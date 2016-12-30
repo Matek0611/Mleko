@@ -1,0 +1,705 @@
+<!doctype html public "-//w3c//dtd html 4.0 Transitional//en">
+<html>
+<head>
+  <title>Frequently Asked Questions</title>
+
+<style>
+body {
+  overflow: hidden; 
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  background: #ffffff; 
+  color: #000000;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 70%;
+  width: 100%;
+  }
+p
+	{
+	margin: .5em 0em .5em 0em;
+	}
+ol, ul
+	{
+	margin-top: .5em; 
+	}
+li
+	{
+	margin-bottom: .5em;
+	}
+ul p, ol p, dl p
+	{
+	margin-left: 0em;
+	}
+blockquote.dxOverload
+	{
+	margin: .5em 1.5em .5em 1.5em;
+	}
+h1, h2, h3, h4
+	{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	margin-bottom: .4em; 
+	margin-top: 1em;
+	font-weight: bold;
+	}
+h1
+	{
+	font-size: 120%;
+	margin-top: 0em;
+	}
+h2
+	{
+	font-size: 130%;
+	}
+h3
+	{
+	font-size: 115%;
+	}
+h4
+	{
+	font-size: 100%;
+	}
+.dxH1, .dxH2, .dxH3, .dxH4
+	{
+	margin-left: -18px;	
+	}
+A
+  {
+  color: #0000FF;
+  }
+A:link
+  {
+  color: #0000FF;
+  }
+A:active
+  {
+  color: #000080;
+  }
+A:visited
+  {
+  color: #800080;
+  }
+A:hover
+  {
+  color: #FF0000;
+  }
+pre
+  {
+  font-family: Courier New;
+  font-size: 9pt;
+  color: #000060;
+  margin-top: 0px;
+  }
+code, p.example, p.sourcecode, table.sourcecode, tr.sourcecode, td.sourcecode
+  {
+  font-family: Courier New;
+  font-size: 9pt;
+  color: #000060;
+  }
+div#pagetop {
+  margin: 0px;
+  padding: 0px;
+  background-color: #99ccff;   
+  height: 44;
+  width: 100%;
+  border-bottom: 1px solid #999999;
+  }
+div#pagebody {
+  margin: 0px 0px 0px 0px;
+  padding: 5px 10px 0px 22px;
+  height: 90%;
+  width: 100%;
+  overflow: auto;
+  background-color: #FFFFFF;
+  vertical-align: top;
+  }
+table#BannerTable
+  {
+  width: 100%;
+  height: 100%;
+  border-collapse:collapse;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  }
+table#BannerTable td
+  {
+  padding-left: 8px;
+  padding-right: 8px;
+  }
+tr#BannerTopRow
+  {
+  font-style: italic;
+  font-size: 70%;
+  }
+tr#Banner2ndRow
+  {
+  font-weight: bold;
+  font-size: 80%;
+  }
+table.filtereditemlisttable, table.xmldoctable
+	{
+	width: 95%; 
+	margin-top: .6em;
+	margin-bottom: .3em;
+	border-width: 1px 1px 0px 0px;
+	border-style: solid;
+	border-color: #999999;
+	background-color: #999999; 
+	font-size: 100%;
+  border-collapse:collapse;
+	}
+table.filtereditemlisttable th, table.filtereditemlisttable td, table.xmldoctable th, table.xmldoctable td
+	{ 
+/*	border-style: solid; */
+	border-width: 0px 0px 1px 1px;
+	border-style: solid;
+	border-color: #999999;
+	padding: 4px 6px;
+	text-align: left;
+	vertical-align: top;
+	}
+table.filtereditemlisttable th, table.xmldoctable th
+	{ 
+	background: #cccccc; 
+	vertical-align: bottom;
+	}
+table.filtereditemlisttable td, table.xmldoctable td
+	{
+	background-color: #ffffff;
+	vertical-align: top;
+	}
+table.desctable 
+    {
+    margin-top: .6em;
+    margin-bottom: .3em;
+    border-width: 1px 1px 0px 0px;
+    border-style: solid;
+    border-color: #999999;
+    background-color: #999999;
+    font-size: 100%;
+    }
+table.desctable th, table.desctable td 
+    {
+    border-style: solid;
+    border-width: 0px 0px 1px 1px;
+    border-style: solid;
+    border-color: #999999;
+    padding: 4px 6px;
+    text-align: left;
+    vertical-align: top;
+    }
+table.desctable th 
+    {
+    background: #cccccc;
+    vertical-align: bottom;
+    }
+table.desctable td 
+    {
+    background: #ffffff;
+    vertical-align: top;
+    }
+span.Q 
+  {
+  font-weight: bold;
+  color: #000088;
+  }
+span.A 
+  {
+  color: #000000;
+  }
+span#Category
+  {
+  font-weight: 600;
+  font-size: 110%;
+  }
+</style>
+
+<script>
+
+var Engine;
+var enOpera = 'Opera';
+var enIE = 'IE';
+var enGecko = 'Gecko';
+
+function TestEngine()
+{
+  if (document.all) {
+    if (window.opera) {
+      Engine = enOpera;
+    }
+    else {
+      Engine = enIE;
+    }
+  }
+  else {
+    Engine = enGecko;
+  }
+}
+
+
+function RunningInCHM()
+{
+  var wstr = document.location.href.substr(0,14);
+  return (wstr == 'mk:@MSITStore:');
+}
+
+
+function RunningInHxS()
+{
+  var wstr = document.location.href.substr(0,10);
+  return (wstr == 'ms-help://');
+}
+
+
+function RunningInHost()
+{
+  return RunningInCHM() || RunningInHxS();
+}
+
+
+function AdjustContentSize()
+{
+  var cDiv = document.getElementById("pagebody");
+  if ((Engine == enGecko)||(Engine == enOpera))//amend padding
+    {
+      var w = document.body.clientWidth;
+      cDiv.style.width = w - 32;
+    }
+  var h = document.body.clientHeight;
+  var diff = 44;
+  if ((Engine == enGecko)||(Engine == enOpera)) diff = diff + 6;
+  cDiv.style.height = h - diff;
+}
+
+
+function Startup()
+{
+  //add startup code here
+}
+</script>
+
+</head>
+
+
+<body onresize="AdjustContentSize()" onload="Startup()">
+
+<div id="pagetop">
+  <table id="BannerTable">
+    <tr id="BannerTopRow">
+      <td>SQL Server Data Access Components</td>
+      <td align="right">sdac@crlab.com</td>
+    </tr>
+    <tr id="Banner2ndRow">
+      <td>Frequently Asked Questions</td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+<div id="pagebody" valign="bottom">
+
+<!-- begin content -->
+
+<p>
+This page contains a list of Frequently Asked Questions for SQL Server Data Access Components. 
+</p>
+<p>
+If you have encounter a question with using SDAC, please browse through this list first. 
+If this page does not answer your question, refer to the Getting Support topic in SDAC help.
+</p>
+
+<div id="InsertHere">
+</div>
+<p>&nbsp;</p>
+
+<span id="Category">Installation and Deployment</span>
+<ol>
+  <li>
+    <span id="Qx" class="Q">I am having a problem installing SDAC or compiling SDAC-based projects...</span><br>
+    <span class="A">
+  <p>
+  You may be having a compatibility issue that shows up in one or more of the following forms:<p>
+    <ul>
+      <li>Get a "Setup has detected already installed DAC packages which are incompatible with current version" message during SDAC installation.
+      <li>Get a "Procedure entry point ... not found in ... " message when starting IDE.
+      <li>Get a "Unit ... was compiled with a different version of ..." message on compilation.
+  </ul> 
+  <p>
+  You can have such problems if you installed incompatible SDAC, ODAC, MyDAC or IBDAC versions. All these products use common base packages. The easiest way to avoid the problem is to uninstall all installed DAC products and then download from our site and install the last builds.</p></span>
+  </li>
+
+  <li>
+    <span id="Qx" class="Q">What software should be installed on the client computer so that my applications
+	  that use SDAC can run?</span><br>
+    <span class="A">
+      <p>SDAC requires OLE DB installed on the workstation. In current versions of Microsoft Windows, 
+   	  such as Windows 2000, OLE DB is already included as part of the standard installation. But it is highly 
+   	  recommended to download the latest version (newer than 2.5) of <A HREF="http://www.microsoft.com/downloads/browse.aspx?productID=B7ADDC23-DEC1-4C5F-8479-EAD9245A8D61">Microsoft 
+	    Data Access Components</A> (MDAC).
+      </p>
+      <p>
+      Many features of SQL Server 2005 like Query Notifications, MARS require 
+      <a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=d09c1d60-a13c-4479-9b91-9e8b9d835cdc&displaylang=en#SNAC">
+      Microsoft SQL Server Native Client</a>. If you need to use these features, you should  download and install Microsoft SQL Server Native Client.
+      </p>
+      <p>
+      For applications that use 
+      <a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=85e0c3ce-3fa1-453a-8ce9-af6ca20946c3&DisplayLang=en">
+      SQL Server 2005 Compact Edition</a>, the server itself is required to be installed on the client computer.
+      </p>
+      <p>
+      For more information, please refer to the Deployment topic of the SDAC help.
+      </p>
+    </span>
+  </li>
+</ol>
+
+<span id="Category">Licensing and Subscriptions</span>
+<ol>
+<li>
+  <span id="Qx" class="Q">Am I entitled to distribute applications written with SDAC?</span><br>
+  <span class="A"><p>If you have purchased a full version of SDAC, you are entitled to distribute pre-compiled programs created with its use. You are not entitled to propagate any components inherited from SDAC or using SDAC source code. For more information see the <i>License.rtf</i> file in your SDAC installation directory.</p></span>
+</li>
+
+<li>
+  <span id="Qx" class="Q">Can I create components using SDAC?</span><br>
+  <span class="A">
+    <p>You can create your own components that are inherited from SDAC or that use the SDAC source code. You are entitled to sell and distribute compiled application executables that use such components, but not their source code and not the components themselves.</p>
+  </span>
+</li>
+
+
+
+<li>
+  <span id="Qx" class="Q">What licensing changes can I expect with SDAC 4.00?</span><br>
+  <span class="A">
+    <p>The basic SDAC license agreement will remain the same. With SDAC 4.00, the <a href="http://www.crlab.com/sdac/#editionmatrix">SDAC Edition Matrix</a> will be reorganized and a new <a href="#subscriptionprogram">SDAC Subscription Program</a> will be introduced.</p>
+    </span>
+</li>
+<li>
+  <span id="Qx" class="Q">What do the SDAC 4.00 Edition Levels correspond to?</span><br>
+  <span class="A">
+    <p>SDAC 4.00 will come in four editions: Trial, Standard, Professional, and Professional with Sources.</p>
+    <p>When you upgrade to the new version, your edition level will be automatically updated using the following Edition Correspondence Table.</p><br>
+    <center>
+    <b>Edition Correspondence Table for Upgrading to SDAC 4.00</b>
+    <table width = "550" class="desctable" cellspacing="0" >
+    <tr><th width="50%">Old Edition Level</th><th>New Edition Level</th></tr>
+    <tr><td><i>- No Correspondence -</i></td><td>SDAC Standard Edition</td></tr>
+    <tr><td>SDAC Standard Edition</td><td>SDAC Professional Edition</td></tr>
+    <tr><td>SDAC Professional Edition</td><td>SDAC Professional Edition with Sources</td></tr>
+    <tr><td>SDAC Trial Edition</td><td> SDAC Trial Edition</td></tr>
+    </table></center><br>
+    <p>
+    The feature list for each edition can be found in the SDAC documentation and on the <a href="http://www.crlab.com/sdac/#editionmatrix">SDAC website</a>.</p>
+  </span>
+</li>
+
+
+<li>
+  <span id="Qx" class="Q">I have a registered version of SDAC. Will I need to pay to upgrade to future versions?</span><br>
+  <span class="A">
+    <p>After SDAC 4.00, all upgrades to future versions are free to users with an active SDAC Subscription.</p>
+    <p>Users that have a registration for versions of SDAC prior to SDAC 4.00 will have to first upgrade to SDAC 4.00 to jump in on the Subscription program.</p>
+  </span>
+</li>
+
+<li>
+  <span id="Qx" class="Q">What are the benefits of the SDAC Subscription program?</span><br>
+  <span class="A">
+  <p><a href="#subscriptionprogram"></a>The <b>SDAC Subscription Program</b> is an annual maintenance and support service
+          for SDAC users.</p>
+  <p>Users with a valid SDAC Subscription get the following benefits:</p>
+     <ul>
+        <li>Access to new versions of SDAC when they are released
+        <li>Access to all SDAC updates and bug fixes
+        <li>Product support through the SDAC Priority Support program
+        <li>Notification of new product versions
+     </ul>
+  <p><b>Priority Support</b> is an advanced product support program which offers you expedited individual assistance with SDAC-related questions from the SDAC developers themselves. Priority Support is carried out over email and has a two business day response policy.</p>
+  
+
+  <p>The SDAC Subscription Program is available for registered users of SDAC 4.00 and higher.</p>
+  </span>
+</li>
+
+
+
+<li>
+  <span id="Qx" class="Q">Can I use my version of SDAC after my Subscription expires?</span><br>
+  <span class="A">
+    <p>Yes, you can.  SDAC version licenses are perpetual.</p>
+  </span>
+</li>
+
+
+
+<li>
+  <span id="Qx" class="Q">I want a SDAC Subscription!  How can I get one?</span><br>
+  <span class="A">
+    <p>An annual SDAC Subscription is included when ordering or upgrading to any registered (non-Trial) edition of SDAC 4.00 or higher.</p>
+    <p>You can renew your SDAC Subscription on the <a href="http://www.crlab.com/sdac/ordering.html">SDAC Ordering Page</a>.  For more information, please contact <a href="mailto:sales@crlab.com">sales@crlab.com</a>.</p>
+  </span>
+</li>
+
+<li>
+  <span id="Qx" class="Q">Does this mean that if I upgrade to SDAC 4 from SDAC 3, I'll get an annual SDAC Subscription for free?</span><br>
+  <span class="A">
+  Yes.
+  </span>
+</li>
+
+
+<li>
+  <span id="Qx" class="Q">How do I upgrade to SDAC 4.00?</span><br>
+  <span class="A">
+    <p>To upgrade to SDAC 4.00, you can get a Version Update from the <a href="http://www.crlab.com/sdac/ordering.html">SDAC Ordering Page</a>.  For more information, please contact <a href="mailto:sales@crlab.com">sales@crlab.com</a>.</p>
+  </span>
+</li>
+</ol>
+
+<span id="Category">Performance</span>
+<ol>
+  <li>
+    <span id="Qx" class="Q">How productive is SDAC?</span><br>
+    <span class="A"><p>SDAC uses the lowest documented protocol level (OLE DB) to access 
+	the database server. This allows SDAC to achieve high performance. From time to time 
+	we compare SDAC with other products, and SDAC always takes first place.</p></span>
+  </li>
+  
+  <li>
+    <span id="Qx" class="Q">Why does the Locate function work so slowly the first time I use it?</span><br>
+    <span class="A"><p>Locate is performed on the client. So if you had set FetchAll to False when opening 
+	your dataset, cached only some of the rows on the client, and then invoked Locate, SDAC will have to 
+	fetch all the remaining rows from the server before performing the operation. On subsequent calls, 
+	Locate should work much faster.</p>
+    <p>If the Locate method keeps working slowly on subsequent calls or you are working with FetchAll=True, 
+	try the following. Perform local sorting by a field that is used in the Locate method. Just assign 
+	corresponding field name to the IndexFieldNames property.</p></span>
+  </li>
+
+</ol>
+
+<span id="Category">How To</span>
+<ol>
+  <li>
+    <span id="Qx" class="Q">How can I enable syntax highlighting in SDAC component editors at design time?</span><br>
+    <span class="A"><p>To enable syntax highlighting for SDAC, you should download and install the freeware <A HREF="http://synedit.sourceforge.net/">SynEdit component set</A>.</p>
+    </span>
+  </li>
+
+  <li>
+    <span id="Qx" class="Q">How can I determine which version of SDAC am I using?</span><br>
+    <span class="A"><p>You can determine your SDAC version number in several ways:
+      <ul>
+        <li>During installation of SDAC, consult the SDAC Installer screen.
+        <li>After installation, see the <i>history.html</i> file in your SDAC installation directiory.
+        <li>At design-time, select SQL Server | About SDAC from the main menu of your IDE.
+        <li>At run-time, check the value of the SdacVersion and DACVersion constants.
+      </ul></p>
+    </span>
+  </li>
+
+  <li>
+    <span id="Qx" class="Q">How can I stop the cursor from changing to an hour glass during query execution?</span><br>
+    <span class="A"><p>Just set the DBAccess.ChangeCursor variable to False anywhere in your program.  
+	The cursor will stop changing after this command is executed.</p></span>
+  </li>
+
+  <li>
+    <span id="Qx" class="Q">How can I execute a query saved in the SQLInsert, SQLUpdate, 
+	SQLDelete, or SQLRefresh properties of a SDAC dataset?</span><br>
+    <span class="A"><p>The values of these properties are templates for query statements, 
+	and they cannot be manually executed. Usually there is no need to fill these properties
+	because the text of the query is generated automatically.</p>
+    
+    <p> In special cases, you can set these properties to perform more complicated processing 
+	during a query.  These properties are automatically processed by SDAC during the execution 
+	of the Post, Delete, or RefreshRecord methods, and are used to construct the query to 
+	the server.  Their values can contain parameters with names of fields in the underlying 
+	data source, which will be later replaced by appropriate data values. </p> 
+
+    <p>For example, you can use the SQLInsert template to insert a row into a query instance as follows.</p>
+    <ol>
+    <li>Fill the SQLInsert property with the parametrized query template you want to use.
+    <li>Call Insert.
+    <li>Initialize field values of the row to insert.
+    <li>Call Post.
+    </ol>
+
+    <p>The value of the SQLInsert property will then be used by SDAC to perform the last step.</p>  
+
+    <p>Setting these properties is optional and allows you to automatically execute additional 
+	SQL statements, add calls to stored procedures and functions, check input parameters, and/or 
+	store comments during query execution. If these properties are not set, the SDAC dataset 
+	object will generate the query itself using the appropriate insert, update, delete, or 
+	refresh record syntax.</p>
+     </span>
+  </li>
+
+  <li>
+    <span id="Qx" class="Q">How can I get a list of the databases on the server?</span><br>
+    <span class="A"><p>Use the TCustomDAConnection.GetDatabaseNames method.</p></span>
+  </li>
+
+  <li>
+    <span id="Qx" class="Q">How can I get a list of the tables list in a database?</span><br>
+    <span class="A">Use the TCustomDAConnection.GetTableNames method.</span>
+  </li>
+
+
+  <li>
+    <span id="Qx" class="Q">Some questions about the visual part of SDAC</span><br>
+    <span class="A"><p>
+    The following questions usually arise from the same problem:
+    <ul>
+      <li>I set the Debug property to True but nothing happens!
+      <li>While executing a query, the screen cursor does not change to an hour-glass.
+      <li>Even if I have LoginPromp set to True, the connect dialog does not appear.
+  </ul>
+  To fix this problem, you should add the SdacVcl unit to the uses clause of your 
+  project.</p></span>
+  </li>
+</ol>  
+
+<span id="Category">General Questions</span>
+<ol>
+  <li>
+    <span id="Qx" class="Q">I would like to develop an application that works with SQL Server. Should I use SDAC or DbxSda?</span><br>
+    <span class="A"><p><a href="http://www.crlab.com/dbx/">DbxSda</a> is our dbExpress driver for SQL Server.
+	dbExpress technology serves for providing a more or less uniform way to access different servers 
+	(SQL Server, MySQL, Oracle and so on). It is based on drivers that include server-specific features. 
+	Like any universal tool, in many specialized cases dbExpress providers lose some functionality. 
+	For example, the dbExpress design-time is quite poor and cannot be expanded.</p>
+    <p>SDAC is a specialized set of components for SQL Server, which has advanced server-specific design-time 
+	and a component interface similar to that of BDE.</p>
+    <p>We tried to include maximal support of SQL Server-specific features in both DbxSda and SDAC. However, 
+	the nature of dbExpress technology has some insurmountable restrictions. For example, Unicode fields 
+	cannot be passed from a driver to dbExpress.</p>
+    <p>SDAC and DbxSda use the same kernel and thus have similar performance. In some cases dbExpress is 
+	slower because data undergoes additional conversion to correspond to dbExpress standards.</p>
+    <p>To summarise, if it is important for you to be able to quickly adapt your application to a database 
+	server other than SQL Server, it is probably better to use DbxSda. In other cases, especially when migrating 
+	from BDE or ADO, you should use SDAC. </span>
+  </li>
+
+  <li>
+    <span id="Qx" class="Q">What are the advantages of SDAC over Delphi ADO components for accessing SQL Server?</span><br>
+    <span class="A">ADO is a universal components while SDAC is specialized in SQL Server, 
+	so SDAC takes into account lots of server specific features. SDAC has great benefit in performance 
+	(5-10 times in different tests) because it works directly through OLE DB, which is a native SQL Server 
+	interface. Moreover, SDAC provides advanced design-time editors.</span>
+  </li>
+
+  <li>
+    <span id="Qx" class="Q">On connect, I get an "OLE DB error occured. Code 800401F0h. CoInitialize has 
+	not been called" error. What can I do?</span><br>
+    <span class="A">As SDAC uses OLE DB, it is necessary to 
+	initialize OLE by calling CoInitialize before a new connection is established. Usually VCL does this automatically. SDAC does not call to the CoInitialize and CoUninitialize functions itself, as this may cause unexpected 
+	problems if OLE is used in the program by someone else.</span>
+  </li>
+
+  <li>
+    <span id="Qx" class="Q">Are the SDAC connection components thread-safe?</span><br>
+    <span class="A"><p>Yes, SDAC is thread-safe but there is a restriction. But the same TCustomMSConnection object descendant cannot be used in several threads. So if you have a multithreaded application, you should have a TCustomMSConnection object descendant for each thread that uses SDAC.</p></span>
+  </li>
+
+  <li>
+    <span id="Qx" class="Q">When editing a DataSet, I get an exception with the message 'Update failed. 
+	Found %d records.' or 'Refresh failed. Found %d records.'
+   </span><br>
+    <span class="A"><p>This error occurs when the database server is unable to determine which record 
+	to modify or delete. In other words, there are either more than one record or no records that suit 
+	the UPDATE criteria. Such situation can happen when you omit the unique field in a SELECT statement 
+	(TCustomDADataSet.SQL) or when another user modifies the table simultaneously. This exception can
+	be suppressed. Refer to TCustomDADataSet.Options topic in SDAC help for more information.</p>
+  </span>
+  </li>
+
+  <li>
+
+    <span id="Qx" class="Q">Some questions with using TCustomDADataSet.FetchAll=False mode</span><br>
+    <span class="A">
+	Common issues when using FetchAll=False:
+	  <ul>
+        <li>I have problems working with temporary tables. 
+        <li>I have problems working with transactions. 
+        <li>Sometimes my application hangs on applying changes to database.
+	  </ul>
+      <p>Usage of FetchAll=False mode has many advantages; however, it also has some restrictions 
+	  since it requires an additional connection to server to be created for data fetching. The 
+	  additional connection is created to prevent the main connection from blocking.</p>
+
+      <p>These problems can be avoided by setting the FetchAll property to True. Please see description of the
+	  FetchAll propery and the CreateConnection option in SDAC help for more information.</p>
+
+      <p>One more way to solve these problems is to use the Multiple Active Result Sets (MARS) feature. 
+	  This feature lets you keep more than one unfetched record set within a single connection. 
+	  To enable MARS, set the MultipleActiveResultSets option of TMSConnection to True. 
+	  Note: To use MARS, you will need to have SQL Server 2005 and SQL Native Client installed.</p>
+  </li>
+</ol>
+
+<!-- end content -->
+
+<p>&nbsp;</p><p>&nbsp;</p><hr size=1>
+<p>&copy; 2002-2007 Core Lab. All rights reserved.</p>
+
+</div>
+
+
+<script>
+function CreateAnchor(aName)
+{
+  var anc;
+  if (Engine == enIE)
+  {
+    anc = document.createElement('<a name="' + aName + '"></a>');
+    anc.href = '';
+  }//IE
+  else
+  {
+    anc = document.createElement("a");
+    anc.href = '';
+    anc.name = aName;
+  }//Mozilla, Opera
+  return anc;
+}
+
+function BuildTOC()
+{
+  var str = "";
+  var coll = document.getElementsByTagName('span');
+  var i;
+  var theSpan;
+  var InsertHere = document.getElementById("InsertHere");
+  var firstBR = document.createElement("br");
+  InsertHere.insertBefore(firstBR, InsertHere.lastChild);
+  for (i=0;i<coll.length;++i)
+  {
+    theSpan = coll[i];
+    if (theSpan.id == "Qx")
+    {
+      var anc = CreateAnchor('q' + i);
+      var theHref = document.createElement("a");
+      theHref.href = "#q" + i;
+      theHref.innerHTML = theSpan.innerHTML;
+      InsertHere.insertBefore(theHref, InsertHere.lastChild);
+      var theBR = document.createElement("br");
+      InsertHere.insertBefore(theBR, InsertHere.lastChild);
+      theSpan.insertBefore(anc, theSpan.firstChild);
+    } 
+    if (theSpan.id == "Category")
+    {
+      var theCaption = document.createElement("h4");
+      theCaption.innerHTML = theSpan.innerHTML;
+      theCaption.className = "dxH4";
+      InsertHere.insertBefore(theCaption, InsertHere.lastChild);
+    } 
+  }
+  InsertHere.removeChild(firstBR);
+}
+
+TestEngine();
+BuildTOC();
+AdjustContentSize();
+</script>
+</body>
+</html>

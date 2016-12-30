@@ -1,0 +1,43 @@
+SELECT     NaklR.DateNakl,
+           dbo.Get_doc_sum(NaklR.NaklNo,'NAKLR') as Summa, 
+           NaklR.NaklNo,
+           NaklR.Nom, 
+           Post.NameLong, 
+           Post.DogovorNo, 
+           Post.DateDogovor, 
+           AddressPost.Address, 
+           NaklR.Weight, 
+           NaklR.KolPerPak, 
+           Post.OKPO, 
+           Cars.CarsName, 
+           Cars.CarsDriver, 
+           Cars.CarsType, 
+           Cars.CarsNomer, 
+           Cars.CarsOKPO, 
+           Cars.CarsFirma,
+           (select NameLong 
+              from post 
+               where PostNo= NaklR.OurFirmNo) as "OurFirmName",
+           (select OKPO  
+              from post 
+               where PostNo= NaklR.OurFirmNo) as "OurOKPO",     
+           NaklR.Contract_id,
+           dbo.Get_Contract_Base (NaklR.NaklNo,'NAKLR') as Contract_Name, 
+           NaklR.ExpeditionNo
+FROM AddressPost RIGHT OUTER JOIN
+     NaklR INNER JOIN
+     Post ON NaklR.PostNo = Post.PostNo ON AddressPost.PostNo = NaklR.PostNo AND AddressPost.AddressNo = NaklR.AddressNo LEFT OUTER JOIN
+     Expedition INNER JOIN Cars ON Expedition.ExpeditionCarsNo = Cars.CarsNo ON NaklR.ExpeditionNo = Expedition.ExpeditionNo
+ where NaklR.NaklNo = :NaklNo
+/*
+SELECT     NaklR.DateNakl, dbo.Get_doc_sum(NaklR.NaklNo,'NAKLR') as Summa, NaklR.Nom, Post.NameLong, Post.DogovorNo, Post.DateDogovor, AddressPost.Address, NaklR.Weight, 
+                      NaklR.KolPerPak, Post.OKPO, Cars.CarsName, Cars.CarsDriver, Cars.CarsType, Cars.CarsNomer, Cars.CarsOKPO, Cars.CarsFirma
+,(select NameLong from post where PostNo= NaklR.OurFirmNo) as OurFirmName, NaklR.Contract_id
+           ,dbo.Get_Contract_Base (NaklR.NaklNo,'NAKLR') as Contract_Name, NaklR.ExpeditionNo
+FROM         AddressPost RIGHT OUTER JOIN
+                      NaklR INNER JOIN
+                      Post ON NaklR.PostNo = Post.PostNo ON AddressPost.PostNo = NaklR.PostNo AND AddressPost.AddressNo = NaklR.AddressNo LEFT OUTER JOIN
+                      Expedition INNER JOIN
+                      Cars ON Expedition.ExpeditionCarsNo = Cars.CarsNo ON NaklR.ExpeditionNo = Expedition.ExpeditionNo
+where NaklR.NaklNo=:NaklNo
+*/

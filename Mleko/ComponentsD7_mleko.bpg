@@ -1,0 +1,310 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+!include compile.mak
+#------------------------------------------------------------------------------
+PROJECTS = dac70.bpl sdac70.bpl sdacvcl70.bpl dcldac70.bpl dclsdac70.bpl \
+  dacvcl70.bpl cit.bpl Target.bpl TargetFilters.bpl En_D7.bpl citDB.bpl \
+  dxCoreD7.bpl dxGDIPlusD7.bpl dxThemeD7.bpl dxComnD7.bpl cxLibraryVCLD7.bpl \
+  cxDataD7.bpl cxADOAdaptersD7.bpl cxEditorsVCLD7.bpl cxBDEAdaptersD7.bpl \
+  dclcxLibraryVCLD7.bpl cxExtEditorsVCLD7.bpl dclcxEditorsVCLD7.bpl \
+  dclcxExtEditorsVCLD7.bpl cxIBXAdaptersD7.bpl dxBarD7.bpl dxBarDBNavD7.bpl \
+  dxBarExtDBItemsD7.bpl dxBarExtItemsD7.bpl dxRibbonD7.bpl cxBarEditItemD7.bpl \
+  dcldxBarD7.bpl dcldxBarDBNavD7.bpl dcldxBarExtDBItemsD7.bpl \
+  dcldxBarExtItemsD7.bpl dcldxRibbonD7.bpl dclcxBarEditItemD7.bpl dxdbtrD7.bpl \
+  dxmdsD7.bpl dxtrmdD7.bpl dcldxmdsD7.bpl dcldxtrmdD7.bpl dcldxdbtrD7.bpl \
+  cxExportVCLD7.bpl cxPageControlVCLD7.bpl dclcxPageControlVCLD7.bpl cxGridD7.bpl \
+  dclcxGridD7.bpl cxVerticalGridVCLD7.bpl dclcxVerticalGridVCLD7.bpl \
+  cxTreeListVCLD7.bpl dclcxTreeListVCLD7.bpl fs7.bpl fsDB7.bpl fsBDE7.bpl \
+  fsADO7.bpl fsIBX7.bpl fsTee7.bpl frx7.bpl frxDB7.bpl frxADO7.bpl frxBDE7.bpl \
+  frxIBX7.bpl frxDBX7.bpl frxTee7.bpl frxe7.bpl dclfs7.bpl dclfsDB7.bpl \
+  dclfsBDE7.bpl dclfsADO7.bpl dclfsIBX7.bpl dclfsTee7.bpl dclfrx7.bpl \
+  dclfrxDB7.bpl dclfrxADO7.bpl dclfrxBDE7.bpl dclfrxIBX7.bpl dclfrxDBX7.bpl \
+  dclfrxTee7.bpl dclfrxe7.bpl fr7.bpl fqb70.bpl rxctl70.bpl dclrx70.bpl \
+  dclrxbd70.bpl DclRxDb70.bpl EhLib70.bpl EhLibDataDrivers70.bpl DclEhLib70.bpl \
+  DclEhLibDataDrivers70.bpl
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+Target.bpl: DbBase_Component\Target\Target.dpk
+  $(DCC)
+
+En_D7.bpl: DbBase_Component\EnvImageLib\source\En_D7.dpk
+  $(DCC)
+
+cit.bpl: DbBase_Component\CIT_Controls\cit.dpk
+  $(DCC)
+
+citDB.bpl: DbBase_Component\CIT_DB\citDB.dpk
+  $(DCC)
+
+dxGDIPlusD7.bpl: DbBase_Component\DevExpress\ExpressCore Library\Packages\dxCoreD7.dpk
+  $(DCC)
+
+dxCoreD7.bpl: DbBase_Component\DevExpress\ExpressCore Library\Packages\dxCoreD7.dpk
+  $(DCC)
+
+dxGDIPlusD7.bpl: DbBase_Component\DevExpress\ExpressGDI+ Library\Packages\dxGDIPlusD7.dpk
+  $(DCC)
+
+dxThemeD7.bpl: DbBase_Component\DevExpress\XP Theme Manager\Packages\dxThemeD7.dpk
+  $(DCC)
+
+dxComnD7.bpl: DbBase_Component\DevExpress\ExpressCommon Library\Packages\dxComnD7.dpk
+  $(DCC)
+
+cxDataD7.bpl: DbBase_Component\DevExpress\ExpressDataController\Packages\cxDataD7.dpk
+  $(DCC)
+
+cxADOAdaptersD7.bpl: DbBase_Component\DevExpress\ExpressDataController\Packages\cxADOAdaptersD7.dpk
+  $(DCC)
+
+cxBDEAdaptersD7.bpl: DbBase_Component\DevExpress\ExpressDataController\Packages\cxBDEAdaptersD7.dpk
+  $(DCC)
+
+cxIBXAdaptersD7.bpl: DbBase_Component\DevExpress\ExpressDataController\Packages\cxIBXAdaptersD7.dpk
+  $(DCC)
+
+dxBarD7.bpl: DbBase_Component\DevExpress\ExpressBars 6\Packages\dxBarD7.dpk
+  $(DCC)
+
+dxBarDBNavD7.bpl: DbBase_Component\DevExpress\ExpressBars 6\Packages\dxBarDBNavD7.dpk
+  $(DCC)
+
+dxBarExtDBItemsD7.bpl: DbBase_Component\DevExpress\ExpressBars 6\Packages\dxBarExtDBItemsD7.dpk
+  $(DCC)
+
+dxBarExtItemsD7.bpl: DbBase_Component\DevExpress\ExpressBars 6\Packages\dxBarExtItemsD7.dpk
+  $(DCC)
+
+dxRibbonD7.bpl: DbBase_Component\DevExpress\ExpressBars 6\Packages\dxRibbonD7.dpk
+  $(DCC)
+
+cxBarEditItemD7.bpl: DbBase_Component\DevExpress\ExpressBars 6\Packages\cxBarEditItemD7.dpk
+  $(DCC)
+
+dcldxBarD7.bpl: DbBase_Component\DevExpress\ExpressBars 6\Packages\dcldxBarD7.dpk
+  $(DCC)
+
+dcldxBarDBNavD7.bpl: DbBase_Component\DevExpress\ExpressBars 6\Packages\dcldxBarDBNavD7.dpk
+  $(DCC)
+
+dcldxBarExtDBItemsD7.bpl: DbBase_Component\DevExpress\ExpressBars 6\Packages\dcldxBarExtDBItemsD7.dpk
+  $(DCC)
+
+dcldxBarExtItemsD7.bpl: DbBase_Component\DevExpress\ExpressBars 6\Packages\dcldxBarExtItemsD7.dpk
+  $(DCC)
+
+dcldxRibbonD7.bpl: DbBase_Component\DevExpress\ExpressBars 6\Packages\dcldxRibbonD7.dpk
+  $(DCC)
+
+dclcxBarEditItemD7.bpl: DbBase_Component\DevExpress\ExpressBars 6\Packages\dclcxBarEditItemD7.dpk
+  $(DCC)
+
+dxdbtrD7.bpl: DbBase_Component\DevExpress\ExpressDBTree Suite\Packages\dxdbtrD7.dpk
+  $(DCC)
+
+dxtrmdD7.bpl: DbBase_Component\DevExpress\ExpressDBTree Suite\Packages\dxtrmdD7.dpk
+  $(DCC)
+
+dcldxtrmdD7.bpl: DbBase_Component\DevExpress\ExpressDBTree Suite\Packages\dcldxtrmdD7.dpk
+  $(DCC)
+
+dcldxdbtrD7.bpl: DbBase_Component\DevExpress\ExpressDBTree Suite\Packages\dcldxdbtrD7.dpk
+  $(DCC)
+
+cxGridD7.bpl: DbBase_Component\DevExpress\ExpressQuantumGrid 6\Packages\cxGridD7.dpk
+  $(DCC)
+
+dclcxGridD7.bpl: DbBase_Component\DevExpress\ExpressQuantumGrid 6\Packages\dclcxGridD7.dpk
+  $(DCC)
+
+cxLibraryVCLD7.bpl: DbBase_Component\DevExpress\ExpressLibrary\Packages\cxLibraryVCLD7.dpk
+  $(DCC)
+
+cxEditorsVCLD7.bpl: DbBase_Component\DevExpress\ExpressEditors Library 5\Packages\cxEditorsVCLD7.dpk
+  $(DCC)
+
+cxExtEditorsVCLD7.bpl: DbBase_Component\DevExpress\ExpressEditors Library 5\Packages\cxExtEditorsVCLD7.dpk
+  $(DCC)
+
+dclcxLibraryVCLD7.bpl: DbBase_Component\DevExpress\ExpressLibrary\Packages\dclcxLibraryVCLD7.dpk
+  $(DCC)
+
+dclcxEditorsVCLD7.bpl: DbBase_Component\DevExpress\ExpressEditors Library 5\Packages\dclcxEditorsVCLD7.dpk
+  $(DCC)
+
+dclcxExtEditorsVCLD7.bpl: DbBase_Component\DevExpress\ExpressEditors Library 5\Packages\dclcxExtEditorsVCLD7.dpk
+  $(DCC)
+
+cxExportVCLD7.bpl: DbBase_Component\DevExpress\ExpressExport Library\Packages\cxExportVCLD7.dpk
+  $(DCC)
+
+cxPageControlVCLD7.bpl: DbBase_Component\DevExpress\ExpressPageControl 2\Packages\cxPageControlVCLD7.dpk
+  $(DCC)
+
+dclcxPageControlVCLD7.bpl: DbBase_Component\DevExpress\ExpressPageControl 2\Packages\dclcxPageControlVCLD7.dpk
+  $(DCC)
+
+cxVerticalGridVCLD7.bpl: DbBase_Component\DevExpress\ExpressVerticalGrid\Packages\cxVerticalGridVCLD7.dpk
+  $(DCC)
+
+dclcxVerticalGridVCLD7.bpl: DbBase_Component\DevExpress\ExpressVerticalGrid\Packages\dclcxVerticalGridVCLD7.dpk
+  $(DCC)
+
+cxTreeListVCLD7.bpl: DbBase_Component\DevExpress\ExpressQuantumTreeList 4\Packages\cxTreeListVCLD7.dpk
+  $(DCC)
+
+dclcxTreeListVCLD7.bpl: DbBase_Component\DevExpress\ExpressQuantumTreeList 4\Packages\dclcxTreeListVCLD7.dpk
+  $(DCC)
+
+dxmdsD7.bpl: DbBase_Component\DevExpress\ExpressMemData\Packages\dxmdsD7.dpk
+  $(DCC)
+
+dcldxmdsD7.bpl: DbBase_Component\DevExpress\ExpressMemData\Packages\dcldxmdsD7.dpk
+  $(DCC)
+
+fs7.bpl: DbBase_Component\FastScript\FastScript\fs7.dpk
+  $(DCC)
+
+fsDB7.bpl: DbBase_Component\FastScript\FastScript\fsDB7.dpk
+  $(DCC)
+
+fsBDE7.bpl: DbBase_Component\FastScript\FastScript\fsBDE7.dpk
+  $(DCC)
+
+fsADO7.bpl: DbBase_Component\FastScript\FastScript\fsADO7.dpk
+  $(DCC)
+
+fsIBX7.bpl: DbBase_Component\FastScript\FastScript\fsIBX7.dpk
+  $(DCC)
+
+fsTee7.bpl: DbBase_Component\FastScript\FastScript\fsTee7.dpk
+  $(DCC)
+
+frx7.bpl: DbBase_Component\FastScript\Source\frx7.dpk
+  $(DCC)
+
+frxDB7.bpl: DbBase_Component\FastScript\Source\frxDB7.dpk
+  $(DCC)
+
+frxADO7.bpl: DbBase_Component\FastScript\Source\ADO\frxADO7.dpk
+  $(DCC)
+
+frxBDE7.bpl: DbBase_Component\FastScript\Source\BDE\frxBDE7.dpk
+  $(DCC)
+
+frxIBX7.bpl: DbBase_Component\FastScript\Source\IBX\frxIBX7.dpk
+  $(DCC)
+
+frxDBX7.bpl: DbBase_Component\FastScript\Source\DBX\frxDBX7.dpk
+  $(DCC)
+
+frxTee7.bpl: DbBase_Component\FastScript\Source\frxTee7.dpk
+  $(DCC)
+
+frxe7.bpl: DbBase_Component\FastScript\Source\ExportPack\frxe7.dpk
+  $(DCC)
+
+dclfs7.bpl: DbBase_Component\FastScript\FastScript\dclfs7.dpk
+  $(DCC)
+
+dclfsDB7.bpl: DbBase_Component\FastScript\FastScript\dclfsDB7.dpk
+  $(DCC)
+
+dclfsBDE7.bpl: DbBase_Component\FastScript\FastScript\dclfsBDE7.dpk
+  $(DCC)
+
+dclfsADO7.bpl: DbBase_Component\FastScript\FastScript\dclfsADO7.dpk
+  $(DCC)
+
+dclfsIBX7.bpl: DbBase_Component\FastScript\FastScript\dclfsIBX7.dpk
+  $(DCC)
+
+dclfsTee7.bpl: DbBase_Component\FastScript\FastScript\dclfsTee7.dpk
+  $(DCC)
+
+dclfrx7.bpl: DbBase_Component\FastScript\Source\dclfrx7.dpk
+  $(DCC)
+
+dclfrxDB7.bpl: DbBase_Component\FastScript\Source\dclfrxDB7.dpk
+  $(DCC)
+
+dclfrxADO7.bpl: DbBase_Component\FastScript\Source\ADO\dclfrxADO7.dpk
+  $(DCC)
+
+dclfrxBDE7.bpl: DbBase_Component\FastScript\Source\BDE\dclfrxBDE7.dpk
+  $(DCC)
+
+dclfrxIBX7.bpl: DbBase_Component\FastScript\Source\IBX\dclfrxIBX7.dpk
+  $(DCC)
+
+dclfrxDBX7.bpl: DbBase_Component\FastScript\Source\DBX\dclfrxDBX7.dpk
+  $(DCC)
+
+dclfrxTee7.bpl: DbBase_Component\FastScript\Source\dclfrxTee7.dpk
+  $(DCC)
+
+dclfrxe7.bpl: DbBase_Component\FastScript\Source\ExportPack\dclfrxe7.dpk
+  $(DCC)
+
+fr7.bpl: DbBase_Component\FastReport.v2.56\Source\fr7.dpk
+  $(DCC)
+
+fqb70.bpl: DbBase_Component\FastScript\FastQB\fqb70.dpk
+  $(DCC)
+
+dclrx70.bpl: DbBase_Component\RxLibrary\packages\Delphi7\dclrx.dpk
+  $(DCC)
+
+dclrxbd70.bpl: DbBase_Component\RxLibrary\packages\Delphi7\dclrxbd.dpk
+  $(DCC)
+
+DclRxDb70.bpl: DbBase_Component\RxLibrary\packages\Delphi7\DclRxDb.dpk
+  $(DCC)
+
+rxctl70.bpl: DbBase_Component\RxLibrary\packages\Delphi7\rxctl.dpk
+  $(DCC)
+
+dac70.bpl: DbBase_Component\sdac\Source\Delphi7\dac70.dpk
+  $(DCC)
+
+dacvcl70.bpl: DbBase_Component\sdac\Source\Delphi7\dacvcl70.dpk
+  $(DCC)
+
+dcldac70.bpl: DbBase_Component\sdac\Source\Delphi7\dcldac70.dpk
+  $(DCC)
+
+dclsdac70.bpl: DbBase_Component\sdac\Source\Delphi7\dclsdac70.dpk
+  $(DCC)
+
+sdac70.bpl: DbBase_Component\sdac\Source\Delphi7\sdac70.dpk
+  $(DCC)
+
+sdacvcl70.bpl: DbBase_Component\sdac\Source\Delphi7\sdacvcl70.dpk
+  $(DCC)
+
+EhLib70.bpl: DbBase_Component\EhLib\EhLib70.dpk
+  $(DCC)
+
+EhLibDataDrivers70.bpl: DbBase_Component\EhLib\EhLibDataDrivers70.dpk
+  $(DCC)
+
+DclEhLib70.bpl: DbBase_Component\EhLib\DclEhLib70.dpk
+  $(DCC)
+
+DclEhLibDataDrivers70.bpl: DbBase_Component\EhLib\DclEhLibDataDrivers70.dpk
+  $(DCC)
+
+TargetFilters.bpl: DbBase_Component\TargetFilters\TargetFilters.dpk
+  $(DCC)
+
+

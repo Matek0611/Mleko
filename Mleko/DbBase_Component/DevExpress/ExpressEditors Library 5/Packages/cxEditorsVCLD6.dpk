@@ -1,0 +1,88 @@
+package cxEditorsVCLD6;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'ExpressEditors Library 5 (VCL Edition) by Developer Express Inc.'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  dbrtl,
+  vcl,
+  vcldb,
+  vcljpg,
+  dxThemeD6,
+  cxDataD6,
+  cxLibraryVCLD6;
+
+contains
+  cxBlobEdit in '..\Sources\cxBlobEdit.pas',
+  cxButtonEdit in '..\Sources\cxButtonEdit.pas',
+  cxButtons in '..\Sources\cxButtons.pas',
+  cxCalc in '..\Sources\cxCalc.pas',
+  cxCalendar in '..\Sources\cxCalendar.pas',
+  cxCheckBox in '..\Sources\cxCheckBox.pas',
+  cxCurrencyEdit in '..\Sources\cxCurrencyEdit.pas',
+  cxDBEdit in '..\Sources\cxDBEdit.pas',
+  cxDBEditRepository in '..\Sources\cxDBEditRepository.pas',
+  cxDBLookupEdit in '..\Sources\cxDBLookupEdit.pas',
+  cxEdit in '..\Sources\cxEdit.pas',
+  cxEditConsts in '..\Sources\cxEditConsts.pas',
+  cxEditDataRegisteredRepositoryItems in '..\Sources\cxEditDataRegisteredRepositoryItems.pas',
+  cxEditDBRegisteredRepositoryItems in '..\Sources\cxEditDBRegisteredRepositoryItems.pas',
+  cxEditRegisteredRepositoryItems in '..\Sources\cxEditRegisteredRepositoryItems.pas',
+  cxEditUtils in '..\Sources\cxEditUtils.pas',
+  cxHyperLinkEdit in '..\Sources\cxHyperLinkEdit.pas',
+  cxImage in '..\Sources\cxImage.pas',
+  cxImageComboBox in '..\Sources\cxImageComboBox.pas',
+  cxLookupDBGrid in '..\Sources\cxLookupDBGrid.pas',
+  cxLookupEdit in '..\Sources\cxLookupEdit.pas',
+  cxLookupGrid in '..\Sources\cxLookupGrid.pas',
+  cxMaskEdit in '..\Sources\cxMaskEdit.pas',
+  cxMemo in '..\Sources\cxMemo.pas',
+  cxNavigator in '..\Sources\cxNavigator.pas',
+  cxMRUEdit in '..\Sources\cxMRUEdit.pas',
+  cxRegExpr in '..\Sources\cxRegExpr.pas',
+  cxSpinEdit in '..\Sources\cxSpinEdit.pas',
+  cxTimeEdit in '..\Sources\cxTimeEdit.pas',
+  cxDropDownEdit in '..\Sources\cxDropDownEdit.pas',
+  cxEditPaintUtils in '..\Sources\cxEditPaintUtils.pas',
+  cxTextEdit in '..\Sources\cxTextEdit.pas',
+  cxStandardMask in '..\Sources\cxStandardMask.pas',
+  cxEditMaskEditor in '..\Sources\cxEditMaskEditor.pas',
+  cxDBLookupComboBox in '..\Sources\cxDBLookupComboBox.pas',
+  cxRadioGroup in '..\Sources\cxRadioGroup.pas',
+  cxListBox in '..\Sources\cxListBox.pas',
+  cxFilterControl in '..\Sources\cxFilterControl.pas',
+  cxFilterControlUtils in '..\Sources\cxFilterControlUtils.pas',
+  cxFilterControlStrs in '..\Sources\cxFilterControlStrs.pas',
+  cxFilterControlDialog in '..\Sources\cxFilterControlDialog.pas',
+  cxEditRepositoryItems in '..\Sources\cxEditRepositoryItems.pas',
+  cxDBNavigator in '..\Sources\cxDBNavigator.pas',
+  cxDBFilterControl in '..\Sources\cxDBFilterControl.pas',
+  cxPropertiesConverters in '..\Sources\cxPropertiesConverters.pas',
+  cxGroupBox in '..\Sources\cxGroupBox.pas',
+  cxInplaceContainer in '..\Sources\cxInplaceContainer.pas';
+
+end.

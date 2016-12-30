@@ -1,0 +1,53 @@
+package dclcxLibraryVCLD6;
+
+{$R *.res}
+{$R 'cxLibraryReg.dcr'}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'Express Cross Platform Library (VCL Edition) by Developer Express Inc.'}
+{$DESIGNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vcl,
+  designide,
+  dxCoreD6,
+  cxLibraryVCLD6,
+  dxGDIPlusD6,
+  dbrtl;
+
+contains
+  cxDesignWindows in '..\Sources\cxDesignWindows.pas',
+  cxStyleRepositoryEditor in '..\Sources\cxStyleRepositoryEditor.pas',
+  cxPropEditors in '..\Sources\cxPropEditors.pas',
+  cxLibraryReg in '..\Sources\cxLibraryReg.pas',
+  cxStyleSheetsLoad in '..\Sources\cxStyleSheetsLoad.pas',
+  cxPropertiesStoreEditor in '..\Sources\cxPropertiesStoreEditor.pas',
+  cxImportDialog in '..\Sources\cxImportDialog.pas',
+  cxConverterFactory in '..\Sources\cxConverterFactory.pas',
+  cxComponentCollectionEditor in '..\Sources\cxComponentCollectionEditor.pas',
+  cxImageListEditor in '..\Sources\cxImageListEditor.pas',
+  cxImageListEditorView in '..\Sources\cxImageListEditorView.pas',
+  cxClassesReg in '..\Sources\cxClassesReg.pas';
+
+end.

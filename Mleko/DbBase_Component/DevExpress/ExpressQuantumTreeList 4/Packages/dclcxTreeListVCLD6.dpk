@@ -1,0 +1,48 @@
+package dclcxTreeListVCLD6;
+
+{$R *.res}
+{$R 'cxTLReg.dcr'}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'ExpressQuantumTreeList 4 (VCL Edition) by Developer Express Inc.'}
+{$DESIGNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  designide,
+  cxLibraryVCLD6,
+  cxEditorsVCLD6,
+  dclcxEditorsVCLD6,
+  dxThemeD6,
+  cxTreeListVCLD6;
+
+contains
+  cxTLReg in '..\Sources\cxTLReg.pas',
+  cxTLDsgnEdtrs in '..\Sources\cxTLDsgnEdtrs.pas',
+  cxTLItemsEdtr in '..\Sources\cxTLItemsEdtr.pas',
+  cxTLStyleSheetPreview in '..\Sources\cxTLStyleSheetPreview.pas',
+  cxTLConverter in '..\Sources\cxTLConverter.pas',
+  cxDXTLConverter in '..\Sources\cxDXTLConverter.pas',
+  cxTLPredefinedStyles in '..\Sources\cxTLPredefinedStyles.pas';
+
+end.

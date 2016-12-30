@@ -1,0 +1,54 @@
+
+//////////////////////////////////////////////////
+//  SQL Server Data Access Components
+//  Copyright © 1998-2007 Core Lab. All right reserved.
+//  SDAC Package for Delphi 5
+//////////////////////////////////////////////////
+
+package sdac50;
+
+{$R *.RES}
+{$ALIGN ON}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'SQL Server Data Access Components'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+{$DEFINE sdac}
+
+requires
+  VCL50,
+  VCLDB50,
+  Vclbde50,
+  dac50;
+
+contains
+  SdacVcl in '..\SdacVcl.pas',
+  OLEDBAccess in '..\OLEDBAccess.pas',
+  MSAccess in '..\MSAccess.pas',
+  OLEDBC in '..\oledbc.pas',
+  MSSQLMonitor in '..\MSSQLMonitor.pas',
+  MSParser in '..\MSParser.pas',
+  OLEDBIntf in '..\OLEDBIntf.pas',
+  MSConsts in '..\MSConsts.pas',
+  MSScript in '..\MSScript.pas';
+
+end.

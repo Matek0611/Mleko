@@ -1,0 +1,55 @@
+
+package dclsdac105;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'SQL Server Data Access Components'}
+{$DESIGNONLY}
+{$IMPLICITBUILD OFF}
+{$DEFINE sdac}
+{$DEFINE MYBUILDER}
+
+requires
+  sdac105,
+  dcldb,
+  dcldac105,
+  vcljpg,
+  sdacvcl105,
+  designide,
+  xmlrtl,
+  rtl,
+  vclactnband,
+  vclx,
+  vcl,
+  dbrtl,
+  vcldesigner,
+  dclstd,
+  vcldb,
+  dac105,
+  dacvcl105;
+
+contains
+  MSDesign in '..\Design\MSDesign.pas',
+  MSReg in '..\Design\MSReg.pas';
+
+end.

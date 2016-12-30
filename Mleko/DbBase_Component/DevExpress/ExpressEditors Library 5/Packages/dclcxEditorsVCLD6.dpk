@@ -1,0 +1,49 @@
+package dclcxEditorsVCLD6;
+
+{$R *.res}
+{$R 'cxEditReg.dcr'}
+{$R 'cxFilterControlReg.dcr'}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'ExpressEditors Library 5 (VCL Edition) by Developer Express Inc.'}
+{$DESIGNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vcl,
+  vcldb,
+  cxEditorsVCLD6,
+  designide,
+  dcldb,
+  dclcxLibraryVCLD6;
+
+contains
+  cxEditReg in '..\Sources\cxEditReg.pas',
+  cxEditRepositoryEditor in '..\Sources\cxEditRepositoryEditor.pas',
+  cxMaskEditTextEditor in '..\Sources\cxMaskEditTextEditor.pas',
+  cxSelectEditRepositoryItem in '..\Sources\cxSelectEditRepositoryItem.pas',
+  cxFilterControlReg in '..\Sources\cxFilterControlReg.pas',
+  cxEditPropEditors in '..\Sources\cxEditPropEditors.pas',
+  cxInplaceContainerReg in '..\Sources\cxInplaceContainerReg.pas';
+
+end.

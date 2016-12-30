@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="dclsdac60.bpl"/>
+    <OBJFILES value="dclsdac60.obj MSReg.obj MSDesign.obj MSMenu.obj"/>
+    <RESFILES value="dclsdac60.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES)"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value=""/>
+    <SPARELIBS value="rtl.lib"/>
+    <PACKAGES value="vcl.bpi vcldb.bpi designide.bpi dbrtl.bpi vcljpg.bpi rtl.bpi dcldac60.bpi 
+      sdac60.bpi sdacvcl60.bpi dcldb.bpi designdgm.bpi vclx.bpi 
+      dclstd.bpi"/>
+    <PATHCPP value=".;"/>
+    <PATHPAS value=".;..;..\Design"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value="SDAC"/>
+    <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
+    <MAINSOURCE value="dclsdac60.cpp"/>
+    <INCLUDEPATH value="..\;..;..\Design;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Dac\Source;..\..\..\Dac\Source\Design;$(BCB)\source\toolsapi"/>
+    <LIBPATH value="..\;..;..\Design;$(BCB)\Projects\Lib;..\..\..\Dac\Source\CBuilder6;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\Dac\Source;..\..\..\Dac\Source\Design;$(BCB)\source\toolsapi"/>
+    <WARNINGS value="-w-par"/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-I..\. -I.. -I..\Design -I$(BCB)\include -I$(BCB)\include\vcl 
+      -I..\..\..\Dac\Source -I..\..\..\Dac\Source\Design 
+      -I$(BCB)\source\toolsapi -src_suffix cpp -DSDAC -boa"/>
+    <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -a8 -b- -k- -vi -c -tWM"/>
+    <PFLAGS value="-N2. -N0. -$Y- -$L- -$D- -$A8 -v -JPHNE -M -LUdcldb"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zn"/>
+    <LFLAGS value="-l. -I. -D&quot;SQL Server Data Access Components&quot; -aa -Tpp -Gpd -x -Gn -Gl -Gi"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0pkg32.obj $(PACKAGES) Memmgr.Lib sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib"/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="dclsdac60.res" FORMNAME="" UNITNAME="dclsdac60.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="dclsdac60.cpp" FORMNAME="" UNITNAME="dclsdac60" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\Dac\Source\CBuilder6\vcl.bpi" FORMNAME="" UNITNAME="vcl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\Dac\Source\CBuilder6\vcldb.bpi" FORMNAME="" UNITNAME="vcldb" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\Dac\Source\CBuilder6\designide.bpi" FORMNAME="" UNITNAME="designide" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\Dac\Source\CBuilder6\dbrtl.bpi" FORMNAME="" UNITNAME="dbrtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\Dac\Source\CBuilder6\vcljpg.bpi" FORMNAME="" UNITNAME="vcljpg" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\Dac\Source\CBuilder6\rtl.bpi" FORMNAME="" UNITNAME="rtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\Dac\Source\CBuilder6\dcldac60.bpi" FORMNAME="" UNITNAME="dcldac60" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\Dac\Source\CBuilder6\sdac60.bpi" FORMNAME="" UNITNAME="sdac60" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\CRControls\Source\CBuilder6\sdacvcl60.bpi" FORMNAME="" UNITNAME="sdacvcl60" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="d:\Program Files\Borland\CBuilder6\Lib\dcldb.bpi" FORMNAME="" UNITNAME="dcldb" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\Design\MSReg.pas" FORMNAME="" UNITNAME="MSReg" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\Design\MSDesign.pas" FORMNAME="" UNITNAME="MSDesign" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\Design\designdgm.bpi" FORMNAME="" UNITNAME="designdgm" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\Design\vclx.bpi" FORMNAME="" UNITNAME="vclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\Design\dclstd.bpi" FORMNAME="" UNITNAME="dclstd" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\Design\MSMenu.pas" FORMNAME="" UNITNAME="MSMenu" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=1
+AutoIncBuild=0
+MajorVer=4
+MinorVer=30
+Release=0
+Build=12
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+
+[Version Info Keys]
+CompanyName=Core Lab
+FileDescription=
+FileVersion=4.30.0.12
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=Sdac
+ProductVersion=4.30.0.12
+
+
+[HistoryLists\hlIncludePath]
+Count=8
+Item0=..\;..\Design;..;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Dac\Source;..\..\..\Dac\Source\Design;$(BCB)\source\toolsapi
+Item1=..\Design;..\;..;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Dac\Source;..\..\..\Dac\Source\Design;$(BCB)\source\toolsapi
+Item2=..\Design;..\;..;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Dac\Source;$(BCB)\source\toolsapi
+Item3=..\;..;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Dac\Source;$(BCB)\source\toolsapi
+Item4=..;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Dac\Source
+Item5=..\;..\..\Source;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Dac\Source
+Item6=..\;..;..\..\..\Dac\Source;..\Net;$(BCB)\include;$(BCB)\include\vcl;$(BCB)\source\toolsapi
+Item7=..\;D:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=11
+Item0=..\;..\Design;..;$(BCB)\Projects\Lib;..\..\..\Dac\Source\CBuilder6;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\Dac\Source;..\..\..\Dac\Source\Design;$(BCB)\source\toolsapi
+Item1=..\;..\Design;..;$(BCB)\Projects\Lib;..\..\..\Dac\Source\CBuilder6;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\Dac\Source;$(BCB)\source\toolsapi
+Item2=..\Design;..\;..;$(BCB)\Projects\Lib;..\..\..\Dac\Source\CBuilder6;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\Dac\Source;$(BCB)\source\toolsapi
+Item3=..\;$(BCB)\Projects\Lib;..;..\..\..\Dac\Source\CBuilder6;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\Dac\Source;$(BCB)\source\toolsapi
+Item4=$(BCB)\Projects\Lib;..\;..;..\..\..\Dac\Source\CBuilder6;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\Dac\Source;$(BCB)\source\toolsapi
+Item5=..;..\..\..\Dac\Source\CBuilder6;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\Dac\Source
+Item6=..\;..\..\Source;..\..\..\Dac\Source\CBuilder6;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\Dac\Source
+Item7=..\;..;..\..\..\Dac\source\cbuilder6;..\..\..\Dac\Source;..\..\..\Dac\Source\CBuilder6;..\Net;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\source\toolsapi;$(BCB)\projects\lib
+Item8=;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;..\;..\..\..\Dac\source\cbuilder6;;;;..;..\..\..\Dac\Source;..\..\..\Dac\Source\CBuilder6;..\Net;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\source\toolsapi;$(BCB)\projects\lib
+Item9=..\;..;..\..\..\Dac\Source;..\..\..\Dac\Source\CBuilder6;..\Net;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\source\toolsapi;$(BCB)\projects\lib
+Item10=..\;D:\Program Files\Borland\CBuilder6\Projects;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=3
+Item0=SDAC
+Item1=ODAC
+Item2=_DEBUG
+
+[HistoryLists\hlIntOutputDir]
+Count=1
+Item0=.
+
+[HistoryLists\hIBPIOutputDir]
+Count=1
+Item0=.
+
+[Debugging]
+DebugSourceDirs=
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+
+[Language]
+ActiveLang=
+RootDir=
+
+[Linker]
+LibPrefix=
+LibSuffix=
+LibVersion=
+  </IDEOPTIONS>
+</PROJECT>

@@ -1,0 +1,114 @@
+inherited DATableEditorForm: TDATableEditorForm
+  Left = 294
+  Top = 203
+  Height = 340
+  HorzScrollBar.Visible = False
+  VertScrollBar.Visible = False
+  ActiveControl = cbTableName
+  BorderIcons = [biSystemMenu]
+  Constraints.MinHeight = 332
+  Constraints.MinWidth = 512
+  Font.Height = -11
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited BtnPanel: TPanel
+    Top = 272
+    TabOrder = 1
+    inherited btOk: TBitBtn
+      TabOrder = 1
+    end
+    inherited btCancel: TBitBtn
+      TabOrder = 2
+    end
+    object btnDataEditor: TBitBtn
+      Left = 8
+      Top = 8
+      Width = 80
+      Height = 25
+      Anchors = [akLeft, akBottom]
+      Caption = '&Data Editor...'
+      TabOrder = 0
+      OnClick = btnDataEditorClick
+    end
+  end
+  object Panel1: TPanel
+    Left = 8
+    Top = 8
+    Width = 489
+    Height = 257
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    TabOrder = 0
+    object Label2: TLabel
+      Left = 8
+      Top = 20
+      Width = 58
+      Height = 13
+      Caption = 'Table Name'
+    end
+    object Label4: TLabel
+      Left = 8
+      Top = 44
+      Width = 56
+      Height = 13
+      Caption = 'Order Fields'
+    end
+    object Label1: TLabel
+      Left = 8
+      Top = 67
+      Width = 43
+      Height = 13
+      Caption = 'FilterSQL'
+    end
+    object edFilter: TEdit
+      Left = 96
+      Top = 64
+      Width = 388
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 2
+      OnExit = edFilterExit
+    end
+    object meSQL: TMemo
+      Left = 5
+      Top = 88
+      Width = 479
+      Height = 164
+      Anchors = [akLeft, akTop, akRight, akBottom]
+      Color = clBtnFace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Courier New'
+      Font.Pitch = fpVariable
+      Font.Style = []
+      Lines.Strings = (
+        '')
+      ParentFont = False
+      ReadOnly = True
+      ScrollBars = ssBoth
+      TabOrder = 3
+      WordWrap = False
+    end
+    object cbTableName: TComboBox
+      Left = 96
+      Top = 16
+      Width = 388
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      DropDownCount = 16
+      ItemHeight = 13
+      TabOrder = 0
+      OnDropDown = cbTableNameDropDown
+      OnExit = cbTableNameExit
+    end
+    object edOrderFields: TEdit
+      Left = 96
+      Top = 40
+      Width = 388
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 1
+      OnExit = edOrderFieldsExit
+    end
+  end
+end

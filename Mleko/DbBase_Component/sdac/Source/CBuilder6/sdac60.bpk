@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="sdac60.bpl"/>
+    <OBJFILES value="
+      OLEDBAccess.obj         
+      MSAccess.obj            
+      OLEDBC.obj              
+      MSSQLMonitor.obj        
+      MSParser.obj            
+      OLEDBIntf.obj           
+      MSConsts.obj            
+      MSScript.obj            
+      sdac60.obj 
+      "/>
+    <RESFILES value="sdac60.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES)"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value=""/>
+    <SPARELIBS value=""/>
+    <PACKAGES value="dac60.bpi rtl.bpi dbrtl.bpi"/>
+    <PATHCPP value=".;"/>
+    <PATHPAS value=".;..;.."/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value="SDAC"/>
+    <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
+    <MAINSOURCE value="sdac60.cpp"/>
+    <INCLUDEPATH value="..;..\..\..\Dac\Source;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="..;..\..\..\Dac\Source;..\..\..\Dac\Source\CBuilder6;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\projects\lib"/>
+    <WARNINGS value="-w-par"/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-I.. -I..\..\..\Dac\Source -I$(BCB)\include -I$(BCB)\include\vcl 
+      -src_suffix cpp -DSDAC -boa"/>
+    <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -a8 -b- -k- -vi -c -tWM"/>
+    <PFLAGS value="-N2. -N0. -$Y- -$L- -$D- -$A8 -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zn"/>
+    <LFLAGS value="-l. -I. -D&quot;SQL Server Data Access Components&quot; -aa -Tpp -Gpr -x -Gn -Gl -Gi"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0pkg32.obj $(PACKAGES) Memmgr.Lib sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib"/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="sdac60.res" FORMNAME="" UNITNAME="sdac60.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="sdac60.cpp" FORMNAME="" UNITNAME="sdac60" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\OLEDBAccess.pas" FORMNAME="" UNITNAME="OLEDBAccess" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\MSAccess.pas" FORMNAME="" UNITNAME="MSAccess" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\OLEDBC.pas" FORMNAME="" UNITNAME="OLEDBC" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\MSSQLMonitor.pas" FORMNAME="" UNITNAME="MSSQLMonitor" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\MSParser.pas" FORMNAME="" UNITNAME="MSParser" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\OLEDBIntf.pas" FORMNAME="" UNITNAME="OLEDBIntf" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\MSConsts.pas" FORMNAME="" UNITNAME="MSConsts" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\MSScript.pas" FORMNAME="" UNITNAME="MSScript" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\Dac\Source\CBuilder6\dac60.bpi" FORMNAME="" UNITNAME="dac60" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\CRControls\Source\CBuilder6\rtl.bpi" FORMNAME="" UNITNAME="rtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\CRControls\Source\CBuilder6\dbrtl.bpi" FORMNAME="" UNITNAME="dbrtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=1
+AutoIncBuild=0
+MajorVer=4
+MinorVer=30
+Release=0
+Build=12
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+
+[Version Info Keys]
+CompanyName=Core Lab
+FileDescription=
+FileVersion=4.30.0.12
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=SDAC
+ProductVersion=4.30.0.12
+Comments=
+
+[HistoryLists\hlIncludePath]
+Count=6
+Item0=..\;..;..\..\..\Dac\Source;$(BCB)\include;$(BCB)\include\vcl
+Item1=..\;..;..\Net;$(BCB)\include;$(BCB)\include\vcl
+Item2=..;..\Net;$(BCB)\include;$(BCB)\include\vcl
+Item3=..\;..;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Dac\Source
+Item4=..\;..;..\..\..\Dac\Source;..\Net;$(BCB)\include;$(BCB)\include\vcl
+Item5=..\;D:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=10
+Item0=..\;..;..\..\..\Dac\Source;..\..\..\Dac\Source\CBuilder6;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\projects\lib
+Item1=..;..\..\..\Dac\Source;..\..\..\Dac\Source\CBuilder6;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\projects\lib
+Item2=$(BCB)\Projects\Lib;..\;..\..\..\Dac\source\cbuilder6;..;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\Dac\Source
+Item3=..\..\..\Dac\source\cbuilder6;..\;..;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\Dac\Source; ..\..\..\Dac\Source\CBuilder6
+Item4=..\..\..\Dac\source\cbuilder6;..\;..;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\Dac\Source;..\..\..\Dac\Source\CBuilder6
+Item5=..\;..;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\Dac\Source;..\..\..\Dac\Source\CBuilder6
+Item6=..\;..;..\..\..\Dac\Source;..\..\..\Dac\Source\CBuilder6;..\Net;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\projects\lib
+Item7=;;;;;;;;;;;..\;..;..\..\..\Dac\Source;..\..\..\Dac\Source\CBuilder6;..\Net;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\projects\lib
+Item8=..\;..;..\..\..\Dac\Source;..\..\..\Dac\Source\CBuilder6;..\Net;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\projects\lib;..\..\..\Dac\Source\CBuilder6
+Item9=..\;D:\Program Files\Borland\CBuilder6\Projects;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=2
+Item0=SDAC
+Item1=ODAC
+
+[HistoryLists\hlIntOutputDir]
+Count=1
+Item0=.
+
+[HistoryLists\hIBPIOutputDir]
+Count=1
+Item0=.
+
+[Debugging]
+DebugSourceDirs=
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+
+[Language]
+ActiveLang=
+RootDir=
+
+[Linker]
+LibPrefix=
+LibSuffix=
+LibVersion=
+  </IDEOPTIONS>
+</PROJECT>

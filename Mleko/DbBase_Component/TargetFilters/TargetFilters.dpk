@@ -1,0 +1,55 @@
+package TargetFilters;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vcl,
+  dbrtl,
+  vcldb,
+  adortl,
+  bdertl,
+  dclstd;
+
+contains
+  TargetFilter_utils in 'TargetFilter_utils.pas',
+  comp_TargetFilter_Panel in 'comp_TargetFilter_Panel.pas',
+  comp_TargetFilter_CustomFilter in 'comp_TargetFilter_CustomFilter.pas',
+  comp_TargetFilter_DateFilter in 'comp_TargetFilter_DateFilter.pas',
+  comp_TargetFilter_NumberFilter in 'comp_TargetFilter_NumberFilter.pas',
+  comp_TargetFilter_StringFilter in 'comp_TargetFilter_StringFilter.pas',
+  comp_TargetFilter_BooleanFilter in 'comp_TargetFilter_BooleanFilter.pas',
+  comp_TargetFilter_DictionaryFilter in 'comp_TargetFilter_DictionaryFilter.pas',
+  comp_TargetFilter_ScrollBox in 'comp_TargetFilter_ScrollBox.pas',
+  targetFilter_ScrollBox_Load in 'targetFilter_ScrollBox_Load.pas',
+  comp_Target_DBCtrls in 'comp_Target_DBCtrls.pas',
+  COMPSQLBuilder in 'COMPSQLBuilder.pas',
+  COMPSQLBuilderDebug in 'COMPSQLBuilderDebug.pas' {COMPSQLBuilderDebugDlg},
+  COMPSQLBuilderDlg in 'COMPSQLBuilderDlg.pas' {SQLDlg},
+  comp_TargetFilter_LookupFilter in 'comp_TargetFilter_LookupFilter.pas',
+  comp_TargetFilter_Edits in 'comp_TargetFilter_Edits.pas',
+  comp_TargetFilter_Gauges in 'comp_TargetFilter_Gauges.pas';
+
+end.

@@ -1,0 +1,132 @@
+package CoreLab.Dac.Design;
+
+
+{$ALIGN 0}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'Data Access Components'}
+{$DESIGNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  CoreLab.DbTools.Interfaces,
+  CoreLab.Dac,
+  Borland.Delphi,
+  Borland.Studio.Vcl.Design,
+  Borland.Studio.ToolsAPI,
+  Borland.Vcl,
+  Borland.Vcl.Design.DbRtl,
+  Borland.VclDbCtrls,
+  Borland.VclRtl;
+
+contains
+  CoreLab.Dac.Design.DacReg in '..\Net\CoreLab.Dac.Design.DacReg.pas',
+  CoreLab.Dac.Design.VTDesign in '..\Net\CoreLab.Dac.Design.VTDesign.pas',
+  CoreLab.Dac.Design.DAMenu in '..\Net\CoreLab.Dac.Design.DAMenu.pas',
+  CoreLab.Dac.Design.DADesign in '..\Net\CoreLab.Dac.Design.DADesign.pas',
+  CoreLab.Dac.Design.DAUpdateSQLFrame in '..\Net\CoreLab.Dac.Design.DAUpdateSQLFrame.pas',
+  CoreLab.Dac.Design.CRFrame in '..\Net\CoreLab.Dac.Design.CRFrame.pas',
+  CoreLab.Dac.Design.CRColFrame in '..\Net\CoreLab.Dac.Design.CRColFrame.pas',
+  CoreLab.Dac.Design.CRTabEditor in '..\Net\CoreLab.Dac.Design.CRTabEditor.pas',
+  CoreLab.Dac.Design.DAConnectionEditor in '..\Net\CoreLab.Dac.Design.DAConnectionEditor.pas',
+  CoreLab.Dac.Design.CRDataEditor in '..\Net\CoreLab.Dac.Design.CRDataEditor.pas',
+  CoreLab.Dac.Design.DADataEditor in '..\Net\CoreLab.Dac.Design.DADataEditor.pas',
+  CoreLab.Dac.Design.DAMacrosFrame in '..\Net\CoreLab.Dac.Design.DAMacrosFrame.pas',
+  CoreLab.Dac.Design.DAParamsFrame in '..\Net\CoreLab.Dac.Design.DAParamsFrame.pas',
+  CoreLab.Dac.Design.DAParamValueEditor in '..\Net\CoreLab.Dac.Design.DAParamValueEditor.pas',
+  CoreLab.Dac.Design.DAQueryEditor in '..\Net\CoreLab.Dac.Design.DAQueryEditor.pas',
+  CoreLab.Dac.Design.DADualListEditor in '..\Net\CoreLab.Dac.Design.DADualListEditor.pas',
+  CoreLab.Dac.Design.DADumpProgress in '..\Net\CoreLab.Dac.Design.DADumpProgress.pas',
+  CoreLab.Dac.Design.DADumpEditor in '..\Net\CoreLab.Dac.Design.DADumpEditor.pas',
+  CoreLab.Dac.Design.DASPCallFrame in '..\Net\CoreLab.Dac.Design.DASPCallFrame.pas',
+  CoreLab.Dac.Design.DASQLEditor in '..\Net\CoreLab.Dac.Design.DASQLEditor.pas',
+  CoreLab.Dac.Design.DASQLFrame in '..\Net\CoreLab.Dac.Design.DASQLFrame.pas',
+  CoreLab.Dac.Design.DASQLGeneratorFrame in '..\Net\CoreLab.Dac.Design.DASQLGeneratorFrame.pas',
+  CoreLab.Dac.Design.DATableEditor in '..\Net\CoreLab.Dac.Design.DATableEditor.pas',
+  CoreLab.Dac.Design.CREditor in '..\Net\CoreLab.Dac.Design.CREditor.pas',
+  CoreLab.Dac.Design.DADesignUtils in '..\Net\CoreLab.Dac.Design.DADesignUtils.pas',
+  CoreLab.Dac.Design.DAUpdateSQLEditor in '..\Net\CoreLab.Dac.Design.DAUpdateSQLEditor.pas',
+  CoreLab.Dac.Design.DAScriptEditor in '..\Net\CoreLab.Dac.Design.DAScriptEditor.pas',
+  CoreLab.Dac.Design.DAStoredProcEditor in '..\Net\CoreLab.Dac.Design.DAStoredProcEditor.pas',
+  CoreLab.Dac.Design.VTDataEditor in '..\Net\CoreLab.Dac.Design.VTDataEditor.pas',
+  CoreLab.Dac.Design.Download in '..\Net\CoreLab.Dac.Design.Download.pas',
+  CoreLab.Dac.Design.DBToolsClient in '..\Net\CoreLab.Dac.Design.DBToolsClient.pas',
+  CoreLab.Dac.Design.DBToolsIntf in '..\Net\CoreLab.Dac.Design.DBToolsIntf.pas',
+  CoreLab.Dac.Design.HelpUtils in '..\Net\CoreLab.Dac.Design.HelpUtils.pas';
+
+[assembly: AssemblyTitle('Core Lab Data Access Components')]
+[assembly: AssemblyDescription('Core Lab Data Access Components')]
+[assembly: AssemblyConfiguration('')]
+[assembly: AssemblyCompany('Core Lab')]
+[assembly: AssemblyProduct('Core Lab Data Access Components')]
+[assembly: AssemblyCopyright('')]
+[assembly: AssemblyTrademark('')]
+[assembly: AssemblyCulture('')]
+
+// The Delphi compiler controls the AssemblyTitleAttribute via the ExeDescription.
+// You can set this in the IDE via the Project Options.
+// Manually setting the AssemblyTitle attribute below will override the IDE
+// setting.
+// [assembly: AssemblyTitle('')]
+
+
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion('6.20.0.4011')]
+
+//
+// In order to sign your assembly you must specify a key to use. Refer to the 
+// Microsoft .NET Framework documentation for more information on assembly signing.
+//
+// Use the attributes below to control which key is used for signing. 
+//
+// Notes: 
+//   (*) If no key is specified, the assembly is not signed.
+//   (*) KeyName refers to a key that has been installed in the Crypto Service
+//       Provider (CSP) on your machine. KeyFile refers to a file which contains
+//       a key.
+//   (*) If the KeyFile and the KeyName values are both specified, the 
+//       following processing occurs:
+//       (1) If the KeyName can be found in the CSP, that key is used.
+//       (2) If the KeyName does not exist and the KeyFile does exist, the key 
+//           in the KeyFile is installed into the CSP and used.
+//   (*) In order to create a KeyFile, you can use the sn.exe (Strong Name) utility.
+//       When specifying the KeyFile, the location of the KeyFile should be
+//       relative to the project output directory. For example, if your KeyFile is
+//       located in the project directory, you would specify the AssemblyKeyFile 
+//       attribute as [assembly: AssemblyKeyFile('mykey.snk')], provided your output
+//       directory is the project directory (the default).
+//   (*) Delay Signing is an advanced option - see the Microsoft .NET Framework
+//       documentation for more information on this.
+//
+[assembly: AssemblyDelaySign(false)]
+[assembly: AssemblyKeyFile('CoreLab.snk')]
+[assembly: AssemblyKeyName('')]
+end.

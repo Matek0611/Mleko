@@ -1,0 +1,81 @@
+package cxExtEditorsVCLD6;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'ExpressExtendedEditors Library 5 (VCL Edition) by Developer Express Inc.'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vcl,
+  vclx,
+  dbrtl,
+  vcljpg,
+  vcldb,
+  cxLibraryVCLD6,
+  dxThemeD6,
+  cxEditorsVCLD6,
+  cxDataD6;
+
+contains
+  cxCheckListBox in '..\Sources\cxCheckListBox.pas',
+  cxProgressBar in '..\Sources\cxProgressBar.pas',
+  cxLabel in '..\Sources\cxLabel.pas',
+  cxTrackBar in '..\Sources\cxTrackBar.pas',
+  cxFontNameComboBox in '..\Sources\cxFontNameComboBox.pas',
+  cxColorComboBox in '..\Sources\cxColorComboBox.pas',
+  cxExtEditUtils in '..\Sources\cxExtEditUtils.pas',
+  cxCheckComboBox in '..\Sources\cxCheckComboBox.pas',
+  cxTreeView in '..\Sources\cxTreeView.pas',
+  cxSplitter in '..\Sources\cxSplitter.pas',
+  cxDBColorComboBox in '..\Sources\cxDBColorComboBox.pas',
+  cxDBProgressBar in '..\Sources\cxDBProgressBar.pas',
+  cxDBLabel in '..\Sources\cxDBLabel.pas',
+  cxDBTrackBar in '..\Sources\cxDBTrackBar.pas',
+  cxHint in '..\Sources\cxHint.pas',
+  cxMCListBox in '..\Sources\cxMCListBox.pas',
+  cxListView in '..\Sources\cxListView.pas',
+  cxHeader in '..\Sources\cxHeader.pas',
+  cxDBCheckListBox in '..\Sources\cxDBCheckListBox.pas',
+  cxDBCheckComboBox in '..\Sources\cxDBCheckComboBox.pas',
+  cxExtEditConsts in '..\Sources\cxExtEditConsts.pas',
+  cxSpinButton in '..\Sources\cxSpinButton.pas',
+  cxDBFontNameComboBox in '..\Sources\cxDBFontNameComboBox.pas',
+  cxShellComboBox in '..\Sources\cxShellComboBox.pas',
+  cxShellCommon in '..\Sources\cxShellCommon.pas',
+  cxShellControls in '..\Sources\cxShellControls.pas',
+  cxShellListView in '..\Sources\cxShellListView.pas',
+  cxShellTreeView in '..\Sources\cxShellTreeView.pas',
+  cxDBShellComboBox in '..\Sources\cxDBShellComboBox.pas',
+  cxShellBrowser in '..\Sources\cxShellBrowser.pas',
+  cxShellBrowserDialog in '..\Sources\cxShellBrowserDialog.pas',
+  cxShellDlgs in '..\Sources\cxShellDlgs.pas',
+  cxExtEditRepositoryItems in '..\Sources\cxExtEditRepositoryItems.pas',
+  cxShellEditRepositoryItems in '..\Sources\cxShellEditRepositoryItems.pas',
+  cxRichEdit in '..\Sources\cxRichEdit.pas',
+  cxDBRichEdit in '..\Sources\cxDBRichEdit.pas',
+  cxCheckGroup in '..\Sources\cxCheckGroup.pas',
+  cxDBCheckGroup in '..\Sources\cxDBCheckGroup.pas';
+
+end.

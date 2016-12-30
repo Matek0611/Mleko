@@ -1,0 +1,330 @@
+<!doctype html public "-//w3c//dtd html 4.0 Transitional//en">
+<html>
+<head>
+  <title>SQL Server Data Access Components UDT Demo Readme</title>
+  <meta http-equiv="Content-Type" content="text/html">
+<style>
+body {
+  overflow: hidden; 
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  background: #ffffff; 
+  color: #000000;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 70%;
+  width: 100%;
+  }
+p
+	{
+	margin: .5em 0em .5em 0em;
+	}
+ol, ul
+	{
+	margin-top: .5em; 
+	}
+li
+	{
+	margin-bottom: .5em;
+	}
+ul p, ol p, dl p
+	{
+	margin-left: 0em;
+	}
+blockquote.dxOverload
+	{
+	margin: .5em 1.5em .5em 1.5em;
+	}
+h1, h2, h3, h4
+	{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	margin-bottom: .4em; 
+	margin-top: 1em;
+	font-weight: bold;
+	}
+h1
+	{
+	font-size: 120%;
+	margin-top: 0em;
+	}
+h2
+	{
+	font-size: 130%;
+	}
+h3
+	{
+	font-size: 115%;
+	}
+h4
+	{
+	font-size: 100%;
+	}
+.dxH1, .dxH2, .dxH3, .dxH4
+	{
+	margin-left: -18px;	
+	}
+A
+  {
+  color: #0000FF;
+  }
+A:link
+  {
+  color: #0000FF;
+  }
+A:active
+  {
+  color: #000080;
+  }
+A:visited
+  {
+  color: #800080;
+  }
+A:hover
+  {
+  color: #FF0000;
+  }
+pre
+  {
+  font-family: Courier New;
+  font-size: 9pt;
+  color: #000060;
+  margin-top: 0px;
+  }
+code, p.example, p.sourcecode, table.sourcecode, tr.sourcecode, td.sourcecode
+  {
+  font-family: Courier New;
+  font-size: 9pt;
+  color: #000060;
+  }
+div#pagetop {
+  margin: 0px;
+  padding: 0px;
+  background-color: #99ccff;   
+  height: 44;
+  width: 100%;
+  border-bottom: 1px solid #999999;
+  }
+div#pagebody {
+  margin: 0px 0px 0px 0px;
+  padding: 5px 10px 0px 22px;
+  height: 90%;
+  width: 100%;
+  overflow: auto;
+  background-color: #FFFFFF;
+  vertical-align: top;
+  }
+table#BannerTable
+  {
+  width: 100%;
+  height: 100%;
+  border-collapse:collapse;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  }
+table#BannerTable td
+  {
+  padding-left: 8px;
+  padding-right: 8px;
+  }
+tr#BannerTopRow
+  {
+  font-style: italic;
+  font-size: 70%;
+  }
+tr#BannerTopRow td
+  {
+  padding-top: 4px;
+  }
+tr#Banner2ndRow
+  {
+  font-weight: bold;
+  font-size: 80%;
+  }
+tr#Banner2ndRow td
+  {
+  padding-bottom: 4px;
+  }
+table.filtereditemlisttable, table.xmldoctable
+	{
+	width: 95%; 
+	margin-top: .6em;
+	margin-bottom: .3em;
+	border-width: 1px 1px 0px 0px;
+	border-style: solid;
+	border-color: #999999;
+	background-color: #999999; 
+	font-size: 100%;
+  border-collapse:collapse;
+	}
+table.filtereditemlisttable th, table.filtereditemlisttable td, table.xmldoctable th, table.xmldoctable td
+	{ 
+	border-width: 0px 0px 1px 1px;
+	border-style: solid;
+	border-color: #999999;
+	padding: 4px 6px;
+	text-align: left;
+	vertical-align: top;
+	}
+table.filtereditemlisttable th, table.xmldoctable th
+	{ 
+	background: #cccccc; 
+	vertical-align: bottom;
+	}
+table.filtereditemlisttable td, table.xmldoctable td
+	{
+	background-color: #ffffff;
+	vertical-align: top;
+	}
+</style>
+
+<script>
+
+var Engine;
+var enOpera = 'Opera';
+var enIE = 'IE';
+var enGecko = 'Gecko';
+
+function TestEngine()
+{
+  if (document.all) {
+    if (window.opera) {
+      Engine = enOpera;
+    }
+    else {
+      Engine = enIE;
+    }
+  }
+  else {
+    Engine = enGecko;
+  }
+}
+
+
+function AdjustContentSize()
+{
+  var cDiv = document.getElementById("pagebody");
+  if ((Engine == enGecko)||(Engine == enOpera))//amend padding
+    {
+      var w = document.body.clientWidth;
+      cDiv.style.width = w - 32;
+    }
+  var h = document.body.clientHeight;
+  var diff = 44;
+  if ((Engine == enGecko)||(Engine == enOpera)) diff = diff + 6;
+  cDiv.style.height = h - diff;
+}
+
+
+function Startup()
+{
+  //add startup code here
+}
+</script>
+
+</head>
+
+
+<body onresize="AdjustContentSize()" onload="Startup()">
+
+<div id="pagetop">
+  <table id="BannerTable">
+    <tr id="BannerTopRow">
+      <td>SQL Server Data Access Components</td>
+      <td align="right">sdac@crlab.com</td>
+    </tr>
+    <tr id="Banner2ndRow">
+      <td>UDT Demo Readme</td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+
+<div id="pagebody">
+<!-- begin content -->
+
+<p>
+This demo project demonstrates SDAC abilities for working with 
+CLR User-defined Types (UDT) of SQL Server 2005.
+You can read about UDT in <a href="http://msdn2.microsoft.com/library/ms186366.aspx">MSDN</a>.
+</p>
+
+<p>
+It is required some additional settings to be made for this demo:
+</p>
+<ol>
+  <li>
+    The <i>Square.sln</i> from the Square folder should be built with 
+    Microsoft Visual Studio. 
+    This step can be omitted, as the built assembly is 
+    included in the demo.
+  </li>
+
+  <li>
+    Register the <i>Square.dll</i> assembly implementing UDT in your SQL Server 
+    by the following Transact-SQL command:
+   
+    <pre class="code">
+      CREATE ASSEMBLY Square
+      FROM '< Path to the assembly on the SQL Server computer >\Square.dll'
+      WITH PERMISSION_SET = SAFE;
+    </pre>
+  </li>
+  
+  <li>
+    Create a new type from this assembly:
+    <pre class="code">
+      CREATE TYPE dbo.Square EXTERNAL NAME Square.[Square];
+    </pre>
+  </li>
+
+  <li>
+    Create and fill the table used in the demo:
+  
+    <pre class="code">
+      CREATE TABLE Squares(
+        [uid] [int] IDENTITY (1, 1) NOT NULL ,
+        c_square    Square)
+  
+      GO
+  
+      ALTER TABLE [dbo].[Squares] WITH NOCHECK ADD 
+        CONSTRAINT [PK_Squares] PRIMARY KEY  CLUSTERED 
+        (
+          [uid]
+        )  ON [PRIMARY] 
+  
+      GO
+  
+      INSERT INTO [Squares](c_square) VALUES(CONVERT(Square, '0, 0, 100'))
+      INSERT INTO [Squares](c_square) VALUES(CONVERT(Square, '100, 100, 150'))
+      INSERT INTO [Squares](c_square) VALUES(CONVERT(Square, '100, 200, 200'))
+      INSERT INTO [Squares](c_square) VALUES(CONVERT(Square, '200, 100, 250'))
+      INSERT INTO [Squares](c_square) VALUES(CONVERT(Square, '200, 150, 300'))
+    </pre>
+  </li>
+
+  <li>
+    Put the <i>Square.dll</i> assembly in the root folder of the demo directory, or 
+    register it in GAC.
+  </li>
+</ol>
+
+This demo requires:
+
+<ol>
+  <li>Microsoft SQL Server 2005;</li>
+  <li>SQL Native Client provider on the client computer;</li>
+  <li>.Net framework version 2 on the client computer.</li>
+</ol>
+
+<!-- end content -->
+
+<p>&nbsp;</p><p>&nbsp;</p><hr size=1> 
+<p>&copy; 1997-2007 Core Lab. All rights reserved.</p>
+
+</div>
+
+<script>
+TestEngine();
+AdjustContentSize();
+</script>
+</body>
+</html>

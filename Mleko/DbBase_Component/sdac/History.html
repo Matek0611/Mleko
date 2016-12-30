@@ -1,0 +1,906 @@
+<!doctype html public "-//w3c//dtd html 4.0 Transitional//en">
+<html>
+<head>
+  <title>SQL Server Data Access Components</title>
+
+<style>
+body {
+  overflow: hidden; 
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  background: #ffffff; 
+  color: #000000;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 70%;
+  width: 100%;
+  }
+p
+  {
+  margin: .5em 0em .5em 0em;
+  }
+ol, ul
+  {
+  margin-top: .5em; 
+  }
+li
+  {
+  margin-bottom: .5em;
+  }
+ul p, ol p, dl p
+  {
+  margin-left: 0em;
+  }
+blockquote.dxOverload
+  {
+  margin: .5em 1.5em .5em 1.5em;
+  }
+h1, h2, h3, h4
+  {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  margin-bottom: .4em; 
+  margin-top: 1em;
+  font-weight: bold;
+  }
+h1
+  {
+  font-size: 120%;
+  margin-top: 0em;
+  }
+h2
+  {
+  font-size: 130%;
+  }
+h3
+  {
+  font-size: 115%;
+  }
+h4
+  {
+  font-size: 100%;
+  }
+.dxH1, .dxH2, .dxH3, .dxH4
+  {
+  margin-left: -18px; 
+  }
+A
+  {
+  color: #0000FF;
+  }
+A:link
+  {
+  color: #0000FF;
+  }
+A:active
+  {
+  color: #000080;
+  }
+A:visited
+  {
+  color: #800080;
+  }
+A:hover
+  {
+  color: #FF0000;
+  }
+pre
+  {
+  font-family: Courier New;
+  font-size: 9pt;
+  color: #000060;
+  margin-top: 0px;
+  }
+code, p.example, p.sourcecode, table.sourcecode, tr.sourcecode, td.sourcecode
+  {
+  font-family: Courier New;
+  font-size: 9pt;
+  color: #000060;
+  }
+div#pagetop {
+  margin: 0px;
+  padding: 0px;
+  background-color: #99ccff;   
+  height: 44;
+  width: 100%;
+  border-bottom: 1px solid #999999;
+  }
+div#pagebody {
+  margin: 0px 0px 0px 0px;
+  padding: 5px 10px 0px 22px;
+  height: 90%;
+  width: 100%;
+  overflow: auto;
+  background-color: #FFFFFF;
+  vertical-align: top;
+  }
+table#BannerTable
+  {
+  width: 100%;
+  height: 100%;
+  border-collapse:collapse;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  }
+table#BannerTable td
+  {
+  padding-left: 8px;
+  padding-right: 8px;
+  }
+tr#BannerTopRow
+  {
+  font-style: italic;
+  font-size: 70%;
+  }
+tr#Banner2ndRow
+  {
+  font-weight: bold;
+  font-size: 80%;
+  }
+table.filtereditemlisttable, table.xmldoctable
+  {
+  width: 95%; 
+  margin-top: .6em;
+  margin-bottom: .3em;
+  border-width: 1px 1px 0px 0px;
+  border-style: solid;
+  border-color: #999999;
+  background-color: #999999; 
+  font-size: 100%;
+  border-collapse:collapse;
+  }
+table.filtereditemlisttable th, table.filtereditemlisttable td, table.xmldoctable th, table.xmldoctable td
+  { 
+  border-style: solid; 
+  border-width: 0px 0px 1px 1px;
+  border-style: solid;
+  border-color: #999999;
+  padding: 4px 6px;
+  text-align: left;
+  vertical-align: top;
+  }
+table.filtereditemlisttable th, table.xmldoctable th
+  { 
+  background: #cccccc; 
+  vertical-align: bottom;
+  }
+table.filtereditemlisttable td, table.xmldoctable td
+  {
+  background-color: #ffffff;
+  vertical-align: top;
+  }
+</style>
+
+<script>
+
+var Engine;
+var enOpera = 'Opera';
+var enIE = 'IE';
+var enGecko = 'Gecko';
+
+function TestEngine()
+{
+  if (document.all) {
+    if (window.opera) {
+      Engine = enOpera;
+    }
+    else {
+      Engine = enIE;
+    }
+  }
+  else {
+    Engine = enGecko;
+  }
+}
+
+
+function AdjustContentSize()
+{
+  var cDiv = document.getElementById("pagebody");
+  if ((Engine == enGecko)||(Engine == enOpera))//amend padding
+    {
+      var w = document.body.clientWidth;
+      cDiv.style.width = w - 32;
+    }
+  var h = document.body.clientHeight;
+  var diff = 44;
+  if ((Engine == enGecko)||(Engine == enOpera)) diff = diff + 6;
+  cDiv.style.height = h - diff;
+}
+
+
+
+function Startup()
+{
+  //add startup code here
+}
+</script>
+
+</head>
+
+
+<body onresize="AdjustContentSize()" onload="Startup()">
+
+<div id="pagetop">
+  <table id="BannerTable">
+    <tr id="BannerTopRow">
+      <td>SQL Server Data Access Components</td>
+      <td align="right">sdac@crlab.com</td>
+    </tr>
+    <tr id="Banner2ndRow">
+      <td>History</td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+
+<div id="pagebody">
+
+<br><p><b>4.30.0.12 <b>27.09.07</b></b></p>
+<ul>
+  <li>CodeGear RAD Studio 2007 supported
+  <li>Added enhanced support for User-defined Types of SQL Server
+  <li>Added support for distributed transactions with the new TMSTransaction component
+  <li>Added support for Query Notifications with the new TMSChangeNotification component
+  <li>Improved support for SQL Server Compact Edition with the new TMSCompactConnection component
+  <li>Added support for getting results from queries with the FOR XML clause in readable view
+  <li>Added ability to lock records and tables
+  <li>TMSMetaData is enhanced with more schema row sets
+  <li>Added support for connection encryption without certificate validation
+  <li>Added support for detailed error messages output to DBMonitor
+  <li>Added ability to force record fetch for datasets open in FetchAll=False mode
+  <li>Added ability to use the default login database if no database is assigned on connect
+  <li>Improved color schema of syntax higlighting with SynEdit
+  <li>Added the OnProgress event in TMyLoader
+  <li>Optimized memory utilization when loading XML files by the TVirtualTable.LoadFromFile method
+  <li>Added ability to send the DataSetChange event after dataset open
+  <li>Fixed bug with using the Filter property for FindFirst and similar methods when Filtered is False
+  <li>Fixed bug with calling First after changing UpdateRecordTypes in Edit mode
+  <li>Fixed bug with Disconnected Model and Pooling
+  <li>Fixed bug with commiting updates in CachedUpdates mode
+  <li>Fixed Assert with TCRBatchMove and BLOB fields
+  <li>Avoided design-time bug with UniSynEdit
+  <li>Bug with save/load data to/from XML fixed
+  <li>Fixed several bugs with NonBlocking
+  <li>Fixed bug with RefreshQuick and master/detail relationships
+</ul>
+
+<br><p><b>4.10.0.10 <b>02.08.07</b></b></p>
+<ul>
+  <li>Added the XML data type to the parameters list in design-time parameters editor
+  <li>Fixed bug with PSGetDefaultOrder method freezing for queries with complicated ORDER BY clauses
+  <li>Fixed bug in TCRBatchMove with mapping fields by name when Fields count and FieldDefs count are not equal
+  <li>Fixed bug with adding fields in TVirtualTable
+  <li>Fixed bug with Pooling and Local Failover
+  <li>Fixed bug with "Invalid Variant Type" exception under Windows 2000 when TDataSet.Refresh is called
+  <li>Fixed bug with performance penalty when processing lookup and calculated fields
+  <li>Problem with DBMonitor integration under Windows Vista Ultimate fixed
+  <li>Bug with field names quotation in CRDBGrid fixed
+  <li>Fixed bug with freezing in NonBlocking mode
+  <li>Fixed bug with setting wrong parameter types for queries provided to SQLInsert, SQLUpdate, SQLDelete, SQLRefresh
+  <li>Fixed bug with performance penalty when processing lookup and calculated fields
+  <li>Fixed bug with setting the CanModify flag for computed fields
+  <li>Fixed bug with ReturnParams option and parameter types in Update SQLs
+  <li>Fixed bug with the RereshQuick method for queries with the WHERE clause
+  <li>Fixed bug with setting the Hidden flag for FieldDescs with SQL Server Compact Edition and Windows Vista
+  <li>Fixed bug in TMSStoredProc with Local Failover and Disconnected Model
+  <li>Fixed bug compound field names quotation
+  <li>Changed ancestor of TMSXMLField from TMemoField to TField due to Delphi field types limitation
+</ul>
+
+<br><p><b>4.10.0.9 12.06.07</b></p>
+<ul>
+  <li>C++Builder 2007 supported
+  <li>TMSConnection.Options.FailoverPartner property added
+  <li>Added ability to customize information view about fields in DataSetManager
+  <li>Replacement of the TwwDataSource with TMSDataSource in the BDE/ADO Migration Wizard added
+  <li>Performance of some operations in DataSet Manager improved
+  <li>Bug with the BaseSQL property set to an empty string after assigning macro values fixed
+  <li>Bug with incorrect registry key used by connect dialog to save/load the Server value fixed
+  <li>Bug with refreshing records in detail dataset fixed
+  <li>Fixed bug with lookup and data fields with the same name
+  <li>Fixed bug with reopening queries in NonBlocking mode
+  <li>Fixed bug with calling the RefreshQuick method for the detail DataSet
+  <li>Fixed bug with calculated fields with ftDate and ftTime data types
+  <li>Fixed bug with comparing string values during locate ans sort operations
+  <li>Fixed bug with prepared stored procedures, whose result set depends on parameter values
+  <li>Avoided Delphi 6 bug in the TryStrToBool function 
+  <li>Fixed bug with retrieving stored procedure output parameters with DECIMAL data type
+  <li>Fixed bug with raising exceptions when locating records on filtered recordsets
+  <li>Removed restriction on datasets that TMyDataSource can be associated with
+  <li>Minor bugs in DataSet Manager fixed
+</ul>
+
+<br><p><b>4.00.0.7 16.05.07</b></p>
+<ul>
+  <li>Added ability to drag datasets between connections in group by connections mode in DataSet Manager
+  <li>Added ability to assign DataSource and DataField properties of DevExpress DB-aware controls automatically in DataSet Manager
+  <li>Extended abilities of assigning default controls for datasets and fields in DataSet Manager
+  <li>Fixed bug in the MSDataAdapter component with reading BLOB fields
+  <li>Fixed bug with AV failure after second call to CommitUpdates when there are skipped records in cache
+  <li>Bug with processing stored procedures with XML parameters fixed
+  <li>Fixed bug with retrieving information about foreign keys of a table using the TMSMetaData component
+  <li>Fixed AV bug with opening detail DataSet when master DataSet is not TCustomMSDataSet descendant
+  <li>Fixed bug with "DisposeBuf failed" exception on updating string fields in CachedUpdates mode
+  <li>Bug when UnPrepare is not called for TCustomDASQL on changing value of a macro fixed
+  <li>Fixed bug with loading DataSet Manager package in a localized IDE
+  <li>Fixed minor bugs in DataSet Manager
+  <li>Fixed Access Violation bug on Delphi 2006 exit on Windows Vista
+  <li>Fixed minor bugs in installation for C++Builder and Delphi 2007
+</ul>
+
+<br><p><b>4.00.0.6 20.04.07</b></p>
+<ul>
+  <li>Added support for DevExpress controls in DataSet Manager
+  <li>Added support for using TMemDataSet.IndexFieldNames with RefreshQuick
+  <li>FastScript v1.9 support added
+  <li>Fixed bug with SQL Generator in design time
+  <li>Fixed bug with trimming SQL texts in design-time editors
+  <li>Bug with setting RecNo property for filtered datasets fixed
+  <li>Bug with PSGetTableName returning incorrect value after changing the SQL property fixed
+  <li>Bug with calling TDataSet.Edit for master DataSet in CachedUpdates mode fixed
+  <li>Minor bugs in installation fixed 
+  <li>Fixed bug in SQL Generator with generating REFRESH statements for detail DataSet 
+  <li>Fixed AV failure with deleting records in CachedUpdates mode
+  <li>Fixed bug when detail DataSet is refreshed on switching master DataSet to Edit mode 
+  <li>Fixed bug with loading files in TMSScript editor
+  <li>Fixed bug with calling design-time editors of TDADataSource descendants by double click
+  <li>Fixed access violation when loading DataSet Manager package under Delphi 2007 and Windows Vista
+  <li>Fixed bug with DataSet Manager when IDE freezes on loading a form with a large quantity of datasets
+  <li>Fixed bug with SQL Server Compact and databases with maximum database size greater than 128 MB
+  <li>Fixed bug with executing parametrized queries in Detail DataSet from design-time editor
+  <li>Fixed bug with the RefreshQuick method and SELECT statements containing column aliases
+  <li>Fixed bug in RefreshQuick method with semicolon at the end of the SELECT statement 
+  <li>Fixed bug with displaying invalid object property type in object inspector
+  <li>Fixed bug with filter expression that contains several consecutive left brackets 
+</ul>
+
+<br><p><b>4.00.0.5 06.04.07</b></p>
+<ul>
+  <li>TCustomMSDataSet.CreateProcCall and TMSSQL.CreateProcCall methods added
+  <li>DataSet Manager stability improved
+  <li>Fixed bug in SQL Generator with complex SELECT statements
+  <li>Bug with setting RecNo property for filtered datasets fixed
+  <li>Bug with Locate on ordered data fixed
+  <li>Fixed bug with XmlTextReader.Eof property under C++Builder
+  <li>Internal error in Delphi 5 fixed
+  <li>Fixed bug with calling RefreshQuick method for SDAC DataSet with parameters in query
+  <li>Fixed bug with identity columns in SQL generator
+</ul>
+
+<br><p><b>4.00.0.4 20.03.07</b></p>
+
+<i>New functionality:</i>
+<ul>
+  <li>Delphi 2007 for Win32 supported
+  <li>Disconnected model for working offline and automatically connecting and disconnecting supported 
+  <li>Local failover for detecting connection loss and implicitly reexecuting some operations supported 
+  <li>Added DataSet Manager to control project datasets
+  <li>New TMSScript component for easy execution of multistatement scripts with the following features added:
+  <ul>
+    <li>Support for executing individual statements in scripts
+    <li>Support for executing huge scripts stored in files with dynamic loading
+    <li>Ability to use standard MS SQL client tool syntax
+  </ul>
+  <li>New component for transferring data between all types of TDataSets descendants added
+  <li>New TMSServiceBroker component for SQL Server 2005 queuing and reliable messaging added
+  <li>New TMSLoader component for improving records insertion performance added
+  <li>New TMSDump component for loading data to and from the server added
+  <li>Data export and import to/from XML supported
+  <li>WideMemo field type in Delphi 2006 supported
+  <li>Support for sending messages to DBMonitor from any point of your program added
+  <li>Added asynchronous execute and fetch modes
+  <li>Compressed BLOBs supported
+</ul>
+<P>
+<i> Support for more MS SQL server functionality:</i>
+<ul>
+  <li>MS SQL Server Compact Edition supported
+  <li>Multiple Active Result Sets (MARS) supported
+  <li>Support for new data types, including XML, varchar(MAX), nvarchar(MAX), varbinary(MAX) added
+  <li>Support for a new level of transaction isolation added
+  <li>Support for more server objects in TMSMetaData added
+  <li>Stored procedure parameters with default values supported
+</ul>
+
+<i>Extensions and improvements to existing functionality:</i>
+  <ul>
+  <li>General performance improved
+  <li>Master/detail functionality extensions:
+  <ul>
+    <li>Local master/detail relationship support added
+    <li>Master/detail relationship in CachedUpdates mode support added
+  </ul>
+  <li>Working with calculated and lookup fields improvements:
+  <ul>
+    <li>Local sorting and filtering added
+    <li>Record location speed increased
+    <li>Improved working with lookup fields
+  </ul>
+  <li>Greatly increased performance of applying updates in CachedUpdates mode
+  <li>Connection pool functionality improvements:
+  <ul>
+    <li>Efficiency significantly improved
+    <li>API for draining the connection pool added
+  </ul>
+  <li>Ability to customize update commands by attaching external components to TMSUpdateSQL objects added
+  <li>Support for DefaultValues on record insertion added
+  <li>Some performance improvements achieved:
+  <ul>
+    <li>NUMERIC fields fetching
+    <li>Update commands execution while editing data set
+    <li>DataSet refreshing
+    <li>Records refreshing after updates and inserts
+  </ul>
+  <li>Support for selecting database name in TMSConnectDialog added 
+</ul>
+
+<i>Usability improvements:</i>
+<ul>
+  <li>Syntax highlighting in design-time editors added
+  <li>Demo projects became better organized and clearer
+  <li>FAQ added
+</ul>
+
+<br><p><b>3.80.0.34 05.12.06</b></p>
+<ul>
+  <li>Fixed bug with TraceFlags in DASQLMonitor (D16224)
+  <li>Fixed bug with TDAParam.AsDate property (D16213)
+  <li>Fixed bug with wrong value of the StatementTypes variable in the BeforeUpdateExecute event
+  <li>Bug with AV failure when modifying VirtualTable data in design time fixed
+</ul>
+
+<br><p><b>3.80.0.33 31.10.06</b></p>
+<ul>
+  <li>Bug with ApplyUpdates and OnUpdateError in SDAC Trial fixed
+  <li>Bug with comparing Unicode strings fixed
+  <li>Bug with BeforeDisconnect event lost in design time fixed
+  <li>Bug with debug mode in design time fixed
+  <li>Bug with RefreshRecord in CachedUpdates mode fixed
+  <li>Bug with mouse wheeling in FilterBar and Search bar of CRDBGrid fixed (15675)
+</ul>
+
+<br><p><b>3.80.0.32 29.09.06</b></p>
+<ul>
+  <li>Limited support added for Windows Vista Beta 2
+  <li>Memory usage optimized for tables with many fields
+  <li>Fixed bug with SQLNCLI provider and server cursors
+  <li>Fixed bug with unquoted '@' symbol in connection string
+  <li>Design-time bug with IDE version in TMSConnectionEditor in Delphi 2005 fixed
+  <li>Fixed bug with macros and "&" operand
+</ul>
+
+<br><p><b>3.80.0.31 28.08.06</b></p>
+<ul>
+  <li>Support for Professional editions of Turbo Delphi, Turbo Delphi for .NET, Turbo C++ added
+  <li>Bug with automatic detail field value generation fixed (D12886)
+  <li>Fixed bug with TrimVarChar
+  <li>Fixed bug with FindKey method when the primary key has field of type Int64 (D12558)
+  <li>Added capability to use quoted field names in IndexFieldNames property (D10091)
+  <li>Bug with canceling edit on record with BLOB fields fixed
+  <li>Bug with WideString lookup fields size fixed
+  <li>Bug with loading wide strings in TVirtualTable fixed
+  <li>Added support for macros names in which first symbol is digit
+  <li>Bugs with parsing macros fixed
+  <li>Bug with filtering DateTime fields when filter expression format differs from one in local system fixed (D12823)
+</ul>
+
+<br><p><b>3.70.3.30 07.07.06</b></p>
+<ul>
+  <li>Fixed bug with wrong line number in DAScript.EndLine property (M12015)
+  <li>Fixed bug with filtering empty strings (S12329)
+  <li>Bug with using calculated and lookup fields in Master/Detail relationship fixed
+  <li>Fixed bug with design-time editor for Detail dataset in Master/Detail relationship (M12021, M11914)
+  <li>Bug with modifying FieldDefs in TVirtualTable fixed
+  <li>Performance of SaveToFile and LoadFromFile functions in TVirtualTable improved (D12435)
+  <li>Bug in TVirtualTable Editor fixed
+</ul>
+
+<br><p><b>3.70.3.29 31.05.06</b></p>
+<ul>
+  <li>New MS SQL Server 2005 data types supported
+  <li>TMSConnection.Options.InitialFileName property added
+  <li>Modifying FieldDefs in TVirtualTable component accelerated
+  <li>Fixed bug with memory leak in TCustomDADataSet (11636)
+  <li>Bug with calling Parameter Editor from Object Inspector fixed (11671)
+  <li>Bug with Master-Detail linked by parameters fixed
+</ul>
+
+<br><p><b>3.70.2.28 18.05.06</b></p>
+<ul>
+  <li>SDAC is now compatible with InterBase Data Access Components
+  <li>Bug with Prepare method in Delphi 5 fixed
+</ul>
+
+<br><p><b>3.70.1.27 12.05.06</b></p>
+<ul>
+  <li>Fixed bug with loosing connection for FetchAll=False datasets (M11398)
+  <li>Added support for MIDAS TDataSet.PSExecuteStatement ResultSet parameter (M11351)
+  <li>Fixed bug with AV failure in ApplyUpdates after CommitUpdates
+  <li>Bug with local filter under CLR fixed (11291)
+  <li>Bug with using alternative memory managers fixed
+</ul>
+
+<br><p><b>3.70.1.26 14.04.06</b></p>
+<ul>
+  <li>Fixed bug with positioning in grid after TCustomDADataSet.Locate (11256)
+  <li>Fixed bug with Master/Detail relations and local sorting and filtering (11254, 11255)
+  <li>TCustomDADataSet.Locate now centers position in DBGrid (10976)
+  <li>Bug with displaying query objects in objects tree in DBMonitor fixed
+  <li>Optimized using of system resources when opening query (O11270)
+  <li>Fixed bug with design-time SQL Generator
+  <li>Added OLE DB limitation workaround when preparing query with parameters in subquery
+</ul>
+
+<br><p><b>3.70.1.25 10.03.06</b></p>
+<ul>
+  <li>Ability of trimming (N)VARCHAR fields with CustomDADataSet.Options.TrimVarChar property added
+  <li>Added support for MIDAS master-detail relations
+  <li>Fixed bug with fetching (N)VARCHAR(4000) fields
+  <li>Fixed bug with erroneous exception on TDAParam.LoadFromStream
+  <li>Bug with AV failure when calling CommitUpdates method of inactive dataset fixed
+  <li>Bug with error failure when assigning empty dataset to VirtualTable under CLR fixed
+</ul>
+
+<br><p><b>3.70.0.24 26.01.06</b></p>
+<ul>
+  <li>Support for Delphi 2006 added
+  <li>Support for MS SQL Server 2005 added
+  <li>FastReport 3.20 support added
+  <li>Fixed bug with single MacroChar in string constants inside SQL
+  <li>Bug with invalid processing of SQL statements when using SQL keywords as macros name fixed
+  <li>Fixed MS SQL server bug with processing 'SET STATISTICS IO ON' statements
+  <li>Fixed bug with using CheckRowVersion property and RefreshRecord method
+</ul>
+
+<br><p><b>3.55.2.22 19.12.05</b></p>
+<ul>
+  <li>Fixed bug with trimming VARCHAR fields
+  <li>Bug with restoring BaseSQL property fixed
+</ul>
+
+<br><p><b>3.55.2.21 07.12.05</b></p>
+<ul>
+  <li>TMSConnection.Options.PersistSecurityInfo property added
+  <li>TCustomDADataSet.FindKey, TCustomDADataSet.FindNearest methods added for BDE compatibility
+  <li>Fixed bug with Locate by multiple fields
+  <li>Fixed bug with unchanging RecordCount value after CancelUpdates
+  <li>Bug with refreshing record after changing SQL property fixed
+  <li>Fixed SetWhere function bug
+  <li>Fixed bug with server cursors when RefreshOptions property contains roBeforeEdit flag
+</ul>
+
+<br><p><b>3.55.1.20 24.10.05</b></p>
+<ul>
+  <li>Fixed bug with open detail TMSTable when master is not opened
+  <li>Fixed bug with design-time SQL Generator
+  <li>Fixed bug with EOLEDBError.MessageWide
+  <li>Bug with updating FilterSQL fixed
+  <li>Bug with VirtualTable registration in CBuilder fixed
+  <li>Bug with VtReg.pas in Pro version fixed
+  <li>Bug with closing dataset (SQL contains macros) when the InsertSQL property changes fixed
+  <li>Bug with incorrect sequence of calling BeforeClose, BeforeDisconnect events fixed
+</ul>
+
+<br><p><b>3.55.1.19 11.10.05</b></p>
+<ul>
+  <li>Unicode error messages support added with EOLEDBError.MessageWide
+  <li>SQL Generator improved: now in design-time <FieldName> format is used instead of  <FieldNo>
+  <li>Fixed some bugs in design-time SQL Generator
+  <li>Fixed bug with Master/Detail relations on string keys that differ in case only
+  <li>Bug with reexecution after SQL statement changed fixed
+  <li>Bug with assertion failure with OnNewRecord fixed
+  <li>Fixed bug with detail refresh when field referenced by MasterFields property is empty
+  <li>Fixed bug with extra detail record posts after master record changed
+  <li>Bug with firing AfterScroll Event after detail dataset refresh fixed
+  <li>Bug with simultaneous use of several DAC products fixed
+  <li>Bug with changing FilterSQL of inactive dataset fixed
+  <li>Bug with column sizing with CRDBGrid.OptionsEx.dgeStretch=True at design-time fixed
+  <li>Bug with TCRColumn.SummaryMode=smLabel for string and date fields fixed
+</ul>
+
+<br><p><b>3.55.1.18 02.09.05</b></p>
+<ul>
+  <li>Deferred detail dataset refresh feature with TCustomDADataSet.Options.DetailDelay property added
+  <li>Fixed bug with locating, filtering and local sorting of strings that contain '--'
+  <li>Fixed DisposeBuf bug
+</ul>
+
+<br><p><b>3.55.0.17 02.08.05</b></p>
+<ul>
+  <li>Optimized macros processing
+  <li>Fixed bug with using keywords as param name
+  <li>Fixed bug with local sorting in dsEdit state
+  <li>Fixed bug with getting Null for Blob fields
+  <li>Improved behavior on parsing inline comments
+</ul>
+
+<br><p><b>3.55.0.16 05.07.05</b></p>
+<ul>
+  <li>Fixed performance bug with calling Execute (ReadOnly = True)
+  <li>Fixed bug with sorting by GUID fields
+  <li>Bug with TDAParam.AsString with TDataTime parameters fixed
+  <li>Fixed bug with TMSConnection.ConnectioString design time editor
+</ul>
+
+<br><p><b>3.55.0.15 30.05.05</b></p>
+<ul>
+  <li>Ability of automatic preparing query with TCustomDADataSet.Options.AutoPrepare property added
+  <li>Ability to synchronize position at different DataSets with TCustomDADataSet.GotoCurrent method added
+  <li>Optimized MSSQLMonitor BLOB parameters processing
+  <li>Improved behavior on editing master key on Master/Detail relation
+  <li>Removed TMSStoredProc.ParamCheck property from design-time
+  <li>Fixed bug with ignoring MSConnection.Options.WorkstationID
+  <li>Fixed bug with DADataSet.CheckBookmark on filtered datasets
+  <li>Fixed bug with Transactions on connection lost
+  <li>Fixed bug with reconnect on connection lost
+</ul>
+
+<br><p><b>3.50.0.14 29.04.05</b></p>
+<ul>
+  <li>Update Pack 3 is required for Delphi 8
+  <li>Fixed bug with FetchAll = False and QueryRecCount = True for Detail queries (6759)
+  <li>MSQuery.AddWhere improved
+</ul>
+
+<br><p><b>3.50.0.13 29.03.05</b></p>
+<ul>
+  <li>Fixed bug with quoting fields in SQLRefresh
+  <li>Fixed bug with FieldDefs.Update and prepared TMSStoredProc (6147)
+  <li>Fixed bug with roAfterUpdate and changing primary key values (6389)
+</ul>
+
+<br><p><b>3.50.0.12 24.02.05</b></p>
+<ul>
+  <li>FastReport3 engine and demo added
+  <li>TCustomDADataSet.UpdateObject support for MIDAS added
+  <li>Fixed bug with CLR BLOB Locate
+  <li>Fixed bug with FmtBCD Locate
+</ul>
+
+<br><p><b>3.50.0.11 24.01.05</b></p>
+<ul>
+  <li>Support for Delphi 2005 added
+  <li>Support for MS SQL Server 2005 Beta 2 added
+  <li>Guid fields support for VirtualTable added
+  <li>Fixed some bugs with connection pooling
+  <li>Fixed bug MSParam.Size on CLR
+  <li>Fixed bug with KeepDesignConnected
+  <li>Fixed bug with design-time SQL generator and macros
+  <li>Fixed bug with design-time MSStoredProc SQL generator
+  <li>Fixed bug with IndexFieldNames on identical values
+  <li>Fixed infrequent bug with IndexFieldNames
+  <li>Fixed bug with params on MSQuery.Execute with SELECT
+  <li>Fixed bug with disconnect on fatal error
+</ul>
+
+<br><p><b>3.00.2.9 23.11.04</b></p>
+<ul>
+  <li>Fixed bug with IndexFieldNames and Locate
+  <li>Fixed bug with setting MinValue and MaxValue for tinyint fields
+  <li>Fixed bug with KeepDesignConnected
+</ul>
+
+<br><p><b>3.00.2.8 28.10.04</b></p>
+<ul>
+  <li>Fixed C++Builder hpp bug
+</ul>
+
+<br><p><b>3.00.2.5 21.10.04</b></p>
+<ul>
+  <li>lxPartialCompare option for DataSet.LocateEx added
+  <li>Fixed bug with OnFilterRecord and Blob fields (4962)
+  <li>Fixed bug with Reconnect and prepared statements (4910)
+  <li>Fixed bug with BlobField.SetAsString
+</ul>
+
+<br><p><b>3.00.1.3 10.09.04</b></p>
+<ul>
+  <li>Common class DADataAdapter isolated to CoreLab.Dac.AdoNet.dll library
+  <li>Fixed bugs with ctKeyset, ctDynamic and default values (4082)
+  <li>Fixed bug with evaluation period in Trial version
+  <li>Support for TDAConnectionOptions.AssignTo added
+  <li>Fixed bug with filtering NULL string values (4776)
+  <li>Fixed bug with large blobs in TVirtualTable (4769)
+</ul>
+
+<br><p><b>3.00.0.2 20.08.04</b></p>
+<ul>
+  <li>Fatal errors processing improved
+  <li>Delphi 7.1 bug fixed
+  <li>MDAC 2.8 Lost connection bug fixed
+  <li>Fixed bug with QueryIdentity and complex table names (4634)
+  <li>Fixed bug with quoting complex names
+</ul>
+
+<br><p><b>3.00.0.1 21.07.04</b></p>
+<ul>
+  <li>Support for Delphi 8 added
+  <li>Local sorting ability with TMemDataSet.IndexFieldNames added
+  <li>Connection pooling support
+  <li>TCRDBGrid sources in Standard edition
+  <li>MSDataAdapter component added
+  <li>.NET Windows Forms demo project added
+  <li>ASP.NET demo project added
+  <li>TMSConnection.GetStoredProcNames, GetTableNames, GetDatabaseNames added
+  <li>TMSConnection.ClientVersion, ServerVersion added
+  <li>Milliseconds support added
+  <li>TCRColumn.TotalValue property added
+  <li>New time trial limitation
+  <li>Fixed StackOverflow bug with opening empty ctStatic cursors
+  <li>Fixed bug with Refresh server cursors (4478)
+  <li>Fixed bug with small memory leak on SQL error (DbxSda4344)
+  <li>RefreshRecord now updates timestamp field as default
+  <li>Fixed bug with updating non-dbo owned tables (4193)
+  <li>Fixed bug with CustomDADataSet.Options.ReturnParams (4159)
+  <li>Fixed bug with CRDBGrid
+  <li>Fixed bug with getting RecordCount if Filtered = True (4125)
+  <li>Fixed bug with getting OldValue after Insert
+  <li>Fixed bug with TrimFixedChar and dll
+</ul>
+
+<br><p><b>2.45.2.25 15.03.04</b></p>
+<ul>
+  <li>Mouse wheel support added to CRDBGrid
+  <li>Local constraints for ctKeyset, ctDynamic disabled (4082)
+  <li>Fixed bug with quote char in Filter property
+  <li>Fixed bug with assigning name with spaces to Database property
+  <li>Fixed bug with getting Identity value that exceeds MaxInt (4081)
+  <li>Fixed bug with RefreshRecord and binary key fields (4089)
+</ul>
+
+<br><p><b>2.45.2.24 05.02.04</b></p>
+<ul>
+  <li>Fixed bug with restoring position after Refresh (M3962)
+  <li>Fixed bug with TCustomMSDataSet.PSGetKeyFields (M4001)
+</ul>
+
+<br><p><b>2.45.2.23 30.12.03</b></p>
+<ul>
+  <li>Fixed bug with processing ftTime and ftDate parameters
+  <li>Fixed bug with setting Null value for string parameters
+  <li>Fixed bug with processing Blob and Memo parameters (3709, 3726)
+</ul>
+
+<br><p><b>2.45.2.22 24.11.03</b></p>
+<ul>
+  <li>Fixed bug with getting RecordCount (ParamCheck = False) (3524)
+</ul>
+
+<br><p><b>2.45.2.21 02.10.03</b></p>
+<ul>
+  <li>Methods TMSSQL.BreakExec and TCustomMSDataSet.BreakExec added
+  <li>Property TMSConnection.Options.AutoTranslate added
+  <li>Method ExecSQL in TMSConnection added
+  <li>Methods GetTableNames and GetDatabaseNames in TMSConnection added
+  <li>Unicode support for Locate on Win9x added
+  <li>Fixed bug with MSDataSet.BeforeUpdateExecute and AfterUpdateExecute (3347)
+  <li>Fixed bug with MSParam.Size (3345)
+  <li>Fixed bug with calling Refresh after RefreshRecord (M3269)
+  <li>Fixed bug with MSDataSet.UpdatingTable set at design-time (3164)
+  <li>Bug with opening queries (FilterSQL <> '', StreamedActive = True) fixed (M3497)
+</ul>
+
+<br><p><b>2.45.1.20 02.07.03</b></p>
+<ul>
+  <li>Fixed bug with possible AV on destroying DataSet in Delphi5 (3069)
+</ul>
+
+<br><p><b>2.45.1.19 10.06.03</b></p>
+<ul>
+  <li>Parameter processing for complex queries optimized (3058)
+  <li>Design-time bug occured in Delphi5 and CBuilder5 fixed
+</ul>
+
+<br><p><b>2.45.1.18 05.06.03</b></p>
+<ul>
+  <li>SQL Generator improved - support for complicated statements added (2993)
+  <li>SQL Generator improved - "Quote names" checkbox added
+  <li>Design-time SQL Generator was simplified
+  <li>TParam -> TDAParam
+  <li>Bug on Post (Insert/Append) when InsertSQL execution fails fixed
+  <li>Fixed bug with ApplyUpdates if Options.ReturnParams is False and Options.QueryIdentity is True
+  <li>Fixed bug on PSGetKeyFields after dataset is closed(3034)
+  <li>Fixed bug with wildcard Locate on WideString fields
+  <li>Fixed memory leak on posting BLOB data with ctKeyset, ctDynamic
+  <li>Fixed bug with trimming char fields having empty values (2987)
+  <li>Fixed bug with calling RefreshRecord on SELECT w/o data fields
+  <li>Fixed bug with calling RefreshRecord on ctDynamic (3053)
+  <li>Fixed bug with MultiSelect DBGrid for ctKeySet, ctStatic (3054)
+</ul>
+
+<br><p><b>2.45.0.17 05.05.03</b></p>
+<ul>
+  <li>property MSConnection.Options.WorkstationID added
+  <li>Performance to insert large BLOBs improved
+  <li>Fixed bug with using SDAC from dll (2963)
+  <li>Fixed bug with getting SharedObj-parameters from datasets with LookUp fields (2948)
+</ul>
+
+<br><p><b>2.45.0.16 04.04.03</b></p>
+<ul>
+  <li>Performance significantly improved
+  <li>event TMSConnection.OnInfoMessage added
+  <li>Multiple Errors support added
+  <li>EMSError now inherited from EOLEDBError
+  <li>property TBlob.AsWideString added
+  <li>property MSConnection.Options.ApplicationName added (2813)
+  <li>Parameters parsing improved. Symbol ':' in string literals is ignored (2836)
+  <li>Network error processing improved (2554, 2571)
+  <li>MSConnectDialog improved
+  <li>Performance demo added
+  <li>Bug with RefreshRecord fixed
+  <li>Small memory leak in RefreshRecord on ctKeyset, ctDynamic removed
+  <li>Fixed bug with storing unicode strings in Memo fields
+  <li>Fixed bug with processing 'Fail' parameter in TMSConnection.OnError (M2876)
+  <li>Fixed bug with password storing in MSConnection.ConnectString (2841)
+  <li>Fixed bug with design-time SQL Generator (2885)
+  <li>Bug with transaction control on ctKeyset, ctDynamic fixed (2885)
+  <li>Fixed bug with TMSMetaData.Refresh (2872)
+  <li>Fixed bug with changing TMSMetaData.ObjectType
+</ul>
+
+<br><p><b>2.40.0.15 24.02.03</b></p>
+<ul>
+  <li>WideString support added
+  <li>Refresh improved - current record is restored after Refresh call
+  <li>Supported types list for TVirtualTable extended. WideString, Smallint, Word, Boolean, Largeint, Currency, Date and Time field
+  <li>pes added (2779)
+  <li>Performance of VirtualTable.AssignDataSet improved
+  <li>Property MSDataSet.Options.QuoteNames added
+  <li>Property MSConnection.Options.KeepDesignConnected added
+  <li>Property MSConnectDialog.StoreLogInfo published
+  <li>Bug with SDAC and ADO incompatibility under CBuilder fixed (2751)
+  <li>Bug with clearing old value for Null output parameters fixed
+  <li>Bug with wrong setting parameter values in WHERE clause fixed
+  <li>Bug with processing empty param values in ConnectString fixed
+  <li>Bug in MSTable.Execute fixed
+  <li>Support for LIKE expressions in Filter property added(DAC-2706)
+  <li>Precision and Size property values setting bug for TBCDField and TFMTBCDField fixed(2723)
+  <li>Bug with getting field aliases on old clients fixed (2780)
+  <li>Bug with design-time created fields case sensitivity fixed (2663)
+  <li>Bug with some memory leak on each connection to server fixed (2679)
+</ul>
+
+<br><p><b>2.35.0.14 30.01.03</b></p>
+<ul>
+  <li>Improved performance for opening queries with lot of parameters
+  <li>Dataset 'with many fields' update performance improved
+  <li>'Connection Lost' error processing improved
+  <li>MSDataSet.Locate improved (2589)
+  <li>Fixed bug with compiling applications on C++ Builder
+  <li>Fixed bug editing MSConnection.ConnectString property on DataModule (2586)
+  <li>Getting identity improved for MS SQL 2000 (SCOPE_IDENTITY() instead  @@Identity)
+  <li>Fixed bug with getting Identity value after inserting to view (2567)
+</ul>
+
+<br><p><b>2.35.0.13 04.01.03</b></p>
+<ul>
+  <li>Bug with string quote in filter expression fixed (O2532)
+</ul>
+
+<br><p><b>2.35.0.12 26.12.02</b></p>
+<ul>
+  <li>Speed optimization for opening small queries (2378)
+  <li>MSConnection.Options added (2454)
+  <li>Limited MSConnection.ConnectString support added (2356)
+  <li>Output string and (var)bytes parameters are now obtained from the server
+  <li>with the maximum length not depending on set Param.Size (2355)
+  <li>DBMonitor client implementation moved to COM server
+  <li>Bug with complex table names fixed
+  <li>Fixed common bug with lost data in DT-editors(D2137)
+  <li>Bug with design-time MSConnection in DataModule fixed (O2290)
+  <li>Design-time editor for MSTable bug fixed (2433)
+  <li>BLOB fields post for Server Cursors optimized(2117)
+  <li>Bug with Master/Detail relation for ClientDataSet fixed (O2423)
+  <li>Fixed some bugs with OutOfMem (1979)
+</ul>
+
+<!-- end content -->
+
+<p>&nbsp;</p><p>&nbsp;</p><hr size=1><p>&copy; 1997-2007 Core Lab. All rights reserved.</p>
+</div>
+
+<script>
+TestEngine();
+AdjustContentSize();
+</script>
+</body>
+</html>

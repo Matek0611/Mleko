@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <PersonalityInfo>
+    <Option>
+      <Option Name="Personality">DelphiDotNet.Personality</Option>
+      <Option Name="ProjectType">VCLApplication</Option>
+      <Option Name="Version">2.0</Option>
+      <Option Name="GUID">{CE08EFDB-E09F-41FA-8098-BDE0F03043C4}</Option>
+    </Option>
+  </PersonalityInfo>
+  <DelphiDotNet.Personality>
+    <Source>
+      <Source Name="MainSource">SdacDemo_VclNet.dpr</Source>
+    </Source>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <FileList>
+      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.Drawing.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="System.Drawing" AssemblyName="System.Drawing" Version="1.0.5000.0" LinkUnits="False"/>
+      <File FileName="..\..\..\..\..\common files\borland shared\bds\shared assemblies\4.0\Borland.VclDbRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDbRtl" AssemblyName="Borland.VclDbRtl" Version="10.0.4143.0" LinkUnits="False"/>
+      <File FileName="..\..\..\..\..\common files\borland shared\bds\shared assemblies\4.0\Borland.Delphi.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.Delphi" AssemblyName="Borland.Delphi" Version="10.0.4143.0" LinkUnits="False"/>
+      <File FileName="..\..\..\..\..\common files\borland shared\bds\shared assemblies\4.0\Borland.VclRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclRtl" AssemblyName="Borland.VclRtl" Version="10.0.4143.0" LinkUnits="False"/>
+      <File FileName="..\..\..\..\..\common files\borland shared\bds\shared assemblies\4.0\Borland.Vcl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.Vcl" AssemblyName="Borland.Vcl" Version="10.0.4143.0" LinkUnits="False"/>
+      <File FileName="..\..\..\bin\CoreLab.Dac.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="CoreLab.Dac" AssemblyName="CoreLab.Dac" Version="6.0.0.4001" LinkUnits="False"/>
+      <File FileName="..\..\..\bin\CoreLab.Sdac.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="CoreLab.Sdac" AssemblyName="CoreLab.Sdac" Version="4.0.0.4001" LinkUnits="False"/>
+      <File FileName="" ContainerId="" ModuleName="Forms"/>
+      <File FileName="Base\CategoryFrame.pas" ContainerId="PascalCompiler" ModuleName="CategoryFrame"/>
+      <File FileName="Base\DemoBase.pas" ContainerId="PascalCompiler" ModuleName="DemoBase"/>
+      <File FileName="Base\DemoForm.pas" ContainerId="PascalCompiler" ModuleName="DemoForm"/>
+      <File FileName="Base\DemoFrame.pas" ContainerId="PascalCompiler" ModuleName="DemoFrame"/>
+      <File FileName="Base\HtmlConsts.pas" ContainerId="PascalCompiler" ModuleName="HtmlConsts"/>
+      <File FileName="VirtualTable\VTable.pas" ContainerId="PascalCompiler" ModuleName="VTable"/>
+      <File FileName="Base\SdacAbout.pas" ContainerId="PascalCompiler" ModuleName="SdacAbout"/>
+      <File FileName="CachedUpdates\CachedUpdates.pas" ContainerId="PascalCompiler" ModuleName="CachedUpdates"/>
+      <File FileName="CachedUpdates\UpdateAction.pas" ContainerId="PascalCompiler" ModuleName="UpdateAction"/>
+      <File FileName="ConnectDialog\ConnectDialog.pas" ContainerId="PascalCompiler" ModuleName="ConnectDialog"/>
+      <File FileName="ConnectDialog\ConnectForm.pas" ContainerId="PascalCompiler" ModuleName="ConnectForm"/>
+      <File FileName="ConnectDialog\InheritedConnectForm.pas" ContainerId="PascalCompiler" ModuleName="InheritedConnectForm"/>
+      <File FileName="FetchAll\FetchAll.pas" ContainerId="PascalCompiler" ModuleName="FetchAll"/>
+      <File FileName="MasterDetail\MasterDetail.pas" ContainerId="PascalCompiler" ModuleName="MasterDetail"/>
+      <File FileName="Pictures\Pictures.pas" ContainerId="PascalCompiler" ModuleName="Pictures"/>
+      <File FileName="ServerCursors\ServerCursors.pas" ContainerId="PascalCompiler" ModuleName="ServerCursors"/>
+      <File FileName="Sql\Sql.pas" ContainerId="PascalCompiler" ModuleName="Sql"/>
+      <File FileName="StoredProc\StoredProc.pas" ContainerId="PascalCompiler" ModuleName="StoredProc"/>
+      <File FileName="StoredProcUpdates\StoredProcUpdates.pas" ContainerId="PascalCompiler" ModuleName="StoredProcUpdates"/>
+      <File FileName="Table\Table.pas" ContainerId="PascalCompiler" ModuleName="Table"/>
+      <File FileName="Text\Text.pas" ContainerId="PascalCompiler" ModuleName="Text"/>
+      <File FileName="Threads\ThreadsData.pas" ContainerId="PascalCompiler" ModuleName="ThreadsData"/>
+      <File FileName="UpdateSQL\UpdateSQL.pas" ContainerId="PascalCompiler" ModuleName="UpdateSQL"/>
+      <File FileName="Base\SdacDemoForm.pas" ContainerId="PascalCompiler" ModuleName="SdacDemoForm"/>
+      <File FileName="Query\Query.pas" ContainerId="PascalCompiler" ModuleName="Query"/>
+      <File FileName="FilterAndIndex\FilterAndIndex.pas" ContainerId="PascalCompiler" ModuleName="FilterAndIndex"/>
+      <File FileName="Loader\Loader.pas" ContainerId="PascalCompiler" ModuleName="Loader"/>
+      <File FileName="Loader\Fetch.pas" ContainerId="PascalCompiler" ModuleName="Fetch"/>
+      <File FileName="ServiceBroker\ServiceBroker.pas" ContainerId="PascalCompiler" ModuleName="ServiceBroker"/>
+      <File FileName="Transaction\Transaction.pas" ContainerId="PascalCompiler" ModuleName="Transaction"/>
+      <File FileName="ChangeNotification\ChangeNotification.pas" ContainerId="PascalCompiler" ModuleName="ChangeNotification"/>
+      <File FileName="LongStrings\LongStrings.pas" ContainerId="PascalCompiler" ModuleName="LongStrings"/>
+      <File FileName="Lock\Lock.pas" ContainerId="PascalCompiler" ModuleName="Lock"/>
+    </FileList>
+    <FileVersion>
+      <FileVersion Name="Version">7.0</FileVersion>
+    </FileVersion>
+    <Compiler>
+      <Compiler Name="A">0</Compiler>
+      <Compiler Name="B">0</Compiler>
+      <Compiler Name="C">1</Compiler>
+      <Compiler Name="D">1</Compiler>
+      <Compiler Name="E">0</Compiler>
+      <Compiler Name="F">0</Compiler>
+      <Compiler Name="G">1</Compiler>
+      <Compiler Name="H">1</Compiler>
+      <Compiler Name="I">1</Compiler>
+      <Compiler Name="J">0</Compiler>
+      <Compiler Name="K">0</Compiler>
+      <Compiler Name="L">1</Compiler>
+      <Compiler Name="M">0</Compiler>
+      <Compiler Name="N">1</Compiler>
+      <Compiler Name="O">1</Compiler>
+      <Compiler Name="P">1</Compiler>
+      <Compiler Name="Q">0</Compiler>
+      <Compiler Name="R">0</Compiler>
+      <Compiler Name="S">0</Compiler>
+      <Compiler Name="T">0</Compiler>
+      <Compiler Name="U">0</Compiler>
+      <Compiler Name="V">1</Compiler>
+      <Compiler Name="W">0</Compiler>
+      <Compiler Name="X">1</Compiler>
+      <Compiler Name="Y">1</Compiler>
+      <Compiler Name="Z">1</Compiler>
+      <Compiler Name="ShowHints">True</Compiler>
+      <Compiler Name="ShowWarnings">True</Compiler>
+      <Compiler Name="UnitAliases">WinTypes=Borland.Vcl.Windows;WinProcs=Borland.Vcl.Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;</Compiler>
+      <Compiler Name="NamespacePrefix">Borland.Vcl</Compiler>
+      <Compiler Name="GenerateDocumentation">False</Compiler>
+      <Compiler Name="DefaultNamespace"></Compiler>
+      <Compiler Name="SymbolDeprecated">False</Compiler>
+      <Compiler Name="SymbolLibrary">True</Compiler>
+      <Compiler Name="SymbolPlatform">False</Compiler>
+      <Compiler Name="SymbolExperimental">True</Compiler>
+      <Compiler Name="UnitLibrary">True</Compiler>
+      <Compiler Name="UnitPlatform">False</Compiler>
+      <Compiler Name="UnitDeprecated">False</Compiler>
+      <Compiler Name="UnitExperimental">True</Compiler>
+      <Compiler Name="HResultCompat">True</Compiler>
+      <Compiler Name="HidingMember">True</Compiler>
+      <Compiler Name="HiddenVirtual">True</Compiler>
+      <Compiler Name="Garbage">True</Compiler>
+      <Compiler Name="BoundsError">True</Compiler>
+      <Compiler Name="ZeroNilCompat">True</Compiler>
+      <Compiler Name="StringConstTruncated">True</Compiler>
+      <Compiler Name="ForLoopVarVarPar">True</Compiler>
+      <Compiler Name="TypedConstVarPar">True</Compiler>
+      <Compiler Name="AsgToTypedConst">True</Compiler>
+      <Compiler Name="CaseLabelRange">True</Compiler>
+      <Compiler Name="ForVariable">True</Compiler>
+      <Compiler Name="ConstructingAbstract">True</Compiler>
+      <Compiler Name="ComparisonFalse">True</Compiler>
+      <Compiler Name="ComparisonTrue">True</Compiler>
+      <Compiler Name="ComparingSignedUnsigned">True</Compiler>
+      <Compiler Name="CombiningSignedUnsigned">True</Compiler>
+      <Compiler Name="UnsupportedConstruct">True</Compiler>
+      <Compiler Name="FileOpen">True</Compiler>
+      <Compiler Name="FileOpenUnitSrc">True</Compiler>
+      <Compiler Name="BadGlobalSymbol">True</Compiler>
+      <Compiler Name="DuplicateConstructorDestructor">True</Compiler>
+      <Compiler Name="InvalidDirective">True</Compiler>
+      <Compiler Name="PackageNoLink">True</Compiler>
+      <Compiler Name="PackageThreadVar">True</Compiler>
+      <Compiler Name="ImplicitImport">True</Compiler>
+      <Compiler Name="HPPEMITIgnored">True</Compiler>
+      <Compiler Name="NoRetVal">True</Compiler>
+      <Compiler Name="UseBeforeDef">True</Compiler>
+      <Compiler Name="ForLoopVarUndef">True</Compiler>
+      <Compiler Name="UnitNameMismatch">True</Compiler>
+      <Compiler Name="NoCFGFileFound">True</Compiler>
+      <Compiler Name="ImplicitVariants">True</Compiler>
+      <Compiler Name="UnicodeToLocale">True</Compiler>
+      <Compiler Name="LocaleToUnicode">True</Compiler>
+      <Compiler Name="ImagebaseMultiple">True</Compiler>
+      <Compiler Name="SuspiciousTypecast">True</Compiler>
+      <Compiler Name="PrivatePropAccessor">True</Compiler>
+      <Compiler Name="UnsafeType">False</Compiler>
+      <Compiler Name="UnsafeCode">False</Compiler>
+      <Compiler Name="UnsafeCast">False</Compiler>
+      <Compiler Name="OptionTruncated">True</Compiler>
+      <Compiler Name="WideCharReduced">True</Compiler>
+      <Compiler Name="DuplicatesIgnored">True</Compiler>
+      <Compiler Name="UnitInitSeq">True</Compiler>
+      <Compiler Name="LocalPInvoke">True</Compiler>
+      <Compiler Name="MessageDirective">True</Compiler>
+      <Compiler Name="CodePage"></Compiler>
+    </Compiler>
+    <Linker>
+      <Linker Name="MapFile">0</Linker>
+      <Linker Name="OutputObjs">0</Linker>
+      <Linker Name="GenerateHpps">False</Linker>
+      <Linker Name="ConsoleApp">1</Linker>
+      <Linker Name="DebugInfo">True</Linker>
+      <Linker Name="RemoteSymbols">False</Linker>
+      <Linker Name="GenerateDRC">False</Linker>
+      <Linker Name="MinStackSize">4096</Linker>
+      <Linker Name="MaxStackSize">1048576</Linker>
+      <Linker Name="ImageBase">4194304</Linker>
+      <Linker Name="ExeDescription"></Linker>
+    </Linker>
+    <Directories>
+      <Directories Name="OutputDir"></Directories>
+      <Directories Name="UnitOutputDir"></Directories>
+      <Directories Name="PackageDLLOutputDir"></Directories>
+      <Directories Name="PackageDCPOutputDir"></Directories>
+      <Directories Name="DebugSourceDirs"></Directories>
+      <Directories Name="UsePackages">True</Directories>
+      <Directories Name="SearchPath">..\SdacDemo\ConnectDialog</Directories>
+    </Directories>
+    <Parameters>
+      <Parameters Name="RunParams"></Parameters>
+      <Parameters Name="HostApplication"></Parameters>
+      <Parameters Name="Launcher"></Parameters>
+      <Parameters Name="UseLauncher">False</Parameters>
+      <Parameters Name="DebugCWD"></Parameters>
+      <Parameters Name="Debug Symbols Search Path"></Parameters>
+      <Parameters Name="LoadAllSymbols">True</Parameters>
+      <Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
+    </Parameters>
+    <Language>
+      <Language Name="ActiveLang"></Language>
+      <Language Name="ProjectLang">$00000000</Language>
+      <Language Name="RootDir"></Language>
+    </Language>
+    <VersionInfo>
+      <VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+      <VersionInfo Name="AutoIncBuild">False</VersionInfo>
+      <VersionInfo Name="MajorVer">1</VersionInfo>
+      <VersionInfo Name="MinorVer">0</VersionInfo>
+      <VersionInfo Name="Release">0</VersionInfo>
+      <VersionInfo Name="Build">0</VersionInfo>
+      <VersionInfo Name="Debug">False</VersionInfo>
+      <VersionInfo Name="PreRelease">False</VersionInfo>
+      <VersionInfo Name="Special">False</VersionInfo>
+      <VersionInfo Name="Private">False</VersionInfo>
+      <VersionInfo Name="DLL">False</VersionInfo>
+      <VersionInfo Name="Locale">1033</VersionInfo>
+      <VersionInfo Name="CodePage">1252</VersionInfo>
+    </VersionInfo>
+    <VersionInfoKeys>
+      <VersionInfoKeys Name="CompanyName"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileDescription"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="InternalName"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>
+      <VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductName"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="Comments"></VersionInfoKeys>
+    </VersionInfoKeys>
+  </DelphiDotNet.Personality>
+</BorlandProject>

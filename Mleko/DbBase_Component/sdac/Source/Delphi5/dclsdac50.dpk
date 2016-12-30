@@ -1,0 +1,49 @@
+
+//////////////////////////////////////////////////
+//  SQL Server Data Access Components
+//  Copyright © 1998-2007 Core Lab. All right reserved.
+//  SDAC Package for Delphi 5
+//////////////////////////////////////////////////
+
+
+package dclsdac50;
+
+{$R *.RES}
+{$ALIGN ON}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'SQL Server Data Access Components'}
+{$DESIGNONLY}
+{$IMPLICITBUILD OFF}
+{$DEFINE sdac}
+
+requires
+  dcldb50,
+  sdac50,
+  dcldac50,
+  VCLJPG50;
+
+contains
+  MSReg in '..\Design\MSReg.pas',
+  MSDesign in '..\Design\MSDesign.pas',
+  MSMenu in '..\Design\MSMenu.pas';
+
+end.

@@ -1,0 +1,48 @@
+package cxDataD6;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'ExpressDataController by Developer Express Inc.'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  dxCoreD6,
+  dbrtl;
+
+contains
+  cxCustomData in '..\Sources\cxCustomData.pas',
+  cxData in '..\Sources\cxData.pas',
+  cxDataConsts in '..\Sources\cxDataConsts.pas',
+  cxDataStorage in '..\Sources\cxDataStorage.pas',
+  cxDataUtils in '..\Sources\cxDataUtils.pas',
+  cxDB in '..\Sources\cxDB.pas',
+  cxDBData in '..\Sources\cxDBData.pas',
+  cxFilter in '..\Sources\cxFilter.pas',
+  cxDBFilter in '..\Sources\cxDBFilter.pas',
+  cxFilterConsts in '..\Sources\cxFilterConsts.pas',
+  cxLike in '..\Sources\cxLike.pas',
+  cxVariants in '..\Sources\cxVariants.pas';
+
+end.

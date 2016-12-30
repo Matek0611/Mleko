@@ -1,0 +1,49 @@
+package dxBarD6;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'ExpressBars by Developer Express Inc.'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  dxCoreD6,
+  dxComnD6,
+  cxLibraryVCLD6;
+
+contains
+  dxBarCommon in '..\Sources\dxBarCommon.pas',
+  dxBar in '..\Sources\dxBar.pas',
+  dxBarCustomCustomizationForm in '..\Sources\dxBarCustomCustomizationForm.pas',
+  dxBarCustForm in '..\Sources\dxBarCustForm.pas',
+  dxBarItemEd in '..\Sources\dxBarItemEd.pas',
+  dxBarNameEd in '..\Sources\dxBarNameEd.pas',
+  dxBarPopupMenuEd in '..\Sources\dxBarPopupMenuEd.pas',
+  dxBarAddGroupItemsEd in '..\Sources\dxBarAddGroupItemsEd.pas',
+  dxStatusBar in '..\Sources\dxStatusBar.pas',
+  dxBarStrs in '..\Sources\dxBarStrs.pas',
+  dxBarSkinConsts in '..\Sources\dxBarSkinConsts.pas',
+  dxBarSkin in '..\Sources\dxBarSkin.pas',
+  dxBarAccessibility in '..\Sources\dxBarAccessibility.pas';
+
+end.

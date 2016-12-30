@@ -1,0 +1,61 @@
+package citDB;
+
+{$R *.res}
+{$R 'citRegDB.DCR'}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'CIT database aware components'}
+{$DESIGNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  vcl,
+  vcldb,
+  cit,
+  designide,
+  Target,
+  TargetFilters,
+  En_D7,
+  rtl,
+  dbrtl,
+  bdertl,
+  VclSmp,
+  vclx;
+
+contains
+  citRegDB in 'CITREGDB.PAS',
+  citConfirmTransDlg in 'citConfirmTransDlg.pas' {ConfirmTransactionDlg},
+  citCursors in 'citCursors.pas',
+  citDBCalculator in 'citDBCalculator.pas',
+  citDBCalDlg in 'citDBCalDlg.pas',
+  citDBCalendar in 'citDBCalendar.pas',
+  citDBCtrls in 'citDBCtrls.PAS',
+  citDbGrid in 'citDbGrid.pas',
+  citDBTime in 'citDBTime.pas',
+  citDBTimeEdit in 'citDBTimeEdit.pas',
+  citDBGridUtils in 'citDBGridUtils.pas',
+  citDBGridLayout in 'citDBGridLayout.pas' {DBGridLayoutDlg},
+  citDBGridLayoutDlg in 'citDBGridLayoutDlg.PAS' {GridLayoutDlg},
+  CitComboSelect in 'citComboSelect.pas' {CitComboSelectDlg},
+  citDBComboEdit in 'citDBComboEdit.pas';
+
+end.

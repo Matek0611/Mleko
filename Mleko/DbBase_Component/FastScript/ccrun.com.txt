@@ -1,0 +1,38 @@
+[info]
+name=FastReport
+ver=v4.7.91
+author=
+web=http://www.fast-report.com/
+devtool=Delphi4~7,9~12 / C++Builder4~6,10~12
+sn=
+fullsource=1
+desc=FastReport 是非常强大的报表控件，它能使用户的应用程序快速有效地产生报表。FastReport 提供了创建报表所需的所有工具，包括报表引擎，报表设计工具，预览器，对话框设计工具，以及Pascal-like 宏解释程序。
+
+特点：
+无需附加的动态链接库（DLL）就可提供快速、紧致、灵活的代码。 
+运行时可使用内建的功能强大且易于使用的设计工具。 
+带有"文本搜索"和"编辑"功能的MSWord-like报表预览。 
+常用的组件集：文本，线，图片，形状，对象链接和嵌入（OLE）, RichText, 图表，Barcode。 
+可以创建自己的组件。 
+将报表输出为其它格式（例如：TXT, RTF, CSV, HTML, PDF 等等）。 
+内建的Pascal-like宏语言使得用户无需在Delphi环境中就可以写出代码。它可以创建出使用其它工具所不能创建的报表。 
+FastReport包含了对话框表格。在准备创建报表前，用户可以使用这一表格来修改参数，而且可以不受限制地使用它。FastReport使用同一个设计工具来创建对话框，这一设计工具带有对话框控件的标准集：按钮，编辑框，复选框等等。 
+FastReport提供了多样的数据库引擎，它允许用户在运行时创建表格，查询程序及数据库组件。用户的报表和应用程序是完全独立的。 
+FastReport可以从各种数据源的表格、查询程序、数组及数据文件中导入数据。 
+FastReport并不依赖于Borland公司的数据库引擎（BDE）。只要是基于标准Tdataset组件的数据库，都能使用FastReport。 
+FastReport也可在IB_Objects下工作。IB_Objects是用于Interbase数据库管理系统（DBMS）的功能强大且使用广泛的库。 
+在FastReport中可使用22语言，这就使得用户的应用程序更易于国际化。
+
+本版本支持以下 IDE：
+Delphi 4,5,6,7,2005
+C++Builder 4,5,6
+BDS 2006 (Delphi 2006, C++Builder 2006)
+RAD Studio 2007 (Delphi 2007, C++Builder 2007)
+RAD Studio 2009 (Delphi 2009, C++Builder 2009)
+
+╔---------------------------╗
+┆ 欢迎访问 C++Builder 研究  ┆
+┆   http://www.ccrun.com    ┆
+╚---------------------------╝
+
+// 63 63 72 75 6E 2E 63 6F 6D

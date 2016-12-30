@@ -1,0 +1,72 @@
+package cxGridD6;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'ExpressQuantumGrid 6 by Developer Express Inc.'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  cxEditorsVCLD6,
+  cxExportVCLD6,
+  cxExtEditorsVCLD6,
+  cxPageControlVCLD6;
+
+contains
+  cxDBExtLookupComboBox in '..\Sources\cxDBExtLookupComboBox.pas',
+  cxGridExportLink in '..\Sources\cxGridExportLink.pas',
+  cxFilterDialog in '..\Sources\cxFilterDialog.pas',
+  cxGrid in '..\Sources\cxGrid.pas',
+  cxGridBandedTableView in '..\Sources\cxGridBandedTableView.pas',
+  cxGridCardView in '..\Sources\cxGridCardView.pas',
+  cxGridChartView in '..\Sources\cxGridChartView.pas',
+  cxGridCommon in '..\Sources\cxGridCommon.pas',
+  cxGridCustomPopupMenu in '..\Sources\cxGridCustomPopupMenu.pas',
+  cxGridCustomTableView in '..\Sources\cxGridCustomTableView.pas',
+  cxGridCustomView in '..\Sources\cxGridCustomView.pas',
+  cxGridDBBandedTableView in '..\Sources\cxGridDBBandedTableView.pas',
+  cxGridDBCardView in '..\Sources\cxGridDBCardView.pas',
+  cxGridDBChartView in '..\Sources\cxGridDBChartView.pas',
+  cxGridDBDataDefinitions in '..\Sources\cxGridDBDataDefinitions.pas',
+  cxGridDBTableView in '..\Sources\cxGridDBTableView.pas',
+  cxGridDetailsSite in '..\Sources\cxGridDetailsSite.pas',
+  cxGridFilterHelpers in '..\Sources\cxGridFilterHelpers.pas',
+  cxGridFooterPopupMenuItems in '..\Sources\cxGridFooterPopupMenuItems.pas',
+  cxGridHeaderPopupMenuItems in '..\Sources\cxGridHeaderPopupMenuItems.pas',
+  cxGridGroupRowPopupMenuItems in '..\Sources\cxGridGroupRowPopupMenuItems.pas',
+  cxGridLevel in '..\Sources\cxGridLevel.pas',
+  cxGridMenuOperations in '..\Sources\cxGridMenuOperations.pas',
+  cxGridPopupMenu in '..\Sources\cxGridPopupMenu.pas',
+  cxGridPopupMenuConsts in '..\Sources\cxGridPopupMenuConsts.pas',
+  cxGridRows in '..\Sources\cxGridRows.pas',
+  cxGridStdPopupMenu in '..\Sources\cxGridStdPopupMenu.pas',
+  cxGridStrs in '..\Sources\cxGridStrs.pas',
+  cxGridTableView in '..\Sources\cxGridTableView.pas',
+  cxGridUIBandedTableHelper in '..\Sources\cxGridUIBandedTableHelper.pas',
+  cxGridUICardHelper in '..\Sources\cxGridUICardHelper.pas',
+  cxGridUICustomTableHelper in '..\Sources\cxGridUICustomTableHelper.pas',
+  cxGridUIHelper in '..\Sources\cxGridUIHelper.pas',
+  cxGridUITableHelper in '..\Sources\cxGridUITableHelper.pas';
+
+end.

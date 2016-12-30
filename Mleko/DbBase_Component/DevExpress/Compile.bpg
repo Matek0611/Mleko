@@ -1,0 +1,149 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+#------------------------------------------------------------------------------
+PROJECTS = dxCoreD6.bpl dxGDIPlusD6.bpl dxThemeD6.bpl dxComnD6.bpl cxLibraryVCLD6.bpl cxDataD6.bpl cxADOAdaptersD6.bpl \
+  cxEditorsVCLD6.bpl cxBDEAdaptersD6.bpl dclcxLibraryVCLD6.bpl cxExtEditorsVCLD6.bpl dclcxEditorsVCLD6.bpl dclcxExtEditorsVCLD6.bpl \
+  cxIBXAdaptersD6.bpl dxBarD6.bpl dxBarDBNavD6.bpl dxBarExtDBItemsD6.bpl dxBarExtItemsD6.bpl dxRibbonD6.bpl cxBarEditItemD6.bpl \
+  dcldxBarD6.bpl dcldxBarDBNavD6.bpl dcldxBarExtDBItemsD6.bpl dcldxBarExtItemsD6.bpl dcldxRibbonD6.bpl dclcxBarEditItemD6.bpl \
+  dxdbtrD6.bpl dxmdsd6.bpl dxtrmdD6.bpl dcldxmdsd6.bpl dcldxtrmdD6.bpl dcldxdbtrD6.bpl cxExportVCLD6.bpl cxPageControlVCLD6.bpl \
+  dclcxPageControlVCLD6.bpl cxGridD6.bpl dclcxGridD6.bpl cxVerticalGridVCLD6.bpl dclcxVerticalGridVCLD6.bpl cxTreeListVCLD6.bpl \
+  dclcxTreeListVCLD6.bpl
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+dxGDIPlusD6.bpl: ExpressCore Library\Packages\dxCoreD6.dpk
+  $(DCC)
+
+dxCoreD6.bpl: ExpressCore Library\Packages\dxCoreD6.dpk
+  $(DCC)
+
+dxGDIPlusD6.bpl: ExpressGDI+ Library\Packages\dxGDIPlusD6.dpk
+  $(DCC)
+
+dxThemeD6.bpl: XP Theme Manager\Packages\dxThemeD6.dpk
+  $(DCC)
+
+dxComnD6.bpl: ExpressCommon Library\Packages\dxComnD6.dpk
+  $(DCC)
+
+cxDataD6.bpl: ExpressDataController\Packages\cxDataD6.dpk
+  $(DCC)
+
+cxADOAdaptersD6.bpl: ExpressDataController\Packages\cxADOAdaptersD6.dpk
+  $(DCC)
+
+cxBDEAdaptersD6.bpl: ExpressDataController\Packages\cxBDEAdaptersD6.dpk
+  $(DCC)
+
+cxIBXAdaptersD6.bpl: ExpressDataController\Packages\cxIBXAdaptersD6.dpk
+  $(DCC)
+
+dxBarD6.bpl: ExpressBars 6\Packages\dxBarD6.dpk
+  $(DCC)
+
+dxBarDBNavD6.bpl: ExpressBars 6\Packages\dxBarDBNavD6.dpk
+  $(DCC)
+
+dxBarExtDBItemsD6.bpl: ExpressBars 6\Packages\dxBarExtDBItemsD6.dpk
+  $(DCC)
+
+dxBarExtItemsD6.bpl: ExpressBars 6\Packages\dxBarExtItemsD6.dpk
+  $(DCC)
+
+dxRibbonD6.bpl: ExpressBars 6\Packages\dxRibbonD6.dpk
+  $(DCC)
+
+cxBarEditItemD6.bpl: ExpressBars 6\Packages\cxBarEditItemD6.dpk
+  $(DCC)
+
+dcldxBarD6.bpl: ExpressBars 6\Packages\dcldxBarD6.dpk
+  $(DCC)
+
+dcldxBarDBNavD6.bpl: ExpressBars 6\Packages\dcldxBarDBNavD6.dpk
+  $(DCC)
+
+dcldxBarExtDBItemsD6.bpl: ExpressBars 6\Packages\dcldxBarExtDBItemsD6.dpk
+  $(DCC)
+
+dcldxBarExtItemsD6.bpl: ExpressBars 6\Packages\dcldxBarExtItemsD6.dpk
+  $(DCC)
+
+dcldxRibbonD6.bpl: ExpressBars 6\Packages\dcldxRibbonD6.dpk
+  $(DCC)
+
+dclcxBarEditItemD6.bpl: ExpressBars 6\Packages\dclcxBarEditItemD6.dpk
+  $(DCC)
+
+dxdbtrD6.bpl: ExpressDBTree Suite\Packages\dxdbtrD6.dpk
+  $(DCC)
+
+dxtrmdD6.bpl: ExpressDBTree Suite\Packages\dxtrmdD6.dpk
+  $(DCC)
+
+dcldxtrmdD6.bpl: ExpressDBTree Suite\Packages\dcldxtrmdD6.dpk
+  $(DCC)
+
+dcldxdbtrD6.bpl: ExpressDBTree Suite\Packages\dcldxdbtrD6.dpk
+  $(DCC)
+
+cxGridD6.bpl: ExpressQuantumGrid 6\Packages\cxGridD6.dpk
+  $(DCC)
+
+dclcxGridD6.bpl: ExpressQuantumGrid 6\Packages\dclcxGridD6.dpk
+  $(DCC)
+
+cxLibraryVCLD6.bpl: ExpressLibrary\Packages\cxLibraryVCLD6.dpk
+  $(DCC)
+
+cxEditorsVCLD6.bpl: ExpressEditors Library 5\Packages\cxEditorsVCLD6.dpk
+  $(DCC)
+
+cxExtEditorsVCLD6.bpl: ExpressEditors Library 5\Packages\cxExtEditorsVCLD6.dpk
+  $(DCC)
+
+dclcxLibraryVCLD6.bpl: ExpressLibrary\Packages\dclcxLibraryVCLD6.dpk
+  $(DCC)
+
+dclcxEditorsVCLD6.bpl: ExpressEditors Library 5\Packages\dclcxEditorsVCLD6.dpk
+  $(DCC)
+
+dclcxExtEditorsVCLD6.bpl: ExpressEditors Library 5\Packages\dclcxExtEditorsVCLD6.dpk
+  $(DCC)
+
+cxExportVCLD6.bpl: ExpressExport Library\Packages\cxExportVCLD6.dpk
+  $(DCC)
+
+cxPageControlVCLD6.bpl: ExpressPageControl 2\Packages\cxPageControlVCLD6.dpk
+  $(DCC)
+
+dclcxPageControlVCLD6.bpl: ExpressPageControl 2\Packages\dclcxPageControlVCLD6.dpk
+  $(DCC)
+
+cxVerticalGridVCLD6.bpl: ExpressVerticalGrid\Packages\cxVerticalGridVCLD6.dpk
+  $(DCC)
+
+dclcxVerticalGridVCLD6.bpl: ExpressVerticalGrid\Packages\dclcxVerticalGridVCLD6.dpk
+  $(DCC)
+
+cxTreeListVCLD6.bpl: ExpressQuantumTreeList 4\Packages\cxTreeListVCLD6.dpk
+  $(DCC)
+
+dclcxTreeListVCLD6.bpl: ExpressQuantumTreeList 4\Packages\dclcxTreeListVCLD6.dpk
+  $(DCC)
+
+dxmdsd6.bpl: ExpressMemData\Packages\dxmdsd6.dpk
+  $(DCC)
+
+dcldxmdsd6.bpl: ExpressMemData\Packages\dcldxmdsd6.dpk
+  $(DCC)
+
+

@@ -1,0 +1,32 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+#------------------------------------------------------------------------------
+PROJECTS = UtilsC.bpl BDDCFM.bpl DDC.bpl CJ.bpl Mleko.exe
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+Mleko.exe: Mleko.dpr
+  $(DCC)
+
+BDDCFM.bpl: ..\..\BPL\BDDC\BC.dpk
+  $(DCC)
+
+UtilsC.bpl: ..\..\Bpl\Utils\UtilsC.dpk
+  $(DCC)
+
+CJ.bpl: ..\..\BPL\CommonJournal\CJ.dpk
+  $(DCC)
+
+DDC.bpl: ..\..\BPL\DDC\DDC.dpk
+  $(DCC)
+
+

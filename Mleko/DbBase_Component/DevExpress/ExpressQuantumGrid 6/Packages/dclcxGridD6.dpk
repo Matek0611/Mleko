@@ -1,0 +1,62 @@
+package dclcxGridD6;
+
+{$R *.res}
+{$R 'cxGridReg.dcr'}
+{$R 'cxGridPopupMenuReg.dcr'}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'ExpressQuantumGrid 6 by Developer Express Inc.'}
+{$DESIGNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  cxGridD6,
+  dxThemeD6,
+  designide,
+  dclcxLibraryVCLD6,
+  dclcxEditorsVCLD6,
+  dclcxExtEditorsVCLD6,
+  dclcxPageControlVCLD6;
+
+contains
+  cxBandedTableViewEditor in '..\Sources\cxBandedTableViewEditor.pas',
+  cxCardViewEditor in '..\Sources\cxCardViewEditor.pas',
+  cxChartViewEditor in '..\Sources\cxChartViewEditor.pas',
+  cxCustomTableViewEditor in '..\Sources\cxCustomTableViewEditor.pas',
+  cxDBGridConverter in '..\Sources\cxDBGridConverter.pas',
+  cxDXGridConverter in '..\Sources\cxDXGridConverter.pas',
+  cxGridConverter in '..\Sources\cxGridConverter.pas',
+  cxGridEditor in '..\Sources\cxGridEditor.pas',
+  cxGridImportDialog in '..\Sources\cxGridImportDialog.pas',
+  cxGridPopupMenuReg in '..\Sources\cxGridPopupMenuReg.pas',
+  cxGridPredefinedStyles in '..\Sources\cxGridPredefinedStyles.pas',
+  cxGridReg in '..\Sources\cxGridReg.pas',
+  cxGridStructureNavigator in '..\Sources\cxGridStructureNavigator.pas',
+  cxGridStyleSheetsPreview in '..\Sources\cxGridStyleSheetsPreview.pas',
+  cxGridViewLayoutEditor in '..\Sources\cxGridViewLayoutEditor.pas',
+  cxImageComboBoxItemsEditor in '..\Sources\cxImageComboBoxItemsEditor.pas',
+  cxTableViewEditor in '..\Sources\cxTableViewEditor.pas',
+  cxViewEditor in '..\Sources\cxViewEditor.pas',
+  cxWWGridConverter in '..\Sources\cxWWGridConverter.pas';
+
+end.
