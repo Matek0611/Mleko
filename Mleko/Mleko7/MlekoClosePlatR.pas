@@ -740,7 +740,7 @@ begin
 
   result := 'FreeSumma<>0 and OurFIrmNo=' + Query.FieldByName('OurFIrmNo').AsString + ' and PostNo=' + Query.FieldByName('PostNo').AsString +
     ' and Buh = ' + Query.FieldByName('buh').AsString + ' and ((a.factor_direction<>' + p_factor_directon + ' and sum_sign=' + p_sum_sign +
-    ') or (a.factor_direction=' + p_factor_directon + ' and sum_sign<>' + p_sum_sign + ')) '; //+addWhere;
+    ') or (a.factor_direction=' + p_factor_directon + ' and sum_sign<>' + p_sum_sign + ')) ' + ' and CurrencyHead = '''+ Query.FieldByName('CurrencyHead').AsString+''' '; //+addWhere;
 
   if cbIsNaklR.Checked then result := result + addWhereIsNaklR else result := result;
   if cbIsDolgNaklR.Checked then result := result + addWhereIsDolgNaklR else result := result;
@@ -1118,6 +1118,7 @@ end;
 procedure TMlekoClosePlatRForm.QuFreeNaklAfterOpen(DataSet: TDataSet);
 begin
   inherited;
+
   DBGridFreeNakl.PropStorage.User := IntToStr(data.UserNo);
   DBGridFreeNakl.RestoreFormatFromStorage;
 end;

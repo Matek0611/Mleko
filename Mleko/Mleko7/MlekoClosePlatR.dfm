@@ -1520,8 +1520,10 @@ inherited MlekoClosePlatRForm: TMlekoClosePlatRForm
       '       ,h.activity_type_name'
       '       ,h.otdel_name         AS otdelname'
       '       ,h.is_econom'
+      '       ,l.Link_SummaCurrencyAccounting'
       '       ,CurrencyHead'
-      '       ,Rate')
+      '       ,Rate'
+      '       ')
     From.Strings = (
       '(SELECT l1.id'
       
@@ -1549,6 +1551,7 @@ inherited MlekoClosePlatRForm: TMlekoClosePlatRForm
         '               ,l1.factor_direction * l1.sign_2 * l1.link_summa ' +
         'AS delta'
       '               ,l1.pkey'
+      '               ,l1.Link_SummaCurrencyAccounting'
       '        FROM   e_plat_nakl_link l1'
       '        WHERE  l1.entityno_1 = :p_PlatNo1'
       '        AND l1.entity_type_1 = :p_LinkNaklType1'
@@ -1579,6 +1582,7 @@ inherited MlekoClosePlatRForm: TMlekoClosePlatRForm
         '               ,l2.factor_direction * l2.sign_1 * l2.link_summa ' +
         'AS delta'
       '               ,l2.pkey'
+      '               ,l2.Link_SummaCurrencyAccounting'
       '        FROM   e_plat_nakl_link l2'
       '        WHERE  l2.entityno_2 = :p_PlatNo2'
       '        AND l2.entity_type_2 = :p_LinkNaklType2'
