@@ -62,10 +62,13 @@ type
     procedure sbPrevClick(Sender: TObject);
     procedure sbPrintClick(Sender: TObject);
     procedure sbBlankOstClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     SearchString: string;
     bmCheck: TBitMap;
+    LastIndex: Integer;
+    Descending: Boolean;    
   public
     { Public declarations }
   end;
@@ -179,6 +182,7 @@ begin
   end;
 end;
 
+(*
 procedure TfmSvedenieNakl.DBGridEh1TitleBtnClick(Sender: TObject;
   ACol: Integer; Column: TColumnEh);
 var
@@ -199,6 +203,52 @@ begin
   quNaklR.Locate('NaklNo', FindNaklRNo, []);
   Screen.Cursor := crDefault;
 end;
+*)
+
+procedure TfmSvedenieNakl.DBGridEh1TitleBtnClick(Sender: TObject;
+  ACol: Integer; Column: TColumnEh);
+var
+ FindNaklRNo:integer;
+ MacroValue: String;
+ OldColumn: TColumnEh;
+begin
+ Screen.Cursor:=crHourGlass;
+ FindNaklRNo := quNaklR.FieldByName('NaklNo').AsInteger;
+ quNaklR.Close;
+ if (ACol in [1,2,4,6,7,9,10]) then
+ begin
+ if (LastIndex<>ACol) then
+    begin
+    if (LastIndex>=0) then
+       begin
+         OldColumn:= DBGridEh1.Columns[LastIndex];
+         OldColumn.Title.SortMarker:= smNoneEh;
+       end;
+    Descending:= false;
+    end;
+ case ACol of
+    1: MacroValue := 'NaklR.Nom';
+    2: MacroValue := 'NaklR.DateNaklFirst,NaklR.Nom';
+    4: MacroValue := 'Post.Name';
+    6: MacroValue := 'AddressPost.Address';
+    7: MacroValue := 'NaklR.Summa';
+    9:MacroValue:=   'NaklR.OrderInFlight';
+   10:MacroValue:=   'NaklR.ArrivalTime';
+ end;
+ if Descending then MacroValue:= MacroValue + ' desc';
+ if Descending then
+    Column.Title.SortMarker:= smUpEh else
+    Column.Title.SortMarker:= smDownEh;
+ LastIndex:= ACol;
+ Descending:= not Descending;
+ end;
+ quNaklR.MacroByName('_order').Value:= MacroValue;
+ quNaklR.Prepare;
+ quNaklR.Open;
+ quNaklR.Locate('NaklNo',FindNaklRNo,[]);
+ Screen.Cursor:=crDefault;
+end;
+
 
 procedure TfmSvedenieNakl.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
@@ -309,6 +359,12 @@ end;
 procedure TfmSvedenieNakl.sbBlankOstClick(Sender: TObject);
 begin
   BlankOstatok(fmExpedition.quExpeditionExpeditionNo.AsInteger);
+end;
+
+procedure TfmSvedenieNakl.FormCreate(Sender: TObject);
+begin
+  inherited;
+  LastIndex:= -1;
 end;
 
 end.

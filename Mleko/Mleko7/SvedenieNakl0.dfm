@@ -1,8 +1,8 @@
 inherited fmSvedenieNakl: TfmSvedenieNakl
-  Left = 528
-  Top = 238
-  Width = 928
-  Height = 487
+  Left = 500
+  Top = 151
+  Width = 996
+  Height = 486
   BorderIcons = [biSystemMenu]
   Caption = #1061#1086#1076#1082#1072' ('#1057#1074#1077#1076#1077#1085#1080#1077')'
   Position = poMainFormCenter
@@ -11,7 +11,7 @@ inherited fmSvedenieNakl: TfmSvedenieNakl
   object paTop: TPanel [0]
     Left = 0
     Top = 33
-    Width = 912
+    Width = 980
     Height = 46
     Align = alTop
     BevelInner = bvLowered
@@ -20,7 +20,7 @@ inherited fmSvedenieNakl: TfmSvedenieNakl
     object ScrollBox: TScrollBox
       Left = 2
       Top = 2
-      Width = 908
+      Width = 976
       Height = 42
       HorzScrollBar.Margin = 6
       HorzScrollBar.Range = 341
@@ -111,7 +111,7 @@ inherited fmSvedenieNakl: TfmSvedenieNakl
   object CoolBar1: TToolBar [1]
     Left = 0
     Top = 0
-    Width = 912
+    Width = 980
     Height = 33
     ButtonHeight = 28
     EdgeOuter = esNone
@@ -473,8 +473,8 @@ inherited fmSvedenieNakl: TfmSvedenieNakl
   object DBGridEh1: TDBGridEh [2]
     Left = 0
     Top = 79
-    Width = 912
-    Height = 370
+    Width = 980
+    Height = 368
     Align = alClient
     DataSource = dsNaklR
     Flat = True
@@ -485,7 +485,7 @@ inherited fmSvedenieNakl: TfmSvedenieNakl
     FooterFont.Name = 'MS Sans Serif'
     FooterFont.Style = []
     FooterRowCount = 1
-    Options = [dgTitles, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
+    Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
     SumList.Active = True
     TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
@@ -565,6 +565,7 @@ inherited fmSvedenieNakl: TfmSvedenieNakl
         Width = 209
       end
       item
+        DisplayFormat = '0.00'
         EditButtons = <>
         FieldName = 'Summa'
         Footer.FieldName = 'Summa'
@@ -580,7 +581,22 @@ inherited fmSvedenieNakl: TfmSvedenieNakl
         FieldName = 'VidNaklName'
         Footers = <>
         Title.Caption = #1042#1080#1076' '#1085#1072#1082#1083#1072#1076#1085#1086#1081
-        Width = 141
+        Width = 80
+      end
+      item
+        EditButtons = <>
+        FieldName = 'OrderInFlight'
+        Footers = <>
+        Title.Caption = #1053#1086#1084'. '#1074' '#1093#1086#1076#1082#1077
+        Title.TitleButton = True
+      end
+      item
+        EditButtons = <>
+        FieldName = 'ArrivalTime'
+        Footers = <>
+        Title.Caption = #1042#1088#1077#1084#1103' '#1087#1088#1080#1073#1099#1090#1080#1103
+        Title.TitleButton = True
+        Width = 120
       end>
   end
   inherited ActionList: TActionList
@@ -638,6 +654,8 @@ inherited fmSvedenieNakl: TfmSvedenieNakl
       '       ,naklr.svedenie'
       '       ,naklr.pkey'
       '       ,v.VidNaklName'
+      '       ,naklr.OrderInFlight'
+      '       ,naklr.ArrivalTime'
       'FROM   naklr'
       '       INNER JOIN post'
       '         ON naklr.postno = post.postno'
