@@ -1,7 +1,7 @@
 inherited fmEditExpedition: TfmEditExpedition
-  Left = 425
-  Top = 208
-  Width = 855
+  Left = 462
+  Top = 321
+  Width = 995
   Height = 430
   BorderIcons = [biSystemMenu]
   Caption = #1061#1086#1076#1082#1072
@@ -11,7 +11,7 @@ inherited fmEditExpedition: TfmEditExpedition
   object paTop: TPanel [0]
     Left = 0
     Top = 0
-    Width = 839
+    Width = 979
     Height = 46
     Align = alTop
     BevelInner = bvLowered
@@ -21,7 +21,7 @@ inherited fmEditExpedition: TfmEditExpedition
     object ScrollBox: TScrollBox
       Left = 2
       Top = 2
-      Width = 835
+      Width = 975
       Height = 42
       HorzScrollBar.Margin = 6
       HorzScrollBar.Range = 341
@@ -125,7 +125,7 @@ inherited fmEditExpedition: TfmEditExpedition
   object paMiddle: TPanel [1]
     Left = 0
     Top = 46
-    Width = 839
+    Width = 979
     Height = 313
     Align = alClient
     BevelInner = bvLowered
@@ -134,7 +134,7 @@ inherited fmEditExpedition: TfmEditExpedition
     object DBGridEh1: TDBGridEh
       Left = 2
       Top = 2
-      Width = 835
+      Width = 975
       Height = 309
       Align = alClient
       DataSource = dsNaklR
@@ -146,7 +146,7 @@ inherited fmEditExpedition: TfmEditExpedition
       FooterFont.Name = 'MS Sans Serif'
       FooterFont.Style = []
       FooterRowCount = 1
-      Options = [dgTitles, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
+      Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
       SumList.Active = True
       TabOrder = 0
       TitleFont.Charset = DEFAULT_CHARSET
@@ -217,7 +217,9 @@ inherited fmEditExpedition: TfmEditExpedition
           Width = 182
         end
         item
+          DisplayFormat = '0.00'
           EditButtons = <>
+          EditMask = '0.00'
           FieldName = 'Summa'
           Footer.FieldName = 'Summa'
           Footer.ValueType = fvtSum
@@ -228,6 +230,7 @@ inherited fmEditExpedition: TfmEditExpedition
           Width = 62
         end
         item
+          DisplayFormat = '0.00'
           EditButtons = <>
           FieldName = 'Weight'
           Footer.FieldName = 'Weight'
@@ -235,7 +238,6 @@ inherited fmEditExpedition: TfmEditExpedition
           Footers = <>
           Title.Alignment = taCenter
           Title.Caption = #1042#1077#1089
-          Title.TitleButton = True
           Width = 62
         end
         item
@@ -246,7 +248,6 @@ inherited fmEditExpedition: TfmEditExpedition
           Footers = <>
           Title.Alignment = taCenter
           Title.Caption = #1071#1097#1080#1082
-          Title.TitleButton = True
           Width = 53
         end
         item
@@ -254,14 +255,30 @@ inherited fmEditExpedition: TfmEditExpedition
           FieldName = 'VidNaklName'
           Footers = <>
           Title.Caption = #1042#1080#1076' '#1085#1072#1082#1083#1072#1076#1085#1086#1081
-          Width = 133
+          Width = 80
+        end
+        item
+          EditButtons = <>
+          FieldName = 'OrderInFlight'
+          Footers = <>
+          Title.Caption = #1053#1086#1084'. '#1074' '#1093#1086#1076#1082#1077
+          Title.TitleButton = True
+          Width = 70
+        end
+        item
+          EditButtons = <>
+          FieldName = 'ArrivalTime'
+          Footers = <>
+          Title.Caption = #1042#1088#1077#1084#1103' '#1087#1088#1080#1073#1099#1090#1080#1103
+          Title.TitleButton = True
+          Width = 120
         end>
     end
   end
   object paBottom: TPanel [2]
     Left = 0
     Top = 359
-    Width = 839
+    Width = 979
     Height = 32
     Align = alBottom
     TabOrder = 2
@@ -432,6 +449,8 @@ inherited fmEditExpedition: TfmEditExpedition
       '       ,post.print3'
       '       ,'#39'NAKLR'#39'             AS sourcetable'
       '       ,VidNaklName'
+      '       , h.OrderInFlight'
+      '       , h.ArrivalTime'
       'FROM   naklr h'
       '       INNER JOIN post'
       '         ON h.postno = post.postno'
@@ -441,7 +460,7 @@ inherited fmEditExpedition: TfmEditExpedition
       '       INNER JOIN post post_1'
       '         ON h.postnofirst = post_1.postno'
       '       inner join VidNakl v on h.VidNaklNo=v.VidNaklNo'
-      'WHERE  (h.expeditionno = :ExpeditionNo)'
+      'WHERE  (h.expeditionno = :expeditionno)'
       'AND (h.expeditionno <> 0)'
       'UNION ALL'
       'SELECT b.id            AS naklno'
@@ -459,6 +478,8 @@ inherited fmEditExpedition: TfmEditExpedition
       '       ,Cast(0 AS BIT) AS print3'
       '       ,'#39'E_BLANK_HEAD'#39' AS sourcetable'
       '       ,VidNaklName'
+      '       , null as OrderInFlight'
+      '       , null as ArrivalTime'
       'FROM   e_blank_head b'
       '       INNER JOIN post p'
       '         ON b.postno = p.postno'
@@ -466,7 +487,7 @@ inherited fmEditExpedition: TfmEditExpedition
       '         ON b.addressno = a.addressno'
       '            AND b.postno = a.postno'
       '       inner join VidNakl v on b.VidNaklNo=v.VidNaklNo'
-      'WHERE  (b.expeditionno = :ExpeditionNo)'
+      'WHERE  (b.expeditionno = :expeditionno)'
       'AND (b.expeditionno <> 0)'
       'AND NOT EXISTS (SELECT 1'
       '                FROM   naklr'
@@ -478,14 +499,11 @@ inherited fmEditExpedition: TfmEditExpedition
     ParamData = <
       item
         DataType = ftString
-        Name = 'ExpeditionNo'
-        Size = 1
-        Value = '0'
+        Name = 'expeditionno'
       end
       item
         DataType = ftString
-        Name = 'ExpeditionNo'
-        Value = '0'
+        Name = 'expeditionno'
       end>
     MacroData = <
       item
@@ -560,6 +578,14 @@ inherited fmEditExpedition: TfmEditExpedition
     end
     object quNaklRVidNaklName: TStringField
       FieldName = 'VidNaklName'
+      ReadOnly = True
+    end
+    object quNaklROrderInFlight: TIntegerField
+      FieldName = 'OrderInFlight'
+      ReadOnly = True
+    end
+    object quNaklRArrivalTime: TDateTimeField
+      FieldName = 'ArrivalTime'
       ReadOnly = True
     end
   end

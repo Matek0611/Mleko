@@ -1,13 +1,13 @@
 inherited fmExpedition: TfmExpedition
-  Left = 697
-  Top = 71
+  Left = 566
+  Top = 229
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1061#1086#1076#1082#1080
   ClientHeight = 661
-  ClientWidth = 884
+  ClientWidth = 905
   Constraints.MaxHeight = 700
-  Constraints.MaxWidth = 900
+  Constraints.MaxWidth = 1000
   Constraints.MinHeight = 700
   Constraints.MinWidth = 900
   Position = poScreenCenter
@@ -16,7 +16,7 @@ inherited fmExpedition: TfmExpedition
   object Panel1: TPanel [0]
     Left = 0
     Top = 561
-    Width = 884
+    Width = 905
     Height = 100
     Align = alBottom
     TabOrder = 0
@@ -378,7 +378,7 @@ inherited fmExpedition: TfmExpedition
   object Panel2: TPanel [2]
     Left = 0
     Top = 0
-    Width = 884
+    Width = 905
     Height = 30
     Align = alTop
     TabOrder = 2
@@ -1273,14 +1273,14 @@ inherited fmExpedition: TfmExpedition
   object PCExp: TcxPageControl [3]
     Left = 0
     Top = 30
-    Width = 884
+    Width = 905
     Height = 531
     ActivePage = tsRoute
     Align = alClient
     Style = 9
     TabOrder = 3
     ClientRectBottom = 531
-    ClientRectRight = 884
+    ClientRectRight = 905
     ClientRectTop = 20
     object tsRoute: TcxTabSheet
       Caption = #1061#1086#1076#1082#1080
@@ -1288,7 +1288,7 @@ inherited fmExpedition: TfmExpedition
       object DBGridEh1: TDBGridEh
         Left = 0
         Top = 0
-        Width = 884
+        Width = 905
         Height = 511
         Align = alClient
         ColumnDefValues.AlwaysShowEditButton = True
@@ -1501,7 +1501,7 @@ inherited fmExpedition: TfmExpedition
       object cxGrid1: TcxGrid
         Left = 0
         Top = 0
-        Width = 884
+        Width = 905
         Height = 511
         Align = alClient
         TabOrder = 0
@@ -1648,6 +1648,7 @@ inherited fmExpedition: TfmExpedition
       
         '         ,convert(bit,case when lewl.ExpeditioinNo is null then ' +
         '0 else 1 end) as is_logistic'
+      ''
       'FROM     expedition e'
       '         INNER JOIN shipping_agent sa'
       '           ON e.expeditionshipping_agentno = sa.shipping_agentno'
@@ -1658,6 +1659,7 @@ inherited fmExpedition: TfmExpedition
       '                                 ,weight'
       '                                 ,expeditionno'
       '                                 ,postno'
+      '                                  '
       '                          FROM   naklr'
       '                          UNION ALL'
       '                          SELECT summa'
@@ -1665,6 +1667,7 @@ inherited fmExpedition: TfmExpedition
       '                                 ,weight'
       '                                 ,expeditionno'
       '                                 ,postno'
+      '                                 '
       '                          FROM   e_blank_head h'
       '                          WHERE  status = 0'
       '                          AND NOT EXISTS (SELECT 1'
@@ -1910,6 +1913,8 @@ inherited fmExpedition: TfmExpedition
       '      , r.DateOpl'
       '      , isnull(Post.PrintPost,0) as PrintPost'
       '      , l.DAY_DELAY'
+      '      , r.OrderInFlight'
+      '      , r.ArrivalTime'
       'FROM NaklR r left JOIN'
       
         '     L_POST_SET_ARTGROUP_DELAY l on l.POSTNO = r.PostNo and l.BU' +
@@ -1979,6 +1984,12 @@ inherited fmExpedition: TfmExpedition
     end
     object quNaklRDAY_DELAY: TIntegerField
       FieldName = 'DAY_DELAY'
+    end
+    object quNaklROrderInFlight: TIntegerField
+      FieldName = 'OrderInFlight'
+    end
+    object quNaklRArrivalTime: TDateTimeField
+      FieldName = 'ArrivalTime'
     end
   end
   object frReport: TfrReport

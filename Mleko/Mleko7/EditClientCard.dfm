@@ -1,6 +1,6 @@
 inherited EditClientCardForm: TEditClientCardForm
-  Left = 45
-  Top = 179
+  Left = 197
+  Top = 39
   Width = 1639
   Height = 622
   Caption = #1050#1072#1088#1090#1086#1095#1082#1072' '#1082#1083#1080#1077#1085#1090#1072
@@ -1842,7 +1842,20 @@ inherited EditClientCardForm: TEditClientCardForm
       '  WHERE id = :id')
     Connection = dmDataModule.DB
     SQL.Strings = (
-      'select *'
+      'select  Id'
+      '      , DocId'
+      '      , PostNo'
+      '      , NAME'
+      '      , Day_Delay'
+      '      , Day_Delay_Ext'
+      '      , PayBan'
+      '      , Buh'
+      '      , BuhName'
+      '      , SetArticleGroupId'
+      
+        '      , isnull(Currency,(select c.l_code from D_CURRENCY c inner' +
+        ' join CurrencyExchange ce on c.IsDefault = 1 and ce.IsActive = 1' +
+        ' and ce.CurrencyId = c.ID and c.isTrash = 0)) as Currency'
       ' from DocClientCardDelaySpec d'
       '  where d.DocId = :DocId'
       ''
@@ -1872,6 +1885,8 @@ inherited EditClientCardForm: TEditClientCardForm
       '  where lpsagd.PostNo = :PostNo'
       '*/')
     BeforeOpen = quDalayBeforeOpen
+    AfterOpen = quDalayAfterOpen
+    AfterInsert = quDalayAfterInsert
     BeforePost = quDalayBeforePost
     Left = 1401
     Top = 346

@@ -201,6 +201,8 @@ type
     frRtfAdvExport1: TfrRtfAdvExport;
     Button1: TButton;
     quNaklRDAY_DELAY: TIntegerField;
+    quNaklROrderInFlight: TIntegerField;
+    quNaklRArrivalTime: TDateTimeField;
 
     procedure RxDBGrid1KeyPress(Sender: TObject; var Key: Char);
     procedure RxDBGrid1TitleBtnClick(Sender: TObject; ACol: Integer;
@@ -489,6 +491,7 @@ begin
     2: quExpedition.MacroByName('_order').Value := 'CarsName';
     3: quExpedition.MacroByName('_order').Value := 'Shipping_AgentName,C.CarsName';
     4: quExpedition.MacroByName('_order').Value := 'ExpeditionSumma';
+
   end;
   quExpedition.Prepare;
   quExpedition.Open;

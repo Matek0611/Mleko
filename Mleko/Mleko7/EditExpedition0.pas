@@ -62,6 +62,8 @@ type
     bbPrint: TBitBtn;
     Label2: TLabel;
     TTN_Query: TMSQuery;
+    quNaklROrderInFlight: TIntegerField;
+    quNaklRArrivalTime: TDateTimeField;
     procedure edCarsEnter(Sender: TObject);
     procedure ChangeCars;
     procedure ChangeShipping_Agent;
@@ -90,10 +92,13 @@ type
     procedure bbOkClick(Sender: TObject);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     SearchString:string;
     bmHelp:TBitmap;
+    LastIndex: Integer;
+    Descending: Boolean;
   public
     { Public declarations }
   end;
@@ -433,17 +438,44 @@ procedure TfmEditExpedition.DBGridEh1TitleBtnClick(Sender: TObject;
   ACol: Integer; Column: TColumnEh);
 var
  FindNaklRNo:integer;
+ MacroValue: String;
+ OldColumn: TColumnEh;
 begin
  Screen.Cursor:=crHourGlass;
  FindNaklRNo:=quNaklRNaklNo.AsInteger;
  quNaklR.Close;
+ if (ACol in [0,1,2,3,5,6,10,11]) then
+ begin
+ if (LastIndex<>ACol) then      
+    begin
+    if (LastIndex>=0) then
+       begin
+         OldColumn:= DBGridEh1.Columns[LastIndex];
+         OldColumn.Title.SortMarker:= smNoneEh;
+       end;
+    Descending:= false;
+    end;
  case ACol of
-  0:quNaklR.MacroByName('_order').Value:='NaklR.Nom';
-  1:quNaklR.MacroByName('_order').Value:='NaklR.DateNaklFirst,NaklR.Nom';
-  2:quNaklR.MacroByName('_order').Value:='Post.Name, AddressPost.Address';
-  3:quNaklR.MacroByName('_order').Value:='AddressPost.Address,Post.Name';
-  4:quNaklR.MacroByName('_order').Value:='NaklR.Summa, Post.Name, AddressPost.Address';
+  0:MacroValue:='h.InCar';
+  1:MacroValue:='h.NaklNo';
+  2:MacroValue:='h.DateNakl,h.Nom';
+  //3:MacroValue:='Post.Name, AddressPost.Address';
+  3:MacroValue:='Post.Name';
+  5:MacroValue:='AddressPost.Address';
+  //5:MacroValue:='AddressPost.Address,Post.Name';
+  //6:MacroValue:='h.Summa, Post.Name, AddressPost.Address';
+  6:MacroValue:='h.Summa';
+ 10:MacroValue:='h.OrderInFlight';
+ 11:MacroValue:='h.ArrivalTime';
  end;
+ if Descending then MacroValue:= MacroValue + ' desc';
+ if Descending then
+    Column.Title.SortMarker:= smUpEh else
+    Column.Title.SortMarker:= smDownEh;
+ LastIndex:= ACol;
+ Descending:= not Descending;
+ end;
+ quNaklR.MacroByName('_order').Value:= MacroValue;
  quNaklR.Prepare;
  quNaklR.Open;
  quNaklR.Locate('NaklNo',FindNaklRNo,[]);
@@ -560,6 +592,12 @@ procedure TfmEditExpedition.DBGridEh1GetCellParams(Sender: TObject;
   State: TGridDrawState);
 begin
   if quNaklRSourceTable.AsString='E_BLANK_HEAD' then Background:=clMoneyGreen;
+end;
+
+procedure TfmEditExpedition.FormCreate(Sender: TObject);
+begin
+  inherited;
+  LastIndex:= -1;
 end;
 
 end.

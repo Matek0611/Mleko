@@ -396,6 +396,8 @@ type
       State: TGridDrawState);
     procedure DBGridEhGroupCuttingKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure quDalayAfterOpen(DataSet: TDataSet);
+    procedure quDalayAfterInsert(DataSet: TDataSet);
   private
     { Private declarations }
     SearchString:string;
@@ -1093,6 +1095,7 @@ procedure TEditClientCardForm.quDalayBeforePost(DataSet: TDataSet);
 begin
   quDalayDocId.Value := MaxId;
   quDalayPostNo.Value := PostNoFirm;
+  
 
 
 end;
@@ -2584,6 +2587,25 @@ begin
   VK_DELETE : if IsSignature = False Then if Application.MessageBox('Вы уверены ?','Удаление',MB_YESNO or MB_DEFBUTTON2)=ID_YES then
                quDocClientCardPostGroupCuttingSpec.Delete;
  end;
+end;
+
+procedure TEditClientCardForm.quDalayAfterOpen(DataSet: TDataSet);
+begin
+  inherited;
+  dmDataModule.OpenSQL('select c.l_code, c.Name from D_CURRENCY c inner join CurrencyExchange ce on c.IsDefault = 1 and ce.IsActive = 1 and ce.CurrencyId = c.ID and c.isTrash = 0');
+  if quDalay.State in [dsInsert,dsEdit] then begin
+                                               if quDalayCurrency.IsNull then quDalayCurrency.Value := dmDataModule.QFO.FieldByName('l_code').Value;
+                                               if quDalayCyrrencyName.IsNull then quDalayCyrrencyName.Value := dmDataModule.QFO.FieldByName('Name').Value;
+                                             end;  
+
+end;
+
+procedure TEditClientCardForm.quDalayAfterInsert(DataSet: TDataSet);
+begin
+  inherited;
+  dmDataModule.OpenSQL('select c.l_code, c.Name from D_CURRENCY c inner join CurrencyExchange ce on c.IsDefault = 1 and ce.IsActive = 1 and ce.CurrencyId = c.ID and c.isTrash = 0');
+  quDalayCurrency.Value := dmDataModule.QFO.FieldByName('l_code').Value;
+  quDalayCyrrencyName.Value := dmDataModule.QFO.FieldByName('Name').Value;
 end;
 
 end.
