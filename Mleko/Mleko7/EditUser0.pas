@@ -33,6 +33,8 @@ type
     { Public declarations }
   end;
 
+  procedure EditUser();
+
 var
   fmEditUser: TfmEditUser;
 
@@ -41,6 +43,16 @@ implementation
 uses  Users, data, SetupMenu0, main;
 
 {$R *.DFM}
+
+procedure EditUser();
+begin
+ fmEditUser:=TfmEditUser.Create(Application);
+ try
+ fmEditUser.ShowModal;
+ finally
+ fmEditUser.Free;
+ end;
+end;
 
 procedure TfmEditUser.bbOkClick(Sender: TObject);
 begin
