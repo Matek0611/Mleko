@@ -167,6 +167,9 @@ type
     cxDBDateEdit1: TcxDBDateEdit;
     Button1: TButton;
     Button2: TButton;
+    quNaklPCurrencyHead: TStringField;
+    Label13: TLabel;
+    DBTCurrencyHead: TDBText;
     procedure ScrollBoxExit(Sender: TObject);
     procedure bbOKClick(Sender: TObject);
     procedure DBGrid1KeyUp(Sender: TObject; var Key: Word;
@@ -273,6 +276,9 @@ begin
         quNaklP.FieldByName('pkey').Value := dmDataModule.QFO.FieldByName('new_id').Value;
         quNaklP.FieldByName('edit_status_id').Value := 3;
         quNaklP.FieldByName('otdelNo').Value := OtdelNo;
+
+        dmDataModule.OpenSQL('select c.l_code, c.Name from D_CURRENCY c inner join CurrencyExchange ce on c.IsDefault = 1 and ce.IsActive = 1 and ce.CurrencyId = c.ID and isnull(c.isTrash,0) = 0');
+        quNaklPCurrencyHead.Value := dmDataModule.QFO.FieldByName('l_code').Value;
 {
         quNaklPDelay.Open;
         dsNaklPDelay.Edit;
@@ -293,6 +299,12 @@ begin
         quNaklP.Close;
         quNaklP.ParamByName('dhead_id').Value := pkey;
         quNaklP.Open;
+
+        if quNaklPCurrencyHead.IsNull then begin
+                                             if not (quNaklP.State in [dsInsert,dsEdit]) then quNaklP.Edit;
+                                             dmDataModule.OpenSQL('select c.l_code, c.Name from D_CURRENCY c inner join CurrencyExchange ce on c.IsDefault = 1 and ce.IsActive = 1 and ce.CurrencyId = c.ID and c.isTrash = 0');
+                                             quNaklPCurrencyHead.Value := dmDataModule.QFO.FieldByName('l_code').Value;
+                                           end;
 
 
         QuSetArtGroup.Close;

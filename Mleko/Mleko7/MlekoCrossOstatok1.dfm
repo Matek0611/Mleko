@@ -617,10 +617,16 @@ inherited MlekoCrossOstatok1Form: TMlekoCrossOstatok1Form
       '   ,@d_bank_invoice_id int'
       '   ,@Pkey bigint'
       '   ,@OtdelNo int'
+      '   ,@CurrencyHead varchar(5) '
       ''
       
         'select @d_bank_invoice_id = id from D_BANK_INVOICE where isMain ' +
         '= 1'
+      ''
+      
+        'select @CurrencyHead = c.l_code from D_CURRENCY c inner join Cur' +
+        'rencyExchange ce on c.IsDefault = 1 and ce.IsActive = 1 and ce.C' +
+        'urrencyId = c.ID and isnull(c.isTrash,0) = 0'
       ''
       ''
       'select @p_NaklNo=max(naklNo)+1 '
@@ -652,12 +658,12 @@ inherited MlekoCrossOstatok1Form: TMlekoCrossOstatok1Form
       ''
       
         'INSERT INTO NaklP (NaklNo, Nom, PostNo, DateNakl, DatePrih, Summ' +
-        'a, SummaDolg, Buh, UserNo,  doc_type, OurFirmNo, OtdelNo,d_bank_' +
-        'invoice_id)'
+        'a, SummaDolg, Buh, UserNo,  doc_type, OurFirmNo, OtdelNo, d_bank' +
+        '_invoice_id, CurrencyHead)'
       
         'VALUES(@p_NaklNo, @p_Nom, @p_PostNo, @p_DateNakl, @p_DatePrih, 0' +
         ', 0, @p_Buh, @p_UserNo, @p_doc_type, (select PostNo from d_our_f' +
-        'irm),@OtdelNo,@d_bank_invoice_id)'
+        'irm),@OtdelNo,@d_bank_invoice_id,@CurrencyHead)'
       ''
       ''
       'select @Pkey = pkey from naklp where NaklNo = @p_NaklNo'

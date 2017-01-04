@@ -1,7 +1,7 @@
 inherited fmPrihodTov: TfmPrihodTov
   Left = 597
   Top = 185
-  Width = 899
+  Width = 903
   Height = 577
   Caption = #1055#1088#1080#1093#1086#1076' '#1090#1086#1074#1072#1088#1072
   ParentFont = True
@@ -11,7 +11,7 @@ inherited fmPrihodTov: TfmPrihodTov
   object paTop: TPanel [0]
     Left = 0
     Top = 0
-    Width = 883
+    Width = 887
     Height = 99
     Align = alTop
     BevelInner = bvLowered
@@ -20,7 +20,7 @@ inherited fmPrihodTov: TfmPrihodTov
     object ScrollBox: TScrollBox
       Left = 2
       Top = 2
-      Width = 879
+      Width = 883
       Height = 95
       HorzScrollBar.Margin = 6
       HorzScrollBar.Range = 341
@@ -131,6 +131,21 @@ inherited fmPrihodTov: TfmPrihodTov
         Caption = #1044#1072#1090#1072' '#1087#1088#1086#1080#1079#1074#1086#1076#1089#1090#1074#1072
         FocusControl = cxDBDateEdit1
         Visible = False
+      end
+      object Label13: TLabel
+        Left = 288
+        Top = 48
+        Width = 38
+        Height = 13
+        Caption = #1042#1072#1083#1102#1090#1072
+      end
+      object DBTCurrencyHead: TDBText
+        Left = 336
+        Top = 48
+        Width = 65
+        Height = 17
+        DataField = 'CurrencyHead'
+        DataSource = dsNaklP
       end
       object EditDate: TcxDBDateEdit
         Left = 191
@@ -343,7 +358,7 @@ inherited fmPrihodTov: TfmPrihodTov
   object paMiddle: TPanel [1]
     Left = 0
     Top = 99
-    Width = 883
+    Width = 887
     Height = 410
     Align = alClient
     BevelInner = bvLowered
@@ -353,7 +368,7 @@ inherited fmPrihodTov: TfmPrihodTov
     object DBGrid1: TDBGrid
       Left = 4
       Top = 4
-      Width = 875
+      Width = 879
       Height = 402
       Align = alClient
       DataSource = dsPrihod
@@ -428,7 +443,7 @@ inherited fmPrihodTov: TfmPrihodTov
   object paBottom: TPanel [2]
     Left = 0
     Top = 509
-    Width = 883
+    Width = 887
     Height = 29
     Align = alBottom
     TabOrder = 2
@@ -627,15 +642,17 @@ inherited fmPrihodTov: TfmPrihodTov
         '  (NaklNo, Nom, PostNo, DateNakl, Summa, SummaDolg, Buh, UserNo,' +
         ' VidNaklNo,'
       
-        '  OtdelNo, DatePrih, doc_type, parent_NaklNo, OurFirmNo,pkey,Edi' +
-        't_status_id,d_bank_invoice_id)'
+        '   OtdelNo, DatePrih, doc_type, parent_NaklNo, OurFirmNo,pkey,Ed' +
+        'it_status_id,'
+      '   d_bank_invoice_id, CurrencyHead)'
       'values'
       
         '  (:NaklNo, :Nom, :PostNo, :DateNakl, :Summa, :SummaDolg, :Buh, ' +
         ':UserNo, '
       
         '   :VidNaklNo, :OtdelNo, :DatePrih, :doc_type, :parent_NaklNo, :' +
-        'OurFirmNo, :pkey, :Edit_status_id, @d_bank_invoice_id)')
+        'OurFirmNo, '
+      '   :pkey, :Edit_status_id, @d_bank_invoice_id, :CurrencyHead)')
     SQLDelete.Strings = (
       'delete from NaklP'
       'where'
@@ -669,6 +686,7 @@ inherited fmPrihodTov: TfmPrihodTov
       '         ,parent_naklno = :parent_NaklNo'
       '         ,ourfirmno = :OurFirmNo'
       '         ,edit_status_id = @Edit_status_id'
+      '         ,CurrencyHead = :CurrencyHead'
       '  WHERE  pkey = @dhead_id'
       ''
       '  IF @Edit_status_id <> @old_Edit_status_id'
@@ -705,6 +723,17 @@ inherited fmPrihodTov: TfmPrihodTov
       '       ,h.pkey'
       '       ,h.edit_status_id'
       '       ,h.DateOfManufacture '
+      '       ,isnull(h.CurrencyHead,(select c.l_code '
+      '                                from D_CURRENCY c inner join '
+      
+        '                                     CurrencyExchange ce on c.Is' +
+        'Default = 1 and ce.IsActive = 1 '
+      
+        '                                                                ' +
+        '            and ce.CurrencyId = c.ID '
+      
+        '                                                                ' +
+        '            and isnull(c.isTrash,0) = 0)) as CurrencyHead'
       'FROM   naklp h inner join post p on h.PostNo=p.PostNo'
       'WHERE  h.pkey = :dhead_id')
     BeforePost = quNaklPBeforePost
@@ -773,6 +802,11 @@ inherited fmPrihodTov: TfmPrihodTov
     end
     object quNaklPDateOfManufacture: TDateTimeField
       FieldName = 'DateOfManufacture'
+    end
+    object quNaklPCurrencyHead: TStringField
+      DisplayLabel = #1042#1072#1083#1102#1090#1072
+      FieldName = 'CurrencyHead'
+      Size = 5
     end
   end
   object dsNaklP: TDataSource

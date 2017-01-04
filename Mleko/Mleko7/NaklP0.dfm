@@ -6,17 +6,17 @@ inherited fmNaklP: TfmNaklP
   BorderStyle = bsNone
   Caption = #1055#1088#1080#1093#1086#1076#1085#1099#1077' '#1085#1072#1082#1083#1072#1076#1085#1099#1077
   ClientHeight = 340
-  ClientWidth = 1000
+  ClientWidth = 1025
   Position = poScreenCenter
   WindowState = wsMaximized
   PixelsPerInch = 96
   TextHeight = 13
   inherited StatusBar: TStatusBar
     Top = 321
-    Width = 1000
+    Width = 1025
   end
   inherited ToolBar: TToolBar
-    Width = 1000
+    Width = 1025
     Height = 25
     TabOrder = 2
     object ToolButton4: TToolButton
@@ -77,7 +77,7 @@ inherited fmNaklP: TfmNaklP
   object RxDBGrid1: TRxDBGrid [2]
     Left = 0
     Top = 25
-    Width = 1000
+    Width = 1025
     Height = 296
     Align = alClient
     DataSource = dsNaklP
@@ -178,6 +178,12 @@ inherited fmNaklP: TfmNaklP
         FieldName = 'status_name'
         Title.Caption = #1057#1090#1072#1090#1091#1089
         Width = 84
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CurrencyHead'
+        Title.Caption = #1042#1072#1083#1102#1090#1072
         Visible = True
       end>
   end
