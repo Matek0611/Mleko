@@ -1,7 +1,7 @@
 inherited dmDataModule: TdmDataModule
-  Left = 250
-  Top = 0
-  Height = 680
+  Left = 449
+  Top = 146
+  Height = 806
   Width = 1030
   inherited DB: TMSConnection
     ConnectionTimeout = 0

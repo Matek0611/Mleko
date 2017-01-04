@@ -3,14 +3,19 @@ unit main;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus, ComCtrls, ExtCtrls, IniFiles, DB, Variants, ComObj, DBAccess, MSAccess, DBCtrls, ActnList, StdCtrls, rxFileUtil, DateUtils, Math, BCMain, dxBar, AppEvnts, dxBarExtItems, cxClasses, data, cxControls, cxContainer, cxEdit, cxTextEdit, cxMemo, MemDS;
-
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Menus, ComCtrls, ExtCtrls, IniFiles, DB, Variants, ComObj, DBAccess, MSAccess,
+  DBCtrls, ActnList, StdCtrls, rxFileUtil, DateUtils,
+  Math, BCMain, dxBar, AppEvnts, dxBarExtItems, cxClasses,
+  data, cxControls, cxContainer, cxEdit, cxTextEdit,
+  cxMemo, MemDS;
+   
 type
   TExport_Finance = function(DateExport: TDate): Boolean;
 
 type
   TfmMain = class(TBCMainForm)
-    mmMenu: TMainMenu;
+    mmMenu: TMainMenu;                                       
     N1: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
@@ -586,20 +591,53 @@ var
   GlobalOurFirmNo: Integer;
   day_of_week: integer;
   Edit_CrossBlankOrder: Boolean;
-  IsSelectItemTTN: Boolean;
-  isPrintTTNForNight: Boolean;
+  IsSelectItemTTN :Boolean;
+  isPrintTTNForNight :Boolean;
   DateOfManufacture: TDate;
   //  PrinterOpenCashBox, FiscPrinterConnect, PrinterCash: Boolean;
 
 implementation
 
-uses
-  Post0, NaklP0, Tovar0, Ostatok2, About, PrihodTov, DolgNash, InPlatTov, Sotrud0, fmrOtchet1, fmrOtchet2, VidTov0, fmrPrice, qrOtchet4, HotKey, RasPlatTov, Setup0, qrSotrudPlat0, Users, BCDb, SotrudSalary0, Zakupka0, Company0, SelNakl0, UtilsDataConvert, NaklR0, SelPlat, OrdersPrih0, OrdersRash0, OtchetKassa0, Password, Regions0, Otchets0, TopTovars0, BadTovars0, CloseReturn0, CrossPostNaklR0, CrossPostNaklP0, InputPlan0, uAccountCashRashod, CrossReturne0, VidRashoda, TipTovara0, Cars0, Shipping_Agent0,
-  SelExpedition0, Expedition0, OtchetSale0, PodotchetR0, SelectPodotchet0, Podotchet0, Export1C0, OthetBuh0, SelOtdel, SelTip, KartData, KartVerife0, SvedenieNaklNotCar0, BlockDate0, NaklChange0, TovarSvedenie0, NaklNotSvedenie0, InOutCash0, GetDate0, SelectRas0, MlekoBlankList, MlekoSelectDayDept, MlekoSelectReport, CFLMLKCustomRep, CFLMLKEditReport, MlekoListTovarWieght, MlekoClosePlatR, MLekoListAdrInfo, MLekoListAdrInfoPayBan, MLekoListRestAudit, MlekoListLogist, MlekoListPrice, MlekoCrossBlankOrder,
-  CFLMLKSelect, CFLMLKPropDb, StrUtils, MlekoListRoute, MlekoTest, UtilsCommon, EditNaklR0, MlekoPropDbBlockApp, MlekoListActivity, MlekoListCFO, DolgNam, MlekoListColumns, BCCommon, MlekoBlkParamPrivyazka, Meko_Blanc_Price, TovarPost0, NaklRPost0, MlekoSelectNaklR, Employee, MlekoBlankListOutSide, ChangePrice0, TimetableForDriver, ChangePriceList0, CrossPaymentsFromPost0, StandartsOfGoods, TypeReturn, CategoryTT, MlekoSelectFloat, MlekoBlankListWithKPK, ExportTovarForScales, InputOrderWithExcel,
-  MlekoSelectMarijaGroupTax, PrihodOrderHead, PrihodOrder, BlockDateExpedition0, DeliveryOfGoods0, ListMinusVidTovar, ListMinusPostForOstatokZero, ListMinusVidRashForOstatokZero, ListMinusPostForClearBase, ListMinusVidRashForClearBase, ListPlusPostForDolg, ListControlRequiredData, VidRashod, WriteOffCosts, SelectPostForWriteOffCosts, ClassifierABCDZ, BankAndInvoice, Kassa, BDDS, VidSotrudInPepsico, SalesChannelsOfPepsico, KOATUU, MlekoSelectBankInvoice, RequestForSupplyGoodsHead,
-  AddressPost_CODE_Commerce_Network, MlekoSelectFIrmSupplier, Ostatok1Head, ListMinusPostForAnalizPrihod, ReasonForUnlocking0, ListMinusPostForAnalizOstatka, PlanningOrder, PlanningOrderHead, AnalisPlanningOrder, AnalisReturnOrder, Infarmatsionny_Analysis, ListMinusPostForAnalizPrihodNew, MLekoListAdrInfoNew, PricingList, RestTovarOfDateManufacture, ControlRestTovarOfDateManufacture, ReconciliationReceiptPriceInInst, OtdelForm0, ListMinusPostForDolg, PrihodTovWithExel, MlekoSelectFIrm, EditClientCard,
-  VidDoc, DocClientCardHead, ControlVidRashodForPlat, GroupCutting, ListVidTovForGroupCutting, CheckMeshCutting, PostFromGroupCutting, AnalisCuttingMesh, Currency, CurrencyExchange, VidRashodGroup;
+uses Post0, NaklP0, Tovar0, Ostatok2, About,
+  PrihodTov, DolgNash, InPlatTov, Sotrud0,
+  fmrOtchet1, fmrOtchet2, VidTov0, fmrPrice, qrOtchet4,
+  HotKey, RasPlatTov, Setup0,
+  qrSotrudPlat0, Users, BCDb,
+  SotrudSalary0,
+  Zakupka0, Company0, SelNakl0, UtilsDataConvert, NaklR0,
+  SelPlat, OrdersPrih0, OrdersRash0, OtchetKassa0, Password,
+  Regions0, Otchets0, TopTovars0,
+  BadTovars0, CloseReturn0, CrossPostNaklR0, CrossPostNaklP0, InputPlan0,
+  uAccountCashRashod, CrossReturne0, VidRashoda, TipTovara0, Cars0, Shipping_Agent0,
+  SelExpedition0, Expedition0, OtchetSale0, PodotchetR0,
+  SelectPodotchet0, Podotchet0, Export1C0, OthetBuh0,
+  SelOtdel, SelTip, KartData, KartVerife0, SvedenieNaklNotCar0, BlockDate0, NaklChange0,
+  TovarSvedenie0, NaklNotSvedenie0, InOutCash0, GetDate0, SelectRas0,
+  MlekoBlankList, MlekoSelectDayDept,
+  MlekoSelectReport, CFLMLKCustomRep, CFLMLKEditReport,
+  MlekoListTovarWieght, MlekoClosePlatR, MLekoListAdrInfo, MLekoListAdrInfoPayBan,
+  MLekoListRestAudit, MlekoListLogist,
+  MlekoListPrice, MlekoCrossBlankOrder, CFLMLKSelect, 
+  CFLMLKPropDb, StrUtils, MlekoListRoute, MlekoTest, UtilsCommon, EditNaklR0,
+  MlekoPropDbBlockApp, MlekoListActivity, MlekoListCFO, DolgNam,
+  MlekoListColumns, BCCommon, MlekoBlkParamPrivyazka,Meko_Blanc_Price,TovarPost0,
+  NaklRPost0,MlekoSelectNaklR,Employee,MlekoBlankListOutSide,ChangePrice0,
+  TimetableForDriver, ChangePriceList0, CrossPaymentsFromPost0,
+  StandartsOfGoods, TypeReturn, CategoryTT, MlekoSelectFloat,
+  MlekoBlankListWithKPK,ExportTovarForScales,InputOrderWithExcel,
+  MlekoSelectMarijaGroupTax, PrihodOrderHead, PrihodOrder, BlockDateExpedition0,
+  DeliveryOfGoods0,ListMinusVidTovar,ListMinusPostForOstatokZero,ListMinusVidRashForOstatokZero,
+  ListMinusPostForClearBase, ListMinusVidRashForClearBase, ListPlusPostForDolg, ListControlRequiredData,
+  VidRashod, WriteOffCosts, SelectPostForWriteOffCosts, ClassifierABCDZ, BankAndInvoice, Kassa, BDDS,
+  VidSotrudInPepsico, SalesChannelsOfPepsico, KOATUU, MlekoSelectBankInvoice,
+  RequestForSupplyGoodsHead, AddressPost_CODE_Commerce_Network, MlekoSelectFIrmSupplier,
+  Ostatok1Head, ListMinusPostForAnalizPrihod, ReasonForUnlocking0, ListMinusPostForAnalizOstatka,
+  PlanningOrder, PlanningOrderHead, AnalisPlanningOrder, AnalisReturnOrder, Infarmatsionny_Analysis,
+  ListMinusPostForAnalizPrihodNew, MLekoListAdrInfoNew, PricingList, RestTovarOfDateManufacture,
+  ControlRestTovarOfDateManufacture, ReconciliationReceiptPriceInInst, OtdelForm0,
+  ListMinusPostForDolg, PrihodTovWithExel, MlekoSelectFIrm, EditClientCard, VidDoc, DocClientCardHead,
+  ControlVidRashodForPlat, GroupCutting, ListVidTovForGroupCutting, CheckMeshCutting, PostFromGroupCutting,
+  AnalisCuttingMesh, Currency, CurrencyExchange, VidRashodGroup;
 
 {$R *.DFM}
 
@@ -622,7 +660,8 @@ begin
   dmDataModule.quMenu.Open;
   for i := 0 to MI.Count - 1 do
   begin
-    if dmDataModule.quMenu.Locate('UserNo;ItemName', VarArrayOf([Data.UserNo, Trim(MI[i].Name)]), []) and dmDataModule.quMenuEnabled.AsBoolean then
+    if dmDataModule.quMenu.Locate('UserNo;ItemName', VarArrayOf([Data.UserNo, Trim(MI[i].Name)]), []) and
+    dmDataModule.quMenuEnabled.AsBoolean then
     begin
       MI[i].Enabled := True;
       MI[i].Visible := True;
@@ -749,7 +788,7 @@ var
   Connect1C: Boolean;
 begin
   inherited;
-  OnSetModule;
+  OnSetModule;  
   if not TMlekoSelectDayDeptDlg.SelectDayDept then
   begin
     MessageDlg('Для входа в программу необходимо выбрать подразделение и рабочую дату', mtInformation, [mbOk], 0);
@@ -792,6 +831,9 @@ begin
   PlanningOrderPrev.Caption := 'За ' + MonthToString(Month, False);
   Label1.Caption := dmDataModule.OurFirmName;
 
+
+
+
   dmDataModule.OpenSQL('select EditPost, rtrim(UserName) as UserName, @@SERVERNAME as ServerName from Users where UserNo = :p1_id', [Data.UserNo]);
   EditPostUser := (not dmDataModule.QFO.FieldByName('EditPost').AsBoolean);
   fmMain.StatusBar.Panels[0].Text := 'Пользователь : ' + dmDataModule.QFO.FieldByName('UserName').AsString;
@@ -811,25 +853,22 @@ begin
   fmMain.StatusBar.Panels[3].Width := 200;
   ServerType := data.ServSection;
 
+
+
   isPrintTTNForNight := False;
 
   dmDataModule.OpenSQL('select UserName,EditPost from Users where EditPost = 1 and UserNo = :p1_id', [Data.UserNo]);
-  if (dmDataModule.QFO.RecordCount > 0) then
-    UserAccessToEditingPublishers := true
-  else
-    UserAccessToEditingPublishers := false;
+  if (dmDataModule.QFO.RecordCount > 0) then   UserAccessToEditingPublishers := true
+                                        else   UserAccessToEditingPublishers := false; 
 
   dmDataModule.OpenSQL('select ChangePriceInInst from ListUsersForChange where UserNo = :p1_id', [Data.UserNo]);
-  if (dmDataModule.QFO.RecordCount > 0) then
-    EditPriceInInst := (dmDataModule.QFO.FieldByName('ChangePriceInInst').AsBoolean)
-  else
-    EditPriceInInst := false;
+  if (dmDataModule.QFO.RecordCount > 0) then EditPriceInInst := (dmDataModule.QFO.FieldByName('ChangePriceInInst').AsBoolean)
+                                        else EditPriceInInst := false;
+
 
   dmDataModule.OpenSQL('select DeltaPriceInInst from DeltaPrice');
-  if (dmDataModule.QFO.RecordCount > 0) then
-    DeltaPriceInInst := (dmDataModule.QFO.FieldByName('DeltaPriceInInst').AsFloat)
-  else
-    DeltaPriceInInst := 0;
+  if (dmDataModule.QFO.RecordCount > 0) then DeltaPriceInInst := (dmDataModule.QFO.FieldByName('DeltaPriceInInst').AsFloat)
+                                        else DeltaPriceInInst := 0;
 
 
   //Проверка кассового аппарата (начало)
@@ -841,7 +880,8 @@ begin
   except
     begin
       dmDataModule.quWork.SQL.Clear;
-      dmDataModule.quWork.SQL.Add('ALTER TABLE Setup ADD PrinterCash INT ' + 'CONSTRAINT  DF_Setup_PrinterCash NOT NULL DEFAULT 0 WITH VALUES');
+      dmDataModule.quWork.SQL.Add('ALTER TABLE Setup ADD PrinterCash INT ' +
+        'CONSTRAINT  DF_Setup_PrinterCash NOT NULL DEFAULT 0 WITH VALUES');
       dmDataModule.quWork.Execute;
 
       dmDataModule.quWork.SQL.Clear;
@@ -857,7 +897,8 @@ begin
   except
     begin
       dmDataModule.quWork.SQL.Clear;
-      dmDataModule.quWork.SQL.Add('ALTER TABLE Setup ADD OpenCashBox INT ' + 'CONSTRAINT  DF_Setup_PrinterCash NOT NULL DEFAULT 0 WITH VALUES');
+      dmDataModule.quWork.SQL.Add('ALTER TABLE Setup ADD OpenCashBox INT ' +
+        'CONSTRAINT  DF_Setup_PrinterCash NOT NULL DEFAULT 0 WITH VALUES');
       dmDataModule.quWork.Execute;
 
       dmDataModule.quWork.SQL.Clear;
@@ -910,7 +951,8 @@ begin
   for j := 0 to fmMain.mmMenu.Items.Count - 1 do
     for i := 0 to fmMain.mmMenu.Items[j].Count - 1 do
     begin
-      fmMain.mmMenu.Items[j].Items[i].ShortCut := TextToShortCut(Ini.ReadString('Menu', fmMain.mmMenu.Items[j].Items[i].Name, ''));
+      fmMain.mmMenu.Items[j].Items[i].ShortCut :=
+        TextToShortCut(Ini.ReadString('Menu', fmMain.mmMenu.Items[j].Items[i].Name, ''));
     end;
   Ini.Free;
 
@@ -943,7 +985,8 @@ begin
         for i := 0 to fmMain.mmMenu.Items[j].Count - 1 do
           if fmMain.mmMenu.Items[j].Items[i].Visible then
           begin
-            fmMain.mmMenu.Items[j].Items[i].ShortCut := TextToShortCut(ListView1.Items[k].SubItems[0]);
+            fmMain.mmMenu.Items[j].Items[i].ShortCut :=
+              TextToShortCut(ListView1.Items[k].SubItems[0]);
             Ini.WriteString('Menu', fmMain.mmMenu.Items[j].Items[i].Name, ListView1.Items[k].SubItems[0]);
             Inc(k);
           end;
@@ -1435,7 +1478,9 @@ begin
   RetSelExpedition.Shipping_AgentNo := 0;
   RetSelExpedition.DateBegin := Date();
   RetSelExpedition.DateEnd := Date();
+  // RetSelExpedition:=SelExpedition;
   Expedition(RetSelExpedition, True);
+  // NaklR0.NaklR(RetSelNakl);
 end;
 
 procedure TfmMain.N85Click(Sender: TObject);
@@ -1733,10 +1778,8 @@ begin
     begin
       Divided := 1;
       case (Length(TempStr) - DelChar) of
-        1:
-          KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '00';
-        2:
-          KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '0';
+        1: KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '00';
+        2: KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '0';
       else
         KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr));
       end;
@@ -1753,8 +1796,7 @@ begin
     else
     begin
       case (Length(TempStr) - DelChar) of
-        1:
-          PricePrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '0';
+        1: PricePrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '0';
       else
         PricePrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr));
       end;
@@ -1763,7 +1805,8 @@ begin
     SummaCash := 0.756 * 17.45;
     if SummaCash > 0.01 then
     begin
-      MessageDlg('Товар: ' + 'КУРИНЫЕ КРЫЛЫШКИ' + ', Кол-во: ' + KolPrint + ', Цена: ' + PricePrint + ', Делимость: ' + IntToStr(Divided) + ' Сумма:' + FloatToStr(SummaCash), mtInformation, [mbOk], 0);
+      MessageDlg('Товар: ' + 'КУРИНЫЕ КРЫЛЫШКИ' + ', Кол-во: ' + KolPrint + ', Цена: ' + PricePrint + ', Делимость: ' + IntToStr(Divided) + ' Сумма:'
+        + FloatToStr(SummaCash), mtInformation, [mbOk], 0);
       if FiscPrinter.FiscalLine('КУРИНЫЕ КРЫЛЫШКИ', StrToInt(KolPrint), StrToInt(PricePrint), Divided, 1, 0, 101) <> 0 then
       begin
 
@@ -1787,10 +1830,8 @@ begin
     begin
       Divided := 1;
       case (Length(TempStr) - DelChar) of
-        1:
-          KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '00';
-        2:
-          KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '0';
+        1: KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '00';
+        2: KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '0';
       else
         KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr));
       end;
@@ -1807,8 +1848,7 @@ begin
     else
     begin
       case (Length(TempStr) - DelChar) of
-        1:
-          PricePrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '0';
+        1: PricePrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '0';
       else
         PricePrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr));
       end;
@@ -1817,7 +1857,8 @@ begin
     SummaCash := 1.25 * 22.58;
     if SummaCash > 0.01 then
     begin
-      MessageDlg('Товар: ' + 'КОЛБАСКА' + ', Кол-во: ' + KolPrint + ', Цена: ' + PricePrint + ', Делимость: ' + IntToStr(Divided) + ' Сумма:' + FloatToStr(SummaCash), mtInformation, [mbOk], 0);
+      MessageDlg('Товар: ' + 'КОЛБАСКА' + ', Кол-во: ' + KolPrint + ', Цена: ' + PricePrint + ', Делимость: ' + IntToStr(Divided) + ' Сумма:' +
+        FloatToStr(SummaCash), mtInformation, [mbOk], 0);
       if FiscPrinter.FiscalLine('КОЛБАСКА', StrToInt(KolPrint), StrToInt(PricePrint), Divided, 1, 0, 102) <> 0 then
       begin
 
@@ -1841,10 +1882,8 @@ begin
     begin
       Divided := 1;
       case (Length(TempStr) - DelChar) of
-        1:
-          KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '00';
-        2:
-          KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '0';
+        1: KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '00';
+        2: KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '0';
       else
         KolPrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr));
       end;
@@ -1861,8 +1900,7 @@ begin
     else
     begin
       case (Length(TempStr) - DelChar) of
-        1:
-          PricePrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '0';
+        1: PricePrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr)) + '0';
       else
         PricePrint := Copy(TempStr, 0, DelChar - 1) + Copy(TempStr, DelChar + 1, Length(TempStr));
       end;
@@ -1871,7 +1909,8 @@ begin
     SummaCash := 1 * 0.25;
     if SummaCash > 0.01 then
     begin
-      MessageDlg('Товар: ' + 'ПАКЕТИК' + ', Кол-во: ' + KolPrint + ', Цена: ' + PricePrint + ', Делимость: ' + IntToStr(Divided) + ' Сумма:' + FloatToStr(SummaCash), mtInformation, [mbOk], 0);
+      MessageDlg('Товар: ' + 'ПАКЕТИК' + ', Кол-во: ' + KolPrint + ', Цена: ' + PricePrint + ', Делимость: ' + IntToStr(Divided) + ' Сумма:' +
+        FloatToStr(SummaCash), mtInformation, [mbOk], 0);
       if FiscPrinter.FiscalLine('ПАКЕТИК', StrToInt(KolPrint), StrToInt(PricePrint), Divided, 1, 0, 99) <> 0 then
       begin
 
@@ -2229,9 +2268,9 @@ end;
 procedure TfmMain.Z1Click(Sender: TObject);
 begin
   if MessageDlg('Вы уверены что хотите распечатать Z-Отчет?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-  begin
-    if dmDataModule.FiscPrinterConnect(True) then
-    begin
+      begin
+        if dmDataModule.FiscPrinterConnect(True) then
+          begin
            {Получение информации о текущем положении ключа на принтере.
             ВОЗВРАЩАЕТ: Положение ключа в случае успеха или -1 в случае неудачи.
            GetPrinterKeyPosition принимает следующие значения:
@@ -2242,132 +2281,137 @@ begin
                 4 - "ПРОГРАММИРОВАНИЕ" (П).}
 
 
-        //*******************************************************************************************
-      if GlobalOurFirmNo = 490 then
-      begin
 
-        if FiscPrinter.GetPrinterKeyPosition = 3 then
-        begin
+        //*******************************************************************************************
+       if GlobalOurFirmNo = 490 then
+       begin
+       
+         if FiscPrinter.GetPrinterKeyPosition = 3 then
+           begin
 
              //Захватить доступ к принтеру
-          if FiscPrinter.LockPrinter(3000) = 1 then
-          begin
+					if FiscPrinter.LockPrinter(3000) = 1 then
+						begin
 							//       FiscPrinter.SetCheckHeadLine('ТОВ "Млеко" вул. Б.Чичибабіна,2-114А');//36
-            FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
-            FiscPrinter.ZReport;
-            FiscPrinter.UnlockPrinter;
-            dmDataModule.quWork.Close;
-            dmDataModule.quWork.SQL.Clear;
-            dmDataModule.quWork.SQL.Add('DELETE FROM Articles');
-            try
-              dmDataModule.quWork.Execute;
-            except
-              MessageDlg('Ошибка в очистки артиклей!!!', mtInformation, [mbOk], 0);
-            end;
+							FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
+							FiscPrinter.ZReport;
+							FiscPrinter.UnlockPrinter;
+							dmDataModule.quWork.Close;
+							dmDataModule.quWork.SQL.Clear;
+							dmDataModule.quWork.SQL.Add('DELETE FROM Articles');
+						try
+							dmDataModule.quWork.Execute;
+						except
+							MessageDlg('Ошибка в очистки артиклей!!!', mtInformation, [mbOk], 0);
+						end;
               //       FiscPrinter.OpenCashBox;
-          end
-          else
-            MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
-        end
-        else
-          MessageDlg('Переведите ключ в положение "Z-ОТЧЕТ" (Z)', mtInformation, [mbOk], 0);
-      end;
+					end
+			  	else
+				       	MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
+			  	end
+			  	else
+				      	MessageDlg('Переведите ключ в положение "Z-ОТЧЕТ" (Z)', mtInformation, [mbOk], 0);
+				end;
          
         //*******************************************************************************************
 
 
+
         //*******************************************************************************************
-      if GlobalOurFirmNo = 7419 then
-      begin
+       if GlobalOurFirmNo = 7419 then   
+       begin
 
              //Захватить доступ к принтеру
-        if FiscPrinter.LockPrinter(3000) = 1 then
-        begin
+					if FiscPrinter.LockPrinter(3000) = 1 then
+						begin
 							//       FiscPrinter.SetCheckHeadLine('ТОВ "Млеко" вул. Б.Чичибабіна,2-114А');//36
-          FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
-          FiscPrinter.ZReport;
-          FiscPrinter.UnlockPrinter;
-          dmDataModule.quWork.Close;
-          dmDataModule.quWork.SQL.Clear;
-          dmDataModule.quWork.SQL.Add('DELETE FROM Articles');
-          try
-            dmDataModule.quWork.Execute;
-          except
-            MessageDlg('Ошибка в очистки артиклей!!!', mtInformation, [mbOk], 0);
-          end;
+							FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
+							FiscPrinter.ZReport;
+							FiscPrinter.UnlockPrinter;
+							dmDataModule.quWork.Close;
+							dmDataModule.quWork.SQL.Clear;
+							dmDataModule.quWork.SQL.Add('DELETE FROM Articles');
+						try
+							dmDataModule.quWork.Execute;
+						except
+							MessageDlg('Ошибка в очистки артиклей!!!', mtInformation, [mbOk], 0);
+						end;
               //       FiscPrinter.OpenCashBox;
-        end
-        else
-          MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
+					end
+				  else
+				  	  MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
+				  end
       end
-    end
  
  //*******************************************************************************************
-    else
-      MessageDlg('Фискальный принтер не подключен!', mtInformation, [mbOk], 0);
-  end;
+		else
+					MessageDlg('Фискальный принтер не подключен!', mtInformation, [mbOk], 0);
+		end;
 end;
+
 
 procedure TfmMain.X1Click(Sender: TObject);
 begin
   if MessageDlg('Вы уверены что хотите распечатать X-Отчет?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-  begin
-    if dmDataModule.FiscPrinterConnect(True) then
-    begin
- 			  
+        begin
+            if dmDataModule.FiscPrinterConnect(True) then
+              begin 			  
 			  
 			  
  //***************************************************************************************************************
-
-      if GlobalOurFirmNo = 490 then
-      begin
-        if FiscPrinter.GetPrinterKeyPosition = 2 then
-        begin
+			  
+			  if GlobalOurFirmNo = 490 then
+			    begin
+				      if FiscPrinter.GetPrinterKeyPosition = 2 then
+					      begin
 						        //Захватить доступ к принтеру
-          if FiscPrinter.LockPrinter(3000) = 1 then
-          begin
+						        if FiscPrinter.LockPrinter(3000) = 1 then
+						        	begin
 								        	  //       FiscPrinter.SetCheckHeadLine('ТОВ "Млеко" вул. Б.Чичибабіна,2-114А');//36
-            FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
-            FiscPrinter.XReport;
-            FiscPrinter.UnlockPrinter;
+							    	        	FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
+								             	FiscPrinter.XReport;
+								            	FiscPrinter.UnlockPrinter;
 								          	//       FiscPrinter.OpenCashBox;
-          end
-          else
-            MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
-        end
-        else
-          MessageDlg('Переведите ключ в положение "X-ОТЧЕТ" (X)', mtInformation, [mbOk], 0);
-      end;
+							      	end
+							      	else
+								          	MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
+					      end
+				         else
+				                 	MessageDlg('Переведите ключ в положение "X-ОТЧЕТ" (X)', mtInformation, [mbOk], 0);
+		    	end;
 			  
           //*****************************************************************************************************
 
+
 			  //*******************************************************************************************************
 
-      if GlobalOurFirmNo = 7419 then
-      begin
+          if GlobalOurFirmNo = 7419 then
+			          begin
 
 			          	//Захватить доступ к принтеру
-        if FiscPrinter.LockPrinter(3000) = 1 then
-        begin
+			            if FiscPrinter.LockPrinter(3000) = 1 then
+		              	begin
 					               	//       FiscPrinter.SetCheckHeadLine('ТОВ "Млеко" вул. Б.Чичибабіна,2-114А');//36
-          FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
-          FiscPrinter.XReport;
-          FiscPrinter.UnlockPrinter;
+					            	FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
+					            	FiscPrinter.XReport;
+						            FiscPrinter.UnlockPrinter;
 					            	//       FiscPrinter.OpenCashBox;
-        end
-        else
-          MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
-      end
-    end
+				          	end
+					          else
+					              	MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
+		            end
+		      end
 
 			//***************************************************************************************
+			  
+      else
+          MessageDlg('Фискальный принтер не подключен!', mtInformation, [mbOk], 0);
 
-    else
-      MessageDlg('Фискальный принтер не подключен!', mtInformation, [mbOk], 0);
+    end
 
-  end
 
 end;
+
 
 procedure TfmMain.N144Click(Sender: TObject);
 var
@@ -2384,39 +2428,41 @@ begin
     3 - "Z-ОТЧЕТ" (Z);
     4 - "ПРОГРАММИРОВАНИЕ" (П).}
 
+
         //*****************************************************************************************************
 
-    if GlobalOurFirmNo = 490 then
-    begin
+		if GlobalOurFirmNo = 490 then
+		begin
 
       if FiscPrinter.GetPrinterKeyPosition = 1 then
-      begin
+         begin
            //Захватить доступ к принтеру
-        if FiscPrinter.LockPrinter(3000) = 1 then
-        begin
+          if FiscPrinter.LockPrinter(3000) = 1 then
+             begin
                //     FiscPrinter.SetCheckHeadLine('ТОВ "Млеко" вул. Б.Чичибабіна,2-114А');//36
-          FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
-          SummCash := '';
-          SummCash := InOutCash('Внесение наличности:');
-          if SummCash <> '' then
-            FiscPrinter.MoveCash(1, SummCash);
-          FiscPrinter.UnlockPrinter;
-          if PrinterOpenCashBox then
-            FiscPrinter.OpenCashBox;
-        end
-        else
-          MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
-
-      end
+                FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
+                SummCash := '';
+                SummCash := InOutCash('Внесение наличности:');
+                if SummCash <> '' then
+                FiscPrinter.MoveCash(1, SummCash);
+                FiscPrinter.UnlockPrinter;
+                      if PrinterOpenCashBox then
+                            FiscPrinter.OpenCashBox;
+            end
       else
-        MessageDlg('Переведите ключ в положение "РАБОТА" (Р)', mtInformation, [mbOk], 0);
-    end;
+        MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
+
+    end
+    else
+      MessageDlg('Переведите ключ в положение "РАБОТА" (Р)', mtInformation, [mbOk], 0);
+  end;
 
    //******************************************************************************************************************
 
+
    //******************************************************************************************************************
-    if GlobalOurFirmNo = 7419 then
-    begin
+        if GlobalOurFirmNo = 7419 then
+        begin
 
             //Захватить доступ к принтеру
       if FiscPrinter.LockPrinter(3000) = 1 then
@@ -2461,30 +2507,30 @@ begin
 
  //*****************************************************************************************************
 
-    if GlobalOurFirmNo = 490 then
-    begin
+       if GlobalOurFirmNo = 490 then
+	    	begin
 
-      if FiscPrinter.GetPrinterKeyPosition = 1 then
-      begin
+        if FiscPrinter.GetPrinterKeyPosition = 1 then
+          begin
             //Захватить доступ к принтеру
-        if FiscPrinter.LockPrinter(3000) = 1 then
-        begin
+            if FiscPrinter.LockPrinter(3000) = 1 then
+               begin
                    //       FiscPrinter.SetCheckHeadLine('ТОВ "Млеко" вул. Б.Чичибабіна,2-114А');//36
-          FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
-          SummCash := '';
-          SummCash := InOutCash('Выдача наличности:');
-          if SummCash <> '' then
-            FiscPrinter.MoveCash(0, SummCash);
-          FiscPrinter.UnlockPrinter;
-          if PrinterOpenCashBox then
-            FiscPrinter.OpenCashBox;
-        end
-        else
-          MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
-      end
-      else
-        MessageDlg('Переведите ключ в положение "РАБОТА" (Р)', mtInformation, [mbOk], 0);
-
+                      FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
+                      SummCash := '';
+                      SummCash := InOutCash('Выдача наличности:');
+                        if SummCash <> '' then
+                            FiscPrinter.MoveCash(0, SummCash);
+                            FiscPrinter.UnlockPrinter;
+                        if PrinterOpenCashBox then
+                            FiscPrinter.OpenCashBox;
+                end
+                else
+                      MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
+            end
+            else
+                   MessageDlg('Переведите ключ в положение "РАБОТА" (Р)', mtInformation, [mbOk], 0);
+      
     end;
 
 
@@ -2492,27 +2538,27 @@ begin
 //*****************************************************************************************************
 
 //*****************************************************************************************************
-    if GlobalOurFirmNo = 7419 then
-    begin
+     if GlobalOurFirmNo = 7419 then
+        begin
                //Захватить доступ к принтеру
-      if FiscPrinter.LockPrinter(3000) = 1 then
-      begin
+          if FiscPrinter.LockPrinter(3000) = 1 then
+              begin
                   //       FiscPrinter.SetCheckHeadLine('ТОВ "Млеко" вул. Б.Чичибабіна,2-114А');//36
-        FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
-        SummCash := '';
-        SummCash := InOutCash('Выдача наличности:');
-        if SummCash <> '' then
-          FiscPrinter.MoveCash(0, SummCash);
-        FiscPrinter.UnlockPrinter;
-        if PrinterOpenCashBox then
-          FiscPrinter.OpenCashBox;
-      end
-      else
-        MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
-    end
-  end
+                FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
+                SummCash := '';
+                SummCash := InOutCash('Выдача наличности:');
+                  if SummCash <> '' then
+                      FiscPrinter.MoveCash(0, SummCash);
+                      FiscPrinter.UnlockPrinter;
+                 if PrinterOpenCashBox then
+                     FiscPrinter.OpenCashBox;
+              end
+              else
+                    MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
+        end
+        end
 
- //**********************************************************************************************************
+ //**********************************************************************************************************  
   else
     MessageDlg('Фискальный принтер не подключен!', mtInformation, [mbOk], 0);
 end;
@@ -2532,17 +2578,18 @@ begin
       3 - "Z-ОТЧЕТ" (Z);
       4 - "ПРОГРАММИРОВАНИЕ" (П).}
 
+
 //*************************************************************************************************************
       if GlobalOurFirmNo = 490 then
-      begin
-        if FiscPrinter.GetPrinterKeyPosition = 1 then
-        begin
+	    	begin
+              if FiscPrinter.GetPrinterKeyPosition = 1 then
+               begin
                     //Захватить доступ к принтеру
-          if FiscPrinter.LockPrinter(3000) = 1 then
-          begin
+                    if FiscPrinter.LockPrinter(3000) = 1 then
+                         begin
                              //       FiscPrinter.SetCheckHeadLine('ТОВ "Млеко" вул. Б.Чичибабіна,2-114А');//36
-            FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
-            FiscPrinter.CutAndBeep(0, 1);
+                              FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
+                              FiscPrinter.CutAndBeep(0, 1);
                               {Включает или отключает авто обрезку и/или звуковой
                               сигнал в конце каждого чека. Примечание: Эта функция
                               работает только с ЭККА Мария-М301 МТМ.
@@ -2551,35 +2598,38 @@ begin
                             бумаги в конце каждого чека.
                             BeepOn - включение(1)/выключение(0) звукового
                             сигнала в конце каждого чека.}
-            FiscPrinter.NullCheck;
-            FiscPrinter.NullCheck;
-            FiscPrinter.NullCheck;
-            FiscPrinter.CutAndBeep(1, 1);
-            FiscPrinter.UnlockPrinter;
+                              FiscPrinter.NullCheck;
+                              FiscPrinter.NullCheck;
+                              FiscPrinter.NullCheck;
+                              FiscPrinter.CutAndBeep(1, 1);
+                              FiscPrinter.UnlockPrinter;
                               //       FiscPrinter.OpenCashBox;
-          end
-          else
-            MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
-        end
-        else
-          MessageDlg('Переведите ключ в положение "РАБОТА" (Р)', mtInformation, [mbOk], 0);
-
-      end;
+                        end
+                        else
+                              MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
+               end
+               else
+                      MessageDlg('Переведите ключ в положение "РАБОТА" (Р)', mtInformation, [mbOk], 0);
+                
+        end;
 
 
  //****************************************************************************************************************************
 
+
  //***************************************************************************************************************************
 
 
-      if GlobalOurFirmNo = 7419 then
-      begin
-              //Захватить доступ к принтеру
-        if FiscPrinter.LockPrinter(3000) = 1 then
+
+
+    if GlobalOurFirmNo = 7419 then
         begin
+              //Захватить доступ к принтеру
+              if FiscPrinter.LockPrinter(3000) = 1 then
+                  begin
                       //       FiscPrinter.SetCheckHeadLine('ТОВ "Млеко" вул. Б.Чичибабіна,2-114А');//36
-          FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');
-          FiscPrinter.CutAndBeep(1, 1, 1);
+                       FiscPrinter.SetCheckBottomLine('          "Дякуємо за покупку!"');  
+                      FiscPrinter.CutAndBeep(1, 1, 1);
                       {Включает или отключает авто обрезку и/или звуковой
                         сигнал в конце каждого чека. Примечание: Эта функция
                         работает только с ЭККА Мария-М301 МТМ.
@@ -2588,24 +2638,24 @@ begin
                         бумаги в конце каждого чека.
                         BeepOn - включение(1)/выключение(0) звукового
                         сигнала в конце каждого чека.}
-          FiscPrinter.NullCheck;
-          FiscPrinter.NullCheck;
-          FiscPrinter.NullCheck;
-          FiscPrinter.CutAndBeep(1, 1);
-          FiscPrinter.UnlockPrinter;
+                        FiscPrinter.NullCheck;
+                        FiscPrinter.NullCheck;
+                        FiscPrinter.NullCheck;
+                        FiscPrinter.CutAndBeep(1, 1);
+                        FiscPrinter.UnlockPrinter;
                         //       FiscPrinter.OpenCashBox;
-        end
-        else
-          MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
+                  end
+                  else
+                         MessageDlg('Фискальный принтер занят другим приложением. Попоробуйте позже', mtInformation, [mbOk], 0);
+           end 
       end
-    end
 
     //*******************************************************************************************************************************
 
 
     else
       MessageDlg('Фискальный принтер не подключен!', mtInformation, [mbOk], 0);
-  end
+      end
 end;
 
 procedure TfmMain.N147Click(Sender: TObject);
@@ -2756,7 +2806,7 @@ var
 begin
 
 //*****************************************************************************************************************************
-  if dmDataModule.FiscPrinterConnect(True) then
+   if dmDataModule.FiscPrinterConnect(True) then
   begin
     Period := ZapDate(3);
     if (Period[1] = 0) or (Period[2] = 0) then
@@ -2764,7 +2814,7 @@ begin
     FiscPrinter.PeriodicalFiscalReportDate(DateToStr(Period[1]), DateToStr(Period[2]));
   end
   else
-    MessageDlg('Фискальный принтер не подключен!', mtInformation, [mbOk], 0);
+   MessageDlg('Фискальный принтер не подключен!', mtInformation,[mbOk], 0);
    //**************************************************************************************************************************
 end;
 
@@ -2812,26 +2862,25 @@ procedure TfmMain.N124Click(Sender: TObject);
 begin
   inherited;
   begin
-    with TfmNaklRPost.Create(Application) do
-    try
-      dtDateBeg.Date := GlobalDateNakl - 1;
-      dtDateEnd.Date := GlobalDateNakl;
-      quFilterPost.Open;
+  with TfmNaklRPost.Create(Application) do
+  try
+    dtDateBeg.Date := GlobalDateNakl -1;
+    dtDateEnd.Date := GlobalDateNakl;
+    quFilterPost.Open;
 
-      quNaklRpostExport.ParamByName('date1').Value := GlobalDateNakl - 1;
-      quNaklRpostExport.ParamByName('date2').Value := GlobalDateNakl;
+    quNaklRpostExport.ParamByName('date1').Value := GlobalDateNakl -1;
+    quNaklRpostExport.ParamByName('date2').Value := GlobalDateNakl;
 
-      quNaklRpostExport.Open;
-      if quNaklRpostExport.RecordCount = 0 then
-        raise Exception.Create('Нет записи в запросе! Сообщите программисту!!!' + #10#13 + quNaklRpostExport.SQL.Text);
-      ShowModal;
-    finally
+    quNaklRpostExport.Open;
+     if quNaklRpostExport.RecordCount = 0 then raise Exception.Create('Нет записи в запросе! Сообщите программисту!!!'+ #10#13 +quNaklRpostExport.SQL.Text);
+     ShowModal;
+  finally
 //    quFilterPost.Close;
-      quNaklRpostExport.Close;
+    quNaklRpostExport.Close;
 
-      Free;
-    end;
+    Free;
   end;
+end;
 end;
 
 procedure TfmMain.N187Click(Sender: TObject);
@@ -2843,183 +2892,170 @@ var
   l_str: string;
 begin
   inherited;
-  Meko_Blanc_Price.BLANC_PRICE.Y_N_Label.Caption := '';
-  MlekoBlkParamPrivyazka.NaborAddTovar.Label1.Caption := '';
+  Meko_Blanc_Price.BLANC_PRICE.Y_N_Label.Caption:= '';
+  MlekoBlkParamPrivyazka.NaborAddTovar.Label1.Caption:='';
   if TCFLMLKSelectDlg.OpenHoldSelect('main_form', 'select_report', 'D_REPORT', false, ' code=''REPORT''') then
   begin
     dmDataModule.get_selected_value('main_form', 'select_report', 'D_REPORT', lv_txt, lv_key);
     id := StrToInt(lv_key);
     Params := TParams.Create;
     try
-      DmDataModule.OpenSQL('select sval from DbProp.dbo.d_instance_prop where Name=''SERVER_TYPE''');
-      SERVER_TYPE := DmDataModule.QFO.FieldByName('sval').AsString;
-      DmDataModule.OpenSQL('select SERVER_TYPE from d_prop_dlg where id= :p1_id', [ID]);
-      if DmDataModule.QFO.FieldByName('SERVER_TYPE').AsString <> SERVER_TYPE then
-        Application.MessageBox('Этот отчет может открываться только на резервном сервере!', 'Предупреждение', MB_OK + MB_ICONSTOP)
-      else if (id = 12) or (id = 112) or (id = 130) then
-      begin
-        dmDataModule.quWork.SQL.Clear;
-        dmDataModule.quWork.SQL.Add('select isnull(MaxKol,0) as MaxKol from MaxKolFromOstatok');
-        dmDataModule.quWork.Open;
-        l_str := 'Желаете изменить максимально выводимое количество остатков?' + #10#13 + 'На данный момент максимально выводимое количество: ' + inttostr(dmDataModule.quWork.FieldByName('MaxKol').Value);
-        if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then
-        begin
-          with TMlekoSelectFloatDlg.Create(Application) do
-          try
-            FloatEditFromOststok.Visible := true;
-            FloatEditFromAnalysisOstatok.Visible := false;
-            FloatEditForAnalysisUnlocking.Visible := false;
-            quMaxKolFromOstatok.Open;
-            ShowModal;
-          finally
-            quMaxKolFromOstatok.Close;
-            Free;
-          end;
-        end;
-      end;
-      if (id = 113) then
-      begin
-        dmDataModule.quWork.SQL.Clear;
-        dmDataModule.quWork.SQL.Add('select isnull(MaxKol,0) as MaxKol from MaxKolFromAnalysisOstatok');
-        dmDataModule.quWork.Open;
-        l_str := 'Желаете изменить минимальное выводимое количество дней продажи товара?' + #10#13 + 'На данный момент минимальное выводимое количество дней продажи: ' + inttostr(dmDataModule.quWork.FieldByName('MaxKol').Value);
-        if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then
-        begin
-          with TMlekoSelectFloatDlg.Create(Application) do
-          try
-            FloatEditFromAnalysisOstatok.Visible := true;
-            FloatEditFromOststok.Visible := false;
-            FloatEditForAnalysisUnlocking.Visible := false;
-            quMaxKolFromAnalysisOstatok.Open;
-            ShowModal;
-          finally
-            quMaxKolFromAnalysisOstatok.Close;
-            Free;
-          end;
-        end;
-        l_str := 'Желаете изменить список исключаемых контрагентов?';
-        if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then
-        begin
-          with TListMinusPostForAnalizOstatkaaForm.Create(Application) do
-          try
-            quListMinusPostForAnalizOstatkaa.Open;
-            ShowModal;
-          finally
-            quListMinusPostForAnalizOstatkaa.Close;
-            Free;
-          end;
-        end;
-      end;
-      if (id = 114) then
-      begin
-        l_str := 'Желаете изменить список исключаемых контрагентов?';
-        if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then
-        begin
-          with TListMinusPostForOstatokZeroaForm.Create(Application) do
-          try
-            quListMinusPostForOstatokZeroa.Open;
-            ShowModal;
-          finally
-            quListMinusPostForOstatokZeroa.Close;
-            Free;
-          end;
-        end;
-        l_str := 'Желаете изменить список исключаемых статей расходов?';
-        if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then
-        begin
-          with TListMinusVidRashodForOstatokZeroaForm.Create(Application) do
-          try
-            quListMinusVidRashodForOstatokZeroa.Open;
-            ShowModal;
-          finally
-            quListMinusVidRashodForOstatokZeroa.Close;
-            Free;
-          end;
-        end;
-      end;
+     DmDataModule.OpenSQL('select sval from DbProp.dbo.d_instance_prop where Name=''SERVER_TYPE''');
+     SERVER_TYPE:=DmDataModule.QFO.FieldByName('sval').AsString;
+     DmDataModule.OpenSQL('select SERVER_TYPE from d_prop_dlg where id= :p1_id',[ID]);
+     if DmDataModule.QFO.FieldByName('SERVER_TYPE').AsString <> SERVER_TYPE then
+      Application.MessageBox('Этот отчет может открываться только на резервном сервере!', 'Предупреждение', MB_OK+MB_ICONSTOP)
+     else
+      if (id = 12) or (id = 112) or (id = 130) then begin
+                                                      dmDataModule.quWork.SQL.Clear;
+                                                      dmDataModule.quWork.SQL.Add('select isnull(MaxKol,0) as MaxKol from MaxKolFromOstatok');
+                                                      dmDataModule.quWork.Open;
+                                                      l_str := 'Желаете изменить максимально выводимое количество остатков?'+ #10#13 +
+                                                               'На данный момент максимально выводимое количество: ' + inttostr(dmDataModule.quWork.FieldByName('MaxKol').Value);
+                                                      if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then begin
+                                                                                                                                    with TMlekoSelectFloatDlg.Create(Application) do
+                                                                                                                                     try
+                                                                                                                                       FloatEditFromOststok.Visible := true;
+                                                                                                                                       FloatEditFromAnalysisOstatok.Visible := false;
+                                                                                                                                       FloatEditForAnalysisUnlocking.Visible := false;
+                                                                                                                                       quMaxKolFromOstatok.Open;
+                                                                                                                                       ShowModal;
+                                                                                                                                     finally
+                                                                                                                                       quMaxKolFromOstatok.Close;
+                                                                                                                                       Free;
+                                                                                                                                     end;
+                                                                                                                                  end;
+                                                    end;
+      if (id = 113) then begin
+                           dmDataModule.quWork.SQL.Clear;
+                           dmDataModule.quWork.SQL.Add('select isnull(MaxKol,0) as MaxKol from MaxKolFromAnalysisOstatok');
+                           dmDataModule.quWork.Open;
+                           l_str := 'Желаете изменить минимальное выводимое количество дней продажи товара?'+ #10#13 +
+                                    'На данный момент минимальное выводимое количество дней продажи: ' + inttostr(dmDataModule.quWork.FieldByName('MaxKol').Value);
+                           if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then begin
+                                                                                                         with TMlekoSelectFloatDlg.Create(Application) do
+                                                                                                          try
+                                                                                                            FloatEditFromAnalysisOstatok.Visible := true;
+                                                                                                            FloatEditFromOststok.Visible := false;
+                                                                                                            FloatEditForAnalysisUnlocking.Visible := false;
+                                                                                                            quMaxKolFromAnalysisOstatok.Open;
+                                                                                                            ShowModal;
+                                                                                                          finally
+                                                                                                            quMaxKolFromAnalysisOstatok.Close;
+                                                                                                            Free;
+                                                                                                          end;
+                                                                                                       end;
+                           l_str := 'Желаете изменить список исключаемых контрагентов?';
+                           if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then begin
+                                                                                                         with TListMinusPostForAnalizOstatkaaForm.Create(Application) do
+                                                                                                          try
+                                                                                                            quListMinusPostForAnalizOstatkaa.Open;
+                                                                                                            ShowModal;
+                                                                                                          finally
+                                                                                                            quListMinusPostForAnalizOstatkaa.Close;
+                                                                                                            Free;
+                                                                                                          end;
+                                                                                                       end;
+                         end;
+      if (id = 114) then begin
+                           l_str := 'Желаете изменить список исключаемых контрагентов?';
+                           if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then begin
+                                                                                                         with TListMinusPostForOstatokZeroaForm.Create(Application) do
+                                                                                                          try
+                                                                                                            quListMinusPostForOstatokZeroa.Open;
+                                                                                                            ShowModal;
+                                                                                                          finally
+                                                                                                            quListMinusPostForOstatokZeroa.Close;
+                                                                                                            Free;
+                                                                                                          end;
+                                                                                                       end;
+                           l_str := 'Желаете изменить список исключаемых статей расходов?';
+                           if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then begin
+                                                                                                         with TListMinusVidRashodForOstatokZeroaForm.Create(Application) do
+                                                                                                          try
+                                                                                                            quListMinusVidRashodForOstatokZeroa.Open;
+                                                                                                            ShowModal;
+                                                                                                          finally
+                                                                                                            quListMinusVidRashodForOstatokZeroa.Close;
+                                                                                                            Free;
+                                                                                                          end;
+                                                                                                       end;
+                         end;
 
-      if (id = 116) then
-      begin
-        l_str := 'Желаете изменить список контрагентов?';
-        if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then
-        begin
-          with TListPlusPostForDolgForm.Create(Application) do
-          try
-            quListPlusPostForDolg.Open;
-            ShowModal;
-          finally
-            quListPlusPostForDolg.Close;
-            Free;
-          end;
-        end;
-        l_str := 'Желаете изменить список исключаемых контрагентов?';
-        if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then
-        begin
-          with TListMinusPostForDolgForm.Create(Application) do
-          try
-            quListMinusPostForDolg.Open;
-            ShowModal;
-          finally
-            quListMinusPostForDolg.Close;
-            Free;
-          end;
-        end;
-      end;
+      if (id = 116) then begin
+                           l_str := 'Желаете изменить список контрагентов?';
+                           if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then begin
+                                                                                                         with TListPlusPostForDolgForm.Create(Application) do
+                                                                                                          try
+                                                                                                            quListPlusPostForDolg.Open;
+                                                                                                            ShowModal;
+                                                                                                          finally
+                                                                                                            quListPlusPostForDolg.Close;
+                                                                                                            Free;
+                                                                                                          end;
+                                                                                                       end;
+                           l_str := 'Желаете изменить список исключаемых контрагентов?';
+                           if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then begin
+                                                                                                         with TListMinusPostForDolgForm.Create(Application) do
+                                                                                                          try
+                                                                                                            quListMinusPostForDolg.Open;
+                                                                                                            ShowModal;
+                                                                                                          finally
+                                                                                                            quListMinusPostForDolg.Close;
+                                                                                                            Free;
+                                                                                                          end;
+                                                                                                       end;
+                         end;
 
-      if (id = 80) then
-      begin
-        l_str := 'Желаете изменить список исключаемых контрагентов?';
-        if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then
-        begin
-          with TListMinusPostForAnalizPrihodaForm.Create(Application) do
-          try
-            quListMinusPostForAnalizPrihoda.Open;
-            ShowModal;
-          finally
-            quListMinusPostForAnalizPrihoda.Close;
-            Free;
-          end;
-        end;
-      end;
+      if (id = 80 ) then begin
+                           l_str := 'Желаете изменить список исключаемых контрагентов?';
+                           if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then begin
+                                                                                                         with TListMinusPostForAnalizPrihodaForm.Create(Application) do
+                                                                                                          try
+                                                                                                            quListMinusPostForAnalizPrihoda.Open;
+                                                                                                            ShowModal;
+                                                                                                          finally
+                                                                                                            quListMinusPostForAnalizPrihoda.Close;
+                                                                                                            Free;
+                                                                                                          end;
+                                                                                                       end;
+                         end;
 
-      if (id = 120) then
-      begin
-        dmDataModule.quWork.SQL.Clear;
-        dmDataModule.quWork.SQL.Add('select isnull(MaxKol,0) as MaxKol from MaxKolForAnalysisUnlocking');
-        dmDataModule.quWork.Open;
-        l_str := 'Желаете изменить количество дней просрочки?' + #10#13 + 'На данный момент количество дней просрочки: ' + inttostr(dmDataModule.quWork.FieldByName('MaxKol').Value);
-        if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then
-        begin
-          with TMlekoSelectFloatDlg.Create(Application) do
-          try
-            FloatEditForAnalysisUnlocking.Visible := true;
-            FloatEditFromAnalysisOstatok.Visible := false;
-            FloatEditFromOststok.Visible := false;
-            quMaxKolForAnalysisUnlocking.Open;
-            ShowModal;
-          finally
-            quMaxKolForAnalysisUnlocking.Close;
-            Free;
-          end;
-        end;
+      if (id = 120) then begin
+                           dmDataModule.quWork.SQL.Clear;
+                           dmDataModule.quWork.SQL.Add('select isnull(MaxKol,0) as MaxKol from MaxKolForAnalysisUnlocking');
+                           dmDataModule.quWork.Open;
+                           l_str := 'Желаете изменить количество дней просрочки?'+ #10#13 +
+                                    'На данный момент количество дней просрочки: ' + inttostr(dmDataModule.quWork.FieldByName('MaxKol').Value);
+                           if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then begin
+                                                                                                         with TMlekoSelectFloatDlg.Create(Application) do
+                                                                                                          try
+                                                                                                            FloatEditForAnalysisUnlocking.Visible := true;
+                                                                                                            FloatEditFromAnalysisOstatok.Visible := false;
+                                                                                                            FloatEditFromOststok.Visible := false;
+                                                                                                            quMaxKolForAnalysisUnlocking.Open;
+                                                                                                            ShowModal;
+                                                                                                          finally
+                                                                                                            quMaxKolForAnalysisUnlocking.Close;
+                                                                                                            Free;
+                                                                                                          end;
+                                                                                                       end;
 
-      end;
+                         end;
 
-      if (id = 126) then
-      begin
-        l_str := 'Желаете изменить список исключаемых контрагентов?';
-        if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then
-        begin
-          with TListMinusPostForAnalizPrihodNewaForm.Create(Application) do
-          try
-            quListMinusPostForAnalizPrihodNewa.Open;
-            ShowModal;
-          finally
-            quListMinusPostForAnalizPrihodNewa.Close;
-            Free;
-          end;
-        end;
-      end;
+      if (id = 126) then begin
+                           l_str := 'Желаете изменить список исключаемых контрагентов?';
+                           if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then begin
+                                                                                                         with TListMinusPostForAnalizPrihodNewaForm.Create(Application) do
+                                                                                                          try
+                                                                                                            quListMinusPostForAnalizPrihodNewa.Open;
+                                                                                                            ShowModal;
+                                                                                                          finally
+                                                                                                            quListMinusPostForAnalizPrihodNewa.Close;
+                                                                                                            Free;
+                                                                                                          end;
+                                                                                                       end;
+                         end;
 
       TCFLMLKCustomRepDlg.ShowRep(ID, Params);
     finally
@@ -3199,7 +3235,8 @@ end;
 procedure TfmMain.ActionServerInfo1Execute(Sender: TObject);
 begin
   inherited;
-  MessageDlg('ConnectString:' + #10#13 + dmDataModule.ConnectionInfo + #10#13 + 'ADO_SPID:' + IntToStr(MainDm.SPID), mtWarning, [mbOk], 0);
+  MessageDlg('ConnectString:'
+    + #10#13 + dmDataModule.ConnectionInfo + #10#13 + 'ADO_SPID:' + IntToStr(MainDm.SPID), mtWarning, [mbOk], 0);
 end;
 
 procedure TfmMain.OnSetModule;
@@ -3212,8 +3249,7 @@ end;
 procedure TfmMain.ActionBlockMainFormExecute(Sender: TObject);
 begin
   inherited;
-  if TMlekoPropDbBlockAppDlg.Block then
-    Exit;
+  if TMlekoPropDbBlockAppDlg.Block then Exit;
 end;
 
 procedure TfmMain.N37Click(Sender: TObject);
@@ -3289,24 +3325,25 @@ procedure TfmMain.N123Click(Sender: TObject);
 begin
   inherited;
   begin
-    with TfmTovarPost.Create(Application) do
-    try
-      quTovarPost.Open;
-      quFilterPost.Open;
-      quFilterBarCode.Open;
-      quFilterNameTovar.Open;
-      quTovarPost.Open;
+  with TfmTovarPost.Create(Application) do
+  try
+    quTovarPost.Open;
+    quFilterPost.Open;
+    quFilterBarCode.Open;
+    quFilterNameTovar.Open;
+    quTovarPost.Open;
 
-      ShowModal;
-    finally
-      quTovarPost.Close;
-      quFilterPost.Close;
-      quFilterBarCode.Close;
-      quFilterNameTovar.Close;
-      Free;
-    end;
+    ShowModal;
+  finally
+    quTovarPost.Close;
+    quFilterPost.Close;
+    quFilterBarCode.Close;
+    quFilterNameTovar.Close;
+    Free;
   end;
 end;
+end;
+
 
 procedure TfmMain.J1Click(Sender: TObject);
 var
@@ -3325,18 +3362,18 @@ procedure TfmMain.N141Click(Sender: TObject);
 begin
   inherited;
   begin
-    with TMlekoBlankListOutSideForm.Create(Application) do
-    try
-      quFilterPrice.Open;
-      quOrders.Open;
-      dtDateDelivery.Date := GlobalDateNakl;
-      ShowModal;
-    finally
-      quFilterPrice.Close;
-      quOrders.Close;
-      Free;
-    end;
+  with TMlekoBlankListOutSideForm.Create(Application) do
+  try
+    quFilterPrice.Open;
+    quOrders.Open;
+    dtDateDelivery.Date := GlobalDateNakl;
+    ShowModal;
+  finally
+    quFilterPrice.Close;
+    quOrders.Close;
+    Free;
   end;
+end;
 end;
 
 procedure TfmMain.N149Click(Sender: TObject);
@@ -3344,34 +3381,34 @@ begin
   inherited;
   begin
     with TfmChangePrice.Create(Application) do
-    try
-      qu_ChangePrice.Open;
-      ShowModal;
-    finally
-      qu_ChangePrice.Close;
-      Free;
-    end;
+     try
+       qu_ChangePrice.Open;
+       ShowModal;
+     finally
+       qu_ChangePrice.Close;
+       Free;
+     end;
   end;
 
 end;
 
 procedure TfmMain.N152Click(Sender: TObject);
 begin
-  inherited;
-  begin
-    with TTimetableForDriver0.Create(Application) do
-    try
-      quListTimeTable.Open;
-      quFilterPost.Open;
-      DateTimePickerBeg.Date := GlobalDateNakl;
-      DateTimePickerEnd.Date := GlobalDateNakl;
-      ShowModal;
-    finally
-      quListTimeTable.Close;
-      quFilterPost.Close;
-      Free;
+    inherited;
+    begin
+      with TTimetableForDriver0.Create(Application) do
+        try
+          quListTimeTable.Open;
+          quFilterPost.Open;
+          DateTimePickerBeg.Date := GlobalDateNakl;
+          DateTimePickerEnd.Date := GlobalDateNakl;
+          ShowModal;
+        finally
+          quListTimeTable.Close;
+          quFilterPost.Close;
+          Free;
+        end;
     end;
-  end;
 
 end;
 
@@ -3379,17 +3416,17 @@ procedure TfmMain.N153_CangePriceListClick(Sender: TObject);
 begin
   inherited;
   begin
-    with TChangePriceList.Create(Application) do
-    try
-      quFilterPrice.Open;
-      qu_ChangePriceList.Open;
-      ShowModal;
-    finally
-      quFilterPrice.Close;
-      qu_ChangePriceList.Close;
-      Free;
+      with TChangePriceList.Create(Application) do
+        try
+          quFilterPrice.Open;
+          qu_ChangePriceList.Open;
+          ShowModal;
+        finally
+          quFilterPrice.Close;
+          qu_ChangePriceList.Close;
+          Free;
+        end;
     end;
-  end;
 end;
 
 procedure TfmMain.NCrosPaymentFromPostClick(Sender: TObject);
@@ -3397,8 +3434,8 @@ begin
   inherited;
   begin
     with TCrossPaymentsFromPost.Create(Application) do
-    try
-      quPaymentForPost.Open;
+        try
+          quPaymentForPost.Open;
 {
           spPaymentForPost.Close;
           spPaymentForPost.ParamByName('isPostNoMinus').AsInteger := 1;
@@ -3409,21 +3446,21 @@ begin
           spPaymentForPost.ParamByName('UserNo').AsInteger := data.UserNo;
           spPaymentForPost.Open;
 }
-      dtDateBeg.Value := GlobalDateNakl - 7;
-      dtDateEnd.Value := GlobalDateNakl;
+          dtDateBeg.Value := GlobalDateNakl - 7;
+          dtDateEnd.Value := GlobalDateNakl;
 
-      quPaymentDelay.Open;
+          quPaymentDelay.Open;
 
-      dbEditNaklNom.Value := 0;
-      dbEditDayDelay.Value := 0;
+          dbEditNaklNom.Value := 0;
+          dbEditDayDelay.Value := 0;
 
-      ShowModal;
-    finally
-      quPaymentForPost.Close;
-      spPaymentForPost.Close;
-      quPaymentDelay.Open;
-      Free;
-    end;
+          ShowModal;
+        finally
+          quPaymentForPost.Close;
+          spPaymentForPost.Close;
+          quPaymentDelay.Open;
+          Free;
+        end;
   end;
 end;
 
@@ -3431,14 +3468,14 @@ procedure TfmMain.StandartsOfGoodsClick(Sender: TObject);
 begin
   inherited;
   begin
-    with TStandartsOfGoodsForm.Create(Application) do
-    try
-      quGoodStandarts.Open;
-      ShowModal;
-    finally
-      quGoodStandarts.Close;
-      Free;
-    end;
+      with TStandartsOfGoodsForm.Create(Application) do
+        try
+          quGoodStandarts.Open;
+          ShowModal;
+        finally
+          quGoodStandarts.Close;
+          Free;
+        end;
   end;
 end;
 
@@ -3446,14 +3483,14 @@ procedure TfmMain.TypeReturnClick(Sender: TObject);
 begin
   inherited;
   begin
-    with TTypeReturnForm.Create(Application) do
-    try
-      quTypeReturn.Open;
-      ShowModal;
-    finally
-      quTypeReturn.Close;
-      Free;
-    end;
+      with TTypeReturnForm.Create(Application) do
+        try
+          quTypeReturn.Open;
+          ShowModal;
+        finally
+          quTypeReturn.Close;
+          Free;
+        end;
   end;
 end;
 
@@ -3461,15 +3498,15 @@ procedure TfmMain.CategoryTTClick(Sender: TObject);
 begin
   inherited;
   begin
-    with TCategoryTTForm.Create(Application) do
-    try
-      quCategoryTT.Open;
-      EnabledEvents := True;
-      ShowModal;
-    finally
-      quCategoryTT.Close;
-      Free;
-    end;
+      with TCategoryTTForm.Create(Application) do
+        try
+          quCategoryTT.Open;
+          EnabledEvents := True;
+          ShowModal;
+        finally
+          quCategoryTT.Close;
+          Free;
+        end;
   end;
 
 end;
@@ -3477,21 +3514,21 @@ end;
 procedure TfmMain.MlekoBlankListWisKPKClick(Sender: TObject);
 begin
   inherited;
-  begin
-    with TMlekoBlankListWithKPKForm.Create(Application) do
-    try
-      que_blank_head_online.Open;
-      que_blank_head_online.ReadOnly := True;
-      DBGridEhOrders.ReadOnly := True;
+    begin
+      with TMlekoBlankListWithKPKForm.Create(Application) do
+        try
+          que_blank_head_online.Open;
+          que_blank_head_online.ReadOnly := True;
+          DBGridEhOrders.ReadOnly := True;
 
-      dtDateBeg.Value := GlobalDateNakl - 1;
-      dtDateEnd.Value := GlobalDateNakl;
-
-      ShowModal;
-    finally
-      que_blank_head_online.Close;
-      Free;
-    end;
+          dtDateBeg.Value := GlobalDateNakl - 1;
+          dtDateEnd.Value := GlobalDateNakl;
+ 
+          ShowModal;
+        finally
+          que_blank_head_online.Close;
+          Free;
+        end;
   end;
 
 end;
@@ -3505,12 +3542,8 @@ procedure TfmMain.IndentOrdersClick(Sender: TObject);
 begin
   inherited;
 
-  if GlobalOurFirmNo = 490 then
-    if not (FileExists('\\SIRIUS\ImportOrdersVeb\orders.csv')) then
-      raise Exception.Create('Файла d:\ImportOrdersVeb\orders.csv не существует на сервере!');
-  if GlobalOurFirmNo = 7419 then
-    if not (FileExists('\\SIRIUS\ImportOrdersVebMarket\orders.csv')) then
-      raise Exception.Create('Файла d:\ImportOrdersVebMarket\orders.csv не существует на сервере!');
+  if GlobalOurFirmNo = 490 then if not (FileExists('\\SIRIUS\ImportOrdersVeb\orders.csv')) then raise Exception.Create('Файла d:\ImportOrdersVeb\orders.csv не существует на сервере!');
+  if GlobalOurFirmNo = 7419 then if not (FileExists('\\SIRIUS\ImportOrdersVebMarket\orders.csv')) then raise Exception.Create('Файла d:\ImportOrdersVebMarket\orders.csv не существует на сервере!');
 
   dmDataModule.QFO.Close;
   dmDataModule.QFO.SQL.Clear;
@@ -3518,10 +3551,9 @@ begin
   dmDataModule.QFO.Execute;
   dmDataModule.QFO.Close;
 
-  if GlobalOurFirmNo = 490 then
-    ShowMessage('Файл d:\ImportOrdersVeb\orders.csv втянут во внешние заказы.');
-  if GlobalOurFirmNo = 7419 then
-    ShowMessage('Файл d:\ImportOrdersVebMarket\orders.csv втянут во внешние заказы.');
+
+ if GlobalOurFirmNo = 490 then ShowMessage('Файл d:\ImportOrdersVeb\orders.csv втянут во внешние заказы.');
+ if GlobalOurFirmNo = 7419 then ShowMessage('Файл d:\ImportOrdersVebMarket\orders.csv втянут во внешние заказы.');
 end;
 
 procedure TfmMain.ExpotrTovForScalesClick(Sender: TObject);
@@ -3529,13 +3561,13 @@ begin
   inherited;
   begin
     with TExportTovarForScalesForm.Create(Application) do
-    try
-      quFilterVidTovarForScales.Open;
-      ShowModal;
-    finally
-      quFilterVidTovarForScales.Close;
-      Free;
-    end;
+      try
+        quFilterVidTovarForScales.Open;
+        ShowModal;
+      finally
+        quFilterVidTovarForScales.Close;
+        Free;
+      end;
   end
 end;
 
@@ -3544,11 +3576,11 @@ begin
   inherited;
   begin
     with TInputOrderWithExcelForm.Create(Application) do
-    try
-      ShowModal;
-    finally
-      Free;
-    end;
+      try
+        ShowModal;
+      finally
+        Free;
+      end;
   end
 end;
 
@@ -3556,12 +3588,12 @@ procedure TfmMain.MarijaGroupTaxClick(Sender: TObject);
 begin
   inherited;
   begin
-    with TMlekoSelectMarijaGroupTaxDlg.Create(Application) do
-    try
-      ShowModal;
-    finally
-      Free;
-    end;
+     with TMlekoSelectMarijaGroupTaxDlg.Create(Application) do
+       try
+         ShowModal;
+       finally
+         Free;
+       end;
   end;
 end;
 
@@ -3632,13 +3664,13 @@ end;
 
 procedure TfmMain.ReceiptOrderClick(Sender: TObject);
 var
-  Spid: integer;
-  Pkey: Int64;
+ Spid : integer;
+ Pkey: Int64;
 begin
   inherited;
   begin
     Pkey := -1;
-    PrihodOrders('Add', Pkey);
+    PrihodOrders('Add',Pkey);
 {
      with TPrihodOrderForm.Create(Application) do
        try
@@ -3672,6 +3704,7 @@ begin
   end;
 end;
 
+
 procedure TfmMain.N153Click(Sender: TObject);
 begin
   inherited;
@@ -3684,33 +3717,35 @@ begin
   DeliveryOfGoods(True);
 end;
 
+
 procedure TfmMain.N01Click(Sender: TObject);
 begin
   inherited;
-  begin
-    with TListMinusVidTovaraForm.Create(Application) do
-    try
-      quListMinusVidTovara.Open;
-      ShowModal;
-    finally
-      quListMinusVidTovara.Close;
-      Free;
-    end;
+    begin
+     with TListMinusVidTovaraForm.Create(Application) do
+       try
+         quListMinusVidTovara.Open;
+         ShowModal;
+       finally
+         quListMinusVidTovara.Close;
+         Free;
+       end;
   end;
 end;
+
 
 procedure TfmMain.NOstatokZeroClick(Sender: TObject);
 begin
   inherited;
   begin
-    with TListMinusPostForOstatokZeroaForm.Create(Application) do
-    try
-      quListMinusPostForOstatokZeroa.Open;
-      ShowModal;
-    finally
-      quListMinusPostForOstatokZeroa.Close;
-      Free;
-    end;
+     with TListMinusPostForOstatokZeroaForm.Create(Application) do
+       try
+         quListMinusPostForOstatokZeroa.Open;
+         ShowModal;
+       finally
+         quListMinusPostForOstatokZeroa.Close;
+         Free;
+       end;
   end;
 end;
 
@@ -3718,29 +3753,29 @@ procedure TfmMain.NMinusVidRashodClick(Sender: TObject);
 begin
   inherited;
   begin
-    with TListMinusVidRashodForOstatokZeroaForm.Create(Application) do
-    try
-      quListMinusVidRashodForOstatokZeroa.Open;
-      ShowModal;
-    finally
-      quListMinusVidRashodForOstatokZeroa.Close;
-      Free;
-    end;
+     with TListMinusVidRashodForOstatokZeroaForm.Create(Application) do
+      try
+       quListMinusVidRashodForOstatokZeroa.Open;
+       ShowModal;
+      finally
+       quListMinusVidRashodForOstatokZeroa.Close;
+       Free;
+      end;
   end;
 end;
 
 procedure TfmMain.NClearBaseClick(Sender: TObject);
 var
-  quClearBaseTrunc: TMSQuery;
+  quClearBaseTrunc : TMSQuery;
   Period: TPeriodDate;
 begin
   inherited;
   Period := ZapDate(1);
   if Period[1] = 0 then
-    exit;
+      exit;
   sp_ClearBaseTrunc.Close;
   sp_ClearBaseTrunc.ParamByName('FixDay').Value := Period[1];
-  sp_ClearBaseTrunc.ExecProc;
+  sp_ClearBaseTrunc.ExecProc ;
 {
   quClearBaseTrunc := TMSQuery.Create(nil);
   quClearBaseTrunc.Connection:=dmDataModule.DB;
@@ -3763,7 +3798,13 @@ procedure TfmMain.NCorrectRestOfVPrihClick(Sender: TObject);
 begin
   inherited;
   dmDataModule.QFO.Close;
-  dmDataModule.QFO.SQL.Add('update Ostatok ' + ' set kol = 0 ' + 'where TovarNo in (select o.TovarNo ' + '                   from Ostatok o left join ' + '                        Tovar t on t.TovarNo = o.TovarNo ' + '                    where o.TovarNo not in (select distinct ARTICLE_ID from DSPEC) ' + '                      and o.Kol <> 0 ');
+  dmDataModule.QFO.SQL.Add('update Ostatok '+
+                           ' set kol = 0 '+
+                           'where TovarNo in (select o.TovarNo '+
+                           '                   from Ostatok o left join '+
+                           '                        Tovar t on t.TovarNo = o.TovarNo '+
+                           '                    where o.TovarNo not in (select distinct ARTICLE_ID from DSPEC) '+
+                           '                      and o.Kol <> 0 ');
   dmDataModule.QFO.Execute;
   ShowMessage('Корректировка остатков по виртуальным приходам завершена!');
 end;
@@ -3772,14 +3813,14 @@ procedure TfmMain.NPostMinusClearBaseClick(Sender: TObject);
 begin
   inherited;
   begin
-    with TListMinusPostForClearBaseForm.Create(Application) do
-    try
-      quListMinusPostForClearBase.Open;
-      ShowModal;
-    finally
-      quListMinusPostForClearBase.Close;
-      Free;
-    end;
+     with TListMinusPostForClearBaseForm.Create(Application) do
+      try
+       quListMinusPostForClearBase.Open;
+       ShowModal;
+      finally
+       quListMinusPostForClearBase.Close;
+       Free;
+      end;
   end;
 end;
 
@@ -3787,14 +3828,14 @@ procedure TfmMain.NMinusVidTovarClick(Sender: TObject);
 begin
   inherited;
   begin
-    with TListMinusVidTovaraForm.Create(Application) do
-    try
-      quListMinusVidTovara.Open;
-      ShowModal;
-    finally
-      quListMinusVidTovara.Close;
-      Free;
-    end;
+     with TListMinusVidTovaraForm.Create(Application) do
+       try
+         quListMinusVidTovara.Open;
+         ShowModal;
+       finally
+         quListMinusVidTovara.Close;
+         Free;
+       end;
   end;
 end;
 
@@ -3803,33 +3844,32 @@ begin
   inherited;
   inherited;
   begin
-    with TListMinusVidRashodForClearBaseForm.Create(Application) do
-    try
-      quListMinusVidRashodForClearBase.Open;
-      ShowModal;
-    finally
-      quListMinusVidRashodForClearBase.Close;
-      Free;
-    end;
+     with TListMinusVidRashodForClearBaseForm.Create(Application) do
+       try
+         quListMinusVidRashodForClearBase.Open;
+         ShowModal;
+       finally
+         quListMinusVidRashodForClearBase.Close;
+         Free;
+       end;
   end;
 end;
 
 procedure TfmMain.NWriteOffCostsClick(Sender: TObject);
 var
-  SelectPostNo, VidRashodNo: integer;
-  Dlg: TWriteOffCostsForm;
+ SelectPostNo, VidRashodNo : integer;
+
+ Dlg : TWriteOffCostsForm;
 begin
   inherited;
 
 //  showmessage(inttostr(VidRashorNo));
 
   SelectPostNo := SelectPostForWriteOffCost(VidRashodNo);
-  if SelectPostNo = 0 then
-    Exit;
+  if SelectPostNo = 0 then Exit;
 
-  VidRashodNo := VidRashod.VidRashoda(False, SelectPostNo);
-  if VidRashodNo = 0 then
-    Exit;
+  VidRashodNo := VidRashod.VidRashoda(False,SelectPostNo);
+  if VidRashodNo = 0 then Exit;
 
   Dlg := TWriteOffCostsForm.Create(Application);
   try
@@ -3846,6 +3886,7 @@ begin
     Dlg.lcPost.KeyValue := SelectPostNo;
     Dlg.lcSotrud.KeyValue := Dlg.quWriteOffCostsSotrudNo.AsVariant;
     Dlg.lcPlatType.KeyValue := 1;
+
 
     Dlg.quMaxNom.ParamByName('Buh').AsInteger := Dlg.quWriteOffCostsBuh.Value;
     Dlg.quMaxNom.Open;
@@ -3878,26 +3919,26 @@ end;
 procedure TfmMain.ABCDZ1Click(Sender: TObject);
 begin
   with TClassifierABCDZForm.Create(Application) do
-  try
-    dmDataModule.quClassifierABCDZ.Open;
-    ShowModal;
-  finally
-    dmDataModule.quClassifierABCDZ.Close;
-    Free;
-  end;
+   try
+     dmDataModule.quClassifierABCDZ.Open;
+     ShowModal;
+   finally
+     dmDataModule.quClassifierABCDZ.Close;
+     Free;
+   end;
 end;
 
 procedure TfmMain.NBanksClick(Sender: TObject);
 begin
   inherited;
   with TBankAndInvoiceForm.Create(Application) do
-  try
-    dmDataModule.quBanks.Open;
-    ShowModal;
-  finally
-    dmDataModule.quBanks.Close;
-    Free;
-  end;
+   try
+     dmDataModule.quBanks.Open;
+     ShowModal;
+   finally
+     dmDataModule.quBanks.Close;
+     Free;
+   end;
 
 end;
 
@@ -3905,25 +3946,25 @@ procedure TfmMain.NKassaClick(Sender: TObject);
 begin
   inherited;
   with TKassaForm.Create(Application) do
-  try
-    dmDataModule.quKassa.Open;
-    dmDataModule.quKassa.Edit;
-    ShowModal;
-  finally
-    dmDataModule.quKassa.Close;
-    Free;
-  end;
+   try
+     dmDataModule.quKassa.Open;
+     dmDataModule.quKassa.Edit;
+     ShowModal;
+   finally
+     dmDataModule.quKassa.Close;
+     Free;
+   end;
 end;
 
 procedure TfmMain.NBDDSClick(Sender: TObject);
 begin
   inherited;
   with TBDDSForm.Create(Application) do
-  try
-    ShowModal;
-  finally
-    Free;
-  end;
+   try
+     ShowModal;
+   finally
+     Free;
+   end;
 end;
 
 procedure TfmMain.NPepsicoClick(Sender: TObject);
@@ -3953,17 +3994,18 @@ begin
 }
 end;
 
+
 procedure TfmMain.NRequestForSupplyClick(Sender: TObject);
 begin
   inherited;
   with TRequestForSupplyGoodsHeadForm.Create(Application) do
-  try
-    quRequestForSupplyGoodsHead.Open;
-    ShowModal;
-  finally
-    quRequestForSupplyGoodsHead.Close;
-    Free;
-  end;
+   try
+     quRequestForSupplyGoodsHead.Open;
+     ShowModal;
+   finally
+     quRequestForSupplyGoodsHead.Close;
+     Free;
+   end;
 
 end;
 
@@ -3973,157 +4015,115 @@ begin
   ShowAddressPost_CODE_Commerce_Network(false);
 end;
 
+
 procedure TfmMain.NExportSotrudClick(Sender: TObject);
 var
-  FileName, DateStr, MonthStr, DayStr: string;
-  Year, Month, Day: Word;
-  BossNo: string;
+  FileName, DateStr, MonthStr, DayStr : string;
+  Year, Month, Day : Word;
+  BossNo : string;
+
 begin
   inherited;
 
   BossNo := SotrudLevelStr(false, 'L4');
 
-  if (BossNo = '-1') then
-  begin
-    raise Exception.Create('Отменено пользователем!');
-  end;
+  if (BossNo = '-1') then begin
+                            raise Exception.Create('Отменено пользователем!');
+                          end;
 
-  dmDataModule.ExecSQL('exec sp_ExportSotrudForSandora :p1_BossNo', [BossNo]);
+  dmDataModule.ExecSQL('exec sp_ExportSotrudForSandora :p1_BossNo',[BossNo]);
 
   DecodeDate(Date, Year, Month, Day);
 
-  if Day = 1 then
-    DayStr := '01';
-  if Day = 2 then
-    DayStr := '02';
-  if Day = 3 then
-    DayStr := '03';
-  if Day = 4 then
-    DayStr := '04';
-  if Day = 5 then
-    DayStr := '05';
-  if Day = 6 then
-    DayStr := '06';
-  if Day = 7 then
-    DayStr := '07';
-  if Day = 8 then
-    DayStr := '08';
-  if Day = 9 then
-    DayStr := '09';
-  if Day > 9 then
-    DayStr := IntToStr(Day);
+  if Day = 1 then DayStr := '01';
+  if Day = 2 then DayStr := '02';
+  if Day = 3 then DayStr := '03';
+  if Day = 4 then DayStr := '04';
+  if Day = 5 then DayStr := '05';
+  if Day = 6 then DayStr := '06';
+  if Day = 7 then DayStr := '07';
+  if Day = 8 then DayStr := '08';
+  if Day = 9 then DayStr := '09';
+  if Day > 9 then DayStr := IntToStr(Day);
 
-  if Month = 1 then
-    MonthStr := '01';
-  if Month = 2 then
-    MonthStr := '02';
-  if Month = 3 then
-    MonthStr := '03';
-  if Month = 4 then
-    MonthStr := '04';
-  if Month = 5 then
-    MonthStr := '05';
-  if Month = 6 then
-    MonthStr := '06';
-  if Month = 7 then
-    MonthStr := '07';
-  if Month = 8 then
-    MonthStr := '08';
-  if Month = 9 then
-    MonthStr := '09';
-  if Month > 9 then
-    MonthStr := IntToStr(Month);
+  if Month = 1 then MonthStr := '01';
+  if Month = 2 then MonthStr := '02';
+  if Month = 3 then MonthStr := '03';
+  if Month = 4 then MonthStr := '04';
+  if Month = 5 then MonthStr := '05';
+  if Month = 6 then MonthStr := '06';
+  if Month = 7 then MonthStr := '07';
+  if Month = 8 then MonthStr := '08';
+  if Month = 9 then MonthStr := '09';
+  if Month > 9 then MonthStr := IntToStr(Month);
 
   DateStr := IntToStr(Year) + MonthStr + DayStr;
 
-  FileName := '\\SIRIUS\ExportForSandora\24_ROUTES_' + DateStr + '.txt';
+  FileName := '\\SIRIUS\ExportForSandora\24_ROUTES_' + DateStr +'.txt';
 
-  if FileExists(FileName) then
-    ShowMessage('Создан файл ' + FileName)
-  else
-    ShowMessage('Файл ' + FileName + ' не создан!' + #10#13 + 'Обратитесь к системному администратору!');
+  if FileExists(FileName) then ShowMessage('Создан файл '+FileName)
+                          else ShowMessage('Файл '+FileName+' не создан!'+ #10#13 +
+                                           'Обратитесь к системному администратору!');
 end;
 
 procedure TfmMain.NExportAdrPostClick(Sender: TObject);
 var
-  FileName, DateStr, MonthStr, DayStr: string;
-  Year, Month, Day: Word;
-  BossNo: string;
+  FileName, DateStr, MonthStr, DayStr : string;
+  Year, Month, Day : Word;
+  BossNo : string;
 begin
   inherited;
 
   BossNo := SotrudLevelStr(false, 'L4');
 
-  if (BossNo = '-1') then
-  begin
-    raise Exception.Create('Отменено пользователем!');
-  end;
+  if (BossNo = '-1') then begin
+                            raise Exception.Create('Отменено пользователем!');
+                          end;
 
-  dmDataModule.ExecSQL('exec sp_ExportClassifierDeliveryPointsForSandora :p1_BossNo', [BossNo]);
+  dmDataModule.ExecSQL('exec sp_ExportClassifierDeliveryPointsForSandora :p1_BossNo',[BossNo]);
 
   DecodeDate(Date, Year, Month, Day);
 
-  if Day = 1 then
-    DayStr := '01';
-  if Day = 2 then
-    DayStr := '02';
-  if Day = 3 then
-    DayStr := '03';
-  if Day = 4 then
-    DayStr := '04';
-  if Day = 5 then
-    DayStr := '05';
-  if Day = 6 then
-    DayStr := '06';
-  if Day = 7 then
-    DayStr := '07';
-  if Day = 8 then
-    DayStr := '08';
-  if Day = 9 then
-    DayStr := '09';
-  if Day > 9 then
-    DayStr := IntToStr(Day);
+  if Day = 1 then DayStr := '01';
+  if Day = 2 then DayStr := '02';
+  if Day = 3 then DayStr := '03';
+  if Day = 4 then DayStr := '04';
+  if Day = 5 then DayStr := '05';
+  if Day = 6 then DayStr := '06';
+  if Day = 7 then DayStr := '07';
+  if Day = 8 then DayStr := '08';
+  if Day = 9 then DayStr := '09';
+  if Day > 9 then DayStr := IntToStr(Day);
 
-  if Month = 1 then
-    MonthStr := '01';
-  if Month = 2 then
-    MonthStr := '02';
-  if Month = 3 then
-    MonthStr := '03';
-  if Month = 4 then
-    MonthStr := '04';
-  if Month = 5 then
-    MonthStr := '05';
-  if Month = 6 then
-    MonthStr := '06';
-  if Month = 7 then
-    MonthStr := '07';
-  if Month = 8 then
-    MonthStr := '08';
-  if Month = 9 then
-    MonthStr := '09';
-  if Month > 9 then
-    MonthStr := IntToStr(Month);
+  if Month = 1 then MonthStr := '01';
+  if Month = 2 then MonthStr := '02';
+  if Month = 3 then MonthStr := '03';
+  if Month = 4 then MonthStr := '04';
+  if Month = 5 then MonthStr := '05';
+  if Month = 6 then MonthStr := '06';
+  if Month = 7 then MonthStr := '07';
+  if Month = 8 then MonthStr := '08';
+  if Month = 9 then MonthStr := '09';
+  if Month > 9 then MonthStr := IntToStr(Month);
 
   DateStr := IntToStr(Year) + MonthStr + DayStr;
 
-  FileName := '\\SIRIUS\ExportForSandora\24_OUTLETS_' + DateStr + '.txt';
+  FileName := '\\SIRIUS\ExportForSandora\24_OUTLETS_' + DateStr +'.txt';
 
-  if FileExists(FileName) then
-    ShowMessage('Создан файл ' + FileName)
-  else
-    ShowMessage('Файл ' + FileName + ' не создан!' + #10#13 + 'Обратитесь к системному администратору!');
+  if FileExists(FileName) then ShowMessage('Создан файл '+FileName)
+                          else ShowMessage('Файл '+FileName+' не создан!'+ #10#13 +
+                                           'Обратитесь к системному администратору!');
 end;
 
 procedure TfmMain.NExportSalesClick(Sender: TObject);
 var
-  Period: TPeriodDate;
-  FileName, DateStr, MonthStr, DayStr: string;
-  Year, Month, Day: Word;
-  PostNo: integer;
-  IsRun: Boolean;
-  Dlg: TMlekoSelectFIrmSupplierDlg;
-  BossNo: string;
+  Period:TPeriodDate;
+  FileName, DateStr, MonthStr, DayStr : string;
+  Year, Month, Day : Word;
+  PostNo : integer;
+  IsRun : Boolean;
+  Dlg : TMlekoSelectFIrmSupplierDlg;
+  BossNo : string;
 begin
   inherited;
 
@@ -4133,150 +4133,100 @@ begin
 
   BossNo := SotrudLevelStr(false, 'L4');
 
-  if (BossNo = '-1') then
-  begin
-    raise Exception.Create('Отменено пользователем!');
+  if (BossNo = '-1') then begin
+                            raise Exception.Create('Отменено пользователем!');
 
-  end;
+                          end;
 
   ShowMessage('Необходимо выбрать поставщика из списка');
   Dlg := TMlekoSelectFIrmSupplierDlg.Create(Application);
   try
     case Dlg.ShowModal of
-      mrOk:
-        PostNo := Dlg.Query.FieldByName('PostNo').Value;
-      mrCancel:
-        IsRun := False;
-      mrIgnore:
-        begin
-        end;
+      mrOk : PostNo := Dlg.Query.FieldByName('PostNo').Value;
+      mrCancel : IsRun := False;
+      mrIgnore : begin end;
     end;
   finally
-    Dlg.Query.Close;
-    Dlg.Free;
+     Dlg.Query.Close;
+     Dlg.Free;
   end;
 
-  if not IsRun then
-    raise Exception.Create('Отменено пользователем!');
+  if not IsRun then raise Exception.Create('Отменено пользователем!');
 
-  Period := ZapDate(2);
+   Period:=ZapDate(2);
 
-  if (Period[1] = 0) then
-    raise Exception.Create('Отменено пользователем!');
+  if (Period[1] = 0) then raise Exception.Create('Отменено пользователем!');
 
-  if IsRun then
-    dmDataModule.ExecSQL('exec sp_ExportSalesForSandora :p1_DateBeg, :p2_DateEnd, :p3_PostNo, :p4_BossNo ', [Period[1] - 2, Period[2] - 2, PostNo, BossNo]);
+  if IsRun then dmDataModule.ExecSQL('exec sp_ExportSalesForSandora :p1_DateBeg, :p2_DateEnd, :p3_PostNo, :p4_BossNo ',[Period[1]-2, Period[2]-2, PostNo, BossNo]);
 
   DecodeDate(Period[1], Year, Month, Day);
 
-  if Day = 1 then
-    DayStr := '01';
-  if Day = 2 then
-    DayStr := '02';
-  if Day = 3 then
-    DayStr := '03';
-  if Day = 4 then
-    DayStr := '04';
-  if Day = 5 then
-    DayStr := '05';
-  if Day = 6 then
-    DayStr := '06';
-  if Day = 7 then
-    DayStr := '07';
-  if Day = 8 then
-    DayStr := '08';
-  if Day = 9 then
-    DayStr := '09';
-  if Day > 9 then
-    DayStr := IntToStr(Day);
+  if Day = 1 then DayStr := '01';
+  if Day = 2 then DayStr := '02';
+  if Day = 3 then DayStr := '03';
+  if Day = 4 then DayStr := '04';
+  if Day = 5 then DayStr := '05';
+  if Day = 6 then DayStr := '06';
+  if Day = 7 then DayStr := '07';
+  if Day = 8 then DayStr := '08';
+  if Day = 9 then DayStr := '09';
+  if Day > 9 then DayStr := IntToStr(Day);
 
-  if Month = 1 then
-    MonthStr := '01';
-  if Month = 2 then
-    MonthStr := '02';
-  if Month = 3 then
-    MonthStr := '03';
-  if Month = 4 then
-    MonthStr := '04';
-  if Month = 5 then
-    MonthStr := '05';
-  if Month = 6 then
-    MonthStr := '06';
-  if Month = 7 then
-    MonthStr := '07';
-  if Month = 8 then
-    MonthStr := '08';
-  if Month = 9 then
-    MonthStr := '09';
-  if Month > 9 then
-    MonthStr := IntToStr(Month);
+  if Month = 1 then MonthStr := '01';
+  if Month = 2 then MonthStr := '02';
+  if Month = 3 then MonthStr := '03';
+  if Month = 4 then MonthStr := '04';
+  if Month = 5 then MonthStr := '05';
+  if Month = 6 then MonthStr := '06';
+  if Month = 7 then MonthStr := '07';
+  if Month = 8 then MonthStr := '08';
+  if Month = 9 then MonthStr := '09';
+  if Month > 9 then MonthStr := IntToStr(Month);
 
   DateStr := IntToStr(Year) + MonthStr + DayStr;
 
   DecodeDate(Period[2], Year, Month, Day);
 
-  if Day = 1 then
-    DayStr := '01';
-  if Day = 2 then
-    DayStr := '02';
-  if Day = 3 then
-    DayStr := '03';
-  if Day = 4 then
-    DayStr := '04';
-  if Day = 5 then
-    DayStr := '05';
-  if Day = 6 then
-    DayStr := '06';
-  if Day = 7 then
-    DayStr := '07';
-  if Day = 8 then
-    DayStr := '08';
-  if Day = 9 then
-    DayStr := '09';
-  if Day > 9 then
-    DayStr := IntToStr(Day);
+  if Day = 1 then DayStr := '01';
+  if Day = 2 then DayStr := '02';
+  if Day = 3 then DayStr := '03';
+  if Day = 4 then DayStr := '04';
+  if Day = 5 then DayStr := '05';
+  if Day = 6 then DayStr := '06';
+  if Day = 7 then DayStr := '07';
+  if Day = 8 then DayStr := '08';
+  if Day = 9 then DayStr := '09';
+  if Day > 9 then DayStr := IntToStr(Day);
 
-  if Month = 1 then
-    MonthStr := '01';
-  if Month = 2 then
-    MonthStr := '02';
-  if Month = 3 then
-    MonthStr := '03';
-  if Month = 4 then
-    MonthStr := '04';
-  if Month = 5 then
-    MonthStr := '05';
-  if Month = 6 then
-    MonthStr := '06';
-  if Month = 7 then
-    MonthStr := '07';
-  if Month = 8 then
-    MonthStr := '08';
-  if Month = 9 then
-    MonthStr := '09';
-  if Month > 9 then
-    MonthStr := IntToStr(Month);
+  if Month = 1 then MonthStr := '01';
+  if Month = 2 then MonthStr := '02';
+  if Month = 3 then MonthStr := '03';
+  if Month = 4 then MonthStr := '04';
+  if Month = 5 then MonthStr := '05';
+  if Month = 6 then MonthStr := '06';
+  if Month = 7 then MonthStr := '07';
+  if Month = 8 then MonthStr := '08';
+  if Month = 9 then MonthStr := '09';
+  if Month > 9 then MonthStr := IntToStr(Month);
 
   DateStr := DateStr + '_' + IntToStr(Year) + MonthStr + DayStr;
 
-  FileName := '\\SIRIUS\ExportForSandora\24_SALES_' + DateStr + '.txt';
+  FileName := '\\SIRIUS\ExportForSandora\24_SALES_' + DateStr +'.txt';
 
-  if IsRun then
-    if FileExists(FileName) then
-      ShowMessage('Создан файл ' + FileName)
-    else
-      ShowMessage('Файл ' + FileName + ' не создан!' + #10#13 + 'Обратитесь к системному администратору!');
+  if IsRun then if FileExists(FileName) then ShowMessage('Создан файл '+FileName)
+                                        else ShowMessage('Файл '+FileName+' не создан!'+ #10#13 +
+                                                         'Обратитесь к системному администратору!');
 
 end;
 
 procedure TfmMain.NExportRestSandClick(Sender: TObject);
 var
-  Period: TPeriodDate;
-  FileName, DateStr, MonthStr, DayStr: string;
-  Year, Month, Day: Word;
-  PostNo: integer;
-  IsRun: boolean;
-  Dlg: TMlekoSelectFIrmSupplierDlg;
+  Period:TPeriodDate;
+  FileName, DateStr, MonthStr, DayStr : string;
+  Year, Month, Day : Word;
+  PostNo : integer;
+  IsRun : boolean;
+  Dlg : TMlekoSelectFIrmSupplierDlg;
 begin
   inherited;
 
@@ -4286,13 +4236,9 @@ begin
   Dlg := TMlekoSelectFIrmSupplierDlg.Create(Application);
   try
     case Dlg.ShowModal of
-      mrOk:
-        PostNo := Dlg.Query.FieldByName('PostNo').Value;
-      mrCancel:
-        IsRun := False;
-      mrIgnore:
-        begin
-        end;
+      mrOk : PostNo := Dlg.Query.FieldByName('PostNo').Value;
+      mrCancel : IsRun := False;
+      mrIgnore : begin end;
     end;
 {
     if Dlg.ShowModal = mrok Then
@@ -4305,133 +4251,88 @@ begin
       end;
 }
   finally
-    Dlg.Query.Close;
-    Dlg.Free;
+     Dlg.Query.Close;
+     Dlg.Free;
   end;
 
-  if not IsRun then
-    raise Exception.Create('Отменено пользователем!');
+  if not IsRun then raise Exception.Create('Отменено пользователем!');
 
-  Period := ZapDate(2);
+  Period:=ZapDate(2);
 
-  if (Period[1] = 0) then
-    raise Exception.Create('Отменено пользователем!');
+  if (Period[1] = 0) then raise Exception.Create('Отменено пользователем!');
 
-  if IsRun then
-    dmDataModule.ExecSQL('exec sp_ExportRestForSandora :p1_DateBeg, :p2_DateEnd, :p3_PostNo ', [Period[1] - 2, Period[2] - 2, PostNo]);
+  if IsRun then dmDataModule.ExecSQL('exec sp_ExportRestForSandora :p1_DateBeg, :p2_DateEnd, :p3_PostNo ',[Period[1]-2, Period[2]-2, PostNo]);
 
   DecodeDate(Period[1], Year, Month, Day);
 
-  if Day = 1 then
-    DayStr := '01';
-  if Day = 2 then
-    DayStr := '02';
-  if Day = 3 then
-    DayStr := '03';
-  if Day = 4 then
-    DayStr := '04';
-  if Day = 5 then
-    DayStr := '05';
-  if Day = 6 then
-    DayStr := '06';
-  if Day = 7 then
-    DayStr := '07';
-  if Day = 8 then
-    DayStr := '08';
-  if Day = 9 then
-    DayStr := '09';
-  if Day > 9 then
-    DayStr := IntToStr(Day);
+  if Day = 1 then DayStr := '01';
+  if Day = 2 then DayStr := '02';
+  if Day = 3 then DayStr := '03';
+  if Day = 4 then DayStr := '04';
+  if Day = 5 then DayStr := '05';
+  if Day = 6 then DayStr := '06';
+  if Day = 7 then DayStr := '07';
+  if Day = 8 then DayStr := '08';
+  if Day = 9 then DayStr := '09';
+  if Day > 9 then DayStr := IntToStr(Day);
 
-  if Month = 1 then
-    MonthStr := '01';
-  if Month = 2 then
-    MonthStr := '02';
-  if Month = 3 then
-    MonthStr := '03';
-  if Month = 4 then
-    MonthStr := '04';
-  if Month = 5 then
-    MonthStr := '05';
-  if Month = 6 then
-    MonthStr := '06';
-  if Month = 7 then
-    MonthStr := '07';
-  if Month = 8 then
-    MonthStr := '08';
-  if Month = 9 then
-    MonthStr := '09';
-  if Month > 9 then
-    MonthStr := IntToStr(Month);
+  if Month = 1 then MonthStr := '01';
+  if Month = 2 then MonthStr := '02';
+  if Month = 3 then MonthStr := '03';
+  if Month = 4 then MonthStr := '04';
+  if Month = 5 then MonthStr := '05';
+  if Month = 6 then MonthStr := '06';
+  if Month = 7 then MonthStr := '07';
+  if Month = 8 then MonthStr := '08';
+  if Month = 9 then MonthStr := '09';
+  if Month > 9 then MonthStr := IntToStr(Month);
 
   DateStr := IntToStr(Year) + MonthStr + DayStr;
 
   DecodeDate(Period[2], Year, Month, Day);
 
-  if Day = 1 then
-    DayStr := '01';
-  if Day = 2 then
-    DayStr := '02';
-  if Day = 3 then
-    DayStr := '03';
-  if Day = 4 then
-    DayStr := '04';
-  if Day = 5 then
-    DayStr := '05';
-  if Day = 6 then
-    DayStr := '06';
-  if Day = 7 then
-    DayStr := '07';
-  if Day = 8 then
-    DayStr := '08';
-  if Day = 9 then
-    DayStr := '09';
-  if Day > 9 then
-    DayStr := IntToStr(Day);
+  if Day = 1 then DayStr := '01';
+  if Day = 2 then DayStr := '02';
+  if Day = 3 then DayStr := '03';
+  if Day = 4 then DayStr := '04';
+  if Day = 5 then DayStr := '05';
+  if Day = 6 then DayStr := '06';
+  if Day = 7 then DayStr := '07';
+  if Day = 8 then DayStr := '08';
+  if Day = 9 then DayStr := '09';
+  if Day > 9 then DayStr := IntToStr(Day);
 
-  if Month = 1 then
-    MonthStr := '01';
-  if Month = 2 then
-    MonthStr := '02';
-  if Month = 3 then
-    MonthStr := '03';
-  if Month = 4 then
-    MonthStr := '04';
-  if Month = 5 then
-    MonthStr := '05';
-  if Month = 6 then
-    MonthStr := '06';
-  if Month = 7 then
-    MonthStr := '07';
-  if Month = 8 then
-    MonthStr := '08';
-  if Month = 9 then
-    MonthStr := '09';
-  if Month > 9 then
-    MonthStr := IntToStr(Month);
+  if Month = 1 then MonthStr := '01';
+  if Month = 2 then MonthStr := '02';
+  if Month = 3 then MonthStr := '03';
+  if Month = 4 then MonthStr := '04';
+  if Month = 5 then MonthStr := '05';
+  if Month = 6 then MonthStr := '06';
+  if Month = 7 then MonthStr := '07';
+  if Month = 8 then MonthStr := '08';
+  if Month = 9 then MonthStr := '09';
+  if Month > 9 then MonthStr := IntToStr(Month);
 
   DateStr := DateStr + '_' + IntToStr(Year) + MonthStr + DayStr;
 
-  FileName := '\\SIRIUS\ExportForSandora\24_STOCKS_' + DateStr + '.txt';
+  FileName := '\\SIRIUS\ExportForSandora\24_STOCKS_' + DateStr +'.txt';
 
-  if IsRun then
-    if FileExists(FileName) then
-      ShowMessage('Создан файл ' + FileName)
-    else
-      ShowMessage('Файл ' + FileName + ' не создан!' + #10#13 + 'Обратитесь к системному администратору!');
+  if IsRun then if FileExists(FileName) then ShowMessage('Создан файл '+FileName)
+                                        else ShowMessage('Файл '+FileName+' не создан!'+ #10#13 +
+                                                         'Обратитесь к системному администратору!');
 end;
 
 procedure TfmMain.NRest1Click(Sender: TObject);
 begin
   inherited;
   with TOstatok1HeadForm.Create(Application) do
-  try
-    quOstatok1Head.Open;
-    ShowModal;
-  finally
-    quOstatok1Head.Close;
-    Free;
-  end;
+   try
+     quOstatok1Head.Open;
+     ShowModal;
+   finally
+     quOstatok1Head.Close;
+     Free;
+   end;
 end;
 
 procedure TfmMain.NUPClick(Sender: TObject);
@@ -4453,7 +4354,7 @@ end;
 
 procedure TfmMain.NPlanningOrderClick(Sender: TObject);
 var
-  Pkey: Int64;
+ Pkey: Int64;
 begin
   inherited;
 {
@@ -4467,11 +4368,11 @@ end;
 
 procedure TfmMain.NNewPlanningOrderClick(Sender: TObject);
 var
-  Pkey: Int64;
+ Pkey: Int64;
 begin
   inherited;
   Pkey := -1;
-  PlanningOrders('Add', Pkey);
+  PlanningOrders('Add',Pkey);
 end;
 
 procedure TfmMain.NPlanningTodayClick(Sender: TObject);
@@ -4513,19 +4414,15 @@ begin
   inherited;
   DecodeDate(Date(), Year, Month, Day);
   RetSelNakl.PostNo := 0;
-  if Month = 1 then
-  begin
-    Year := Year - 1;
-    Month := 12;
-  end
-  else
-    Month := Month - 1;
+  if Month = 1 then begin
+                      Year := Year - 1;
+                      Month := 12;
+                    end
+               else Month := Month - 1;
 
   RetSelNakl.DateBegin := EncodeDate(Year, Month, 01);
-  if Month = 12 then
-    RetSelNakl.DateEnd := EncodeDate(Year + 1, 01, 01) - 1
-  else
-    RetSelNakl.DateEnd := EncodeDate(Year, Month + 1, 01) - 1;
+  if Month = 12 then RetSelNakl.DateEnd := EncodeDate(Year + 1, 01, 01) - 1
+                else RetSelNakl.DateEnd := EncodeDate(Year, Month + 1, 01) - 1;
   PlanningOrdersHead(RetSelNakl);
 end;
 
@@ -4542,73 +4439,74 @@ end;
 procedure TfmMain.AnalisPlanProdagClick(Sender: TObject);
 var
   Year, Month, Day: word;
-  KolDayInMons: Integer;
+  KolDayInMons : Integer;
 begin
   inherited;
 
   with TAnalisPlanningOrderForm.Create(Application) do
-  try
-    DecodeDate(Date(), Year, Month, Day);
+   try
+     DecodeDate(Date(), Year, Month, Day);
 
-    quAnalisPlanningOrder.Open;
+     quAnalisPlanningOrder.Open;
 
-    KolDayInMons := DaysInMonth(EncodeDate(Year, Month, 01));
+     KolDayInMons := DaysInMonth(EncodeDate(Year, Month, 01));
 
-    EdDatePlanningBeg.Date := EncodeDate(Year, Month, 01);
-    EdDatePlanningEnd.Date := EncodeDate(Year, Month, KolDayInMons);
-    EdDatePlanningEndFact.Date := Date();
+     EdDatePlanningBeg.Date := EncodeDate(Year, Month, 01);
+     EdDatePlanningEnd.Date := EncodeDate(Year, Month, KolDayInMons);
+     EdDatePlanningEndFact.Date := Date();
 
-    ShowModal;
-  finally
-    quAnalisPlanningOrder.Close;
-    Free;
-  end;
+     ShowModal;
+   finally
+     quAnalisPlanningOrder.Close;
+     Free;
+   end;
 
 end;
+
 
 procedure TfmMain.AnalizReturnOrderClick(Sender: TObject);
 var
   Year, Month, Day: word;
-  KolDayInMons: Integer;
+  KolDayInMons : Integer;
 begin
   inherited;
   with TAnalisReturnOrderForm.Create(Application) do
-  try
-    DecodeDate(Date(), Year, Month, Day);
+   try
+     DecodeDate(Date(), Year, Month, Day);
 
-    quAnalisReturnOrder.Open;
+     quAnalisReturnOrder.Open;
 
-    KolDayInMons := DaysInMonth(EncodeDate(Year, Month - 1, 01));
+     KolDayInMons := DaysInMonth(EncodeDate(Year, Month-1, 01));
 
-    EdDateBeg1.Date := EncodeDate(Year, Month, 01);
-    EdDateEnd1.Date := Date();
+     EdDateBeg1.Date := EncodeDate(Year, Month, 01);
+     EdDateEnd1.Date := Date();
 
-    EdDateBeg2.Date := EncodeDate(Year, Month - 1, 01);
-    EdDateEnd2.Date := EncodeDate(Year, Month - 1, KolDayInMons);
+     EdDateBeg2.Date := EncodeDate(Year, Month-1, 01);
+     EdDateEnd2.Date := EncodeDate(Year, Month-1, KolDayInMons);
 
-    ShowModal;
-  finally
-    quAnalisReturnOrder.Close;
-    Free;
-  end;
+     ShowModal;
+   finally
+     quAnalisReturnOrder.Close;
+     Free;
+   end;
 end;
 
 procedure TfmMain.InfarmAnalysisClick(Sender: TObject);
 begin
   inherited;
   with TInfarmatsionny_AnalysisForm.Create(Application) do
-  try
+   try
 
-    quInfarmatsionny_AnalysisHead.Open;
+     quInfarmatsionny_AnalysisHead.Open;
 
-    EdDateBeg.Date := Date();
-    EdDateEnd.Date := Date();
+     EdDateBeg.Date := Date();
+     EdDateEnd.Date := Date();
 
-    ShowModal;
-  finally
-    quInfarmatsionny_AnalysisHead.Close;
-    Free;
-  end;
+     ShowModal;
+   finally
+     quInfarmatsionny_AnalysisHead.Close;
+     Free;
+   end;
 
 end;
 
@@ -4622,40 +4520,40 @@ procedure TfmMain.PricingListClick(Sender: TObject);
 begin
   inherited;
   with TPricingListForm.Create(Application) do
-  try
-    quHistoriPrice.Open;
-    quListVidTovName.Open;
-    ShowModal;
-  finally
-    quHistoriPrice.Close;
-    quListVidTovName.Close;
-    Free;
-  end
+   try
+     quHistoriPrice.Open;
+     quListVidTovName.Open;
+     ShowModal;
+   finally
+     quHistoriPrice.Close;
+     quListVidTovName.Close;
+     Free;
+   end
 end;
 
 procedure TfmMain.RestOfDateManufClick(Sender: TObject);
 begin
   inherited;
   with TRestTovarOfDateManufactureForm.Create(Application) do
-  try
-    quTovarDateOfManufacture.Open;
-    quFltVidTovara.Open;
-    ShowModal;
-  finally
-    quTovarDateOfManufacture.Close;
-    quFltVidTovara.Close;
-    Free;
-  end
+   try
+     quTovarDateOfManufacture.Open;
+     quFltVidTovara.Open;
+     ShowModal;
+   finally
+     quTovarDateOfManufacture.Close;
+     quFltVidTovara.Close;
+     Free;
+   end
 end;
 
 procedure TfmMain.NExportOtchetSandClick(Sender: TObject);
 var
-  Period: TPeriodDate;
-  FileName, DateStr, MonthStr, DayStr: string;
-  Year, Month, Day: Word;
-  PostNo: integer;
-  IsRun: Boolean;
-  Dlg: TMlekoSelectFIrmSupplierDlg;
+  Period:TPeriodDate;
+  FileName, DateStr, MonthStr, DayStr : string;
+  Year, Month, Day : Word;
+  PostNo : integer;
+  IsRun : Boolean;
+  Dlg : TMlekoSelectFIrmSupplierDlg;
 begin
   inherited;
   IsRun := true;
@@ -4664,129 +4562,81 @@ begin
   Dlg := TMlekoSelectFIrmSupplierDlg.Create(Application);
   try
     case Dlg.ShowModal of
-      mrOk:
-        PostNo := Dlg.Query.FieldByName('PostNo').Value;
-      mrCancel:
-        IsRun := False;
-      mrIgnore:
-        begin
-        end;
+      mrOk : PostNo := Dlg.Query.FieldByName('PostNo').Value;
+      mrCancel : IsRun := False;
+      mrIgnore : begin end;
     end;
   finally
-    Dlg.Query.Close;
-    Dlg.Free;
+     Dlg.Query.Close;
+     Dlg.Free;
   end;
 
-  if not IsRun then
-    raise Exception.Create('Отменено пользователем!');
+    if not IsRun then raise Exception.Create('Отменено пользователем!');
 
-  Period := ZapDate(2);
+   Period:=ZapDate(2);
 
-  if (Period[1] = 0) then
-    raise Exception.Create('Отменено пользователем!');
+  if (Period[1] = 0) then raise Exception.Create('Отменено пользователем!');
 
-  if IsRun then
-    dmDataModule.ExecSQL('exec sp_ExportOtchetForSandora :p1_DateBeg, :p2_DateEnd, :p3_PostNo ', [Period[1] - 2, Period[2] - 2, PostNo]);
+  if IsRun then dmDataModule.ExecSQL('exec sp_ExportOtchetForSandora :p1_DateBeg, :p2_DateEnd, :p3_PostNo ',[Period[1]-2, Period[2]-2, PostNo]);
 
   DecodeDate(Period[1], Year, Month, Day);
 
-  if Day = 1 then
-    DayStr := '01';
-  if Day = 2 then
-    DayStr := '02';
-  if Day = 3 then
-    DayStr := '03';
-  if Day = 4 then
-    DayStr := '04';
-  if Day = 5 then
-    DayStr := '05';
-  if Day = 6 then
-    DayStr := '06';
-  if Day = 7 then
-    DayStr := '07';
-  if Day = 8 then
-    DayStr := '08';
-  if Day = 9 then
-    DayStr := '09';
-  if Day > 9 then
-    DayStr := IntToStr(Day);
+  if Day = 1 then DayStr := '01';
+  if Day = 2 then DayStr := '02';
+  if Day = 3 then DayStr := '03';
+  if Day = 4 then DayStr := '04';
+  if Day = 5 then DayStr := '05';
+  if Day = 6 then DayStr := '06';
+  if Day = 7 then DayStr := '07';
+  if Day = 8 then DayStr := '08';
+  if Day = 9 then DayStr := '09';
+  if Day > 9 then DayStr := IntToStr(Day);
 
-  if Month = 1 then
-    MonthStr := '01';
-  if Month = 2 then
-    MonthStr := '02';
-  if Month = 3 then
-    MonthStr := '03';
-  if Month = 4 then
-    MonthStr := '04';
-  if Month = 5 then
-    MonthStr := '05';
-  if Month = 6 then
-    MonthStr := '06';
-  if Month = 7 then
-    MonthStr := '07';
-  if Month = 8 then
-    MonthStr := '08';
-  if Month = 9 then
-    MonthStr := '09';
-  if Month > 9 then
-    MonthStr := IntToStr(Month);
+  if Month = 1 then MonthStr := '01';
+  if Month = 2 then MonthStr := '02';
+  if Month = 3 then MonthStr := '03';
+  if Month = 4 then MonthStr := '04';
+  if Month = 5 then MonthStr := '05';
+  if Month = 6 then MonthStr := '06';
+  if Month = 7 then MonthStr := '07';
+  if Month = 8 then MonthStr := '08';
+  if Month = 9 then MonthStr := '09';
+  if Month > 9 then MonthStr := IntToStr(Month);
 
   DateStr := IntToStr(Year) + MonthStr + DayStr;
 
   DecodeDate(Period[2], Year, Month, Day);
 
-  if Day = 1 then
-    DayStr := '01';
-  if Day = 2 then
-    DayStr := '02';
-  if Day = 3 then
-    DayStr := '03';
-  if Day = 4 then
-    DayStr := '04';
-  if Day = 5 then
-    DayStr := '05';
-  if Day = 6 then
-    DayStr := '06';
-  if Day = 7 then
-    DayStr := '07';
-  if Day = 8 then
-    DayStr := '08';
-  if Day = 9 then
-    DayStr := '09';
-  if Day > 9 then
-    DayStr := IntToStr(Day);
+  if Day = 1 then DayStr := '01';
+  if Day = 2 then DayStr := '02';
+  if Day = 3 then DayStr := '03';
+  if Day = 4 then DayStr := '04';
+  if Day = 5 then DayStr := '05';
+  if Day = 6 then DayStr := '06';
+  if Day = 7 then DayStr := '07';
+  if Day = 8 then DayStr := '08';
+  if Day = 9 then DayStr := '09';
+  if Day > 9 then DayStr := IntToStr(Day);
 
-  if Month = 1 then
-    MonthStr := '01';
-  if Month = 2 then
-    MonthStr := '02';
-  if Month = 3 then
-    MonthStr := '03';
-  if Month = 4 then
-    MonthStr := '04';
-  if Month = 5 then
-    MonthStr := '05';
-  if Month = 6 then
-    MonthStr := '06';
-  if Month = 7 then
-    MonthStr := '07';
-  if Month = 8 then
-    MonthStr := '08';
-  if Month = 9 then
-    MonthStr := '09';
-  if Month > 9 then
-    MonthStr := IntToStr(Month);
+  if Month = 1 then MonthStr := '01';
+  if Month = 2 then MonthStr := '02';
+  if Month = 3 then MonthStr := '03';
+  if Month = 4 then MonthStr := '04';
+  if Month = 5 then MonthStr := '05';
+  if Month = 6 then MonthStr := '06';
+  if Month = 7 then MonthStr := '07';
+  if Month = 8 then MonthStr := '08';
+  if Month = 9 then MonthStr := '09';
+  if Month > 9 then MonthStr := IntToStr(Month);
 
   DateStr := DateStr + '_' + IntToStr(Year) + MonthStr + DayStr;
 
-  FileName := '\\SIRIUS\ExportForSandora\24_Otchets_' + DateStr + '.csv';
+  FileName := '\\SIRIUS\ExportForSandora\24_Otchets_' + DateStr +'.csv';
 
-  if IsRun then
-    if FileExists(FileName) then
-      ShowMessage('Создан файл ' + FileName)
-    else
-      ShowMessage('Файл ' + FileName + ' не создан!' + #10#13 + 'Обратитесь к системному администратору!');
+  if IsRun then if FileExists(FileName) then ShowMessage('Создан файл '+FileName)
+                                        else ShowMessage('Файл '+FileName+' не создан!'+ #10#13 +
+                                                         'Обратитесь к системному администратору!');
+
 
 end;
 
@@ -4794,37 +4644,37 @@ procedure TfmMain.ControlRestDOMClick(Sender: TObject);
 begin
   inherited;
   with TControlRestTovarOfDateManufactureForm.Create(Application) do
-  try
-    quTovarOfDateManufacture.Open;
-    dtDateOfManufacture.Date := GlobalDateNakl - 2;
-    ShowModal;
-  finally
-    quTovarOfDateManufacture.Close;
-    Free;
-  end
+   try
+     quTovarOfDateManufacture.Open;
+     dtDateOfManufacture.Date := GlobalDateNakl - 2;
+     ShowModal;
+   finally
+     quTovarOfDateManufacture.Close;
+     Free;
+   end
 end;
 
 procedure TfmMain.CheckPriceInInstClick(Sender: TObject);
 begin
   inherited;
-  with TReconciliationReceiptPriceInInstForm.Create(Application) do
-  try
-    qul_PriceInInstForNaklP.Open;
+   with TReconciliationReceiptPriceInInstForm.Create(Application) do
+     try
+      qul_PriceInInstForNaklP.Open;
 
-    EdDateBeg.Date := Date();
-    EdDateEnd.Date := Date();
+      EdDateBeg.Date := Date();
+      EdDateEnd.Date := Date();
 
-    ShowModal;
-  finally
-    qul_PriceInInstForNaklP.Close;
-    Free;
-  end;
+      ShowModal;
+     finally
+      qul_PriceInInstForNaklP.Close;
+      Free;
+   end;
 end;
 
 procedure TfmMain.NOtdelClick(Sender: TObject);
 begin
   inherited;
-  VidOtdel(false, false);
+  VidOtdel(false,false);
 
 {
   begin
@@ -4840,79 +4690,75 @@ begin
 }
 end;
 
+
 procedure TfmMain.CreatWithExelClick(Sender: TObject);
 var
   Pkey: Int64;
 begin
   inherited;
   Pkey := -1;
-  PrihodTovarWithExel(-1, Pkey);
+  PrihodTovarWithExel(-1,Pkey);
 end;
 
 procedure TfmMain.NewClientCardClick(Sender: TObject);
 var
-  PostNo: integer;
-  Dlg: TMlekoSelectFIrmDlg;
-  IsRun: boolean;
-  Id: integer;
+  PostNo : integer;
+  Dlg : TMlekoSelectFIrmDlg;
+  IsRun : boolean;
+  Id : integer;
 begin
   IsRun := true;
   Id := -1;
-
+  
   Dlg := TMlekoSelectFIrmDlg.Create(Application);
   try
     case Dlg.ShowModal of
-      mrOk:
-        PostNo := Dlg.Query.FieldByName('PostNo').Value;
-      mrCancel:
-        IsRun := False;
-      mrIgnore:
-        begin
-        end;
+      mrOk : PostNo := Dlg.Query.FieldByName('PostNo').Value;
+      mrCancel : IsRun := False;
+      mrIgnore : begin end;
     end;
   finally
-    Dlg.Query.Close;
-    Dlg.Free;
+     Dlg.Query.Close;
+     Dlg.Free;
   end;
 
-  if not IsRun then
-    raise Exception.Create('Отменено пользователем!');
+    if not IsRun then raise Exception.Create('Отменено пользователем!');
 
-  dmDataModule.quUsers.Open;
-  dmDataModule.quOtdel.Open;
-  dmDataModule.quRegions.Open;
-  dmDataModule.quGroupCutting.Open;
-  dmDataModule.quVidTov.Open;
+    dmDataModule.quUsers.Open;
+    dmDataModule.quOtdel.Open;
+    dmDataModule.quRegions.Open;
+    dmDataModule.quGroupCutting.Open;
+    dmDataModule.quVidTov.Open;
 
-  ClientCard('Add', PostNo, Id);
+    ClientCard('Add',PostNo, Id);
 
-  dmDataModule.quUsers.Close;
-  dmDataModule.quOtdel.Close;
-  dmDataModule.quRegions.Close;
-  dmDataModule.quGroupCutting.Close;
-  dmDataModule.quVidTov.Close;
+    dmDataModule.quUsers.Close;
+    dmDataModule.quOtdel.Close;
+    dmDataModule.quRegions.Close;
+    dmDataModule.quGroupCutting.Close;
+    dmDataModule.quVidTov.Close;
 end;
 
 procedure TfmMain.VidDocClick(Sender: TObject);
 begin
   inherited;
-  with TVidDocForm.Create(Application) do
-  try
-    quVidDoc.open;
-    quListUserForVidDoc.Open;
-    dmDataModule.quUsers.Open;
-    dmDataModule.quOtdel.Open;
-    quListUserForConductingDoc.Open;
+   with TVidDocForm.Create(Application) do
+     try
+      quVidDoc.open;
+      quListUserForVidDoc.Open;
+      dmDataModule.quUsers.Open;
+      dmDataModule.quOtdel.Open;
+      quListUserForConductingDoc.Open;
 
-    ShowModal;
-  finally
-    quListUserForVidDoc.Close;
-    quVidDoc.Close;
-    dmDataModule.quUsers.Close;
-    dmDataModule.quOtdel.Close;
-    quListUserForConductingDoc.Close;
-    Free;
-  end;
+      ShowModal;
+     finally
+      quListUserForVidDoc.Close;
+      quVidDoc.Close;
+      dmDataModule.quUsers.Close;
+      dmDataModule.quOtdel.Close;
+      quListUserForConductingDoc.Close;
+      Free;
+   end;
 end;
 
 procedure TfmMain.NotAppCardsClientsClick(Sender: TObject);
@@ -4931,50 +4777,50 @@ procedure TfmMain.ContVidRashodClick(Sender: TObject);
 begin
   inherited;
   with TControlVidRashodForPlatForm.Create(Application) do
-  try
-    quVidRashodPlatP.Open;
-    quVidRashodPlatR.Open;
-    ShowModal;
-  finally
-    quVidRashodPlatP.Close;
-    quVidRashodPlatR.Close;
-    Free;
-  end
+   try
+     quVidRashodPlatP.Open;
+     quVidRashodPlatR.Open;
+     ShowModal;
+   finally
+     quVidRashodPlatP.Close;
+     quVidRashodPlatR.Close;
+     Free;
+   end
 end;
 
 procedure TfmMain.GroupCuttingClick(Sender: TObject);
 begin
   inherited;
   with TGroupCuttingForm.Create(Application) do
-  try
-    quGroupCutting.Open;
-    ShowModal;
-  finally
-    quGroupCutting.Close;
-    Free;
-  end
+   try
+     quGroupCutting.Open;
+     ShowModal;
+   finally
+     quGroupCutting.Close;
+     Free;
+   end
 end;
 
 procedure TfmMain.ListVidTovForGrCutClick(Sender: TObject);
 begin
   inherited;
-  with TListVidTovForGroupCuttingForm.Create(Application) do
-  try
-    quListVidTovForGroupCutting.open;
-    dmDataModule.quVidTov.Open;
-    quL_ListVidTovForGroupCutting.Open;
-    quGroupCutting.Open;
-    ShowModal;
-  finally
-    quListVidTovForGroupCutting.Close;
-    quListVidTovForGroupCutting.Free;
-    dmDataModule.quVidTov.Close;
-    quL_ListVidTovForGroupCutting.Close;
-    quL_ListVidTovForGroupCutting.Free;
-    quGroupCutting.Close;
-    quGroupCutting.Free;
-    Free;
-  end;
+   with TListVidTovForGroupCuttingForm.Create(Application) do
+     try
+      quListVidTovForGroupCutting.open;
+      dmDataModule.quVidTov.Open;
+      quL_ListVidTovForGroupCutting.Open;
+      quGroupCutting.Open;
+      ShowModal;
+     finally
+      quListVidTovForGroupCutting.Close;
+      quListVidTovForGroupCutting.Free;
+      dmDataModule.quVidTov.Close;
+      quL_ListVidTovForGroupCutting.Close;
+      quL_ListVidTovForGroupCutting.Free;
+      quGroupCutting.Close;
+      quGroupCutting.Free;
+      Free;
+   end;
 end;
 
 procedure TfmMain.CheckMeshCuttingClick(Sender: TObject);
@@ -4987,38 +4833,38 @@ procedure TfmMain.PostFromGroupCuttingClick(Sender: TObject);
 begin
   inherited;
   with TPostFromGroupCuttingForm.Create(Application) do
-  try
-    quPostFromGroupCutting.Open;
-    quGroupCutting.Open;
-    quVidTov.Open;
-    quPost.Open;
-    ShowModal;
-  finally
-    quPostFromGroupCutting.Close;
-    quGroupCutting.Close;
-    quVidTov.Close;
-    quPost.Close;
-    Free;
-  end
+   try
+     quPostFromGroupCutting.Open;
+     quGroupCutting.Open;
+     quVidTov.Open;
+     quPost.Open;
+     ShowModal;
+   finally
+     quPostFromGroupCutting.Close;
+     quGroupCutting.Close;
+     quVidTov.Close;
+     quPost.Close;
+     Free;
+   end
 end;
 
 procedure TfmMain.AnalisCuttingMeshClick(Sender: TObject);
 begin
   inherited;
   with TAnalisCuttingMeshForm.Create(Application) do
-  try
-    quAnalisCuttingMesh.Open;
-    quAnalisCuttingMeshBrandFilter.Open;
-    quAnalisCuttingMeshTovarFilter.Open;
-    quAnalisCuttingMeshGroupFilter.Open;
-    ShowModal;
-  finally
-    quAnalisCuttingMesh.Close;
-    quAnalisCuttingMeshBrandFilter.Close;
-    quAnalisCuttingMeshTovarFilter.Close;
-    quAnalisCuttingMeshGroupFilter.Close;
-    Free;
-  end
+   try
+     quAnalisCuttingMesh.Open;
+     quAnalisCuttingMeshBrandFilter.Open;
+     quAnalisCuttingMeshTovarFilter.Open;
+     quAnalisCuttingMeshGroupFilter.Open;
+     ShowModal;
+   finally
+     quAnalisCuttingMesh.Close;
+     quAnalisCuttingMeshBrandFilter.Close;
+     quAnalisCuttingMeshTovarFilter.Close;
+     quAnalisCuttingMeshGroupFilter.Close;
+     Free;
+   end
 end;
 
 procedure TfmMain.CurrencyClick(Sender: TObject);

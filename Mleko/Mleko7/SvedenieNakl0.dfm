@@ -1,5 +1,5 @@
 inherited fmSvedenieNakl: TfmSvedenieNakl
-  Left = 284
+  Left = 500
   Top = 151
   Width = 996
   Height = 486

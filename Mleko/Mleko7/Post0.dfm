@@ -1,6 +1,6 @@
 inherited fmPost: TfmPost
-  Left = 470
-  Top = 203
+  Left = 573
+  Top = 237
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082' '#1087#1072#1088#1090#1085#1077#1088#1086#1074

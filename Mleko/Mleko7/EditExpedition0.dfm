@@ -1,6 +1,6 @@
 inherited fmEditExpedition: TfmEditExpedition
-  Left = 322
-  Top = 235
+  Left = 462
+  Top = 321
   Width = 995
   Height = 430
   BorderIcons = [biSystemMenu]

@@ -3,7 +3,9 @@ unit Users;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, MlekoForm, Dialogs, ExtCtrls, Grids, DBGrids, RXDBCtrl, StdCtrls, Buttons, Db, DBAccess, MsAccess, MemDS, ActnList, GridsEh, DBGridEh, ToolWin, ComCtrls;
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, MlekoForm,
+  Dialogs, ExtCtrls, Grids, DBGrids, RXDBCtrl, StdCtrls, Buttons, Db, DBAccess,
+  MsAccess, MemDS, ActnList, GridsEh, DBGridEh, ToolWin, ComCtrls;
 
 type
   TfmUsers = class(TMlekoForm)
@@ -155,7 +157,8 @@ begin
   ExecuteActionWithUser(0);
 end;
 
-procedure TfmUsers.DBGridEh1TitleBtnClick(Sender: TObject; ACol: Integer; Column: TColumnEh);
+procedure TfmUsers.DBGridEh1TitleBtnClick(Sender: TObject; ACol: Integer; Column:
+  TColumnEh);
 var
   FindUserNo: Integer;
   MacroValue: string;

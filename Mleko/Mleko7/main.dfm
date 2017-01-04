@@ -1,6 +1,6 @@
 inherited fmMain: TfmMain
-  Left = 160
-  Top = 44
+  Left = 441
+  Top = 251
   VertScrollBar.Range = 0
   Anchors = [akLeft, akTop, akRight, akBottom]
   AutoScroll = False

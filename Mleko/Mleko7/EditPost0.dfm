@@ -1,10 +1,10 @@
 inherited fmEditPost: TfmEditPost
-  Left = 369
-  Top = 19
+  Left = 341
+  Top = 230
   BorderStyle = bsDialog
   Caption = #1050#1072#1088#1090#1086#1095#1082#1072
-  ClientHeight = 695
-  ClientWidth = 1278
+  ClientHeight = 709
+  ClientWidth = 1312
   ParentFont = True
   OldCreateOrder = True
   Position = poScreenCenter
@@ -14,8 +14,8 @@ inherited fmEditPost: TfmEditPost
   object Panel1: TPanel [0]
     Left = 0
     Top = 0
-    Width = 1278
-    Height = 669
+    Width = 1312
+    Height = 683
     Align = alClient
     BevelInner = bvLowered
     BorderWidth = 3
@@ -23,9 +23,9 @@ inherited fmEditPost: TfmEditPost
     object pgc: TPageControl
       Left = 5
       Top = 5
-      Width = 1268
-      Height = 659
-      ActivePage = tsAdress
+      Width = 1302
+      Height = 673
+      ActivePage = tsDelayPay
       Align = alClient
       TabOrder = 0
       object tsMain: TTabSheet
@@ -34,7 +34,7 @@ inherited fmEditPost: TfmEditPost
           Left = 0
           Top = 0
           Width = 397
-          Height = 631
+          Height = 645
           Align = alLeft
           TabOrder = 0
           object Label10: TLabel
@@ -635,8 +635,8 @@ inherited fmEditPost: TfmEditPost
         object PanelBoolProp: TPanel
           Left = 397
           Top = 0
-          Width = 863
-          Height = 631
+          Width = 897
+          Height = 645
           Align = alClient
           Caption = 'PanelBoolProp'
           TabOrder = 1
@@ -711,12 +711,12 @@ inherited fmEditPost: TfmEditPost
           Left = 313
           Top = 22
           Width = 8
-          Height = 586
+          Height = 600
         end
         object CoolBar1: TCoolBar
           Left = 0
           Top = 0
-          Width = 1260
+          Width = 1294
           Height = 22
           Bands = <>
           EdgeOuter = esNone
@@ -778,7 +778,7 @@ inherited fmEditPost: TfmEditPost
           Left = 0
           Top = 22
           Width = 313
-          Height = 586
+          Height = 600
           TabStop = False
           Align = alLeft
           BorderStyle = bsNone
@@ -1019,7 +1019,7 @@ inherited fmEditPost: TfmEditPost
           Left = 321
           Top = 22
           Width = 500
-          Height = 586
+          Height = 600
           Align = alLeft
           Caption = 'Panel4'
           TabOrder = 3
@@ -1027,7 +1027,7 @@ inherited fmEditPost: TfmEditPost
             Left = 1
             Top = 30
             Width = 498
-            Height = 555
+            Height = 569
             Align = alClient
             BorderStyle = bsNone
             DataSource = ds_sotrud_address
@@ -1109,20 +1109,20 @@ inherited fmEditPost: TfmEditPost
         object Panel7: TPanel
           Left = 821
           Top = 22
-          Width = 439
-          Height = 586
+          Width = 473
+          Height = 600
           Align = alClient
           TabOrder = 2
           object Splitter2: TSplitter
             Left = 1
             Top = 1
-            Height = 584
+            Height = 598
           end
           object GroupBoxAddressPostProp: TGroupBox
             Left = 4
             Top = 1
-            Width = 434
-            Height = 584
+            Width = 468
+            Height = 598
             Align = alClient
             Caption = #1057#1074#1086#1081#1089#1090#1074#1072' '#1072#1076#1088#1077#1089#1072' '#1076#1086#1089#1090#1072#1074#1082#1080
             Font.Charset = DEFAULT_CHARSET
@@ -1677,13 +1677,13 @@ inherited fmEditPost: TfmEditPost
         end
         object Panel9: TPanel
           Left = 0
-          Top = 608
-          Width = 1260
+          Top = 622
+          Width = 1294
           Height = 23
           Align = alBottom
           TabOrder = 4
           DesignSize = (
-            1260
+            1294
             23)
           object cbIsAllSotrud: TCheckBox
             Left = 328
@@ -1831,17 +1831,17 @@ inherited fmEditPost: TfmEditPost
         inline FrmDelayPay: TMlkListPostArticleGroupDelayPayFrame
           Left = 0
           Top = 0
-          Width = 1260
-          Height = 631
+          Width = 1294
+          Height = 645
           Align = alClient
           PopupMenu = FrmDelayPay.PopupMenuGrid
           TabOrder = 0
           inherited PanelGrid: TPanel
-            Width = 929
-            Height = 493
+            Width = 963
+            Height = 507
             inherited DBCxGrid: TcxGrid
-              Width = 923
-              Height = 400
+              Width = 957
+              Height = 414
               inherited DBCxGridDBTableView1: TcxGridDBTableView
                 inherited ClnPayBan: TcxGridDBColumn
                   Properties.ImmediatePost = True
@@ -1853,33 +1853,33 @@ inherited fmEditPost: TfmEditPost
               end
             end
             inherited PageControlTop: TcxPageControl
-              Width = 923
-              ClientRectRight = 923
+              Width = 957
+              ClientRectRight = 957
             end
             inherited SplFilter: TcxSplitter
-              Width = 923
+              Width = 957
             end
           end
           inherited PageExt: TcxPageControl
-            Top = 527
-            Width = 1260
-            ClientRectRight = 1259
+            Top = 541
+            Width = 1294
+            ClientRectRight = 1293
             inherited TabSelection: TcxTabSheet
               inherited DBGridSelection: TcitDBGrid
-                Width = 1258
+                Width = 1292
               end
             end
           end
           inherited SplitterExt: TcxSplitter
-            Top = 519
-            Width = 1260
+            Top = 533
+            Width = 1294
           end
           inherited PageSettings: TcxPageControl
-            Height = 493
-            ClientRectBottom = 492
+            Height = 507
+            ClientRectBottom = 506
             inherited TabProp2: TcxTabSheet
               inherited FrameProp: TValueListEditor
-                Height = 445
+                Height = 459
                 ColWidths = (
                   77
                   126)
@@ -1887,24 +1887,24 @@ inherited fmEditPost: TfmEditPost
             end
           end
           inherited PageDetails: TcxPageControl
-            Left = 1156
-            Height = 493
-            ClientRectBottom = 492
+            Left = 1190
+            Height = 507
+            ClientRectBottom = 506
             inherited TabDetails1: TcxTabSheet
               inherited GridDetails: TcxDBVerticalGrid
-                Height = 471
+                Height = 485
               end
             end
           end
           inherited SplitterDetails: TcxSplitter
-            Left = 1148
-            Height = 493
+            Left = 1182
+            Height = 507
           end
           inherited SplitterSettings: TcxSplitter
-            Height = 493
+            Height = 507
           end
           inherited BarDockControlCommon: TdxBarDockControl
-            Width = 1260
+            Width = 1294
           end
           inherited BarManager: TdxBarManager
             Categories.ItemsVisibles = (
@@ -1956,35 +1956,35 @@ inherited fmEditPost: TfmEditPost
         inline FrmSetPriceType: TMlkListPostArticleGroupPriceTypeFrame
           Left = 0
           Top = 0
-          Width = 1260
-          Height = 631
+          Width = 1294
+          Height = 645
           Align = alClient
           PopupMenu = FrmSetPriceType.PopupMenuGrid
           TabOrder = 0
           inherited PanelGrid: TPanel
-            Width = 929
-            Height = 493
+            Width = 963
+            Height = 507
             inherited DBCxGrid: TcxGrid
-              Width = 923
-              Height = 400
+              Width = 957
+              Height = 414
             end
             inherited PageControlTop: TcxPageControl
-              Width = 923
-              ClientRectRight = 923
+              Width = 957
+              ClientRectRight = 957
               inherited tsDynamicFilter: TcxTabSheet
                 inherited DbFltControlMain: TcxFilterControl
-                  Width = 877
+                  Width = 911
                 end
               end
             end
             inherited SplFilter: TcxSplitter
-              Width = 923
+              Width = 957
             end
           end
           inherited PageExt: TcxPageControl
-            Top = 527
-            Width = 1260
-            ClientRectRight = 1259
+            Top = 541
+            Width = 1294
+            ClientRectRight = 1293
             inherited TabSelection: TcxTabSheet
               inherited DBGridSelection: TcitDBGrid
                 Width = 1292
@@ -1992,15 +1992,15 @@ inherited fmEditPost: TfmEditPost
             end
           end
           inherited SplitterExt: TcxSplitter
-            Top = 519
-            Width = 1260
+            Top = 533
+            Width = 1294
           end
           inherited PageSettings: TcxPageControl
-            Height = 493
-            ClientRectBottom = 492
+            Height = 507
+            ClientRectBottom = 506
             inherited TabProp2: TcxTabSheet
               inherited FrameProp: TValueListEditor
-                Height = 445
+                Height = 459
                 ColWidths = (
                   64
                   139)
@@ -2008,9 +2008,9 @@ inherited fmEditPost: TfmEditPost
             end
           end
           inherited PageDetails: TcxPageControl
-            Left = 1156
-            Height = 493
-            ClientRectBottom = 492
+            Left = 1190
+            Height = 507
+            ClientRectBottom = 506
             inherited TabDetails1: TcxTabSheet
               inherited GridDetails: TcxDBVerticalGrid
                 Height = 485
@@ -2018,14 +2018,14 @@ inherited fmEditPost: TfmEditPost
             end
           end
           inherited SplitterDetails: TcxSplitter
-            Left = 1148
-            Height = 493
+            Left = 1182
+            Height = 507
           end
           inherited SplitterSettings: TcxSplitter
-            Height = 493
+            Height = 507
           end
           inherited BarDockControlCommon: TdxBarDockControl
-            Width = 1260
+            Width = 1294
           end
           inherited SaveDialog: TSaveDialog
             Left = 42
@@ -2577,8 +2577,8 @@ inherited fmEditPost: TfmEditPost
   end
   object Panel3: TPanel [1]
     Left = 0
-    Top = 669
-    Width = 1278
+    Top = 683
+    Width = 1312
     Height = 26
     Align = alBottom
     TabOrder = 1

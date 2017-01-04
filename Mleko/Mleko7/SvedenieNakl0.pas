@@ -3,7 +3,10 @@ unit SvedenieNakl0;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MlekoForm, Dialogs, ImgList, DB, DBAccess, MsAccess, MemDS, DBGridEh, StdCtrls, Buttons, Mask, DBCtrls, ExtCtrls, Math, ToolWin, ComCtrls, GridsEh, ActnList;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MlekoForm,
+  Dialogs, ImgList, DB, DBAccess, MsAccess, MemDS, DBGridEh, StdCtrls,
+  Buttons, Mask, DBCtrls, ExtCtrls, Math, ToolWin, ComCtrls, GridsEh,
+  ActnList;
 
 type
   TfmSvedenieNakl = class(TMlekoForm)
@@ -45,10 +48,13 @@ type
     sbBlankOst: TSpeedButton;
     bbCancel: TBitBtn;
     ToolButton1: TToolButton;
-    procedure DBGridEh1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure DBGridEh1KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
-    procedure DBGridEh1TitleBtnClick(Sender: TObject; ACol: Integer; Column: TColumnEh);
-    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh1TitleBtnClick(Sender: TObject; ACol: Integer;
+      Column: TColumnEh);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure quNaklRBeforePost(DataSet: TDataSet);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure sbDelClick(Sender: TObject);
@@ -62,7 +68,7 @@ type
     SearchString: string;
     bmCheck: TBitMap;
     LastIndex: Integer;
-    Descending: Boolean;
+    Descending: Boolean;    
   public
     { Public declarations }
   end;
@@ -71,13 +77,12 @@ var
   SvedenieTrue: Boolean;
   fmSvedenieNakl: TfmSvedenieNakl;
   CurExpeditionNo: integer;
-
 procedure SvedenieNakl(ExpeditionNo: integer);
 
 implementation
 
-uses
-  data, Expedition0, SelectItem0, Otchets0, BlankOst0, EditNaklR0;
+uses data, Expedition0, 
+  SelectItem0, Otchets0, BlankOst0, EditNaklR0;
 //, Cars0, Data, Shipping_Agent0, ExpeditionNakl0,
 //     GetPeriodDate0, EditNaklR0;
 
@@ -110,7 +115,8 @@ begin
   end;
 end;
 
-procedure TfmSvedenieNakl.DBGridEh1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TfmSvedenieNakl.DBGridEh1KeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
 var
   FoundNaklNo: integer;
 begin
@@ -141,11 +147,10 @@ begin
       end;
     VK_DELETE:
       begin
-        Key := 0;
-        sbDelClick(Sender);
+          Key := 0;
+          sbDelClick(Sender);
       end;
-    VK_DOWN, VK_UP, VK_LEFT, VK_RIGHT:
-      SearchString := '';
+    VK_DOWN, VK_UP, VK_LEFT, VK_RIGHT: SearchString := '';
     VK_F5:
       begin
         sbPrevClick(Sender);
@@ -157,7 +162,8 @@ begin
   end;
 end;
 
-procedure TfmSvedenieNakl.DBGridEh1KeyPress(Sender: TObject; var Key: Char);
+procedure TfmSvedenieNakl.DBGridEh1KeyPress(Sender: TObject;
+  var Key: Char);
 var
   Found: boolean;
 begin
@@ -176,59 +182,54 @@ begin
   end;
 end;
 
-procedure TfmSvedenieNakl.DBGridEh1TitleBtnClick(Sender: TObject; ACol: Integer; Column: TColumnEh);
+procedure TfmSvedenieNakl.DBGridEh1TitleBtnClick(Sender: TObject;
+  ACol: Integer; Column: TColumnEh);
 var
-  FindNaklRNo: integer;
-  MacroValue: string;
-  OldColumn: TColumnEh;
+ FindNaklRNo:integer;
+ MacroValue: String;
+ OldColumn: TColumnEh;
 begin
-  Screen.Cursor := crHourGlass;
-  FindNaklRNo := quNaklR.FieldByName('NaklNo').AsInteger;
-  quNaklR.Close;
-  if (ACol in [1, 2, 4, 6, 7, 9, 10]) then
-  begin
-    if (LastIndex <> ACol) then
+ Screen.Cursor:=crHourGlass;
+ FindNaklRNo := quNaklR.FieldByName('NaklNo').AsInteger;
+ quNaklR.Close;
+ if (ACol in [1,2,4,6,7,9,10]) then
+ begin
+ if (LastIndex<>ACol) then
     begin
-      if (LastIndex >= 0) then
-      begin
-        OldColumn := DBGridEh1.Columns[LastIndex];
-        OldColumn.Title.SortMarker := smNoneEh;
-      end;
-      Descending := false;
+    if (LastIndex>=0) then
+       begin
+         OldColumn:= DBGridEh1.Columns[LastIndex];
+         OldColumn.Title.SortMarker:= smNoneEh;
+       end;
+    Descending:= false;
     end;
-    case ACol of
-      1:
-        MacroValue := 'NaklR.Nom';
-      2:
-        MacroValue := 'NaklR.DateNaklFirst,NaklR.Nom';
-      4:
-        MacroValue := 'Post.Name';
-      6:
-        MacroValue := 'AddressPost.Address';
-      7:
-        MacroValue := 'NaklR.Summa';
-      9:
-        MacroValue := 'NaklR.OrderInFlight';
-      10:
-        MacroValue := 'NaklR.ArrivalTime';
-    end;
-    if Descending then
-      MacroValue := MacroValue + ' desc';
-    if Descending then
-      Column.Title.SortMarker := smUpEh
-    else
-      Column.Title.SortMarker := smDownEh;
-    LastIndex := ACol;
-    Descending := not Descending;
-  end;
-  quNaklR.MacroByName('_order').Value := MacroValue;
-  quNaklR.Prepare;
-  quNaklR.Open;
-  quNaklR.Locate('NaklNo', FindNaklRNo, []);
-  Screen.Cursor := crDefault;
+ case ACol of
+    1: MacroValue := 'NaklR.Nom';
+    2: MacroValue := 'NaklR.DateNaklFirst,NaklR.Nom';
+    4: MacroValue := 'Post.Name';
+    6: MacroValue := 'AddressPost.Address';
+    7: MacroValue := 'NaklR.Summa';
+    9:MacroValue:=   'NaklR.OrderInFlight';
+   10:MacroValue:=   'NaklR.ArrivalTime';
+ end;
+ if Descending then MacroValue:= MacroValue + ' desc';
+ if Descending then
+    Column.Title.SortMarker:= smUpEh else
+    Column.Title.SortMarker:= smDownEh;
+ LastIndex:= ACol;
+ Descending:= not Descending;
+ end;
+ quNaklR.MacroByName('_order').Value:= MacroValue;
+ quNaklR.Prepare;
+ quNaklR.Open;
+ quNaklR.Locate('NaklNo',FindNaklRNo,[]);
+ Screen.Cursor:=crDefault;
 end;
 
-procedure TfmSvedenieNakl.DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+
+procedure TfmSvedenieNakl.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
 begin
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not (gdFocused in State) or not DBGridEh1.Focused) then
     DBGridEh1.Canvas.Brush.Color := clSilver;
@@ -280,15 +281,14 @@ begin
   quNaklR.Refresh;
   if not quNaklR.fieldByName('Svedenie').AsBoolean then
   begin
-    if not (quNaklR.State in [dsEdit, dsInsert]) then
-      quNaklR.Edit;
-    if MessageDlg('Желаете поставить пометку о том что накладная сведена?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+    if not (quNaklR.State in [dsEdit, dsInsert]) then quNaklR.Edit;
+    if MessageDlg('Желаете поставить пометку о том что накладная сведена?',
+      mtConfirmation, [mbYes, mbNo], 0) = mrYes then
       quNaklR.FieldByName('Svedenie').AsBoolean := True
     else
       quNaklR.FieldByName('Svedenie').AsBoolean := False;
   end;
-  if quNaklR.State in [dsEdit, dsInsert] then
-    quNaklR.Post;
+  if quNaklR.State in [dsEdit, dsInsert] then quNaklR.Post;
 end;
 
 procedure TfmSvedenieNakl.sbPrevClick(Sender: TObject);
@@ -341,9 +341,8 @@ end;
 procedure TfmSvedenieNakl.FormCreate(Sender: TObject);
 begin
   inherited;
-  LastIndex := -1;
+  LastIndex:= -1;
 end;
 
 end.
-
 
