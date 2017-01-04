@@ -182,29 +182,6 @@ begin
   end;
 end;
 
-(*
-procedure TfmSvedenieNakl.DBGridEh1TitleBtnClick(Sender: TObject;
-  ACol: Integer; Column: TColumnEh);
-var
-  FindNaklRNo: integer;
-begin
-  Screen.Cursor := crHourGlass;
-  FindNaklRNo := quNaklR.FieldByName('NaklNo').AsInteger;
-  quNaklR.Close;
-  case ACol of
-    0: quNaklR.MacroByName('_order').Value := 'NaklR.Nom';
-    1: quNaklR.MacroByName('_order').Value := 'NaklR.DateNaklFirst,NaklR.Nom';
-    2: quNaklR.MacroByName('_order').Value := 'Post.Name, AddressPost.Address';
-    3: quNaklR.MacroByName('_order').Value := 'AddressPost.Address,Post.Name';
-    4: quNaklR.MacroByName('_order').Value := 'NaklR.Summa, Post.Name, AddressPost.Address';
-  end;
-  quNaklR.Prepare;
-  quNaklR.Open;
-  quNaklR.Locate('NaklNo', FindNaklRNo, []);
-  Screen.Cursor := crDefault;
-end;
-*)
-
 procedure TfmSvedenieNakl.DBGridEh1TitleBtnClick(Sender: TObject;
   ACol: Integer; Column: TColumnEh);
 var
