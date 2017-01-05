@@ -1,6 +1,6 @@
 inherited fmExpedition: TfmExpedition
-  Left = 437
-  Top = 122
+  Left = 338
+  Top = 200
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1061#1086#1076#1082#1080
