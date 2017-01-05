@@ -70,7 +70,7 @@ end;
 procedure TEditCurrencyForm.DBCheckBoxEh1Click(Sender: TObject);
 begin
   inherited;
-  if IsDefault.Checked then dmDataModule.ExecSQL('update d_currency set isCrossCurrency = 0 where id <> ' + dmDataModule.quCurrencyId.AsString);
+//  if IsDefault.Checked then dmDataModule.ExecSQL('update d_currency set isCrossCurrency = 0 where id <> ' + dmDataModule.quCurrencyId.AsString);
 end;
 
 end.

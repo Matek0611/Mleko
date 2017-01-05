@@ -1,6 +1,6 @@
 inherited EditCurrencyForm: TEditCurrencyForm
-  Left = 792
-  Top = 318
+  Left = 931
+  Top = 173
   Width = 400
   Height = 284
   Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1085#1080#1077' '#1074#1072#1083#1102#1090#1099
