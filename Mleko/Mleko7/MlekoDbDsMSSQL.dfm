@@ -1,6 +1,6 @@
 inherited MlekoDbDsMSSQLDm: TMlekoDbDsMSSQLDm
-  Left = 579
-  Top = 253
+  Left = 338
+  Top = 134
   Height = 469
   Width = 781
   inherited DBDev: TMSConnection

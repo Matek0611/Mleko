@@ -1,5 +1,5 @@
 inherited fmDeliveryOfGoods: TfmDeliveryOfGoods
-  Left = 1095
+  Left = 935
   Top = 190
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
