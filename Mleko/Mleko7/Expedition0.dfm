@@ -1,6 +1,6 @@
 inherited fmExpedition: TfmExpedition
-  Left = 566
-  Top = 229
+  Left = 338
+  Top = 200
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1061#1086#1076#1082#1080
@@ -1915,6 +1915,8 @@ inherited fmExpedition: TfmExpedition
       '      , l.DAY_DELAY'
       '      , r.OrderInFlight'
       '      , r.ArrivalTime'
+      '      , convert(varchar(5), lap.TimeBeg) as TimeBeg'
+      '      , convert(varchar(5), lap.TimeEnd) as TimeEnd'
       'FROM NaklR r left JOIN'
       
         '     L_POST_SET_ARTGROUP_DELAY l on l.POSTNO = r.PostNo and l.BU' +
@@ -1923,7 +1925,10 @@ inherited fmExpedition: TfmExpedition
       '     Post ON r.PostNoFirst = Post.PostNo INNER JOIN'
       
         '     AddressPost ON r.AddressNo = AddressPost.AddressNo AND r.Po' +
-        'stNoFirst = AddressPost.PostNo'
+        'stNoFirst = AddressPost.PostNo INNER JOIN '
+      
+        '     L_AddressPostProp lap ON r.AddressNo = lap.AddressNo AND r.' +
+        'PostNo = lap.PostNo'
       'WHERE (r.ExpeditionNo = :ExpeditionNo) AND (r.ExpeditionNo <>0)'
       'ORDER BY &_order')
     Left = 28
@@ -1990,6 +1995,16 @@ inherited fmExpedition: TfmExpedition
     end
     object quNaklRArrivalTime: TDateTimeField
       FieldName = 'ArrivalTime'
+    end
+    object quNaklRTimeBeg: TStringField
+      FieldName = 'TimeBeg'
+      ReadOnly = True
+      Size = 5
+    end
+    object quNaklRTimeEnd: TStringField
+      FieldName = 'TimeEnd'
+      ReadOnly = True
+      Size = 5
     end
   end
   object frReport: TfrReport

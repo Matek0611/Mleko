@@ -1,5 +1,5 @@
 inherited fmEditUser: TfmEditUser
-  Left = 974
+  Left = 885
   Top = 188
   ActiveControl = deName
   BorderIcons = [biSystemMenu, biMinimize]
