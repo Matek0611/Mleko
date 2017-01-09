@@ -1,6 +1,6 @@
 inherited MlekoClosePlatRForm: TMlekoClosePlatRForm
-  Left = 275
-  Top = 163
+  Left = 297
+  Top = 176
   Width = 1337
   Height = 844
   Caption = #1046#1091#1088#1085#1072#1083' '#1056#1072#1089#1093#1086#1076#1086#1074
@@ -1118,7 +1118,7 @@ inherited MlekoClosePlatRForm: TMlekoClosePlatRForm
     Where.Strings = (
       'DateEntity between :p_date_beg and :p_date_end'
       'and ((abs(Summa-CloseSumma-FreeSumma)>0.02) or :is_uncorect =0)'
-      'and (is_econom= :is_econom or :is_all_econom =1)'
+      'and (is_econom = :is_econom or :is_all_econom = 1)'
       'AND (a.PostNoFirst in (select cast(Param_Value as int)'
       '                      from e_Session_Params'
       '                     where Userno = <USERNO>'
@@ -1727,7 +1727,9 @@ inherited MlekoClosePlatRForm: TMlekoClosePlatRForm
         'trudNo, :p_bank_invoice_id, :p_activity_type_id, :p_response_dep' +
         't_id, :p_VidRashodNo, :p_OtdelNo, :p_our_firmNo, :p_is_econom, :' +
         'p_DataLoad, :p_SummaLoad, :p_FreeSummaLoad, :p_EntityTypeLoad, :' +
-        'p_AddressLoad, :p_SetArticleGroupName, :p_DayDeley, :p_Pkey)}')
+        'p_AddressLoad, :p_SetArticleGroupName, :p_DayDeley, :p_l_code, :' +
+        'p_Rate, :p_CurrencyAccounting, :p_RateCurrencyAccounting, :p_Sum' +
+        'maCurrencyAccounting, :p_SummaDolgCurrencyAccounting, :p_Pkey)}')
     Left = 552
     ParamData = <
       item
@@ -1868,6 +1870,38 @@ inherited MlekoClosePlatRForm: TMlekoClosePlatRForm
       item
         DataType = ftInteger
         Name = 'p_DayDeley'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftString
+        Name = 'p_l_code'
+        ParamType = ptInput
+        Size = 5
+      end
+      item
+        DataType = ftFloat
+        Name = 'p_Rate'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftString
+        Name = 'p_CurrencyAccounting'
+        ParamType = ptInput
+        Size = 5
+      end
+      item
+        DataType = ftFloat
+        Name = 'p_RateCurrencyAccounting'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftFloat
+        Name = 'p_SummaCurrencyAccounting'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftFloat
+        Name = 'p_SummaDolgCurrencyAccounting'
         ParamType = ptInput
       end
       item

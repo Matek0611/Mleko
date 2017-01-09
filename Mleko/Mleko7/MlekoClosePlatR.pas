@@ -857,15 +857,17 @@ begin
   else
     is_uncorect := 0;
 
-  if cb_is_econom.Checked then
-    is_econom := 1
-  else
-    is_econom := 0;
+  MainDm.OpenSQL('select count(*) as cnt from ListPlusPostForClosePlatRIsEconom where UserNo = :p1_UserNo', [data.UserNo]);
+  if TdmDataModule(MainDm).QFO.FieldByName('cnt').AsInteger = 0 then is_econom := 0
+                                                                else begin
+                                                                       if cb_is_econom.Checked then is_econom := 1
+                                                                                               else is_econom := 0;
+                                                                     end;
 
-  if cb_is_econom.State = StdCtrls.cbGrayed then
-    is_all_econom := 1
-  else
-    is_all_econom := 0;
+  MainDm.OpenSQL('select count(*) as cnt from ListPlusPostForClosePlatRIsEconom where UserNo = :p1_UserNo', [data.UserNo]);
+  if TdmDataModule(MainDm).QFO.FieldByName('cnt').AsInteger = 0 then is_all_econom := 0
+                                                                else if cb_is_econom.State = StdCtrls.cbGrayed then is_all_econom := 1
+                                                                                                               else is_all_econom := 0;
 
   if flt_OurFirm.Text = '' then
     is_all_ourfirm := 1
@@ -1611,6 +1613,11 @@ var
   EntityType : string;
   D_RESPONSE_DEPT_ID, D_ACTIVITY_TYPE_ID : integer;
   D_BANK_INVOICE, VidZatrat : integer;
+  Rate,RateCurrencyAccounting : Double;
+  SummaCurrencyAccounting,SummaDolgCurrencyAccounting : Double;
+  RateS,RateCurrencyAccountingS : String;
+  SummaCurrencyAccountingS,SummaDolgCurrencyAccountingS : String;
+  ds : char;
 begin
   inherited;
   isSetDate := False;
@@ -1680,7 +1687,9 @@ begin
      begin
        if ((WorkSheet.Cells[index,1].Text = 'PLATP') or (WorkSheet.Cells[index,1].Text = 'PLATR')) then
         begin
-          
+
+          ds := DecimalSeparator;
+
           DecimalSeparator := '.';
 
           SummaS := StringReplace(WorkSheet.Cells[index,4].Text, '''', '',[rfReplaceAll, rfIgnoreCase]);
@@ -1690,6 +1699,24 @@ begin
           SummaS := StringReplace(WorkSheet.Cells[index,5].Text, '''', '',[rfReplaceAll, rfIgnoreCase]);
           SummaS := StringReplace(SummaS, ',', '.',[rfReplaceAll, rfIgnoreCase]);
           FreeSumma := StrToFloat(SummaS);
+
+          RateS := StringReplace(WorkSheet.Cells[index,23].Text, '''', '',[rfReplaceAll, rfIgnoreCase]);
+          RateS := StringReplace(RateS, ',', '.',[rfReplaceAll, rfIgnoreCase]);
+          Rate := StrToFloat(RateS);
+
+          RateCurrencyAccountingS := StringReplace(WorkSheet.Cells[index,25].Text, '''', '',[rfReplaceAll, rfIgnoreCase]);
+          RateCurrencyAccountingS := StringReplace(RateCurrencyAccountingS, ',', '.',[rfReplaceAll, rfIgnoreCase]);
+          RateCurrencyAccounting := StrToFloat(RateCurrencyAccountingS);
+
+          SummaCurrencyAccountingS := StringReplace(WorkSheet.Cells[index,26].Text, '''', '',[rfReplaceAll, rfIgnoreCase]);
+          SummaCurrencyAccountingS := StringReplace(SummaCurrencyAccountingS, ',', '.',[rfReplaceAll, rfIgnoreCase]);
+          SummaCurrencyAccounting := StrToFloat(SummaCurrencyAccountingS);
+
+          SummaDolgCurrencyAccountingS := StringReplace(WorkSheet.Cells[index,27].Text, '''', '',[rfReplaceAll, rfIgnoreCase]);
+          SummaDolgCurrencyAccountingS := StringReplace(SummaDolgCurrencyAccountingS, ',', '.',[rfReplaceAll, rfIgnoreCase]);
+          SummaDolgCurrencyAccounting := StrToFloat(SummaDolgCurrencyAccountingS);
+
+          DecimalSeparator := ds;
 
           if (FreeSumma <> 0) then
            begin
@@ -1724,6 +1751,13 @@ begin
 
              sp_AddEntity.ParamByName('p_SetArticleGroupName').Value := WorkSheet.Cells[index,20].Text;
              sp_AddEntity.ParamByName('p_DayDeley').Value := StrToInt(WorkSheet.Cells[index,21].Text);
+
+             sp_AddEntity.ParamByName('CurrencyHead').Value := WorkSheet.Cells[index,22].Text;
+             sp_AddEntity.ParamByName('Rate').Value := Rate;
+             sp_AddEntity.ParamByName('CurrencyAccounting').Value := WorkSheet.Cells[index,24].Text;
+             sp_AddEntity.ParamByName('RateCurrencyAccounting').Value := RateCurrencyAccounting;
+             sp_AddEntity.ParamByName('SummaCurrencyAccounting').Value := SummaCurrencyAccounting;
+             sp_AddEntity.ParamByName('SummaDolgCurrencyAccounting').Value := SummaDolgCurrencyAccounting;
 
              sp_AddEntity.Execute;
            end;
@@ -1792,6 +1826,13 @@ begin
 
              sp_AddEntity.ParamByName('p_SetArticleGroupName').Value := WorkSheet.Cells[index,20].Text;
              sp_AddEntity.ParamByName('p_DayDeley').Value := StrToInt(WorkSheet.Cells[index,21].Text);
+
+             sp_AddEntity.ParamByName('CurrencyHead').Value := WorkSheet.Cells[index,22].Text;
+             sp_AddEntity.ParamByName('Rate').Value := Rate;
+             sp_AddEntity.ParamByName('CurrencyAccounting').Value := WorkSheet.Cells[index,24].Text;
+             sp_AddEntity.ParamByName('RateCurrencyAccounting').Value := RateCurrencyAccounting;
+             sp_AddEntity.ParamByName('SummaCurrencyAccounting').Value := SummaCurrencyAccounting;
+             sp_AddEntity.ParamByName('SummaDolgCurrencyAccounting').Value := SummaDolgCurrencyAccounting;
 
              sp_AddEntity.Execute;
            end;
