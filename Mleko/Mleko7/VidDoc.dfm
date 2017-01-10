@@ -55,11 +55,6 @@ inherited VidDocForm: TVidDocForm
             FieldName = 'VidNaklName'
             Footers = <>
             Title.Alignment = taCenter
-            Title.Font.Charset = DEFAULT_CHARSET
-            Title.Font.Color = clWindowText
-            Title.Font.Height = -11
-            Title.Font.Name = 'MS Sans Serif'
-            Title.Font.Style = [fsBold]
             Width = 208
           end>
       end
@@ -106,7 +101,7 @@ inherited VidDocForm: TVidDocForm
             Title.Font.Style = [fsBold]
           end
           item
-            DropDownBox.ListSource = dsUsers
+            DropDownBox.ListSource = dsUsersConfirm
             EditButtons = <>
             FieldName = 'User'
             Footers = <>
@@ -535,14 +530,14 @@ inherited VidDocForm: TVidDocForm
         OnClick = SpeedButton3Click
       end
       object Splitter2: TSplitter
-        Left = 545
+        Left = 568
         Top = 1
         Width = 5
         Height = 30
         Align = alCustom
       end
       object SpeedButton4: TSpeedButton
-        Left = 552
+        Left = 573
         Top = 1
         Width = 25
         Height = 27
@@ -605,7 +600,7 @@ inherited VidDocForm: TVidDocForm
         OnClick = SpeedButton4Click
       end
       object SpeedButton5: TSpeedButton
-        Left = 577
+        Left = 598
         Top = 1
         Width = 25
         Height = 27
@@ -668,7 +663,7 @@ inherited VidDocForm: TVidDocForm
         OnClick = SpeedButton5Click
       end
       object SpeedButton6: TSpeedButton
-        Left = 600
+        Left = 621
         Top = 1
         Width = 25
         Height = 27
@@ -925,7 +920,7 @@ inherited VidDocForm: TVidDocForm
       DisplayLabel = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100
       FieldKind = fkLookup
       FieldName = 'User'
-      LookupDataSet = quUsers
+      LookupDataSet = quUsersConfirm
       LookupKeyFields = 'UserNo'
       LookupResultField = 'UserName'
       KeyFields = 'UserNo'
@@ -937,47 +932,47 @@ inherited VidDocForm: TVidDocForm
       FieldName = 'IsCanEdit'
     end
   end
-  object dsUsers: TMSDataSource
-    DataSet = quUsers
+  object dsUsersConfirm: TMSDataSource
+    DataSet = quUsersConfirm
     Left = 514
     Top = 312
   end
-  object quUsers: TMSQuery
+  object quUsersConfirm: TMSQuery
     Connection = dmDataModule.DB
     SQL.Strings = (
       'select *'
       ' from Users')
     Left = 488
     Top = 312
-    object quUsersUserNo: TIntegerField
+    object quUsersConfirmUserNo: TIntegerField
       FieldName = 'UserNo'
     end
-    object quUsersUserName: TStringField
+    object quUsersConfirmUserName: TStringField
       FieldName = 'UserName'
     end
-    object quUsersCodeAccess: TSmallintField
+    object quUsersConfirmCodeAccess: TSmallintField
       FieldName = 'CodeAccess'
     end
-    object quUsersPassword: TStringField
+    object quUsersConfirmPassword: TStringField
       FieldName = 'Password'
       Size = 8
     end
-    object quUsersEditPost: TBooleanField
+    object quUsersConfirmEditPost: TBooleanField
       FieldName = 'EditPost'
     end
-    object quUsersFormWight: TIntegerField
+    object quUsersConfirmFormWight: TIntegerField
       FieldName = 'FormWight'
     end
-    object quUsersFormHeight: TIntegerField
+    object quUsersConfirmFormHeight: TIntegerField
       FieldName = 'FormHeight'
     end
-    object quUsersFormLeft: TIntegerField
+    object quUsersConfirmFormLeft: TIntegerField
       FieldName = 'FormLeft'
     end
-    object quUsersFormTop: TIntegerField
+    object quUsersConfirmFormTop: TIntegerField
       FieldName = 'FormTop'
     end
-    object quUsersSkin: TIntegerField
+    object quUsersConfirmSkin: TIntegerField
       FieldName = 'Skin'
     end
   end
@@ -1015,7 +1010,7 @@ inherited VidDocForm: TVidDocForm
       DisplayLabel = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100
       FieldKind = fkLookup
       FieldName = 'User'
-      LookupDataSet = quUsers
+      LookupDataSet = quUsersConduct
       LookupKeyFields = 'UserNo'
       LookupResultField = 'UserName'
       KeyFields = 'UserNo'
@@ -1026,5 +1021,49 @@ inherited VidDocForm: TVidDocForm
     DataSet = quListUserForConductingDoc
     Left = 650
     Top = 313
+  end
+  object quUsersConduct: TMSQuery
+    Connection = dmDataModule.DB
+    SQL.Strings = (
+      'select *'
+      ' from Users')
+    Left = 616
+    Top = 256
+    object IntegerField1: TIntegerField
+      FieldName = 'UserNo'
+    end
+    object StringField1: TStringField
+      FieldName = 'UserName'
+    end
+    object SmallintField1: TSmallintField
+      FieldName = 'CodeAccess'
+    end
+    object StringField2: TStringField
+      FieldName = 'Password'
+      Size = 8
+    end
+    object BooleanField1: TBooleanField
+      FieldName = 'EditPost'
+    end
+    object IntegerField2: TIntegerField
+      FieldName = 'FormWight'
+    end
+    object IntegerField3: TIntegerField
+      FieldName = 'FormHeight'
+    end
+    object IntegerField4: TIntegerField
+      FieldName = 'FormLeft'
+    end
+    object IntegerField5: TIntegerField
+      FieldName = 'FormTop'
+    end
+    object IntegerField6: TIntegerField
+      FieldName = 'Skin'
+    end
+  end
+  object dsUsersConduct: TMSDataSource
+    DataSet = quUsersConduct
+    Left = 642
+    Top = 256
   end
 end
