@@ -203,6 +203,7 @@ type
     quNaklRArrivalTime: TDateTimeField;
     quNaklRTimeBeg: TStringField;
     quNaklRTimeEnd: TStringField;
+    quNaklRVidNaklNo: TSmallintField;
     procedure RxDBGrid1KeyPress(Sender: TObject; var Key: Char);
     procedure RxDBGrid1TitleBtnClick(Sender: TObject; ACol: Integer; Field: TField);
     procedure quExpeditionBeforeDelete(DataSet: TDataSet);

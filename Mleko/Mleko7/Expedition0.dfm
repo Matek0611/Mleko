@@ -1,6 +1,6 @@
 inherited fmExpedition: TfmExpedition
   Left = 338
-  Top = 200
+  Top = 0
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1061#1086#1076#1082#1080
@@ -1917,6 +1917,9 @@ inherited fmExpedition: TfmExpedition
       '      , r.ArrivalTime'
       '      , convert(varchar(5), lap.TimeBeg) as TimeBeg'
       '      , convert(varchar(5), lap.TimeEnd) as TimeEnd'
+      
+        '      , (case when r.VidNaklNo in (3,5) then 1 else 0 end) as Vi' +
+        'dNaklNo'
       'FROM NaklR r left JOIN'
       
         '     L_POST_SET_ARTGROUP_DELAY l on l.POSTNO = r.PostNo and l.BU' +
@@ -2005,6 +2008,9 @@ inherited fmExpedition: TfmExpedition
       FieldName = 'TimeEnd'
       ReadOnly = True
       Size = 5
+    end
+    object quNaklRVidNaklNo: TSmallintField
+      FieldName = 'VidNaklNo'
     end
   end
   object frReport: TfrReport
