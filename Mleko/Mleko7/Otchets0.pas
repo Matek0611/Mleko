@@ -551,7 +551,8 @@ var
   procedure SotrudDolgPodotchet;
   procedure LoadCarNew(Copies: Integer; Nakls, PostNoCar:string; DlgSpravkaShow, Preview: Boolean; Car, Expedition: String; DateBegin: TDate);
   procedure LoadCarNoTTNew(Copies: Integer; Nakls, PostNoCar:string; DlgSpravkaShow, Preview: Boolean; Car, Expedition: String; DateBegin: TDate);
-  procedure PrintNaklRasNew(NaklNo:integer; Dlg, Preview, Buh, Print3: Boolean);
+  procedure PrintNaklRasNew( NaklNo:integer; Dlg, Preview, Buh, Print3: Boolean;
+                             SecretKeyPressed: Boolean = False);
   procedure PrintNaklDesign(NaklNo:integer; Dlg, Preview, Buh, Print3: Boolean);
   procedure DolgSotrudExcel;
   procedure LoadCarNewP(Nakls:string; DateBegin,DateEnd: TDate);
@@ -1132,7 +1133,25 @@ begin
  end;
 end;
 
-procedure PrintNaklRasNew(NaklNo:integer; Dlg, Preview, Buh, Print3: Boolean);
+procedure ShowReportOrDesigner(Preview, ShowDesigner: Boolean);
+begin
+   with fmOtchets do
+   begin
+     if ShowDesigner then
+        frReportPrintNakl.DesignReport else
+     if Preview then
+        frReportPrintNakl.ShowReport
+     else
+     begin
+      frReportPrintNakl.PrepareReport;
+      frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
+     end;
+   end;
+end;
+
+
+procedure PrintNaklRasNew( NaklNo:integer; Dlg, Preview, Buh, Print3: Boolean;
+                           SecretKeyPressed: Boolean = False);
 //Buh=False Без шапки
 //Buh=True С шапкой
 begin
@@ -1177,10 +1196,10 @@ begin
 
 //       frReportPrintNakl.LoadFromFile('NaklR_1_1.frf');
 
-//     frReportPrintNakl.DesignReport;
-
+        if SecretKeyPressed then
+           frReportPrintNakl.DesignReport else
        if Preview then
-        frReportPrintNakl.ShowReport
+             frReportPrintNakl.ShowReport
        else
         begin
          frReportPrintNakl.PrepareReport;
@@ -1202,13 +1221,14 @@ begin
 
 //     frReportPrintNakl.DesignReport;
 
-       if Preview then
-        frReportPrintNakl.ShowReport
-       else
-        begin
-         frReportPrintNakl.PrepareReport;
-         frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
-        end;
+//       if Preview then
+//        frReportPrintNakl.ShowReport
+//       else
+//        begin
+//         frReportPrintNakl.PrepareReport;
+//         frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
+//        end;
+          ShowReportOrDesigner(Preview, SecretKeyPressed);
        if Print3 then
         begin
 
@@ -1221,13 +1241,14 @@ begin
 
       //   frReportPrintNakl.DesignReport;
 
-         if Preview then
-          frReportPrintNakl.ShowReport
-         else
-          begin
-           frReportPrintNakl.PrepareReport;
-           frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
-          end;
+//         if Preview then
+//          frReportPrintNakl.ShowReport
+//         else
+//          begin
+//           frReportPrintNakl.PrepareReport;
+//           frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
+//          end;
+          ShowReportOrDesigner(Preview, SecretKeyPressed);
         end;
 
       end;
@@ -1246,13 +1267,14 @@ begin
 
 //       frReportPrintNakl.DesignReport;
 
-       if Preview then
-        frReportPrintNakl.ShowReport
-       else
-        begin
-         frReportPrintNakl.PrepareReport;
-         frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
-        end;
+//       if Preview then
+//        frReportPrintNakl.ShowReport
+//       else
+//        begin
+//         frReportPrintNakl.PrepareReport;
+//         frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
+//        end;
+          ShowReportOrDesigner(Preview, SecretKeyPressed);
 {
        if GlobalOurFirmNo = 1 then frReportPrintNakl.LoadFromFile('NaklR_2_1_BigMarket.frf');
        if GlobalOurFirmNo = 490 then frReportPrintNakl.LoadFromFile('NaklR_2_1.frf');
@@ -1262,13 +1284,14 @@ begin
 
 //       frReportPrintNakl.DesignReport;
 
-       if Preview then
-        frReportPrintNakl.ShowReport
-       else
-        begin
-         frReportPrintNakl.PrepareReport;
-         frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
-        end;
+//       if Preview then
+//        frReportPrintNakl.ShowReport
+//       else
+//        begin
+//         frReportPrintNakl.PrepareReport;
+//         frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
+//        end;
+        ShowReportOrDesigner(Preview, SecretKeyPressed);
       end
      else
       begin
@@ -1280,13 +1303,14 @@ begin
 
 //      frReportPrintNakl.DesignReport;
 
-       if Preview then
-        frReportPrintNakl.ShowReport
-       else
-        begin
-         frReportPrintNakl.PrepareReport;
-         frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
-        end;
+//       if Preview then
+//        frReportPrintNakl.ShowReport
+//       else
+//        begin
+//         frReportPrintNakl.PrepareReport;
+//         frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
+//        end;
+        ShowReportOrDesigner(Preview, SecretKeyPressed);
       end;
     end;
 
