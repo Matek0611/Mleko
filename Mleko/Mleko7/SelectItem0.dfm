@@ -1,6 +1,6 @@
 inherited fmSelectItem: TfmSelectItem
-  Left = 60
-  Top = 160
+  Left = 584
+  Top = 185
   BorderStyle = bsDialog
   Caption = 'fmSelectItem'
   ClientHeight = 135
@@ -25,6 +25,7 @@ inherited fmSelectItem: TfmSelectItem
     Default = True
     ModalResult = 1
     TabOrder = 1
+    OnClick = bbOkClick
     Glyph.Data = {
       DE010000424DDE01000000000000760000002800000024000000120000000100
       0400000000006801000000000000000000001000000000000000000000000000
