@@ -465,7 +465,9 @@ var
   Print3 :boolean;
   Dlg : TfmDeliveryOfGoods;
   DeliveryTovarNo : Integer;
+  SecretKeyPressed: Boolean;
 begin
+  //SecretKeyPressed:= Ctrl_Is_Down() and Shift_Is_Down();
   if quNaklR.FieldByName('TTN').AsBoolean = true then
                                                    i := SelectItem('Печать', ['Загрузка', 'Список', 'Список с районами', 'Внутренняя накладная',
                                                                               'Требование на погрузку', 'Расширенный полный список','Расходная накладная',
@@ -474,6 +476,8 @@ begin
                                                    i := SelectItem('Печать', ['Загрузка', 'Список', 'Список с районами', 'Внутренняя накладная',
                                                                               'Требование на погрузку', 'Расширенный полный список','Расходная накладная',
                                                                               'Поставка товара', 'Требование на погрузку ИМ','Погрузка ИМ с партнерами']);
+  i:= DecodeSecretValue(i, c);
+  SecretKeyPressed:= (c=100);
   case i of
     0:
       begin
@@ -549,11 +553,13 @@ begin
          Print3:=fmNaklR_.quNaklR.FieldByName('Print3').AsBoolean;
          if fmNaklR_.quNaklR.FieldByName('Buh').AsInteger = 2 then
           begin
-           PrintNaklRasNew(quNaklR.FieldByName('NaklNo').AsInteger, False, True, True, Print3);
+           PrintNaklRasNew( quNaklR.FieldByName('NaklNo').AsInteger, False, True, True, Print3,
+                            SecretKeyPressed);
           end
           else
           begin
-            PrintNaklRasNew(quNaklR.FieldByName('NaklNo').AsInteger, False, True, False, Print3);
+            PrintNaklRasNew( quNaklR.FieldByName('NaklNo').AsInteger, False, True, False, Print3,
+                             SecretKeyPressed);
           end;
       end;
     7:

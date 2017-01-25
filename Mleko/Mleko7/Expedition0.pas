@@ -771,20 +771,6 @@ begin
     ActiveControl := DBGridEh1;
 end;
 
-function Ctrl_Is_Down: Boolean;
-var State:TKeyboardState;
-begin
-GetKeyboardState(State);
-Result:=((State[VK_CONTROL] and 128)<>0);
-end;
-
-function Shift_Is_Down: Boolean;
-var State:TKeyboardState;
-begin
-GetKeyboardState(State);
-Result:=((State[VK_SHIFT] and 128)<>0);
-end;
-
 procedure TfmExpedition.sbPrevClick(Sender: TObject);
 var
   ExpeditionNo, i, Tara: integer;
@@ -792,12 +778,14 @@ var
   SelectPost: string;
   SecretKeyPressed: Boolean;
 begin
-  SecretKeyPressed:= Ctrl_Is_Down() and Shift_Is_Down();
+  //SecretKeyPressed:= Ctrl_Is_Down() and Shift_Is_Down();
   quNaklR.ParamByName('ExpeditionNo').AsInteger := quExpeditionExpeditionNo.AsInteger;
   quNaklR.Open;
   i := SelectItem( 'Печать',
                    ['Загрузка', 'Список магазинов', 'Тарная накладная',
                     'Загрузка по виду', 'Список накладных', 'Отчет по ходкам']);
+  i:= DecodeSecretValue(i, Tara);
+  SecretKeyPressed:= (Tara=100);
   case i of
     0:
       begin
