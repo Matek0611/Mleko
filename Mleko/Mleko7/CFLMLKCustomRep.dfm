@@ -1,27 +1,27 @@
 inherited CFLMLKCustomRepDlg: TCFLMLKCustomRepDlg
-  Left = 1093
-  Top = 170
+  Left = 598
+  Top = 266
   Caption = 'CFLMLKCustomRepDlg'
-  ClientHeight = 291
-  ClientWidth = 272
+  ClientHeight = 293
+  ClientWidth = 275
   Constraints.MinWidth = 280
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonOK: TButton
-    Left = 129
-    Top = 270
+    Left = 132
+    Top = 272
     Width = 70
     Height = 20
   end
   inherited ButtonCancel: TButton
-    Left = 201
-    Top = 270
+    Left = 204
+    Top = 272
     Width = 70
     Height = 20
   end
   inherited ButtonApply: TButton
-    Left = 19
-    Top = 270
+    Left = 22
+    Top = 272
     Width = 69
     Height = 20
     Enabled = False
@@ -29,7 +29,7 @@ inherited CFLMLKCustomRepDlg: TCFLMLKCustomRepDlg
   end
   inherited PageControl: TPageControl
     Top = 130
-    Width = 272
+    Width = 275
     Height = 141
     MultiLine = True
     TabHeight = 1
@@ -40,10 +40,14 @@ inherited CFLMLKCustomRepDlg: TCFLMLKCustomRepDlg
     end
   end
   inherited ToolBar: TToolBar
-    Width = 272
+    Width = 275
+    inherited BtnEditDlg: TToolButton
+      Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1079#1072#1087#1088#1086#1089' '#1086#1090#1095#1077#1090#1072' '#1080#1079' '#1041#1044
+    end
     object ToolBtnAdd: TToolButton
       Left = 23
       Top = 0
+      Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1092#1086#1088#1084#1091' '#1086#1090#1095#1077#1090#1072' '#1080#1079' '#1041#1044
       Action = ActionDesignReport
     end
     object ToolButton1: TToolButton
@@ -66,7 +70,7 @@ inherited CFLMLKCustomRepDlg: TCFLMLKCustomRepDlg
   object Panel1: TPanel [5]
     Left = 0
     Top = 24
-    Width = 272
+    Width = 275
     Height = 106
     Align = alTop
     BevelWidth = 2
@@ -128,7 +132,7 @@ inherited CFLMLKCustomRepDlg: TCFLMLKCustomRepDlg
     object DBMemo1: TDBMemo
       Left = 2
       Top = 59
-      Width = 268
+      Width = 271
       Height = 45
       Align = alBottom
       BevelInner = bvNone

@@ -881,7 +881,10 @@ begin
         S := '';
         S1 := '';
         frReportExpeditionPrint.LoadFromFile('BlankExpeditionNakl.frf');
-        frReportExpeditionPrint.ShowReport;
+        if SecretKeyPressed then
+           frReportExpeditionPrint.DesignReport else
+           frReportExpeditionPrint.ShowReport;
+        //frReportExpeditionPrint.ShowReport;
         quExpeditionPrint.Close;
       end;
     5:
@@ -942,11 +945,17 @@ procedure TfmExpedition.sbPrintClick(Sender: TObject);
 var
   i, j, Tara: integer;
   S, S1, S2: string;
+  SecretKeyPressed: Boolean;
 begin
   quNaklR.ParamByName('ExpeditionNo').AsInteger := quExpeditionExpeditionNo.AsInteger;
   quNaklR.Open;
 
-  i := SelectItem('Печать', ['Полный комплект', 'Список магазинов', 'Загрузка', 'Загрузка без ТТ', 'Тарная накладная', 'Список накладных']);
+  i := SelectItem( 'Печать',
+                  ['Полный комплект', 'Список магазинов', 'Загрузка', 'Загрузка без ТТ',
+                  'Тарная накладная', 'Список накладных']);
+  i:= DecodeSecretValue(i, Tara);
+  SecretKeyPressed:= (Tara=100);
+
   case i of
     0:
       begin
@@ -1177,7 +1186,8 @@ begin
         begin
           S := Copy(S, 1, Length(S) - 1);
           S := '(' + S + ')';
-          LoadCarNoTTNew(1, S, S1, False, False, quExpeditionCarsName.AsString, quExpeditionShipping_AgentName.AsString, quExpeditionExpeditionDateGo.AsDateTime);
+          LoadCarNoTTNew( 1, S, S1, False, False, quExpeditionCarsName.AsString, quExpeditionShipping_AgentName.AsString, quExpeditionExpeditionDateGo.AsDateTime,
+                          SecretKeyPressed);
         end;
         quWork.Close;
         quWork.SQL.Clear;
