@@ -433,6 +433,8 @@ type
     quRashodPrintPriceInInst: TFloatField;
     quRashodPrintBarCode: TLargeintField;
     quRashodPrintIsStavNDS: TIntegerField;
+    quTovarVidNameOtdelName: TStringField;
+    quTovarVidNameNaklNo: TIntegerField;
     
     procedure frReport3GetValue(const ParName: String;
       var ParValue: Variant);
@@ -550,7 +552,9 @@ var
   procedure SalarySotrudPercentNew;
   procedure SotrudDolgPodotchet;
   procedure LoadCarNew(Copies: Integer; Nakls, PostNoCar:string; DlgSpravkaShow, Preview: Boolean; Car, Expedition: String; DateBegin: TDate);
-  procedure LoadCarNoTTNew(Copies: Integer; Nakls, PostNoCar:string; DlgSpravkaShow, Preview: Boolean; Car, Expedition: String; DateBegin: TDate);
+  procedure LoadCarNoTTNew(
+            Copies: Integer; Nakls, PostNoCar:string; DlgSpravkaShow, Preview: Boolean;
+            Car, Expedition: String; DateBegin: TDate; DesignCode: Integer = 0);
   procedure PrintNaklRasNew( NaklNo:integer; Dlg, Preview, Buh, Print3: Boolean;
                              SecretKeyPressed: Boolean = False);
   procedure PrintNaklDesign(NaklNo:integer; Dlg, Preview, Buh, Print3: Boolean);
@@ -564,7 +568,7 @@ var
 implementation
 
 uses UtilsDataConvert, SelectItem0, GetDate0, GetPeriodDate0, data, Sotrud0,
-  GetSpravka3, GetSpravka2, EditPost0, main;
+  GetSpravka3, GetSpravka2, EditPost0, main, UFastDatasetView;
 
 {$R *.DFM}
 procedure ZPSotrudPercent;
@@ -1133,22 +1137,35 @@ begin
  end;
 end;
 
-procedure ShowReportOrDesigner(Preview, ShowDesigner: Boolean);
+procedure ShowReportOrDesignerExt(Report: TfrReport; Copies:Integer; Preview, ShowDesigner: Boolean);
 begin
-   with fmOtchets do
-   begin
-     if ShowDesigner then
-        frReportPrintNakl.DesignReport else
-     if Preview then
-        frReportPrintNakl.ShowReport
-     else
-     begin
-      frReportPrintNakl.PrepareReport;
-      frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
-     end;
-   end;
+  if ShowDesigner then
+    Report.DesignReport else
+  if Preview then
+    Report.ShowReport
+  else
+  begin
+  Report.PrepareReport;
+  Report.PrintPreparedReport('', Copies, True, frAll);
+  end;
 end;
 
+procedure ShowReportOrDesigner(Preview, ShowDesigner: Boolean);
+begin
+   ShowReportOrDesignerExt(fmOtchets.frReportPrintNakl, 1, Preview, ShowDesigner);
+//   with fmOtchets do
+//   begin
+//     if ShowDesigner then
+//        frReportPrintNakl.DesignReport else
+//     if Preview then
+//        frReportPrintNakl.ShowReport
+//     else
+//     begin
+//      frReportPrintNakl.PrepareReport;
+//      frReportPrintNakl.PrintPreparedReport('', 1, True, frAll);
+//     end;
+//   end;
+end;
 
 procedure PrintNaklRasNew( NaklNo:integer; Dlg, Preview, Buh, Print3: Boolean;
                            SecretKeyPressed: Boolean = False);
@@ -1724,7 +1741,9 @@ begin
  end;
 end;
 
-procedure LoadCarNoTTNew(Copies: Integer; Nakls, PostNoCar:string; DlgSpravkaShow, Preview: Boolean; Car, Expedition: String; DateBegin: TDate);
+procedure LoadCarNoTTNew( Copies: Integer; Nakls, PostNoCar:string;
+                          DlgSpravkaShow, Preview: Boolean; Car, Expedition: String;
+                          DateBegin: TDate; DesignCode: Integer = 0);
 var
  KolPak: string;
 begin
@@ -1776,6 +1795,12 @@ begin
      FieldDefs.Clear;
      with FieldDefs.AddFieldDef do
       begin
+       Name := 'NaklNo';
+       DataType := ftInteger;
+       Required := False;
+      end;
+     with FieldDefs.AddFieldDef do
+      begin
        Name := 'TovarNo';
        DataType := ftInteger;
        Required := False;
@@ -1790,6 +1815,19 @@ begin
      with FieldDefs.AddFieldDef do
       begin
        Name := 'VidTovarName';
+       DataType := ftString;
+       Size := 40;
+       Required := False;
+      end;
+//     with FieldDefs.AddFieldDef do
+//      begin
+//       Name := 'TovarOtdelNo';
+//       DataType := ftInteger;
+//       Required := False;
+//      end;
+     with FieldDefs.AddFieldDef do
+      begin
+       Name := 'TovarOtdelName';
        DataType := ftString;
        Size := 40;
        Required := False;
@@ -1846,10 +1884,13 @@ begin
      mdLoadCar.FieldByName('Kol').AsFloat:=0;
      mdLoadCar.FieldByName('Weight').AsFloat:=0;
      mdLoadCar.FieldByName('KolPerPak').AsString:='';
+     mdLoadCar.FieldByName('NaklNo').AsInteger:=quTovarVidNameNaklNo.AsInteger;
 //     mdLoadCar.FieldByName('PostName').AsString:='';
      mdLoadCar.FieldByName('TovarName').AsString:=quTovarVidNameNameTovar.AsString;
      mdLoadCar.FieldByName('VidTovarName').AsString:=quTovarVidNameVidName.AsString;
      mdLoadCar.FieldByName('TovarNo').AsInteger:=quTovarVidNameTovarNo.AsInteger;
+     //mdLoadCar.FieldByName('TovarOtdelNo').AsInteger:=quTovarVidNameOtdelNo.AsInteger;
+     mdLoadCar.FieldByName('TovarOtdelName').AsString:=quTovarVidNameOtdelName.AsString;
 //     mdLoadCar.FieldByName('BarCode').AsInteger:=0;
      mdLoadCar.Post;
      mdLoadCar.Refresh;
@@ -1916,19 +1957,21 @@ begin
     end;
 //   mdLoadCar.SortOnFields('VidTovarName',True,False);
 //   mdLoadCar.SortOnFields('TovarName',True,False);
-   frReport12.LoadFromFile('LoadCarNoTT.frf');
+   frReport12.LoadFromFile(ExtractFilePath(Application.ExeName) + 'LoadCarNoTT.frf');
 //   frReport12.DesignReport;
    Screen.Cursor:=crDefault;
 
-
-
-   if Preview then
-    frReport12.ShowReport
-   else
-    begin
-     frReport12.PrepareReport;
-     frReport12.PrintPreparedReport('', Copies, True, frAll);
-    end;
+   if DesignCode = 200 then ViewDatasetFast(mdLoadCar) else
+   ShowReportOrDesignerExt(frReport12, Copies, Preview, DesignCode=100);
+//   if InDesigner then
+//      frReport12.DesignReport else
+//   if Preview then
+//    frReport12.ShowReport
+//   else
+//    begin
+//     frReport12.PrepareReport;
+//     frReport12.PrintPreparedReport('', Copies, True, frAll);
+//    end;
 
 
 //   ShowModal;
@@ -4030,15 +4073,12 @@ begin
  Inc(Coln);
 end;
 
-procedure TfmOtchets.frReport12GetValue(const ParName: String;
-  var ParValue: Variant);
+procedure TfmOtchets.frReport12GetValue(const ParName: String; var ParValue: Variant);
 var
  PostNoStr, AddressNoStr: String;
 begin
 
  frVariables['RospCol'] := mdLoadCar.FieldCount-7;
-
-
 
  if ParName='NotLoad' then
   if LoadCarPostNoCar<>'' then

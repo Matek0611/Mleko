@@ -1,6 +1,6 @@
 inherited fmOtchets: TfmOtchets
-  Left = 616
-  Top = 128
+  Left = 376
+  Top = 138
   Width = 796
   Height = 478
   Caption = 'fmOtchets'
@@ -1631,7 +1631,8 @@ inherited fmOtchets: TfmOtchets
       'WHERE     (NaklR.PostNo = :PostNo) AND (NaklR.NaklNo IN &Nakl)'
       
         'GROUP BY NaklR.AddressNo, Rashod.TovarNo, Tovar.NameTovar, Tovar' +
-        '.KolPerPak, Tovar.Weight, VidTov.VidName, Tovar.BarCode'
+        '.KolPerPak, Tovar.Weight, VidTov.VidName, Tovar.BarCode, NaklR.O' +
+        'tdelNo'
       'HAVING      (NaklR.AddressNo = :AddressNo)'
       'ORDER BY VidTov.VidName DESC, Tovar.NameTovar DESC')
     Left = 636
@@ -1648,7 +1649,7 @@ inherited fmOtchets: TfmOtchets
     MacroData = <
       item
         Name = 'Nakl'
-        Value = '0=0'
+        Value = '(0)'
       end>
     object quLoadCarTovarTovarNo: TSmallintField
       FieldName = 'TovarNo'
@@ -1694,7 +1695,7 @@ inherited fmOtchets: TfmOtchets
   end
   object frReport12: TfrReport
     InitialZoom = pzDefault
-    PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
+    PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit, pbPageSetup]
     RebuildPrinter = False
     OnGetValue = frReport12GetValue
     Left = 636
@@ -1733,7 +1734,13 @@ inherited fmOtchets: TfmOtchets
   object quTovarVidName: TMSQuery
     Connection = dmDataModule.DB
     SQL.Strings = (
-      'SELECT     Tovar.NameTovar, Tovar.TovarNo, VidTov.VidName'
+      'SELECT  Tovar.NameTovar, Tovar.TovarNo, VidTov.VidName,'
+      
+        '--(select OtdelName from VidOtdel where VidOtdel.OtdelNo=NaklR.O' +
+        'tdelNo) as OtdelName'
+      
+        '(select OtdelName from VidOtdel where VidOtdel.OtdelNo=Tovar.Otd' +
+        'elNo) as OtdelName'
       'FROM         NaklR INNER JOIN'
       
         '                      Rashod ON NaklR.NaklNo = Rashod.NaklNo INN' +
@@ -1743,14 +1750,16 @@ inherited fmOtchets: TfmOtchets
         'NER JOIN'
       '                      VidTov ON Tovar.VidNo = VidTov.VidNo'
       'WHERE     (NaklR.NaklNo IN &Nakl)'
-      'GROUP BY Tovar.NameTovar, Tovar.TovarNo, VidTov.VidName'
+      
+        'GROUP BY Tovar.NameTovar, Tovar.TovarNo, VidTov.VidName, Tovar.O' +
+        'tdelNo'
       'ORDER BY VidTov.VidName DESC, Tovar.NameTovar DESC')
     Left = 636
     Top = 120
     MacroData = <
       item
         Name = 'Nakl'
-        Value = '0=0'
+        Value = '(0)'
       end>
     object quTovarVidNameNameTovar: TStringField
       FieldName = 'NameTovar'
@@ -1764,6 +1773,14 @@ inherited fmOtchets: TfmOtchets
       FieldName = 'VidName'
       FixedChar = True
       Size = 30
+    end
+    object quTovarVidNameOtdelName: TStringField
+      FieldName = 'OtdelName'
+      ReadOnly = True
+      Size = 30
+    end
+    object quTovarVidNameNaklNo: TIntegerField
+      FieldName = 'NaklNo'
     end
   end
   object quNaklRPrint: TMSQuery

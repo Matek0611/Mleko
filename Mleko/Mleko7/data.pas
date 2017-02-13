@@ -419,10 +419,6 @@ UserAccessToEditingPublishers: Boolean;
   ServSection: string;
   FormWight, FormHeight, FormLeft, FormTop: integer;
 function Coder(Value: string): string;
-function EncodeSecretValue(Value, Secret: Integer): Integer;
-function DecodeSecretValue(Code: Integer; var Secret: Integer): Integer;
-function Ctrl_Is_Down(): Boolean;
-function Shift_Is_Down(): Boolean;
 procedure FillComboEdit(DataSet: TDataSet; p_ComboEdit: TComboBox; p_KeyPosition: integer; p_field_Name: string);
 implementation
 
@@ -645,39 +641,6 @@ begin
   Result := '';
   for i := 1 to length(Value) do
     Result := Result + Chr(Ord(Value[i]) xor $A5);
-end;
-
-function EncodeSecretValue(Value, Secret: Integer): Integer;
-asm
-  test EAX, EAX  // if (Code<0) then
-  js @Quit       // go to @Quit
-  mov  AH, DL   // Result:= Secret * 256 + Value;
-@Quit:
-end;
-
-function DecodeSecretValue(Code: Integer; var Secret: Integer): Integer;
-asm
-  mov DWORD PTR [EDX], 0         // Secret = 0
-  test EAX, EAX                  // if (Code<0) then
-  js @Quit                       // go to @Quit
-  movzx  ECX, AH                 // ECX = AH (32 bit <- 8 bit)
-  mov    DWORD PTR [EDX], ECX    // Secret:= Code div 256;
-  and    EAX, $FF                // Result = Code mod 256;
-@Quit:
-end;
-
-function Ctrl_Is_Down(): Boolean;
-var State:TKeyboardState;
-begin
-  GetKeyboardState(State);
-  Result:=((State[VK_CONTROL] and 128)<>0);
-end;
-
-function Shift_Is_Down(): Boolean;
-var State:TKeyboardState;
-begin
-  GetKeyboardState(State);
-  Result:=((State[VK_SHIFT] and 128)<>0);
 end;
 
 procedure TdmDataModule.quTovarBeforePost(DataSet: TDataSet);
