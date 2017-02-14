@@ -260,7 +260,7 @@ implementation
 
 uses
   data, EditExpedition0, Otchets0, SelectItem0, SvedenieNakl0, RecycleExpedition0,
-  BlankOst0, uAccountCashRashod, MlekoSelectFIrm, main, GetDate0;
+  BlankOst0, uAccountCashRashod, MlekoSelectFIrm, main, GetDate0, MlekoUtils;
 
 {$R *.dfm}
 
@@ -943,7 +943,7 @@ end;
 
 procedure TfmExpedition.sbPrintClick(Sender: TObject);
 var
-  i, j, Tara: integer;
+  i, j, Tara, Secret: integer;
   S, S1, S2: string;
   SecretKeyPressed: Boolean;
 begin
@@ -953,8 +953,7 @@ begin
   i := SelectItem( 'Печать',
                   ['Полный комплект', 'Список магазинов', 'Загрузка', 'Загрузка без ТТ',
                   'Тарная накладная', 'Список накладных']);
-  i:= DecodeSecretValue(i, Tara);
-  SecretKeyPressed:= (Tara=100);
+  i:= DecodeSecretValue(i, Secret);
 
   case i of
     0:
@@ -1187,7 +1186,7 @@ begin
           S := Copy(S, 1, Length(S) - 1);
           S := '(' + S + ')';
           LoadCarNoTTNew( 1, S, S1, False, False, quExpeditionCarsName.AsString, quExpeditionShipping_AgentName.AsString, quExpeditionExpeditionDateGo.AsDateTime,
-                          SecretKeyPressed);
+                          Secret);
         end;
         quWork.Close;
         quWork.SQL.Clear;
