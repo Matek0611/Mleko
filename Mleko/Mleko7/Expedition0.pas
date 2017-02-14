@@ -241,7 +241,8 @@ type
   private
     { Private declarations }
     SearchString: string;
-    Coln: integer;
+    Coln: Integer;
+    SelectedIndex: Integer;
   public
     { Public declarations }
   end;
@@ -943,19 +944,18 @@ end;
 
 procedure TfmExpedition.sbPrintClick(Sender: TObject);
 var
-  i, j, Tara, Secret: integer;
+  k, j, Tara, Secret: integer;
   S, S1, S2: string;
-  SecretKeyPressed: Boolean;
 begin
   quNaklR.ParamByName('ExpeditionNo').AsInteger := quExpeditionExpeditionNo.AsInteger;
   quNaklR.Open;
 
-  i := SelectItem( 'Печать',
+  k := SelectItem( 'Печать',
                   ['Полный комплект', 'Список магазинов', 'Загрузка', 'Загрузка без ТТ',
-                  'Тарная накладная', 'Список накладных']);
-  i:= DecodeSecretValue(i, Secret);
+                  'Тарная накладная', 'Список накладных'], SelectedIndex);
+  SelectedIndex:= DecodeSecretValue(k, Secret);
 
-  case i of
+  case SelectedIndex of
     0:
       begin
 

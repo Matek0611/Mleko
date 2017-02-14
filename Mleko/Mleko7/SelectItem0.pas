@@ -12,6 +12,7 @@ type
     bbOk: TBitBtn;
     bbCancel: TBitBtn;
     procedure bbOkClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     SecretKeyCode: Integer;
@@ -21,12 +22,12 @@ type
 
 var
   fmSelectItem: TfmSelectItem;
-  function SelectItem(Title:string;Value:array of string):integer;
+  function SelectItem(Title:string; Value:array of string; Index: Integer = 0):integer;
 implementation
 uses MlekoUtils;
 
 {$R *.DFM}
-function SelectItem(Title:string;Value:array of string):integer;
+function SelectItem(Title:string;Value:array of string; Index: Integer = 0):integer;
 var
  i:integer;
 begin
@@ -41,12 +42,11 @@ begin
  fmSelectItem.ClientHeight:=fmSelectItem.RadioGroup1.Height+1+38;
  for i:=Low(Value) to High(Value) do
   fmSelectItem.RadioGroup1.Items.Add(Value[i]);
-// if IsSelectItemTTN = True Then fmSelectItem.RadioGroup1.ItemIndex:=0
-//                           Else fmSelectItem.RadioGroup1.ItemIndex:=0;
+if (Index>=0) and (Index<=High(Value)) then
+   fmSelectItem.RadioGroup1.ItemIndex:=Index else
+   fmSelectItem.RadioGroup1.ItemIndex:= 0;
  if fmSelectItem.ShowModal=mrOk then
  begin
-   //Result:=fmSelectItem.RadioGroup1.ItemIndex;
-   //if fmSelectItem.SecretKeyPressed then
    Result:= EncodeSecretValue(
    fmSelectItem.RadioGroup1.ItemIndex, fmSelectItem.SecretKeyCode);
  end;
@@ -54,6 +54,7 @@ begin
  fmSelectItem.Free;
  end;
 end;
+
 procedure TfmSelectItem.bbOkClick(Sender: TObject);
 var Ctrl_Down, Shift_Down, Alt_Down: Boolean;
 begin
@@ -66,6 +67,13 @@ begin
      SecretKeyCode:=  100 else
   if Ctrl_Down and Alt_Down then
      SecretKeyCode:=  200;
+end;
+
+procedure TfmSelectItem.FormShow(Sender: TObject);
+begin
+  inherited;
+  if not RadioGroup1.Focused then
+  Perform(WM_NEXTDLGCTL, 0, 0); // Now RadioGroup1 is focused
 end;
 
 end.

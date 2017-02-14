@@ -1,6 +1,7 @@
 inherited fmSelectItem: TfmSelectItem
   Left = 584
   Top = 185
+  ActiveControl = RadioGroup1
   BorderStyle = bsDialog
   Caption = 'fmSelectItem'
   ClientHeight = 135
