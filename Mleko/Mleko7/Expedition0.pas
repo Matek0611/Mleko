@@ -816,6 +816,11 @@ begin
       end;
     1:
       begin
+
+        quNaklR.Close;
+        quNaklR.MacroByName('_order').Value := ' r.ArrivalTime ';
+        quNaklR.Open;
+
         quNaklR.First;
         S := '';
         S1 := '';
@@ -959,6 +964,10 @@ begin
     0:
       begin
 
+        quNaklR.Close;
+        quNaklR.MacroByName('_order').Value := ' r.ArrivalTime ';
+        quNaklR.Open;
+
         isPrintTTNForNight := True;
         quNaklR.First;
         S := '';
@@ -972,6 +981,10 @@ begin
         //      frReportBlank.ShowReport;
         frReportBlank.PrepareReport;
         frReportBlank.PrintPreparedReport('', 1, True, frAll);
+
+        quNaklR.Close;
+        quNaklR.MacroByName('_order').Value := ' r.NaklNo ';
+        quNaklR.Open;
 
         quNaklR.First;
         while not quNaklR.Eof do
@@ -1125,6 +1138,11 @@ begin
 
     1:
       begin
+
+        quNaklR.Close;
+        quNaklR.MacroByName('_order').Value := ' r.ArrivalTime ';
+        quNaklR.Open;
+
         quNaklR.First;
         S := '';
         frReport.LoadFromFile('BlankExpedition.frf');
