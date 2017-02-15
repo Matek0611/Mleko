@@ -204,6 +204,8 @@ type
     quNaklRTimeBeg: TStringField;
     quNaklRTimeEnd: TStringField;
     quNaklRVidNaklNo: TSmallintField;
+    quNaklRSumGiven: TFloatField;
+    quNaklRSumReturn: TFloatField;
     procedure RxDBGrid1KeyPress(Sender: TObject; var Key: Char);
     procedure RxDBGrid1TitleBtnClick(Sender: TObject; ACol: Integer; Field: TField);
     procedure quExpeditionBeforeDelete(DataSet: TDataSet);
@@ -774,10 +776,9 @@ end;
 
 procedure TfmExpedition.sbPrevClick(Sender: TObject);
 var
-  ExpeditionNo, i, Tara: integer;
+  ExpeditionNo, i, Tara, Secret: integer;
   S, S1: string;
   SelectPost: string;
-  SecretKeyPressed: Boolean;
 begin
   //SecretKeyPressed:= Ctrl_Is_Down() and Shift_Is_Down();
   quNaklR.ParamByName('ExpeditionNo').AsInteger := quExpeditionExpeditionNo.AsInteger;
@@ -785,8 +786,7 @@ begin
   i := SelectItem( 'Печать',
                    ['Загрузка', 'Список магазинов', 'Тарная накладная',
                     'Загрузка по виду', 'Список накладных', 'Отчет по ходкам']);
-  i:= DecodeSecretValue(i, Tara);
-  SecretKeyPressed:= (Tara=100);
+  i:= DecodeSecretValue(i, Secret);
   case i of
     0:
       begin
@@ -825,7 +825,7 @@ begin
         S := '';
         S1 := '';
         frReport.LoadFromFile('BlankExpedition.frf');
-        if SecretKeyPressed then
+        if Secret=100 then
            frReport.DesignReport else
            frReport.ShowReport;
       end;
@@ -887,7 +887,7 @@ begin
         S := '';
         S1 := '';
         frReportExpeditionPrint.LoadFromFile('BlankExpeditionNakl.frf');
-        if SecretKeyPressed then
+        if Secret=100 then
            frReportExpeditionPrint.DesignReport else
            frReportExpeditionPrint.ShowReport;
         //frReportExpeditionPrint.ShowReport;

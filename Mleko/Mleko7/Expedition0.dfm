@@ -1903,6 +1903,12 @@ inherited fmExpedition: TfmExpedition
       '      , r.Nom'
       '      , r.DateNaklFirst'
       '      , r.Summa'
+      
+        '      , (case when (l.DAY_DELAY=0) and (r.Buh=1) and (not r.VidN' +
+        'aklNo in (3,5)) then r.Summa else 0 end) as SumGiven'
+      
+        '      , (case when r.VidNaklNo in (3,5) then r.Summa else 0 end)' +
+        ' as SumReturn      '
       '      , Post.Name'
       '      , r.ExpeditionNo'
       '      , r.Buh'
@@ -1917,9 +1923,7 @@ inherited fmExpedition: TfmExpedition
       '      , r.ArrivalTime'
       '      , convert(varchar(5), lap.TimeBeg) as TimeBeg'
       '      , convert(varchar(5), lap.TimeEnd) as TimeEnd'
-      
-        '      , (case when r.VidNaklNo in (3,5) then 1 else 0 end) as Vi' +
-        'dNaklNo'
+      '      , r.VidNaklNo'
       'FROM NaklR r left JOIN'
       
         '     L_POST_SET_ARTGROUP_DELAY l on l.POSTNO = r.PostNo and l.BU' +
@@ -2011,6 +2015,14 @@ inherited fmExpedition: TfmExpedition
     end
     object quNaklRVidNaklNo: TSmallintField
       FieldName = 'VidNaklNo'
+    end
+    object quNaklRSumGiven: TFloatField
+      FieldName = 'SumGiven'
+      ReadOnly = True
+    end
+    object quNaklRSumReturn: TFloatField
+      FieldName = 'SumReturn'
+      ReadOnly = True
     end
   end
   object frReport: TfrReport
