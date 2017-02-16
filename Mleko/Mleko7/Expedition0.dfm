@@ -1,6 +1,6 @@
 inherited fmExpedition: TfmExpedition
-  Left = 326
-  Top = 99
+  Left = 341
+  Top = 80
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1061#1086#1076#1082#1080
@@ -1907,8 +1907,11 @@ inherited fmExpedition: TfmExpedition
         '      , (case when (l.DAY_DELAY=0) and (r.Buh=1) and (not r.VidN' +
         'aklNo in (3,5)) then r.Summa else 0 end) as SumGiven'
       
-        '      , (case when r.VidNaklNo in (3,5) then r.Summa else 0 end)' +
-        ' as SumReturn      '
+        '      , (case when (l.DAY_DELAY=0) and (r.Buh=1) and (r.VidNaklN' +
+        'o in (3,5)) then r.Summa else 0 end) as SumReturn'
+      
+        '      , (case when (r.VidNaklNo in (3,5)) then 1 else 0 end) as ' +
+        'IsReturn        '
       '      , Post.Name'
       '      , r.ExpeditionNo'
       '      , r.Buh'
@@ -2022,6 +2025,10 @@ inherited fmExpedition: TfmExpedition
     end
     object quNaklRSumReturn: TFloatField
       FieldName = 'SumReturn'
+      ReadOnly = True
+    end
+    object quNaklRIsReturn: TIntegerField
+      FieldName = 'IsReturn'
       ReadOnly = True
     end
   end

@@ -206,6 +206,7 @@ type
     quNaklRVidNaklNo: TSmallintField;
     quNaklRSumGiven: TFloatField;
     quNaklRSumReturn: TFloatField;
+    quNaklRIsReturn: TIntegerField;
     procedure RxDBGrid1KeyPress(Sender: TObject; var Key: Char);
     procedure RxDBGrid1TitleBtnClick(Sender: TObject; ACol: Integer; Field: TField);
     procedure quExpeditionBeforeDelete(DataSet: TDataSet);
@@ -244,7 +245,7 @@ type
     { Private declarations }
     SearchString: string;
     Coln: Integer;
-    SelectedIndex: Integer;
+    SelPreviewIndex, SelPrintIndex: Integer;
   public
     { Public declarations }
   end;
@@ -776,18 +777,20 @@ end;
 
 procedure TfmExpedition.sbPrevClick(Sender: TObject);
 var
-  ExpeditionNo, i, Tara, Secret: integer;
+  ExpeditionNo, k, Tara, Secret: integer;
   S, S1: string;
   SelectPost: string;
 begin
   //SecretKeyPressed:= Ctrl_Is_Down() and Shift_Is_Down();
   quNaklR.ParamByName('ExpeditionNo').AsInteger := quExpeditionExpeditionNo.AsInteger;
   quNaklR.Open;
-  i := SelectItem( 'Печать',
+  k := SelectItem( 'Печать',
                    ['Загрузка', 'Список магазинов', 'Тарная накладная',
-                    'Загрузка по виду', 'Список накладных', 'Отчет по ходкам']);
-  i:= DecodeSecretValue(i, Secret);
-  case i of
+                    'Загрузка по виду', 'Список накладных', 'Отчет по ходкам'],
+                    SelPreviewIndex);
+  k:= DecodeSecretValue(k, Secret);
+  if (k>=0) then SelPreviewIndex:= k;
+  case k of
     0:
       begin
         S := '';
@@ -957,10 +960,10 @@ begin
 
   k := SelectItem( 'Печать',
                   ['Полный комплект', 'Список магазинов', 'Загрузка', 'Загрузка без ТТ',
-                  'Тарная накладная', 'Список накладных'], SelectedIndex);
-  SelectedIndex:= DecodeSecretValue(k, Secret);
-
-  case SelectedIndex of
+                  'Тарная накладная', 'Список накладных'], SelPrintIndex);
+  k:= DecodeSecretValue(k, Secret);
+  if (k>=0) then SelPrintIndex:= k;
+  case k of
     0:
       begin
 
