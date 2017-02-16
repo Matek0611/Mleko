@@ -98,7 +98,8 @@ end;
 
 function TMlekoSelectAddressDlg.SQLBuilderGetWhere(Sender: TObject): String;
 begin
-  result := ' a.PostNo = isnull(:PostNo,a.PostNo) and a.Address not like ''%---%'' and Address not like ''%...%'' and a.Address is not null';
+ //result := ' a.PostNo = isnull(:PostNo,a.PostNo) and a.Address not like ''%---%'' and Address not like ''%...%'' and a.Address is not null';
+ result := ' (a.Address not like ''%---%'') and (Address not like ''%...%'') and (not a.Address is null) and (Len(Rtrim(a.Address))>0) ';
 end;
 
 initialization

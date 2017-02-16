@@ -1176,7 +1176,9 @@ begin
         c.Text := ls_txt_value[0];
         c.KeyFieldValue := ls_key_value[0];
       end
-      else if c.KeyFieldValue <> '' then
+      else if (c.KeyFieldValue <> '')
+           and (val_count<>0) // added 16.02.2017 by Sergio Chemist
+           then
       begin
         set_txt_value_by_key((p_control as TcitDBComboEdit));
       end
