@@ -1904,11 +1904,11 @@ inherited fmExpedition: TfmExpedition
       '      , r.DateNaklFirst'
       '      , r.Summa'
       
-        '      , (case when (l.DAY_DELAY=0) and (r.Buh=1) and (not r.VidN' +
-        'aklNo in (3,5)) then r.Summa else 0 end) as SumGiven'
+        '      , (case when (l.DAY_DELAY=0) and (r.Buh in (1,2)) and (not' +
+        ' r.VidNaklNo in (3,5)) then r.Summa else 0 end) as SumGiven'
       
-        '      , (case when (l.DAY_DELAY=0) and (r.Buh=1) and (r.VidNaklN' +
-        'o in (3,5)) then r.Summa else 0 end) as SumReturn'
+        '      , (case when (l.DAY_DELAY=0) and (r.Buh in (1,2)) and (r.V' +
+        'idNaklNo in (3,5)) then r.Summa else 0 end) as SumReturn'
       
         '      , (case when (r.VidNaklNo in (3,5)) then 1 else 0 end) as ' +
         'IsReturn        '
