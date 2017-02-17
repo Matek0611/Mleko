@@ -328,6 +328,15 @@ type
     ExchangeRates: TMenuItem;
     VidRashGroup: TMenuItem;
     IsEconom: TMenuItem;
+    LightOfGornalRash: TMenuItem;
+    NewDocPlat: TMenuItem;
+    DocPlat: TMenuItem;
+    NotAppDocPlat: TMenuItem;
+    AppliedDocPlat: TMenuItem;
+    AnalisPP: TMenuItem;
+    ClampingBDDS: TMenuItem;
+    AnalyzeDebitDebt: TMenuItem;
+    BlankListLight: TMenuItem;
     procedure N3Click(Sender: TObject);
     procedure N8Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
@@ -567,6 +576,14 @@ type
     procedure ExchangeRatesClick(Sender: TObject);
     procedure VidRashGroupClick(Sender: TObject);
     procedure IsEconomClick(Sender: TObject);
+    procedure LightOfGornalRashClick(Sender: TObject);
+    procedure NewDocPlatClick(Sender: TObject);
+    procedure NotAppDocPlatClick(Sender: TObject);
+    procedure AppliedDocPlatClick(Sender: TObject);
+    procedure AnalisPPClick(Sender: TObject);
+    procedure ClampingBDDSClick(Sender: TObject);
+    procedure AnalyzeDebitDebtClick(Sender: TObject);
+    procedure BlankListLightClick(Sender: TObject);
   private
     { Private declarations }
     FFileName: string;
@@ -639,7 +656,9 @@ uses Post0, NaklP0, Tovar0, Ostatok2, About,
   ControlRestTovarOfDateManufacture, ReconciliationReceiptPriceInInst, OtdelForm0,
   ListMinusPostForDolg, PrihodTovWithExel, MlekoSelectFIrm, EditClientCard, VidDoc, DocClientCardHead,
   ControlVidRashodForPlat, GroupCutting, ListVidTovForGroupCutting, CheckMeshCutting, PostFromGroupCutting,
-  AnalisCuttingMesh, Currency, CurrencyExchange, VidRashodGroup, ListPlusPostForClosePlatRIsEconom;
+  AnalisCuttingMesh, Currency, CurrencyExchange, VidRashodGroup, ListPlusPostForClosePlatRIsEconom,
+  MlekoClosePlatRLight, EditDocPlat, DocPlatHead, ListVidOtdelForAPP, ListMinusPostForBDDS, UAnalyze_Debit_Debt,
+  MlekoBlankListLight;
 
 {$R *.DFM}
 
@@ -4748,17 +4767,19 @@ begin
      try
       quVidDoc.open;
       quListUserForVidDoc.Open;
+      quListUserForConductingDoc.Open;
       dmDataModule.quUsers.Open;
       dmDataModule.quOtdel.Open;
-      quListUserForConductingDoc.Open;
+
 
       ShowModal;
      finally
+      quListUserForConductingDoc.Close;
       quListUserForVidDoc.Close;
       quVidDoc.Close;
       dmDataModule.quUsers.Close;
       dmDataModule.quOtdel.Close;
-      quListUserForConductingDoc.Close;
+
       Free;
    end;
 end;
@@ -4900,6 +4921,103 @@ begin
          Free;
        end;
   end;
+end;
+
+procedure TfmMain.LightOfGornalRashClick(Sender: TObject);
+begin
+  inherited;
+  TMlekoClosePlatRLightForm.ShowForm(false);
+end;
+
+procedure TfmMain.NewDocPlatClick(Sender: TObject);
+var
+  ln_id: Int64;
+begin
+  inherited;
+  ln_id := -1;
+  Params := TParams.Create;
+  try
+    UtilsCommon.SetParamValue(Params, 'table_key', -1);
+    if TEditDocPlatDlg.Add_Dlg(Params) then
+    begin
+      
+    end;
+  finally
+    Params.Free;
+  end;
+end;
+
+procedure TfmMain.NotAppDocPlatClick(Sender: TObject);
+begin
+  inherited;
+  DocPlatHeadShow(false);
+end;
+
+procedure TfmMain.AppliedDocPlatClick(Sender: TObject);
+begin
+  inherited;
+  DocPlatHeadShow(true);
+end;
+
+procedure TfmMain.AnalisPPClick(Sender: TObject);
+begin
+  inherited;
+  with TListVidOtdelForAPPaForm.Create(Application) do
+  try
+    quListVidOtdelForAPP.Open;
+    quDateForAPP.Open;
+    ShowModal;
+  finally
+    quListVidOtdelForAPP.Close;
+    quDateForAPP.Close;
+    Free;
+  end;
+end;
+
+procedure TfmMain.ClampingBDDSClick(Sender: TObject);
+begin
+  inherited;
+  with TListMinusPostForBDDSForm.Create(Application) do
+   try
+     quListMinusPostForBDDS.Open;
+     quDateForBDDS.Open;
+     ShowModal;
+   finally
+     quListMinusPostForBDDS.Close;
+     quDateForBDDS.Close;
+     Free;
+   end;
+end;
+
+procedure TfmMain.AnalyzeDebitDebtClick(Sender: TObject);
+begin
+  inherited;
+  with TfrmAnalyze_Debit_Debt.Create(Application) do
+  try
+    DisableParams;
+    EdDateAnalyzeEnd.Date := Date();
+    EnableParams;
+    //RefreshResults(True);
+    ShowModal;
+  finally
+    quDebt.Close;
+    Free;
+  end;
+end;
+
+procedure TfmMain.BlankListLightClick(Sender: TObject);
+var
+  l_str: string;
+  ld_date: Tdate;
+begin
+  l_str := 'Сегодня суббота! Вы хотите делать вывоз на воскресенье(Да) или понедельник(Нет)?';
+  ld_date := GlobalDateNakl;
+  if main.day_of_week = 1 then
+    if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then
+      ld_date := GlobalDateNakl
+    else
+      ld_date := GlobalDateNakl + 1;
+  TMlekoBlankListLightForm.ShowListForm(GlobalOtdelNo, ld_date);
 end;
 
 end.

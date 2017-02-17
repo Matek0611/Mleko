@@ -903,12 +903,15 @@ end;
 procedure TMlekoBlankParamForm.CBReasonExit(Sender: TObject);
 begin
   inherited;
-  if (CBReason.KeyFieldValue = '7') or (CBReason.KeyFieldValue = '11') or (CBReason.KeyFieldValue = '13') then
-   begin
-     DBLookupComboboxEhTypeReturn.Enabled := True;
-     quTypeReturn.Refresh;
-     ActiveControl := DBLookupComboboxEhTypeReturn;
-   end;
+  if (CBReason.KeyFieldValue = '7') or (CBReason.KeyFieldValue = '11') or (CBReason.KeyFieldValue = '13') then begin
+                                                                                                                 DBLookupComboboxEhTypeReturn.Enabled := True;
+                                                                                                                 quTypeReturn.Refresh;
+                                                                                                                 ActiveControl := DBLookupComboboxEhTypeReturn;
+                                                                                                               end
+                                                                                                          else begin
+                                                                                                                 DBLookupComboboxEhTypeReturn.Text := '';
+                                                                                                                 DBLookupComboboxEhTypeReturn.Enabled := False;
+                                                                                                               end;
 end;
 
 procedure TMlekoBlankParamForm.DBLookupComboboxEhTypeReturnExit(
@@ -926,35 +929,44 @@ end;
 procedure TMlekoBlankParamForm.CBReasonChange(Sender: TObject);
 begin
   inherited;
-  if (CBReason.KeyFieldValue = '7') or (CBReason.KeyFieldValue = '11') or (CBReason.KeyFieldValue = '13') then
-   begin
-     DBLookupComboboxEhTypeReturn.Enabled := True;
-     quTypeReturn.Refresh;
-     DBLookupComboboxEhTypeReturn.Enabled := true;
-     ActiveControl := DBLookupComboboxEhTypeReturn;
-   end;
+  if (CBReason.KeyFieldValue = '7') or (CBReason.KeyFieldValue = '11') or (CBReason.KeyFieldValue = '13') then begin
+                                                                                                                 DBLookupComboboxEhTypeReturn.Enabled := True;
+                                                                                                                 quTypeReturn.Refresh;
+                                                                                                                 ActiveControl := DBLookupComboboxEhTypeReturn;
+                                                                                                               end
+                                                                                                          else begin
+                                                                                                                 DBLookupComboboxEhTypeReturn.Text := '';
+                                                                                                                 DBLookupComboboxEhTypeReturn.Enabled := False;
+                                                                                                               end;
 end;
 
 function TMlekoBlankParamForm.CBReasonIsSelect(Sender: TObject): Boolean;
 begin
   inherited;
-  if (CBReason.KeyFieldValue = '7') or (CBReason.KeyFieldValue = '11') or (CBReason.KeyFieldValue = '13') then
-   begin
-     DBLookupComboboxEhTypeReturn.Enabled := True;
-     quTypeReturn.Refresh;
-     ActiveControl := DBLookupComboboxEhTypeReturn;
-   end;
+  if (CBReason.KeyFieldValue = '7') or (CBReason.KeyFieldValue = '11') or (CBReason.KeyFieldValue = '13') then begin
+                                                                                                                 DBLookupComboboxEhTypeReturn.Enabled := True;
+                                                                                                                 quTypeReturn.Refresh;
+                                                                                                                 ActiveControl := DBLookupComboboxEhTypeReturn;
+                                                                                                               end
+                                                                                                          else begin
+                                                                                                                 DBLookupComboboxEhTypeReturn.Text := '';
+                                                                                                                 DBLookupComboboxEhTypeReturn.Enabled := False;
+                                                                                                               end;
 end;
 
 procedure TMlekoBlankParamForm.CBReasonSelectOk(Sender: TObject);
 begin
   inherited;
-  if (CBReason.KeyFieldValue = '7') or (CBReason.KeyFieldValue = '11') or (CBReason.KeyFieldValue = '13') then
-   begin
-     DBLookupComboboxEhTypeReturn.Enabled := True;
-     quTypeReturn.Refresh;
-     ActiveControl := DBLookupComboboxEhTypeReturn;
-   end;
+  if (CBReason.KeyFieldValue = '7') or (CBReason.KeyFieldValue = '11') or (CBReason.KeyFieldValue = '13') then begin
+                                                                                                                 DBLookupComboboxEhTypeReturn.Enabled := True;
+                                                                                                                 quTypeReturn.Refresh;
+                                                                                                                 ActiveControl := DBLookupComboboxEhTypeReturn;
+                                                                                                               end
+                                                                                                          else begin
+                                                                                                                 DBLookupComboboxEhTypeReturn.Text := '';
+                                                                                                                 DBLookupComboboxEhTypeReturn.KeyValue := '';
+                                                                                                                 DBLookupComboboxEhTypeReturn.Enabled := False;
+                                                                                                               end;
   if (CBReason.KeyFieldValue = '10') or (CBReason.KeyFieldValue = '11')
    then begin
           EdDescriptionOrderVeb.Visible := true;

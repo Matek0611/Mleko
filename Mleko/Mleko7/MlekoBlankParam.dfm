@@ -452,6 +452,7 @@ inherited MlekoBlankParamForm: TMlekoBlankParamForm
         Top = 28
         Width = 271
         Height = 21
+        Enabled = False
         EditButtons = <>
         KeyField = 'TypeReturnNo'
         ListField = 'TypeReturnName'
@@ -1336,7 +1337,7 @@ inherited MlekoBlankParamForm: TMlekoBlankParamForm
   object dsTypeReturn: TMSDataSource
     DataSet = quTypeReturn
     Left = 31
-    Top = 75
+    Top = 99
   end
   object spModifyLinkBlankReturn: TMSStoredProc
     StoredProcName = 'sp_ModifyLinkBlankReturn;1'
