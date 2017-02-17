@@ -1,407 +1,19 @@
 inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
-  Left = 160
-  Top = 136
-  Width = 1250
+  Left = 228
+  Top = 165
+  Width = 1111
   Height = 604
   Caption = #1040#1085#1072#1083#1080#1079' '#1076#1077#1073#1080#1090#1086#1088#1089#1082#1086#1081' '#1079#1072#1076#1086#1083#1078#1077#1085#1085#1086#1089#1090#1080
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object Panel1: TPanel [0]
-    Left = 0
-    Top = 0
-    Width = 1234
-    Height = 97
-    Align = alTop
-    TabOrder = 0
-    object Label5: TLabel
-      Left = 12
-      Top = 10
-      Width = 86
-      Height = 13
-      Caption = #1044#1072#1090#1072' '#1085#1072#1082#1083#1072#1076#1085#1086#1081':'
-    end
-    object EdDateAnalyzeEnd: TcxDateEdit
-      Left = 13
-      Top = 25
-      Properties.ClearKey = 46
-      Properties.SaveTime = False
-      Properties.ShowTime = False
-      Properties.WeekNumbers = True
-      Properties.OnChange = EdDateAnalyzeEndPropertiesChange
-      TabOrder = 0
-      Width = 105
-    end
-    object cbIs_Ext_OtdelNo: TCheckBox
-      Left = 128
-      Top = 14
-      Width = 169
-      Height = 17
-      Caption = #1056#1072#1089#1096#1080#1088#1080#1090#1100' '#1087#1086' '#1086#1090#1076#1077#1083#1091' '#1087#1088#1086#1076#1072#1078
-      Checked = True
-      State = cbChecked
-      TabOrder = 1
-      OnClick = cbIs_Ext_OtdelNoClick
-    end
-    object cbIs_Ext_VidNo: TCheckBox
-      Left = 143
-      Top = 38
-      Width = 153
-      Height = 17
-      Caption = #1056#1072#1089#1096#1080#1088#1080#1090#1100' '#1087#1086' '#1074#1080#1076#1091' '#1090#1086#1074#1072#1088#1072
-      Checked = True
-      State = cbChecked
-      TabOrder = 2
-      OnClick = cbIs_Ext_VidNoClick
-    end
-    object cbIs_Ext_SotrudNo: TCheckBox
-      Left = 140
-      Top = 62
-      Width = 153
-      Height = 17
-      Caption = #1056#1072#1089#1096#1080#1088#1080#1090#1100' '#1087#1086' '#1089#1086#1090#1088#1091#1076#1085#1080#1082#1091
-      Checked = True
-      State = cbChecked
-      TabOrder = 3
-      OnClick = cbIs_Ext_SotrudNoClick
-    end
-    object fltVidTov: TcitDBComboEdit
-      Left = 299
-      Top = 37
-      Width = 164
-      Height = 21
-      Enabled = True
-      OwnesLButton = True
-      OwnesLLabel = True
-      LBtnAlignment = baRight
-      LBtnFlat = False
-      LBtnDown = False
-      LBtnGroupIndex = 0
-      LBtnAllowAllUp = False
-      LBtnGlyphKind = gkDots
-      LBtnShortCut1 = 0
-      LBtnShortCut2 = 40
-      LBtnWidth = 25
-      LLblAlignment = laLeft
-      LLblWidth = 70
-      LLblFont.Charset = DEFAULT_CHARSET
-      LLblFont.Color = clWindowText
-      LLblFont.Height = -11
-      LLblFont.Name = 'MS Sans Serif'
-      LLblFont.Style = []
-      LLblRequiredFont.Charset = DEFAULT_CHARSET
-      LLblRequiredFont.Color = clWindowText
-      LLblRequiredFont.Height = -11
-      LLblRequiredFont.Name = 'MS Sans Serif'
-      LLblRequiredFont.Style = [fsBold]
-      Required = False
-      TabOrder = 4
-      Visible = True
-      LocateKey = False
-      KeyField = 'VidNo'
-      TextField = 'VidName'
-      Owner = 'frmAnalyzeDebitDebt'
-      EntityCode = 'VIDTOV'
-      multiselect = True
-      OnSelectOk = fltVidTovSelectOk
-      EditStyle = edSelect
-      AutoTabControl = False
-    end
-    object fltOtdel: TcitDBComboEdit
-      Left = 299
-      Top = 13
-      Width = 164
-      Height = 21
-      Enabled = True
-      OwnesLButton = True
-      OwnesLLabel = True
-      LBtnAlignment = baRight
-      LBtnFlat = False
-      LBtnDown = False
-      LBtnGroupIndex = 0
-      LBtnAllowAllUp = False
-      LBtnGlyphKind = gkDots
-      LBtnShortCut1 = 0
-      LBtnShortCut2 = 40
-      LBtnWidth = 25
-      LLblAlignment = laLeft
-      LLblWidth = 80
-      LLblFont.Charset = DEFAULT_CHARSET
-      LLblFont.Color = clWindowText
-      LLblFont.Height = -11
-      LLblFont.Name = 'MS Sans Serif'
-      LLblFont.Style = []
-      LLblRequiredFont.Charset = DEFAULT_CHARSET
-      LLblRequiredFont.Color = clWindowText
-      LLblRequiredFont.Height = -11
-      LLblRequiredFont.Name = 'MS Sans Serif'
-      LLblRequiredFont.Style = [fsBold]
-      Required = False
-      TabOrder = 5
-      Visible = True
-      LocateKey = False
-      KeyField = 'OtdelNo'
-      TextField = 'OtdelName'
-      Owner = 'frmAnalyzeDebitDebt'
-      EntityCode = 'VIDOTDEL'
-      multiselect = True
-      EditStyle = edSelect
-      AutoTabControl = False
-    end
-    object fltSotrud: TcitDBComboEdit
-      Left = 299
-      Top = 61
-      Width = 165
-      Height = 21
-      Enabled = True
-      OwnesLButton = True
-      OwnesLLabel = True
-      LBtnAlignment = baRight
-      LBtnFlat = False
-      LBtnDown = False
-      LBtnGroupIndex = 0
-      LBtnAllowAllUp = False
-      LBtnGlyphKind = gkDots
-      LBtnShortCut1 = 0
-      LBtnShortCut2 = 40
-      LBtnWidth = 25
-      LLblAlignment = laLeft
-      LLblWidth = 70
-      LLblFont.Charset = DEFAULT_CHARSET
-      LLblFont.Color = clWindowText
-      LLblFont.Height = -11
-      LLblFont.Name = 'MS Sans Serif'
-      LLblFont.Style = []
-      LLblRequiredFont.Charset = DEFAULT_CHARSET
-      LLblRequiredFont.Color = clWindowText
-      LLblRequiredFont.Height = -11
-      LLblRequiredFont.Name = 'MS Sans Serif'
-      LLblRequiredFont.Style = [fsBold]
-      Required = False
-      TabOrder = 6
-      Visible = True
-      LocateKey = False
-      KeyField = 'SotrudNo'
-      TextField = 'SotrudName'
-      Owner = 'frmAnalyzeDebitDebt'
-      EntityCode = 'SOTRUD'
-      multiselect = True
-      OnSelectOk = fltSotrudSelectOk
-      EditStyle = edSelect
-      AutoTabControl = False
-    end
-    object cbxBuhType: TCheckBox
-      Left = 560
-      Top = 16
-      Width = 145
-      Height = 17
-      Caption = #1056#1072#1089#1096#1080#1088#1080#1090#1100' '#1087#1086' '#1073#1091#1093'. '#1090#1080#1087#1091
-      Checked = True
-      State = cbChecked
-      TabOrder = 7
-    end
-    object cbxAgent: TCheckBox
-      Left = 541
-      Top = 40
-      Width = 157
-      Height = 17
-      Caption = #1056#1072#1089#1096#1080#1088#1080#1090#1100' '#1087#1086' '#1082#1086#1085#1090#1088#1072#1075#1077#1085#1090#1091
-      Checked = True
-      State = cbChecked
-      TabOrder = 8
-    end
-    object cbxNaklNo: TCheckBox
-      Left = 534
-      Top = 66
-      Width = 163
-      Height = 17
-      Caption = #1056#1072#1089#1096#1080#1088#1080#1090#1100' '#1087#1086' '#8470' '#1085#1072#1082#1083#1072#1076#1085#1086#1081
-      Checked = True
-      State = cbChecked
-      TabOrder = 9
-    end
-    object fltBuhType: TcitDBComboEdit
-      Left = 699
-      Top = 13
-      Width = 164
-      Height = 21
-      Enabled = True
-      OwnesLButton = True
-      OwnesLLabel = True
-      LBtnAlignment = baRight
-      LBtnFlat = False
-      LBtnDown = False
-      LBtnGroupIndex = 0
-      LBtnAllowAllUp = False
-      LBtnGlyphKind = gkDots
-      LBtnShortCut1 = 0
-      LBtnShortCut2 = 40
-      LBtnWidth = 25
-      LLblAlignment = laLeft
-      LLblWidth = 80
-      LLblFont.Charset = DEFAULT_CHARSET
-      LLblFont.Color = clWindowText
-      LLblFont.Height = -11
-      LLblFont.Name = 'MS Sans Serif'
-      LLblFont.Style = []
-      LLblRequiredFont.Charset = DEFAULT_CHARSET
-      LLblRequiredFont.Color = clWindowText
-      LLblRequiredFont.Height = -11
-      LLblRequiredFont.Name = 'MS Sans Serif'
-      LLblRequiredFont.Style = [fsBold]
-      Required = False
-      TabOrder = 10
-      Visible = True
-      LocateKey = False
-      KeyField = 'buh'
-      TextField = 'Buh_type_name'
-      Owner = 'frmAnalyzeDebitDebt'
-      EntityCode = 'd_buh_type'
-      multiselect = True
-      EditStyle = edSelect
-      AutoTabControl = False
-    end
-    object fltAddress: TcitDBComboEdit
-      Left = 1028
-      Top = 13
-      Width = 164
-      Height = 21
-      Enabled = True
-      OwnesLButton = True
-      OwnesLLabel = True
-      LBtnAlignment = baRight
-      LBtnFlat = False
-      LBtnDown = False
-      LBtnGroupIndex = 0
-      LBtnAllowAllUp = False
-      LBtnGlyphKind = gkDots
-      LBtnShortCut1 = 115
-      LBtnShortCut2 = 40
-      LBtnWidth = 25
-      LLblAlignment = laLeft
-      LLblWidth = 80
-      LLblFont.Charset = DEFAULT_CHARSET
-      LLblFont.Color = clWindowText
-      LLblFont.Height = -11
-      LLblFont.Name = 'MS Sans Serif'
-      LLblFont.Style = []
-      LLblRequiredFont.Charset = DEFAULT_CHARSET
-      LLblRequiredFont.Color = clWindowText
-      LLblRequiredFont.Height = -11
-      LLblRequiredFont.Name = 'MS Sans Serif'
-      LLblRequiredFont.Style = [fsBold]
-      Required = False
-      TabOrder = 12
-      Visible = True
-      LocateKey = False
-      KeyField = 'ID'
-      TextField = 'Address'
-      Owner = 'frmAnalyzeDebitDebt'
-      EntityCode = 'AddressPost'
-      multiselect = True
-      EditStyle = edSelect
-      AutoTabControl = False
-    end
-    object cbxAddress: TCheckBox
-      Left = 896
-      Top = 16
-      Width = 129
-      Height = 17
-      Caption = #1056#1072#1089#1096#1080#1088#1080#1090#1100' '#1087#1086' '#1072#1076#1088#1077#1089#1091
-      Checked = True
-      State = cbChecked
-      TabOrder = 11
-    end
-    object fltAgent: TcitDBComboEdit
-      Left = 699
-      Top = 38
-      Width = 164
-      Height = 21
-      Enabled = True
-      OwnesLButton = True
-      OwnesLLabel = True
-      LBtnAlignment = baRight
-      LBtnFlat = False
-      LBtnDown = False
-      LBtnGroupIndex = 0
-      LBtnAllowAllUp = False
-      LBtnGlyphKind = gkDots
-      LBtnShortCut1 = 0
-      LBtnShortCut2 = 40
-      LBtnWidth = 25
-      LLblAlignment = laLeft
-      LLblWidth = 80
-      LLblFont.Charset = DEFAULT_CHARSET
-      LLblFont.Color = clWindowText
-      LLblFont.Height = -11
-      LLblFont.Name = 'MS Sans Serif'
-      LLblFont.Style = []
-      LLblRequiredFont.Charset = DEFAULT_CHARSET
-      LLblRequiredFont.Color = clWindowText
-      LLblRequiredFont.Height = -11
-      LLblRequiredFont.Name = 'MS Sans Serif'
-      LLblRequiredFont.Style = [fsBold]
-      Required = False
-      TabOrder = 13
-      Visible = True
-      LocateKey = False
-      KeyField = 'PostNo'
-      TextField = 'Name'
-      Owner = 'frmAnalyzeDebitDebt'
-      EntityCode = 'Post'
-      multiselect = True
-      EditStyle = edSelect
-      AutoTabControl = False
-    end
-    object fltNaklNo: TcitDBComboEdit
-      Left = 699
-      Top = 63
-      Width = 164
-      Height = 21
-      Enabled = True
-      OwnesLButton = True
-      OwnesLLabel = True
-      LBtnAlignment = baRight
-      LBtnFlat = False
-      LBtnDown = False
-      LBtnGroupIndex = 0
-      LBtnAllowAllUp = False
-      LBtnGlyphKind = gkDots
-      LBtnShortCut1 = 0
-      LBtnShortCut2 = 40
-      LBtnWidth = 25
-      LLblAlignment = laLeft
-      LLblWidth = 80
-      LLblFont.Charset = DEFAULT_CHARSET
-      LLblFont.Color = clWindowText
-      LLblFont.Height = -11
-      LLblFont.Name = 'MS Sans Serif'
-      LLblFont.Style = []
-      LLblRequiredFont.Charset = DEFAULT_CHARSET
-      LLblRequiredFont.Color = clWindowText
-      LLblRequiredFont.Height = -11
-      LLblRequiredFont.Name = 'MS Sans Serif'
-      LLblRequiredFont.Style = [fsBold]
-      Required = False
-      TabOrder = 14
-      Visible = True
-      LocateKey = False
-      KeyField = 'NaklNo'
-      TextField = 'Nom'
-      Owner = 'frmAnalyzeDebitDebt'
-      EntityCode = 'NaklR'
-      multiselect = True
-      EditStyle = edSelect
-      AutoTabControl = False
-    end
-  end
-  object Panel2: TPanel [1]
+  object Panel2: TPanel [0]
     Left = 0
     Top = 505
-    Width = 1234
+    Width = 1095
     Height = 41
     Align = alBottom
-    TabOrder = 1
+    TabOrder = 0
     object btnRefresh: TButton
       Left = 168
       Top = 8
@@ -421,18 +33,18 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       OnClick = btnExportToExcelClick
     end
   end
-  object Panel3: TPanel [2]
+  object Panel3: TPanel [1]
     Left = 0
-    Top = 97
-    Width = 1234
-    Height = 408
+    Top = 0
+    Width = 1095
+    Height = 505
     Align = alClient
-    TabOrder = 2
+    TabOrder = 1
     object dbgDebts: TDBGridEh
       Left = 1
-      Top = 1
-      Width = 1232
-      Height = 406
+      Top = 138
+      Width = 1093
+      Height = 366
       Align = alClient
       DataSource = dsDebt
       Flat = False
@@ -511,14 +123,6 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         end
         item
           EditButtons = <>
-          FieldName = 'OverSumma'
-          Footer.DisplayFormat = '0.00'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          Title.Caption = #1057#1091#1084#1084#1072' '#1087#1088#1086#1089#1088#1086#1095#1082#1080
-        end
-        item
-          EditButtons = <>
           FieldName = 'DateNakl'
           Footers = <>
           Title.Caption = #1044#1072#1090#1072' '#1085#1072#1082#1083#1072#1076#1085#1086#1081
@@ -577,11 +181,128 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
           Title.Caption = #1044#1086#1083#1075' '#1074' '#1074#1072#1083'.'#1091#1095#1077#1090#1072
         end>
     end
+    object pnlControls: TPanel
+      Left = 1
+      Top = 1
+      Width = 1093
+      Height = 137
+      Align = alTop
+      BevelInner = bvLowered
+      TabOrder = 1
+      DesignSize = (
+        1093
+        137)
+      object spl1: TSplitter
+        Left = 308
+        Top = 2
+        Width = 4
+        Height = 133
+        Beveled = True
+      end
+      object spl2: TSplitter
+        Left = 449
+        Top = 2
+        Width = 4
+        Height = 133
+        Beveled = True
+      end
+      object vleDate: TValueListEditor
+        Tag = 1
+        Left = 2
+        Top = 2
+        Width = 306
+        Height = 133
+        Hint = #1042#1099#1073#1086#1088' '#1076#1072#1090#1099' '#1074#1088#1091#1095#1085#1091#1102' '#1080#1083#1080' '#1080#1079' '#1076#1080#1072#1083#1086#1075#1072
+        Align = alLeft
+        DefaultRowHeight = 22
+        FixedCols = 1
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goRowSelect, goThumbTracking]
+        ParentShowHint = False
+        PopupMenu = pmDate
+        ShowHint = True
+        Strings.Strings = (
+          #1044#1072#1090#1072' '#1092#1086#1088#1084#1080#1088#1086#1074#1072#1085#1080#1103'='
+          #1053#1072#1095#1072#1083#1100#1085#1072#1103' '#1076#1072#1090#1072' '#1085#1072#1082#1083'.='
+          #1050#1086#1085#1077#1095#1085#1072#1103' '#1076#1072#1090#1072' '#1085#1072#1082#1083'.=')
+        TabOrder = 0
+        TitleCaptions.Strings = (
+          #1055#1072#1088#1072#1084#1077#1090#1088
+          #1044#1072#1090#1072)
+        OnMouseMove = vleDateMouseMove
+        OnSelectCell = vleDateSelectCell
+        ColWidths = (
+          123
+          177)
+      end
+      object vleSelections: TValueListEditor
+        Left = 453
+        Top = 2
+        Width = 636
+        Height = 133
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        FixedCols = 1
+        PopupMenu = pmSelections
+        Strings.Strings = (
+          #1054#1090#1076#1077#1083#1099' '#1087#1088#1086#1076#1072#1078'='
+          #1042#1080#1076#1099' '#1090#1086#1074#1072#1088#1072'='
+          #1057#1086#1090#1088#1091#1076#1085#1080#1082#1080'='
+          #1041#1091#1093'. '#1090#1080#1087#1099'='
+          #1050#1086#1085#1090#1088#1072#1075#1077#1085#1090#1099'='
+          #8470' '#1085#1072#1082#1083#1072#1076#1085#1086#1081'='
+          #1040#1076#1088#1077#1089#1072'=')
+        TabOrder = 1
+        TitleCaptions.Strings = (
+          #1055#1072#1088#1072#1084#1077#1090#1088
+          #1042#1099#1073#1088#1072#1085#1085#1099#1077' '#1079#1085#1072#1095#1077#1085#1080#1103)
+        OnDblClick = vleSelectionsDblClick
+        OnEditButtonClick = vleSelectionsEditButtonClick
+        ColWidths = (
+          123
+          490)
+        RowHeights = (
+          18
+          18
+          18
+          18
+          18
+          18
+          18
+          18)
+      end
+      object gbxExpansions: TGroupBox
+        Left = 312
+        Top = 2
+        Width = 137
+        Height = 133
+        Align = alLeft
+        Caption = #1056#1072#1089#1096#1080#1088#1080#1090#1100' '#1087#1086
+        PopupMenu = pmExpansion
+        TabOrder = 2
+        object clbExpansions: TCheckListBox
+          Left = 2
+          Top = 15
+          Width = 133
+          Height = 116
+          Align = alClient
+          ItemHeight = 13
+          Items.Strings = (
+            #1054#1090#1076#1077#1083#1091' '#1087#1088#1086#1076#1072#1078
+            #1042#1080#1076#1091' '#1090#1086#1074#1072#1088#1072
+            #1057#1086#1090#1088#1091#1076#1085#1080#1082#1091
+            #1041#1091#1093'. '#1090#1080#1087#1091
+            #1050#1086#1085#1090#1088#1072#1075#1077#1085#1090#1091
+            #8470' '#1085#1072#1082#1083#1072#1076#1085#1086#1081
+            #1040#1076#1088#1077#1089#1091)
+          PopupMenu = pmExpansion
+          TabOrder = 0
+        end
+      end
+    end
   end
-  object sbStatus: TStatusBar [3]
+  object sbStatus: TStatusBar [2]
     Left = 0
     Top = 546
-    Width = 1234
+    Width = 1095
     Height = 19
     Panels = <
       item
@@ -598,7 +319,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       end
       item
         Alignment = taRightJustify
-        Width = 70
+        Width = 80
       end
       item
         Width = 50
@@ -627,6 +348,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ',@p_postNo int'
       ',@p_date_beg SmallDateTime'
       ',@p_date_end SmallDateTime'
+      ',@p_date_nakl_beg SmallDateTime'
+      ',@p_date_nakl_end SmallDateTime'
       ',@p_our_firm int'
       ',@p_is_expr_tovar int'
       ''
@@ -644,6 +367,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       'set @p_our_firm = 1'
       'set @p_is_expr_tovar = 1'
       ''
+      'set @p_date_nakl_beg = '#39'1900-01-01'#39
+      'set @p_date_nakl_end = getdate()'
+      ''
       'set @p_postNo= :p_PostNo'
       'set @p_SotrudNo = :p_SotrudNo'
       'set @p_SectorId = -1'
@@ -651,6 +377,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       'set @p_is_only_firm = :p_is_only_firm'
       'set @p_date_beg = '#39'1900-01-01'#39
       'set @p_date_end = :p_date_end'
+      'set @p_date_nakl_beg = :p_date_nakl_beg '
+      'set @p_date_nakl_end = :p_date_nakl_end '
       'set @p_our_firm = :p_our_firm'
       'set @p_is_expr_tovar = :p_is_expr_tovar'
       '/*'
@@ -1082,6 +810,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '   left outer join d_sector_response s on ap.MarschrutNo=s.id'
       'where SummaDolg is not null'
       ''
+      'and (h.DateNakl between @p_date_nakl_beg and @p_date_nakl_end)'
+      ''
       
         'and (h.OtdelNo in (select cast(param_value as int) from e_sessio' +
         'n_params'
@@ -1183,8 +913,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', t2.VidTovName'
       ') AS t3'
       
-        '--order by t3.OtdelName, t3.VidTovName, t3.SotrudName, t3.NaklRN' +
-        'o')
+        'where (t3.OtdelName<>'#39#39') and (t3.VidTovName<>'#39#39') and (t3.NaklRNo' +
+        '<>0)'
+      'order by t3.OtdelName, t3.VidTovName, t3.SotrudName, t3.NaklRNo')
     BeforeOpen = quDebtBeforeOpen
     Left = 536
     Top = 225
@@ -1206,8 +937,16 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         Name = 'p_is_only_firm'
       end
       item
-        DataType = ftUnknown
+        DataType = ftDateTime
         Name = 'p_date_end'
+      end
+      item
+        DataType = ftDateTime
+        Name = 'p_date_nakl_beg'
+      end
+      item
+        DataType = ftDateTime
+        Name = 'p_date_nakl_end'
       end
       item
         DataType = ftUnknown
@@ -1377,5 +1116,83 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
     Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
     Left = 440
     Top = 464
+  end
+  object sthVerify: TStrHolder
+    Macros = <>
+    Left = 456
+    Top = 257
+    InternalVer = 1
+  end
+  object quSession: TMSQuery
+    Connection = dmDataModule.DB
+    SQL.Strings = (
+      'SELECT'
+      '  (CASE WHEN EXISTS('
+      #9'SELECT 1 FROM e_Session_params'
+      #9'WHERE '
+      #9'  UserNo = :UserNo and '
+      #9'  owner_name = :OwnerName  and '
+      #9'  param_name = :ParamName and '
+      #9'  SPID=:SPID)'
+      #9'THEN 1 ELSE 0 END) AS ParamValue')
+    BeforeOpen = quDebtBeforeOpen
+    Left = 672
+    Top = 241
+    ParamData = <
+      item
+        DataType = ftInteger
+        Name = 'UserNo'
+        Value = 0
+      end
+      item
+        DataType = ftString
+        Name = 'OwnerName'
+      end
+      item
+        DataType = ftString
+        Name = 'ParamName'
+      end
+      item
+        DataType = ftInteger
+        Name = 'SPID'
+        Value = 0
+      end>
+    object quSessionParamValue: TIntegerField
+      FieldName = 'ParamValue'
+      ReadOnly = True
+    end
+  end
+  object MemTableEh1: TMemTableEh
+    Params = <>
+    Left = 576
+    Top = 217
+  end
+  object pmExpansion: TPopupMenu
+    Left = 368
+    Top = 265
+    object mnuSet_All_Exp_False: TMenuItem
+      Caption = #1054#1095#1080#1089#1090#1080#1090#1100' '#1074#1089#1077
+      OnClick = mnuSet_All_Exp_FalseClick
+    end
+    object mnuSet_All_Exp_True: TMenuItem
+      Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1074#1089#1077
+      OnClick = mnuSet_All_Exp_TrueClick
+    end
+  end
+  object pmDate: TPopupMenu
+    Left = 176
+    Top = 257
+    object mnuSetDefaultDates: TMenuItem
+      Caption = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1076#1072#1090#1099' '#1087#1086' '#1091#1084#1086#1083#1095#1072#1085#1080#1102
+      OnClick = mnuSetDefaultDatesClick
+    end
+  end
+  object pmSelections: TPopupMenu
+    Left = 608
+    Top = 305
+    object mnuDeleteAllSelections: TMenuItem
+      Caption = #1059#1073#1088#1072#1090#1100' '#1074#1089#1077' '#1074#1099#1073#1086#1088#1099
+      OnClick = mnuDeleteAllSelectionsClick
+    end
   end
 end
