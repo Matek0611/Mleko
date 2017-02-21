@@ -77,6 +77,31 @@ type
     IntegerField5: TIntegerField;
     IntegerField6: TIntegerField;
     dsUsersConduct: TMSDataSource;
+    GroupBox4: TGroupBox;
+    DBGridEh4: TDBGridEh;
+    quUsersControl: TMSQuery;
+    IntegerField7: TIntegerField;
+    StringField3: TStringField;
+    SmallintField2: TSmallintField;
+    StringField4: TStringField;
+    BooleanField2: TBooleanField;
+    IntegerField8: TIntegerField;
+    IntegerField9: TIntegerField;
+    IntegerField10: TIntegerField;
+    IntegerField11: TIntegerField;
+    IntegerField12: TIntegerField;
+    dsUsersControl: TMSDataSource;
+    quListUserForControlDoc: TMSQuery;
+    StringField5: TStringField;
+    dsListUserForControlDoc: TMSDataSource;
+    quListUserForControlDocId: TIntegerField;
+    quListUserForControlDocIdVidDoc: TIntegerField;
+    quListUserForControlDocUserNo: TIntegerField;
+    quListUserForControlDocActive: TBooleanField;
+    Splitter3: TSplitter;
+    SpeedButton7: TSpeedButton;
+    SpeedButton8: TSpeedButton;
+    SpeedButton9: TSpeedButton;
     procedure quListUserForVidDocBeforeOpen(DataSet: TDataSet);
     procedure DBGridEh1KeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -95,6 +120,14 @@ type
     procedure SpeedButton4Click(Sender: TObject);
     procedure SpeedButton5Click(Sender: TObject);
     procedure SpeedButton6Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure quVidDocBeforePost(DataSet: TDataSet);
+    procedure quVidDocAfterPost(DataSet: TDataSet);
+    procedure quListUserForControlDocBeforePost(DataSet: TDataSet);
+    procedure quListUserForControlDocBeforeOpen(DataSet: TDataSet);
+    procedure SpeedButton7Click(Sender: TObject);
+    procedure SpeedButton8Click(Sender: TObject);
+    procedure SpeedButton9Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -121,13 +154,31 @@ begin
   quListUserForVidDoc.Close;
   quListUserForVidDoc.ParamByName('IdVidDoc').Value := quVidDocId.Value;
   quListUserForVidDoc.Open;
+
+  quListUserForConductingDoc.Close;
+  quListUserForConductingDoc.ParamByName('IdVidDoc').Value := quVidDocId.Value;
+  quListUserForConductingDoc.Open;
+
+  quListUserForControlDoc.Close;
+  quListUserForControlDoc.ParamByName('IdVidDoc').Value := quVidDocId.Value;
+  quListUserForControlDoc.Open;
 end;
 
 procedure TVidDocForm.DBGridEh1CellClick(Column: TColumnEh);
 begin
+
   quListUserForVidDoc.Close;
   quListUserForVidDoc.ParamByName('IdVidDoc').Value := quVidDocId.Value;
   quListUserForVidDoc.Open;
+
+  quListUserForConductingDoc.Close;
+  quListUserForConductingDoc.ParamByName('IdVidDoc').Value := quVidDocId.Value;
+  quListUserForConductingDoc.Open;
+
+  quListUserForControlDoc.Close;
+  quListUserForControlDoc.ParamByName('IdVidDoc').Value := quVidDocId.Value;
+  quListUserForControlDoc.Open;
+
 end;
 
 procedure TVidDocForm.bOkClick(Sender: TObject);
@@ -135,13 +186,15 @@ begin
   if (quListUserForVidDoc.State in [dsInsert, dsEdit]) then quListUserForVidDoc.Post else quListUserForVidDoc.Cancel;
   if (quVidDoc.State in [dsInsert, dsEdit]) then quVidDoc.Post else quVidDoc.Cancel;
   if (quListUserForConductingDoc.State in [dsInsert, dsEdit]) then quListUserForConductingDoc.Post else quListUserForConductingDoc.Cancel;
+  if (quListUserForControlDoc.State in [dsInsert, dsEdit]) then quListUserForControlDoc.Post else quListUserForControlDoc.Cancel;
 end;
 
 procedure TVidDocForm.bCancelClick(Sender: TObject);
 begin
   if (quListUserForVidDoc.State in [dsInsert, dsEdit]) then quListUserForVidDoc.Cancel;
   if (quVidDoc.State in [dsInsert, dsEdit]) then quVidDoc.Cancel;
-  if (quListUserForConductingDoc.State in [dsInsert, dsEdit]) then quListUserForConductingDoc.Cancel;  
+  if (quListUserForConductingDoc.State in [dsInsert, dsEdit]) then quListUserForConductingDoc.Cancel;
+  if (quListUserForControlDoc.State in [dsInsert, dsEdit]) then quListUserForControlDoc.Cancel;
 end;
 
 procedure TVidDocForm.SpeedButton1Click(Sender: TObject);
@@ -210,6 +263,77 @@ procedure TVidDocForm.SpeedButton6Click(Sender: TObject);
 begin
   if Application.MessageBox('Вы уверены ?', 'Удаление', MB_YESNO or MB_DEFBUTTON2) = ID_YES then quListUserForConductingDoc.Delete;
 
+end;
+
+procedure TVidDocForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+//  quListUserForConductingDoc.Close;
+//  quListUserForVidDoc.Close;
+//  quVidDoc.Close;
+//  Free;
+end;
+
+procedure TVidDocForm.quVidDocBeforePost(DataSet: TDataSet);
+begin
+  inherited;
+{
+  quListUserForVidDoc.Close;
+  quListUserForVidDoc.ParamByName('IdVidDoc').Value := quVidDocId.Value;
+  quListUserForVidDoc.Open;
+
+  quListUserForConductingDoc.Close;
+  quListUserForConductingDoc.ParamByName('IdVidDoc').Value := quVidDocId.Value;
+  quListUserForConductingDoc.Open;
+}
+end;
+
+procedure TVidDocForm.quVidDocAfterPost(DataSet: TDataSet);
+begin
+  inherited;
+  quListUserForVidDoc.Close;
+  quListUserForVidDoc.ParamByName('IdVidDoc').Value := quVidDocId.Value;
+  quListUserForVidDoc.Open;
+
+  quListUserForConductingDoc.Close;
+  quListUserForConductingDoc.ParamByName('IdVidDoc').Value := quVidDocId.Value;
+  quListUserForConductingDoc.Open;
+
+  quListUserForControlDoc.Close;
+  quListUserForControlDoc.ParamByName('IdVidDoc').Value := quVidDocId.Value;
+  quListUserForControlDoc.Open;
+
+
+end;
+
+procedure TVidDocForm.quListUserForControlDocBeforePost(DataSet: TDataSet);
+begin
+  inherited;
+  quListUserForControlDocIdVidDoc.Value := quVidDocId.Value;
+end;
+
+procedure TVidDocForm.quListUserForControlDocBeforeOpen(DataSet: TDataSet);
+begin
+  inherited;
+  quListUserForControlDoc.ParamByName('IdVidDoc').Value := quVidDocId.Value;
+end;
+
+procedure TVidDocForm.SpeedButton7Click(Sender: TObject);
+begin
+  inherited;
+  quListUserForControlDoc.Append;
+end;
+
+procedure TVidDocForm.SpeedButton8Click(Sender: TObject);
+begin
+  inherited;
+  quListUserForControlDoc.Edit;
+end;
+
+procedure TVidDocForm.SpeedButton9Click(Sender: TObject);
+begin
+  inherited;
+  if Application.MessageBox('Вы уверены ?', 'Удаление', MB_YESNO or MB_DEFBUTTON2) = ID_YES then quListUserForControlDoc.Delete;
 end;
 
 end.

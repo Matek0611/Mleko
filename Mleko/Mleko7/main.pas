@@ -657,7 +657,7 @@ uses Post0, NaklP0, Tovar0, Ostatok2, About,
   ListMinusPostForDolg, PrihodTovWithExel, MlekoSelectFIrm, EditClientCard, VidDoc, DocClientCardHead,
   ControlVidRashodForPlat, GroupCutting, ListVidTovForGroupCutting, CheckMeshCutting, PostFromGroupCutting,
   AnalisCuttingMesh, Currency, CurrencyExchange, VidRashodGroup, ListPlusPostForClosePlatRIsEconom,
-  MlekoClosePlatRLight, EditDocPlat, DocPlatHead, ListVidOtdelForAPP, ListMinusPostForBDDS, UAnalyze_Debit_Debt,
+  MlekoClosePlatRLight, EditDocPlat, DocPlatHead, ListVidOtdelForAPP, ListMinusPostForBDDS, UAnalyzeDebitDebt,
   MlekoBlankListLight;
 
 {$R *.DFM}
@@ -4768,12 +4768,14 @@ begin
       quVidDoc.open;
       quListUserForVidDoc.Open;
       quListUserForConductingDoc.Open;
+      quListUserForControlDoc.Open;
       dmDataModule.quUsers.Open;
       dmDataModule.quOtdel.Open;
 
 
       ShowModal;
      finally
+      quListUserForControlDoc.Close;
       quListUserForConductingDoc.Close;
       quListUserForVidDoc.Close;
       quVidDoc.Close;
@@ -4992,12 +4994,8 @@ end;
 procedure TfmMain.AnalyzeDebitDebtClick(Sender: TObject);
 begin
   inherited;
-  with TfrmAnalyze_Debit_Debt.Create(Application) do
+  with TfrmAnalyzeDebitDebt.Create(Application) do
   try
-    DisableParams;
-    EdDateAnalyzeEnd.Date := Date();
-    EnableParams;
-    //RefreshResults(True);
     ShowModal;
   finally
     quDebt.Close;

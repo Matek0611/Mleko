@@ -434,7 +434,6 @@ type
     quRashodPrintBarCode: TLargeintField;
     quRashodPrintIsStavNDS: TIntegerField;
     quTovarVidNameOtdelName: TStringField;
-    quTovarVidNameNaklNo: TIntegerField;
     
     procedure frReport3GetValue(const ParName: String;
       var ParValue: Variant);
@@ -1884,7 +1883,7 @@ begin
      mdLoadCar.FieldByName('Kol').AsFloat:=0;
      mdLoadCar.FieldByName('Weight').AsFloat:=0;
      mdLoadCar.FieldByName('KolPerPak').AsString:='';
-     mdLoadCar.FieldByName('NaklNo').AsInteger:=quTovarVidNameNaklNo.AsInteger;
+//     mdLoadCar.FieldByName('NaklNo').AsInteger:=quTovarVidNameNaklNo.AsInteger;
 //     mdLoadCar.FieldByName('PostName').AsString:='';
      mdLoadCar.FieldByName('TovarName').AsString:=quTovarVidNameNameTovar.AsString;
      mdLoadCar.FieldByName('VidTovarName').AsString:=quTovarVidNameVidName.AsString;
