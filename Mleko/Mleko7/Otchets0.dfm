@@ -1,6 +1,6 @@
 inherited fmOtchets: TfmOtchets
-  Left = 376
-  Top = 138
+  Left = 798
+  Top = 127
   Width = 796
   Height = 478
   Caption = 'fmOtchets'
@@ -1778,9 +1778,6 @@ inherited fmOtchets: TfmOtchets
       FieldName = 'OtdelName'
       ReadOnly = True
       Size = 30
-    end
-    object quTovarVidNameNaklNo: TIntegerField
-      FieldName = 'NaklNo'
     end
   end
   object quNaklRPrint: TMSQuery

@@ -89,6 +89,15 @@ type
     QuerySumma: TFloatField;
     ToolButtonTmpCross: TToolButton;
     QueryPostNo: TSmallintField;
+    QueryVidtovGroupId: TLargeintField;
+    QueryBuh: TSmallintField;
+    QueryReasonId: TSmallintField;
+    QueryStatus: TSmallintField;
+    Queryreserve: TSmallintField;
+    QueryVidtovgroupname: TStringField;
+    QueryColnpricename: TStringField;
+    QueryUsername: TStringField;
+    QueryUserNo: TSmallintField;
     procedure ActionItemAddExecute(Sender: TObject);
     procedure DBGridDblClick(Sender: TObject);
     procedure DBGridKeyDown(Sender: TObject; var Key: Word;
@@ -227,6 +236,8 @@ begin
   if Query.FieldByName('Vidtovgroupname').AsString = '' then
   ShowMessage('Сформируйте заказ!') else
   begin
+    if QueryUserNo.Value <> data.UserNo then raise Exception.Create('Запрещено редактирование чужих заказов!');
+
     Meko_Blanc_Price.BLANC_PRICE.NaborLabel.Caption:=Query.FieldValues['Vidtovgroupname'];
     Meko_Blanc_Price.BLANC_PRICE.FirmaLabel.Caption:=Query.FieldValues['Postname'];
     Meko_Blanc_Price.BLANC_PRICE.EnterPriceLabel.Caption:=Query.FieldValues['Colnpricename'];
@@ -571,6 +582,10 @@ begin
   ActionItemDel.Enabled := ne and (status = 0) and not ((not l_is_autoload) and (Query.FieldByName('ReasonId').AsInteger in [4]));
   ActionOrderUnBlock.Enabled := ne and (Query.FieldByName('reserve').AsInteger = 1) and (data.CodeAccess < 8);
   ActionOrderBlock.Enabled := ne and (not (Query.FieldByName('reserve').AsInteger = 1)) and (status = 0);
+  if QueryUserNo.Value <> data.UserNo then begin
+                                             ActionItemDel.Enabled := false;
+                                             ActionItemProp.Enabled := false;
+                                           end;
 end;
 
 procedure TMlekoBlankListLightForm.ActionGoExcelExecute(Sender: TObject);

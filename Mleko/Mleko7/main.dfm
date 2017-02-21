@@ -1,6 +1,6 @@
 inherited fmMain: TfmMain
-  Left = 442
-  Top = 208
+  Left = 441
+  Top = 231
   VertScrollBar.Range = 0
   Anchors = [akLeft, akTop, akRight, akBottom]
   AutoScroll = False
@@ -32,10 +32,8 @@ inherited fmMain: TfmMain
     Left = 0
     Top = 72
     Width = 312
-    Height = 72
-    Caption = 
-      #1054#1073#1085#1086#1074#1083#1077#1085#1080#1077' (6.2.36)  05.01.2017'#13#10#1054#1073#1085#1086#1074#1083#1077#1085#1080#1077' (6.2.37)  07.01.2017' +
-      #13#10#1054#1073#1085#1086#1074#1083#1077#1085#1080#1077' (6.2.38)  10.01.2017'
+    Height = 24
+    Caption = #1054#1073#1085#1086#1074#1083#1077#1085#1080#1077' (6.2.58)  20.02.2017'
     Color = clMoneyGreen
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
@@ -599,6 +597,10 @@ inherited fmMain: TfmMain
         Caption = #1042#1085#1077#1096#1085#1080#1077' '#1079#1072#1082#1072#1079#1099
         OnClick = N141Click
       end
+      object BlankListLight: TMenuItem
+        Caption = #1046#1091#1088#1085#1072#1083' '#1079#1072#1082#1072#1079#1086#1074' '#1076#1083#1103' '#1072#1075#1077#1085#1090#1086#1074
+        OnClick = BlankListLightClick
+      end
       object AnalisCuttingMesh: TMenuItem
         Caption = #1040#1085#1072#1083#1080#1079' '#1072#1074#1090#1086#1084#1072#1090#1080#1095#1077#1089#1082#1086#1081' '#1087#1086#1088#1077#1079#1082#1080' '#1089#1077#1090#1082#1080
         OnClick = AnalisCuttingMeshClick
@@ -665,6 +667,10 @@ inherited fmMain: TfmMain
     end
     object N11: TMenuItem
       Caption = #1044#1086#1083#1075#1080
+      object AnalyzeDebitDebt: TMenuItem
+        Caption = #1040#1085#1072#1083#1080#1079' '#1076#1077#1073#1080#1090'. '#1079#1072#1076#1086#1083#1078#1077#1085#1085#1086#1089#1090#1080
+        OnClick = AnalyzeDebitDebtClick
+      end
       object N16: TMenuItem
         Caption = #1044#1077#1073#1077#1090#1086#1088#1099
         OnClick = N16Click
@@ -1033,6 +1039,10 @@ inherited fmMain: TfmMain
         Caption = #1057#1074#1077#1088#1082#1072' '#1087#1088#1080#1093#1086#1076#1086#1074' '#1089' '#1091#1089#1090'.'#1074#1093'. '#1094#1077#1085#1086#1081
         OnClick = CheckPriceInInstClick
       end
+      object LightOfGornalRash: TMenuItem
+        Caption = #1046#1091#1088#1085#1072#1083' '#1087#1083#1072#1090#1077#1078#1077#1081
+        OnClick = LightOfGornalRashClick
+      end
     end
     object N143: TMenuItem
       Caption = #1060#1080#1089#1082#1072#1083#1100#1085#1099#1081' '#1087#1088#1080#1085#1090#1077#1088
@@ -1193,8 +1203,16 @@ inherited fmMain: TfmMain
         OnClick = CheckMeshCuttingClick
       end
       object IsEconom: TMenuItem
-        Caption = #1057#1087#1080#1089#1086#1082' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1077#1081', '#1074#1080#1076#1103#1097#1080#1093' '#1091#1095#1077#1090' '#1074' '#1078#1091#1088#1085#1072#1083#1077' '#1088#1072#1089#1093#1086#1076#1086#1074
+        Caption = #1057#1087#1080#1089#1086#1082' '#1091#1095#1077#1090#1072
         OnClick = IsEconomClick
+      end
+      object AnalisPP: TMenuItem
+        Caption = #1040#1055#1055
+        OnClick = AnalisPPClick
+      end
+      object ClampingBDDS: TMenuItem
+        Caption = #1041#1044#1044#1057
+        OnClick = ClampingBDDSClick
       end
     end
     object N104: TMenuItem
@@ -1259,6 +1277,21 @@ inherited fmMain: TfmMain
         object AppliedCardsClients: TMenuItem
           Caption = #1055#1088#1086#1074#1077#1076#1077#1085#1085#1099#1077
           OnClick = AppliedCardsClientsClick
+        end
+      end
+      object NewDocPlat: TMenuItem
+        Caption = #1055#1083#1072#1090#1077#1078
+        OnClick = NewDocPlatClick
+      end
+      object DocPlat: TMenuItem
+        Caption = #1055#1083#1072#1090#1077#1078#1080
+        object NotAppDocPlat: TMenuItem
+          Caption = #1053#1077' '#1087#1088#1086#1074#1077#1076#1077#1085#1085#1099#1077
+          OnClick = NotAppDocPlatClick
+        end
+        object AppliedDocPlat: TMenuItem
+          Caption = #1055#1088#1086#1074#1077#1076#1077#1085#1085#1099#1077
+          OnClick = AppliedDocPlatClick
         end
       end
     end

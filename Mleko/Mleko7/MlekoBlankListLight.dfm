@@ -1,9 +1,9 @@
 inherited MlekoBlankListLightForm: TMlekoBlankListLightForm
-  Left = 447
-  Top = 194
+  Left = 430
+  Top = 193
   Width = 1024
   Height = 712
-  Caption = #1057#1087#1080#1089#1086#1082' '#1079#1072#1082#1072#1079#1086#1074
+  Caption = #1057#1087#1080#1089#1086#1082' '#1079#1072#1082#1072#1079#1086#1074' '#1076#1083#1103' '#1090#1086#1088#1075#1086#1074#1099#1093' '#1072#1075#1077#1085#1090#1086#1074
   OnActivate = FormActivate
   OnShow = nil
   PixelsPerInch = 96
@@ -596,6 +596,45 @@ inherited MlekoBlankListLightForm: TMlekoBlankListLightForm
     end
     object QueryPostNo: TSmallintField
       FieldName = 'PostNo'
+      Visible = False
+    end
+    object QueryVidtovGroupId: TLargeintField
+      FieldName = 'VidtovGroupId'
+      Visible = False
+    end
+    object QueryBuh: TSmallintField
+      FieldName = 'Buh'
+      Visible = False
+    end
+    object QueryReasonId: TSmallintField
+      FieldName = 'ReasonId'
+      Visible = False
+    end
+    object QueryStatus: TSmallintField
+      FieldName = 'Status'
+      Visible = False
+    end
+    object Queryreserve: TSmallintField
+      FieldName = 'reserve'
+      Visible = False
+    end
+    object QueryVidtovgroupname: TStringField
+      FieldName = 'Vidtovgroupname'
+      ReadOnly = True
+      Size = 512
+    end
+    object QueryColnpricename: TStringField
+      FieldName = 'Colnpricename'
+      ReadOnly = True
+      Visible = False
+      Size = 64
+    end
+    object QueryUsername: TStringField
+      FieldName = 'Username'
+      ReadOnly = True
+    end
+    object QueryUserNo: TSmallintField
+      FieldName = 'UserNo'
       Visible = False
     end
   end
