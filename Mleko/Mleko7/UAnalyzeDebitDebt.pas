@@ -1,5 +1,11 @@
 {$DEFINE SystemMenu}
 
+(*
+Дата формирования=
+Начальная дата накл.=
+Конечная дата накл.=
+*)
+
 unit UAnalyzeDebitDebt;
 
 interface
@@ -10,10 +16,17 @@ uses
   ExtCtrls, ActnList, StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, cxDropDownEdit, cxCalendar, citCtrls, citmask, citDBComboEdit,
   DBGridEhImpExp, ComCtrls, MlekoUtils, Mask, DBCtrlsEh, rxStrHlder,
-  MemTableDataEh, MemTableEh, Grids, ValEdit, Menus, CheckLst;
+  MemTableDataEh, MemTableEh, Grids, ValEdit, Menus, CheckLst, StrListA;
 
 type
-  TParamType = (ptUserNo, ptSPID, ptOwnerName, ptExpansion, ptSelection);
+  TParamType = ( ptUserNo, ptSPID, ptOwnerName,
+                 ptExpansion, ptSelection,
+                 ptFormDate, ptBegDate, ptStartDate, ptVeryOld,
+                 ptOrderBy,
+                 ptEndDate);
+
+  TSelectionType = ( stOtdel, stVid, stSotrud, stBuh, stPost, stNakl, stAddress,
+                     stDoc, stDayNakl, stDayOpl, stDayExp);
 
   TParamIndexes = array[TParamType] of Integer;
 
@@ -29,44 +42,9 @@ type
     btnExportToExcel: TButton;
     dlgSaveExportToExcel: TSaveDialog;
     sbStatus: TStatusBar;
-    quDebtOtdelName: TStringField;
-    quDebtVidTovName: TStringField;
-    quDebtSotrudName: TStringField;
-    quDebtBuhName: TStringField;
-    quDebtSumma: TFloatField;
-    quDebtSummaDolg: TFloatField;
-    quDebtOverSumma: TFloatField;
-    quDebtDateNakl: TDateTimeField;
-    quDebtDateOpl: TDateTimeField;
-    quDebtSrok: TIntegerField;
-    quDebtCurrencyHead: TStringField;
-    quDebtCurAcc: TStringField;
-    quDebtSummaAcc: TFloatField;
-    quDebtSummaDolgAcc: TFloatField;
-    quDebtName: TStringField;
-    quDebtOtdel_Name: TStringField;
-    quDebtVidTov_Name: TStringField;
-    quDebtSotrud_Name: TStringField;
-    quDebtBuh_Name: TStringField;
-    quDebtName_: TStringField;
-    quDebtSummaPlat: TFloatField;
-    quDebtDay_Exp: TIntegerField;
-    quDebtPhone: TStringField;
-    quDebtVIP: TBooleanField;
-    quDebtVipName: TStringField;
-    quDebtMarschrutNo: TSmallintField;
-    quDebtSectorName: TStringField;
-    quDebtSource_Type: TStringField;
-    quDebtOurFirmName: TStringField;
-    quDebtNameTovar: TStringField;
-    quDebtKolTovar: TStringField;
-    quDebtSummaTovar: TStringField;
-    quDebtAddress: TStringField;
-    quDebtNom: TStringField;
-    sthVerify: TStrHolder;
+    sthSource: TStrHolder;
     quSession: TMSQuery;
     quSessionParamValue: TIntegerField;
-    MemTableEh1: TMemTableEh;
     pnlControls: TPanel;
     vleDate: TValueListEditor;
     spl1: TSplitter;
@@ -81,18 +59,30 @@ type
     clbExpansions: TCheckListBox;
     pmSelections: TPopupMenu;
     mnuDeleteAllSelections: TMenuItem;
-    procedure cbIs_Ext_OtdelNoClick(Sender: TObject);
-    procedure cbIs_Ext_VidNoClick(Sender: TObject);
-    procedure cbIs_Ext_TipNoClick(Sender: TObject);
-    procedure cbIs_Ext_TovarNoClick(Sender: TObject);
-    procedure cbIs_Ext_SotrudNoClick(Sender: TObject);
-    procedure cbIs_Ext_ColnPriceClick(Sender: TObject);
-    procedure fltSotrudSelectOk(Sender: TObject);
-    procedure btnRefreshClick(Sender: TObject);
+    quTest: TMSQuery;
+    quDebtOtdelName: TStringField;
+    quDebtVidName: TStringField;
+    quDebtSotrudName: TStringField;
+    quDebtBuhName: TStringField;
+    quDebtAgentName: TStringField;
+    quDebt_NomNakl: TIntegerField;
+    quDebtNomNakl: TStringField;
+    quDebtPostAddress: TStringField;
+    quDebtDocTypeName: TStringField;
+    quDebtSumma: TFloatField;
+    quDebtSummaDolg: TFloatField;
+    quDebt_DateNakl: TIntegerField;
+    quDebtDateNakl: TStringField;
+    quDebt_DateOpl: TIntegerField;
+    quDebtDateOpl: TStringField;
+    quDebt_DayExp: TIntegerField;
+    quDebtDayExp: TStringField;
+    spl3: TSplitter;
+    acRefresh: TAction;
+    acExportToExcel: TAction;
     procedure dbgDebtsTitleBtnClick(Sender: TObject; ACol: Integer; Column: TColumnEh);
     procedure dbgDebtsKeyPress(Sender: TObject; var Key: Char);
     procedure dbgDebtsKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure btnExportToExcelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure quDebtBeforeOpen(DataSet: TDataSet);
@@ -105,14 +95,15 @@ type
     procedure fltBuhTypePushButton(Sender: TObject);
     procedure vleDateSelectCell(Sender: TObject; ACol, ARow: Integer;
       var CanSelect: Boolean);
-    procedure vleDateMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure mnuSet_All_Exp_FalseClick(Sender: TObject);
     procedure mnuSet_All_Exp_TrueClick(Sender: TObject);
     procedure mnuSetDefaultDatesClick(Sender: TObject);
     procedure vleSelectionsEditButtonClick(Sender: TObject);
     procedure vleSelectionsDblClick(Sender: TObject);
     procedure mnuDeleteAllSelectionsClick(Sender: TObject);
+    procedure clbExpansionsClickCheck(Sender: TObject);
+    procedure acRefreshExecute(Sender: TObject);
+    procedure acExportToExcelExecute(Sender: TObject);
   private
     { Private declarations }
     cbxExpansion: TCheckBox;
@@ -129,27 +120,32 @@ type
     ParamIndexes: TParamIndexes;
     ParamKeys: TParamKeys;
     SelectionList, ExpansionList: TList;
-    Source, Fields, Temp: TStringList;
+    Source, Fields, Temp, Selections: TStringList;
+    AList: TStringListArray;
     ParamList: TStrings;
-    DisableParamIndexes, ItemIsInteger: Boolean;
+    OldCol, OldDir: Integer;
+    DisableParamIndexes, ItemIsInteger,
+    TestMode, CopySourceOnRefresh: Boolean;
+    OrderFullStr: String;
     procedure ShowStatusMsg(Index: Integer; Msg: string);
     procedure ShowRecordCount(SetMaxCount: Boolean = False);
     procedure SetParamsBeforeOpen;
-    procedure Set_Ext_Param(ParamName: string; Owner: TCheckBox);
     procedure FillSourceList;
     procedure FillComponentLists;
     procedure ShowScript;
-    procedure ApplyChanges;
+    procedure ApplyChanges();
     procedure SetParameters;
     procedure SetParameter(Index: Integer; Key, Value: string);
     procedure DetectParamIndexes;
     function SetParameterByType(ParamType: TParamType; Value: string): string;
+    procedure SetParameterByTypeEx(pt: TParamType);
 
     {$IFDEF SystemMenu}
     procedure InsertCommands(SysMenu: THandle);
     procedure wmSysCommand(var Message: TMessage); message WM_SYSCOMMAND;
     procedure CopySQLParams;
     procedure CollectSQLParams;
+    {$ENDIF}
     function CreateSQLContainer(SetCaption: string; GetSQLText: Boolean = True): TForm;
     procedure VerifyNaklNoEditText;
     procedure VerifyCitDBComboEditText(cit: TcitDBComboEdit; ShowInStatus: Boolean = True);
@@ -164,7 +160,22 @@ type
     procedure SetDefaultEditStyleForSelections;
     procedure PushEditButtonForSelection;
     procedure DeleteAllSelections;
-    {$ENDIF}
+    function SelectMLKItems(sel: TSelectionType; ParamName, ParamCode: string): Integer;
+    procedure TransposeSelections;
+    procedure SetDefaultTransposeParams;
+    procedure ExecScript;
+    function GetDateStrByIndex(Index: Integer; IsQuoted: Boolean = False): String;
+    procedure VerifyInvoiceNumbers;
+    function GetSelectionStrByIndex(Index: Integer;
+      IsQuoted: Boolean = False): String;
+    procedure VerifyEmptySelections;
+    function SelectDateItems(sel: TSelectionType): Integer;
+    procedure VerifyIntValues(sel: TSelectionType; DefValue: Integer = MaxInt);
+    procedure VerifyDateValues(sel: TSelectionType);
+    function EnableExpansion(Index: Integer): Boolean;
+    function GetOrderFields(var FieldName: String; Index: Integer): String;
+    procedure ExportToExcel;
+    procedure ExecuteScript;
   public
     { Public declarations }
     procedure RefreshResults(SetMaxCount: Boolean = False);
@@ -178,7 +189,8 @@ var
 implementation
 
 uses
-  data, About, StrUtils, CommCtrl;
+  data, About, StrUtils, DateUtils, CommCtrl,
+  UFastDatasetView, USelectDateItemsDlg;
 
 {$R *.dfm}
 
@@ -198,13 +210,46 @@ const
   idParamPostfix = ' = ';
   idExpansions = 'Expansions';
   idSelections = 'Selections';
+  idExpOption = 1;
+  idSelOption = 2;
   idUserNo = 'UserNo';
+  idNaklNo = 5;
   idSPID = 'SPID';
   idOwnerName = 'OwnerName';
+
+  idFormDate = 'p_date_end';
+
+  idBegDate = 'p_date_beg';
+  idEndDate = 'p_date_end';
+  idStartDate = 'DateStart';
+  dtDateStart = '01.01.2000';
+  dtBegDate = '01.01.1900';
+
+  idVeryOldDay = 'VeryOldDay';
+  idVeryOldVal = -10000;
+  idOrderBy = 'ORDER BY';
+
+//  idBegDate = 'p_date_nakl_beg';
+//  idEndDate = 'p_date_nakl_end';
+
   vk_Enter = 13;
   idLocalOwnerName = 'frmAnalyzeDebitDebt';
   idParamName = 'ParamName';
   idParamValue = 'ParamValue';
+  idNull = 'NULL';
+
+  idInsertExpansions = 'INSERT INTO #Expansions Values';
+  idInsertSelections = 'INSERT INTO #Selections Values';
+
+  NaklNo_Template = 'SELECT %s, %s FROM %s WHERE %s IN (%s) and (NomReturn is NULL)';
+  SQL_Template = 'SELECT %s, %s FROM %s WHERE %s IN (%s)';
+  SQL_Like = 'SELECT %s, %s FROM %s WHERE %s LIKE ''%%%s%%''';
+
+  DefExpValues : array[Boolean] of TBoolStrValue = ('0', '1');
+  DefSelValues : array[Boolean] of TBoolStrValue = ('-1', '0');
+  DefPrefValues : array[Boolean] of TBoolStrValue = ('', ', ');
+
+  idDefaultSortFields = ' OtdelName, VidName, SotrudName, _NomNakl';
 
   BoolStrValues: array[Boolean] of TBoolStrValue =
   //('Нет', 'Да');
@@ -239,18 +284,7 @@ procedure InsertChildInStringGrid(
 var
   Rect: TRect;
 begin
-  //THackControl(Child).SetParent(nil); // get access to the protected method
-  //Child.Visible:= False;
-  //THackControl(Child).SetParent(Parent); 
   Rect:= GetCellRect(Parent, Row, Col);
-//  Child.Left:= Rect.Left+2;
-//  Child.Top:= Rect.Top;
-//  Child.Width:= Rect.Right - Rect.Left - 4;
-  // get access to the protected method
-  // Retreive the rectangle of the statuspanel (in my case the second)
-  //SendMessage(Parent.Handle, SB_GETRECT, 0, Integer(@Rect));
-  // Position the progressbar over the panel on the statusbar
-  
   with Rect do
   begin
     if AWidth=-1 then AWidth:= Bottom - Top;
@@ -258,8 +292,6 @@ begin
       Child.SetBounds(Left, Top, Right - Left, Bottom - Top) else
       Child.SetBounds(Left, Top, AWidth, Bottom - Top);
   end;
-//    Child.BringToFront;
-  //Child.Visible:= True;
 end;
 
 procedure SetBit(Addr: Pointer; Index: Integer; Value: Boolean); assembler;
@@ -303,16 +335,6 @@ begin
   //Result:= Control.Text; No Text property in TControl but in debug mode it is visible
 end;
 
-function GetStartPosIndex(Source: TStrings; S: string): Integer;
-begin
-  for Result := 0 to Source.Count - 1 do
-  begin
-    if Pos(UpperCase(S), UpperCase(Trim(Source[Result]))) = 1 then
-      Exit;
-  end;
-  Result := -1;
-end;
-
 function CollectGroupStrings(Source, Dest: TStrings; Group: Integer; Prefix:
   string): Integer;
 var
@@ -345,7 +367,6 @@ function CollectBitValuesEx(Owner: TComponent): Integer;
   function GetBoolValue(i: Integer): Boolean;
   var
     S: string;
-    cit: TcitDBComboEdit;
   begin
     Result := False;
     if (Owner is TCheckListBox) then
@@ -365,45 +386,38 @@ begin
       List:= (Owner as TValueListEditor).Strings;
   for i := 0 to List.Count - 1 do
     SetBit(@Result, i, GetBoolValue(i));
-//    begin
-//      b:= GetBoolValue(TComponent(List[i]));
-//      if b then
-//         Inc(Result, Integer(1) shl i);
-//    end;
 end;
 
-
-function CollectBitValues(List: TList): Integer;
-
-  function GetBoolValue(Comp: TComponent): Boolean;
-  var
-    S: string;
-    cit: TcitDBComboEdit;
+function CollectBitValuesToString(Owner: TObject): String;
+var Option: Integer;
+  function GetBoolValueStr(i: Integer): String;
   begin
-    Result := False;
-    if (Comp is TCheckBox) then
-      Result := (Comp as TCheckBox).Checked
-    else if (Comp is TcitDBComboEdit) then
-    begin
-//      cit:= Comp as TcitDBComboEdit;
-//      S:= cit.Text;
-//      Result := Trim(S) <> '';
-      Result := Trim((Comp as TcitDBComboEdit).Text) <> '';
+    case Option of
+    idExpOption:
+       Result := DefExpValues[TCheckListBox(Owner).Checked[i]];
+    idSelOption:
+      Result:= DefSelValues[TStringListArray(Owner).GetChild(i).Count>0];
     end;
   end;
 
 var
-  i: Integer;
-  b: Boolean;
+  i, h: Integer;
 begin
-  Result := 0;
-  for i := 0 to List.Count - 1 do
-    SetBit(@Result, i, GetBoolValue(TComponent(List[i])));
-//    begin
-//      b:= GetBoolValue(TComponent(List[i]));
-//      if b then
-//         Inc(Result, Integer(1) shl i);
-//    end;
+  Result := '';
+  if (Owner is TCheckListBox) then
+  begin
+    Option:= idExpOption; h:= (Owner as TCheckListBox).Items.Count-1;
+  end
+    else
+  if (Owner is TStringListArray) then
+  begin
+    Option:= idSelOption; h:= (Owner as TStringListArray).Count-1;
+  end;
+  Result:= '';
+  for i := 0 to h do
+    Result:= Result + GetBoolValueStr(i) + DefPrefValues[i<h];
+  if (Result<>'') then
+  Result:= '(' + Result + ')';
 end;
 
 function GetObjectsAsIntegerList(List: TStrings; UseStrings: Boolean = False;
@@ -425,19 +439,60 @@ begin
     Delete(Result, Length(Result), 1);
 end;
 
-function VerifyTextValues(Variables, Table, KeyField, TextField: string; List:
-  TStrings; AsInteger: Boolean = False; MaxLength: Integer = 20; InitValue:
+procedure PrepareStrValues(Variables: string; Keys: TStrings);
+begin
+  Keys.Clear;
+  ExtractStrings([','], [' '], PAnsiChar(Variables), Keys);
+end;
+
+function VerifyIntKeys(Values: string; Keys: TStrings; DefValue: Integer = MaxInt): Integer;
+var i, v, c: Integer;
+begin
+  Result:= 0;
+  PrepareStrValues(Values, Keys);
+  while (Result<Keys.Count) do
+  begin
+    Val(Keys[Result], v, c);
+    if (c = 0) then
+      Inc(Result)
+    else
+    if (DefValue<>MaxInt) then
+       Keys.Delete(Result) else
+       begin
+         Keys[Result]:= IntToStr(DefValue);
+         Inc(Result);
+       end;
+  end;
+end;
+
+function VerifyDateKeys(Values: string; Keys: TStrings; StartDate: TDate): Integer;
+var i: Integer; ADate: TDate; BadDate: TDate;
+begin
+  PrepareStrValues(Values, Keys); Result := 0;
+  BadDate:= StrToDate('01.01.1900');
+  while (Result<Keys.Count) do
+  begin
+    ADate:= StrToDateDef(Keys[Result], BadDate);
+    if (ADate<>BadDate) then
+    begin
+      Keys[Result]:= IntToStr(DaysBetween(StartDate, ADate));
+      Inc(Result);
+    end else
+    Keys.Delete(Result);
+  end;
+end;
+
+function VerifyTextValues(Variables, Table, KeyField, TextField: string;
+         List, Keys: TStrings; SQL: string = ''; AsInteger: Boolean = False; MaxLength: Integer = 20; InitValue:
   Integer = -1): Integer;
-const
-  SQL_Template = 'SELECT %s, %s FROM %s WHERE %s IN (%s)';
-  SQL_Like = 'SELECT %s, %s FROM %s WHERE %s LIKE ''%%%s%%''';
 var
   P: PAnsiChar;
-  aSQL, Values, s: string;
+  aSQL, Values, s, t: string;
   i, n, v, c, m: Integer;
 begin
   Result := 0;
-  List.Clear;
+  List.Clear; if (Keys<>nil) then Keys.Clear;
+  if Trim(Variables)='' then Exit;
   ExtractStrings([','], [], PAnsiChar(Variables), List);
   Values := '';
   n := List.Count;
@@ -445,7 +500,11 @@ begin
   for i := 0 to n - 1 do
   begin
     s := (AnsiDequotedStr(Trim(List[i]), '"'));
-    //List[i]:= s;
+    if AsInteger then
+    begin
+      s:= Trim(s);
+      List[i]:= s;
+    end;
     c := 0;
     List.Objects[i] := Pointer(InitValue);
     if AsInteger then
@@ -462,9 +521,11 @@ begin
   if Result > 0 then
   begin
     Delete(Values, Length(Values), 1);
-    if (not AsInteger) and (Result=1) then
+    if (SQL<>'') then t := SQL
+                 else t:= SQL_Template;
+    if (not AsInteger) and (Result=1) and (SQL='') then
     aSQL := Format(SQL_Like, [KeyField, TextField, Table, TextField, AnsiDequotedStr(Values, '''')]) else
-    aSQL := Format(SQL_Template, [KeyField, TextField, Table, TextField, Values]);
+    aSQL := Format(t, [KeyField, TextField, Table, TextField, Values]);
     dmDataModule.OpenSQL(aSQL);
     dmDataModule.QFO.First;
     Result := 0;
@@ -476,73 +537,14 @@ begin
       begin
         v := dmDataModule.QFO.FieldByName(KeyField).AsInteger;
         List.Objects[i] := Pointer(v);
+        if (Keys<>nil) then
+            Keys.Add(IntToStr(v));
         Inc(Result);
       end;
       dmDataModule.QFO.Next;
     end;
     dmDataModule.QFO.Close;
   end;
-end;
-
-procedure TfrmAnalyzeDebitDebt.Set_Ext_Param(ParamName: string; Owner: TCheckBox);
-begin
-  inherited;
-//  quDebt.Close;
-//  quDebt.ParamByName(ParamName).Value := Owner.Checked;
-//  quDebt.Open;
-end;
-
-procedure TfrmAnalyzeDebitDebt.cbIs_Ext_OtdelNoClick(Sender: TObject);
-begin
-  inherited;
-  //Set_Ext_Param('Is_Ext_Otd', cbIs_Ext_OtdelNo);
-//  quDebt.Close;
-//  quDebt.ParamByName('Is_Ext_Otd').Value := cbIs_Ext_OtdelNo.Checked;
-//  quDebt.Open;
-end;
-
-procedure TfrmAnalyzeDebitDebt.cbIs_Ext_VidNoClick(Sender: TObject);
-begin
-  inherited;
-  //Set_Ext_Param('Is_Ext_Vid', cbIs_Ext_VidNo);
-//  quDebt.Close;
-//  quDebt.ParamByName('Is_Ext_Vid').Value := cbIs_Ext_VidNo.Checked;
-//  quDebt.Open;
-end;
-
-procedure TfrmAnalyzeDebitDebt.cbIs_Ext_TipNoClick(Sender: TObject);
-begin
-  inherited;
-  //Set_Ext_Param('Is_Ext_TipNo', cbIs_Ext_VidNo);
-//  quDebt.Close;
-//  quDebt.ParamByName('Is_Ext_TipNo').Value := cbIs_Ext_TipNo.Checked;
-//  quDebt.Open;
-end;
-
-procedure TfrmAnalyzeDebitDebt.cbIs_Ext_TovarNoClick(Sender: TObject);
-begin
-  inherited;
-//  quDebt.Close;
-//  quDebt.ParamByName('Is_Ext_TovarNo').Value := cbIs_Ext_TovarNo.Checked;
-//  quDebt.Open;
-end;
-
-procedure TfrmAnalyzeDebitDebt.cbIs_Ext_SotrudNoClick(Sender: TObject);
-begin
-  inherited;
-  //Set_Ext_Param('Is_Ext_Sot', cbIs_Ext_SotrudNo);
-//  quDebt.Close;
-//  quDebt.ParamByName('Is_Ext_Sot').Value := cbIs_Ext_SotrudNo.Checked;
-//  quDebt.Open;
-end;
-
-procedure TfrmAnalyzeDebitDebt.cbIs_Ext_ColnPriceClick(Sender: TObject);
-begin
-  inherited;
-//  quDebt.Close;
-//  quDebt.ParamByName('Is_Ext_ColnPrice').Value :=
-//    cbIs_Ext_ColnPrice.Checked;
-//  quDebt.Open;
 end;
 
 procedure TfrmAnalyzeDebitDebt.DisableParams();
@@ -553,25 +555,6 @@ end;
 procedure TfrmAnalyzeDebitDebt.EnableParams();
 begin
   Dec(DisableCount);
-end;
-
-procedure TfrmAnalyzeDebitDebt.fltSotrudSelectOk(Sender: TObject);
-begin
-  inherited;
-//  if fltSotrud.Text = '' then
-//  begin
-//    quDebt.Close;
-//    quDebt.ParamByName('p_SotrudNo').Value := -1;
-//    quDebt.Open;
-//  end
-//  else
-//  begin
-//    quDebt.Close;
-//    quDebt.ParamByName('p_SotrudNo').Value := 1;
-//    quDebt.ParamByName('UserNo').Value := Data.UserNo;
-//    quDebt.ParamByName('SPID').Value := dmDataModule.SPID;
-//    quDebt.Open;
-//  end;
 end;
 
 procedure TfrmAnalyzeDebitDebt.ShowStatusMsg(Index: Integer; Msg: string);
@@ -607,18 +590,118 @@ end;
 function TfrmAnalyzeDebitDebt.SetParameterByType(ParamType: TParamType; Value:
   string): string;
 begin
-  Result := idParamPrefix + ParamKeys[ParamType] + idParamPostfix + Value;
+  if (ParamType<>ptOrderBy) then
+  Result := idParamPrefix + ParamKeys[ParamType] + idParamPostfix + Value else
+  Result := Value;
   if (not DisableParamIndexes) and (ParamIndexes[ParamType] > 0) then
     ParamList[ParamIndexes[ParamType]] := Result
   else
     ParamList.Add(Result);
 end;
 
+procedure DeleteItemsInStrings(Strings: TStrings; Start, Qty: Integer);
+var i: Integer;
+begin
+while (Qty>0) do
+  begin
+    i:= Start + Qty - 1;
+    if (i<Strings.Count) then
+       Strings.Delete(i) else
+       Qty:= 1;
+    Dec(Qty);
+  end;
+end;
+
+procedure DeleteItemsInStringsUntilEmpty(Strings: TStrings; Start: Integer);
+var i: Integer;
+begin
+while (Start < Strings.Count) do
+  begin
+  if (Trim(Strings[Start])<>'') then
+       Strings.Delete(Start) else
+       Break;
+  end;
+end;
+
+procedure TfrmAnalyzeDebitDebt.VerifyInvoiceNumbers();
+begin
+  VerifyTextValues(
+  GetSelectionStrByIndex(Ord(stNakl)), 'NaklR', 'NaklNo', 'Nom', Temp,
+  AList.GetChild(Ord(stNakl)), NaklNo_Template, True);
+end;
+
+procedure TfrmAnalyzeDebitDebt.VerifyIntValues(sel: TSelectionType; DefValue: Integer = MaxInt);
+var Child: TStrings;
+begin
+  Child:= AList.GetChild(Ord(sel));
+  VerifyIntKeys(
+  GetSelectionStrByIndex(Ord(sel)), Child, DefValue);
+  if (sel=stDayExp) and (Child.Count=0) then Child.Add(IntToStr(DefValue));
+end;
+
+procedure TfrmAnalyzeDebitDebt.VerifyDateValues(sel: TSelectionType);
+begin
+  VerifyDateKeys(
+  GetSelectionStrByIndex(Ord(sel)), AList.GetChild(Ord(sel)), StrToDate(dtDateStart));
+end;
+
+procedure TfrmAnalyzeDebitDebt.VerifyEmptySelections();
+var i: Integer; sel: TSelectionType;
+begin
+for i := 0 to AList.Count-1 do
+  if (TSelectionType(i)<>stDayExp) and (Trim(GetSelectionStrByIndex(i))='') then
+     AList.GetChild(i).Clear else
+     begin
+       sel:= TSelectionType(i);
+       case sel of
+         stNakl: VerifyInvoiceNumbers;
+         stDayNakl, stDayOpl: VerifyDateValues(sel);
+         stDayExp: VerifyIntValues(sel, idVeryOldVal);
+       end;
+     end;  
+end;
+
+procedure TfrmAnalyzeDebitDebt.SetParameterByTypeEx(pt: TParamType);
+var s, p: string;
+begin
+  p:= '';
+  case pt of
+    ptExpansion:
+    S := idInsertExpansions + CollectBitValuesToString(clbExpansions);
+    ptSelection:
+    begin
+//      if (not DisableParamIndexes) and (ParamIndexes[pt]>0) then
+//         DeleteItemsInStringsUntilEmpty(ParamList, ParamIndexes[ptSelection]+1);
+        //DeleteItemsInStrings(ParamList, ParamIndexes[ptSelection]+1, Selections.Count-1)
+      //p:= Selections.Text;
+      //VerifyInvoiceNumbers();
+      VerifyEmptySelections();
+      AList.TransposeToStrings(Selections, False, True, True);
+      S := Trim(Selections.Text);
+    end;
+  end;
+ if (not DisableParamIndexes) and (ParamIndexes[pt] > 0) then
+     ParamList[ParamIndexes[pt]]:= S else
+     begin
+       ParamList.Add(S);
+       //if (pt=ptSelection) then Selections.Text:= p;
+     end;
+end;
+
 procedure TfrmAnalyzeDebitDebt.ApplyChanges();
 begin
-  ParamList := quDebt.SQL;
+  if TestMode then
+  begin
+    quTest.Close;
+    ParamList := quTest.SQL;
+    ParamList.Assign(quDebt.SQL);
+  end
+     else
+     begin
+       quDebt.Close;
+       ParamList := quDebt.SQL;
+     end;
   SetParameters;
-
 end;
 
 function TfrmAnalyzeDebitDebt.CreateSQLContainer(SetCaption: string; GetSQLText:
@@ -626,6 +709,7 @@ function TfrmAnalyzeDebitDebt.CreateSQLContainer(SetCaption: string; GetSQLText:
 begin
   Result := TAboutBox.Create(Application);
   with TAboutBox(Result) do
+  begin
     with Memo1 do
     begin
       if GetSQLText then
@@ -638,66 +722,34 @@ begin
       Font.Name := 'Fixedsys';
     end;
   Caption := 'Script to be executed';
+  end;
 end;
 
 procedure TfrmAnalyzeDebitDebt.ShowScript();
 begin
-  with CreateSQLContainer('Script to be executed') do
+  quTest.Close;
   try
-    ShowModal;
+    ViewDatasetFast('Script to be executed', quTest, False);
   finally
-    Free;
+    quTest.Close;
+  end;
+end;
+
+procedure TfrmAnalyzeDebitDebt.ExecScript();
+begin
+  //ExecuteScript('Results of script execution', quDebt.SQL);
+  quTest.Close;
+  try
+    ViewDatasetFast('Results of script execution', quTest, True);
+  finally
+    quTest.Close;
   end;
 end;
 
 procedure TfrmAnalyzeDebitDebt.RefreshResults(SetMaxCount: Boolean = False);
-
-  procedure UpdateParam2(ParamName: string; ValueComp: TComponent);
-  begin
-    if (ValueComp is TCheckBox) then
-      quDebt.ParamByName(ParamName).Value := TCheckBox(ValueComp).Checked
-    else if (ValueComp is TcxDateEdit) then
-      quDebt.ParamByName(ParamName).Value := TcxDateEdit(ValueComp).Date;
-  end;
-
-  procedure UpdateParam1(ComboEdit: TcitDBComboEdit; ParamName: string);
-  begin
-    if ComboEdit.Text = '' then
-    begin
-      quDebt.ParamByName(ParamName).Value := 0;
-    end
-    else
-    begin
-      quDebt.ParamByName(ParamName).Value := 1;
-      quDebt.ParamByName('UserNo').Value := Data.UserNo;
-      quDebt.ParamByName('SPID').Value := dmDataModule.SPID;
-    end;
-  end;
-
 begin
- (*
-SET @All_OtdelNo = 'Все отделы'
-SET @All_VidNo = 'Все виды'
-SET @All_SotrudNo = 'Все сотрудникаи'
-SET @All_buh = 'Все бух.типы'
-SET @All_PostNo = 'Все контрагенты'
-SET @All_NakRNo = 'Все накладные'
-SET @All_AddressID = 'Все адреса'
- *)
-
   inherited;
   Tracer.Start;
-  quDebt.Close;
-  ApplyChanges;
-      quDebt.ParamByName('p_date_end').AsDate := GetDateByIndex(0);
-      quDebt.ParamByName('p_date_nakl_beg').AsDate := GetDateByIndex(1);
-      quDebt.ParamByName('p_date_nakl_end').AsDate := GetDateByIndex(2);
-
-      //quDebt.ParamByName('UserNo').Value := Data.UserNo;
-     //quDebt.ParamByName('SPID').Value := dmDataModule.SPID;
-
-  //UpdateParam2('p_date_end', EdDateAnalyzeEnd);
-  //quDebt.ParamByName('OwnerName').Value := 'frmAnalyze_Debit_Debt';
   quDebt.Open;
   Tracer.Stop;
   ShowRecordCount(SetMaxCount);
@@ -708,14 +760,28 @@ var
   pt: TParamType;
 begin
   //(ptUserNo, ptSPID, ptOwnerName, ptExpansion, ptSelection);
-  ParamKeys[ptUserNo] := idUserNo;
-  ParamKeys[ptSPID] := idSPID;
-  ParamKeys[ptOwnerName] := idOwnerName;
-  ParamKeys[ptExpansion] := idExpansions;
-  ParamKeys[ptSelection] := idSelections;
-  ParamList := quDebt.SQL;
-  for pt := Low(TParamType) to High(TParamType) do
-    ParamIndexes[pt] := GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
+//  ParamKeys[ptUserNo] := idUserNo;
+//  ParamKeys[ptSPID] := idSPID;
+  ParamKeys[ptFormDate] := idFormDate;
+  ParamKeys[ptBegDate] := idBegDate;
+  ParamKeys[ptStartDate] := idStartDate;
+  ParamKeys[ptVeryOld] := idVeryOldDay;
+  ParamKeys[ptOrderBy] := idOrderBy;
+  //ParamKeys[ptEndDate] := idEndDate;
+//  ParamKeys[ptOwnerName] := idOwnerName;
+//  ParamKeys[ptExpansion] := idExpansions;
+//  ParamKeys[ptSelection] := idSelections;
+  ParamList := sthSource.Strings;
+//  for pt := Low(TParamType) to High(TParamType) do
+//    ParamIndexes[pt] := GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
+   for pt := ptFormDate to ptVeryOld do
+   ParamIndexes[pt]:= GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
+
+   ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
+   OrderFullStr:= idOrderBy + ' ' + idDefaultSortFields;
+
+   ParamIndexes[ptExpansion]:= GetStartPosIndex(ParamList, idInsertExpansions);
+   ParamIndexes[ptSelection]:= GetStartPosIndex(ParamList, idInsertSelections);
 end;
 
 procedure TfrmAnalyzeDebitDebt.SetParameters();
@@ -724,38 +790,90 @@ var
 begin
   for pt := Low(TParamType) to High(TParamType) do
     case pt of
-      ptUserNo:
-        SetParameterByType(pt, IntToStr(Data.UserNo));
-      ptSPID:
-        SetParameterByType(pt, IntToStr(dmDataModule.SPID));
-      ptOwnerName:
-        SetParameterByType(pt, QuotedStr(idLocalOwnerName));
-      ptExpansion:
-        SetParameterByType(pt, IntToStr(CollectBitValuesEx(clbExpansions)));
-      ptSelection:
-        SetParameterByType(pt, IntToStr(CollectBitValuesEx(vleSelections)));
+//      ptUserNo:
+//        SetParameterByType(pt, IntToStr(Data.UserNo));
+//      ptSPID:
+//        SetParameterByType(pt, IntToStr(dmDataModule.SPID));
+//      ptOwnerName:
+//        SetParameterByType(pt, QuotedStr(idLocalOwnerName));
+//      ptExpansion:
+//        SetParameterByType(pt, IntToStr(CollectBitValuesEx(clbExpansions)));
+//      ptSelection:
+//        SetParameterByType(pt, IntToStr(CollectBitValuesEx(vleSelections)));
+      ptFormDate:
+          SetParameterByType(pt, GetDateStrByIndex(0, True));
+      ptBegDate:
+          //SetParameterByType(pt, GetDateStrByIndex(1, True));
+          SetParameterByType(pt, QuotedStr(dtBegDate));
+      ptStartDate:
+          SetParameterByType(pt, QuotedStr(dtDateStart));
+      ptVeryOld:
+          SetParameterByType(pt, IntToStr(idVeryOldVal));
+      ptOrderBy:
+      begin
+        ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
+        SetParameterByType(pt, OrderFullStr);
+      end;
+//      ptEndDate:
+//          SetParameterByType(pt, GetDateStrByIndex(2, True));
+      ptExpansion, ptSelection:
+        SetParameterByTypeEx(pt);
     end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.btnRefreshClick(Sender: TObject);
+procedure TfrmAnalyzeDebitDebt.ExecuteScript();
 var
-  Ctrl_Down: Boolean;
+  Ctrl_Down, Shift_Down: Boolean;
 begin
   Ctrl_Down := Ctrl_Is_Down;
-  ApplyChanges;
+  Shift_Down:= Shift_Is_Down;
+  TestMode:= Shift_Down or Ctrl_Down;
+  ApplyChanges();
   if Ctrl_Down then
   begin
     ShowScript;
+  end  else
+  if Shift_Down then
+  begin
+    ExecScript;
   end
   else
     RefreshResults;
 end;
 
+function TfrmAnalyzeDebitDebt.EnableExpansion(Index: Integer): Boolean;
+begin
+  Result:= (Index>=0) and (Index<clbExpansions.Items.Count) and
+            clbExpansions.Checked[Index];
+end;
+
+function TfrmAnalyzeDebitDebt.GetOrderFields(var FieldName: String; Index: Integer): String;
+var Field: TField; i: Integer;
+begin
+  Result:= idDefaultSortFields;
+  if EnableExpansion(Index) then
+     begin
+       Field:= quDebt.FindField('_' + FieldName);
+       if (Field<>nil) then FieldName:= '_' + FieldName;
+     end;
+  PrepareStrValues(idDefaultSortFields, Temp);
+  i:= Temp.IndexOf(FieldName);
+  if (i>=0) then Temp.Delete(i);
+  //Temp.Insert(0, FieldName);
+  Result:= Temp.CommaText;
+end;
+
 procedure TfrmAnalyzeDebitDebt.dbgDebtsTitleBtnClick(Sender: TObject; ACol:
   Integer; Column: TColumnEh);
 var
-  TovarNo: integer;
+  OrderFields, MainField: String;
 begin
+  if not EnableExpansion(Column.Tag) and (Column.Tag>=0) then Exit;
+  MainField:= Column.FieldName;
+  OrderFields:= GetOrderFields(MainField, Column.Tag);
+  OrderFullStr:=
+  SortMSQueryInEhGrid( OldCol, OldDir, ACol, ParamIndexes[ptOrderBy], Column,
+                       quDebt.SQL, quDebt, MainField, OrderFields, True);
 //  TovarNo := quAnalisPlanningOrderTovarNo.Value;
 //  quDebt.Close;
 //  case ACol of
@@ -812,7 +930,7 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.btnExportToExcelClick(Sender: TObject);
+procedure TfrmAnalyzeDebitDebt.ExportToExcel;
 var
   Settings: TFormatSettings;
 begin
@@ -839,6 +957,7 @@ begin
   end;
 end;
 
+
 procedure TfrmAnalyzeDebitDebt.FillSourceList();
 begin
   quDebt.Close;
@@ -857,28 +976,40 @@ procedure TfrmAnalyzeDebitDebt.FillComponentLists();
 
   end;
 
+  procedure FillArrayList();
+  var i: Integer; Items: TStrings;
+  begin
+    Items:= vleSelections.Strings;
+    AList.Clear;
+  for i := 0 to Items.Count-1 do
+  AList.AddItem(Items.Names[i], nil);
+  end;
+
+
   procedure FillFieldList();
   begin
-    Fields.Clear;
-    Fields.Add(quDebtOtdelName.FieldName);
-    Fields.Add(quDebtVidTovName.FieldName);
-    Fields.Add(quDebtSotrudName.FieldName);
-    Fields.Add(quDebtBuhName.FieldName);
-    Fields.Add(quDebtName.FieldName);
-    Fields.Add(quDebtNom.FieldName);
-    Fields.Add(quDebtAddress.FieldName);
+//    Fields.Clear;
+//    Fields.Add(quDebtOtdelName.FieldName);
+//    Fields.Add(quDebtVidTovName.FieldName);
+//    Fields.Add(quDebtSotrudName.FieldName);
+//    Fields.Add(quDebtBuhName.FieldName);
+//    Fields.Add(quDebtName.FieldName);
+//    Fields.Add(quDebtNom.FieldName);
+//    Fields.Add(quDebtAddress.FieldName);
   end;
 
 begin
   FillExpansionList;
   FillSelectionList;
   FillFieldList;
+  FillArrayList();
 end;
 
 {$IFDEF SystemMenu}
 const
   idCopySQLParams = $401;
   idCollectSQLParams = $402;
+  idTransposeSelections = $403;
 
 procedure TfrmAnalyzeDebitDebt.InsertCommands(SysMenu: THandle);
 var
@@ -889,6 +1020,8 @@ begin
   InsertMenu(SysMenu, Word(-1), MF_SEPARATOR, WM_USER, '');
   uIDShowItem := THandle(InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
     idCollectSQLParams, 'Collect SQL Params'));
+  uIDShowItem := THandle(InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
+    idTransposeSelections, 'Transpose Selections'));
 end;
 
 procedure TfrmAnalyzeDebitDebt.CollectSQLParams();
@@ -906,15 +1039,37 @@ begin
   end;
 end;
 
+procedure TfrmAnalyzeDebitDebt.TransposeSelections();
+var
+  Container: TForm;
+begin
+  Container := CreateSQLContainer('Transposed Selections', False);
+  with TAboutBox(Container) do
+  begin
+    ParamList := Memo1.Lines;
+    DisableParamIndexes := True;
+    //AList.SetTransposeParamsNull;
+    Memo1.Lines.Add('');
+    Memo1.Lines.Add(idInsertExpansions + CollectBitValuesToString(clbExpansions));
+//    if (AList.GetMaxCountInChildren()=0) then
+//    Memo1.Lines.Add(idInsertSelections + CollectBitValuesToString(AList)) else
+    AList.TransposeToStrings(Memo1.Lines, False, False, True);
+    DisableParamIndexes := False;
+    ShowModal;
+  end;
+end;
+
 procedure TfrmAnalyzeDebitDebt.wmSysCommand(var Message: TMessage);
 var
   IsCreated: Boolean;
 begin
   case Message.wParam of
     idCopySQLParams:
-      CopySQLParams;
+      CopySQLParams();
     idCollectSQLParams:
-      CollectSQLParams;
+      CollectSQLParams();
+    idTransposeSelections:
+      TransposeSelections();
   end;
   inherited;
 end;
@@ -935,20 +1090,24 @@ begin
   Source := TStringList.Create;
   Fields := TStringList.Create;
   Temp := TStringList.Create;
+  Selections:= TStringList.Create;
+  Selections.Add(''); // make Selections.Count = 1
+  AList:= TStringListArray.Create;
   FillSourceList();
   FillComponentLists();
   DetectParamIndexes;
   {$IFDEF SystemMenu}
   InsertCommands(0);
   {$ENDIF}
-  DisableParams;
-  EnableParams;
+//  DisableParams;
+//  EnableParams;
   dtPicker:= TDateTimePicker.Create(Self);
   dtPicker.Parent:= vleDate;
   dtPicker.OnChange:= Self.OnChangeDate;
   InsertChildInStringGrid(dtPicker, vleDate, 1, 1);
   SetDefaultExpansions;
   SetDefaultDates;
+  SetDefaultTransposeParams;
   SetDefaultEditStyleForSelections;
   //dtPicker:= TDateTimePicker.Create(nil);
   //dtPicker:= TDateTimePicker.CreateParented(vleDate.Handle);
@@ -1013,6 +1172,8 @@ procedure TfrmAnalyzeDebitDebt.FormDestroy(Sender: TObject);
 begin
   inherited;
   //dtPicker.Free;
+  Selections.Free;
+  AList.Free;
   SelectionList.Free;
   ExpansionList.Free;
   Temp.Free;
@@ -1064,7 +1225,7 @@ var
   n: Integer;
 begin
   n := VerifyTextValues(cit.Text, cit.EntityCode, cit.KeyField, cit.TextField,
-    Temp, ItemIsInteger);
+    Temp, nil, '', ItemIsInteger);
   if ShowInStatus then
   ShowStatusMsg(idTime, IntToStr(n) + ': ' + GetObjectsAsIntegerList(Temp, False, ',', -1));
 end;
@@ -1140,11 +1301,21 @@ begin
   Items.ValueFromIndex[Index]:= GetNormalDateStr(ADate);
 end;
 
-function TfrmAnalyzeDebitDebt.GetDateByIndex(Index: Integer): TDate;
-var i: Integer; Items: TStrings;
+function TfrmAnalyzeDebitDebt.GetDateStrByIndex(Index: Integer; IsQuoted: Boolean = False): String;
 begin
-  Items:= vleDate.Strings;
-  Result:= StrToDate(Items.ValueFromIndex[Index]);
+  Result:= vleDate.Strings.ValueFromIndex[Index];
+  if IsQuoted then Result:= QuotedStr(Result);
+end;
+
+function TfrmAnalyzeDebitDebt.GetSelectionStrByIndex(Index: Integer; IsQuoted: Boolean = False): String;
+begin
+  Result:= vleSelections.Strings.ValueFromIndex[Index];
+  if IsQuoted then Result:= QuotedStr(Result);
+end;
+
+function TfrmAnalyzeDebitDebt.GetDateByIndex(Index: Integer): TDate;
+begin
+  Result:= StrToDate(GetDateStrByIndex(Index));
 end;
 
 procedure TfrmAnalyzeDebitDebt.SetDefaultDates();
@@ -1152,12 +1323,22 @@ var
   Year, Month, Day: word;
   R: TGridRect;
 begin
+  {
+  Дата формирования=
+  Начальная дата накл.=
+  }
   DecodeDate(Date(), Year, Month, Day);
   SetDateByIndex(EncodeDate(Year, Month, Day+1), 0);
-  SetDateByIndex(EncodeDate(Year, Month-1, 1), 1);
-  SetDateByIndex(EncodeDate(Year, Month, Day+1), 2);
+  //SetDateByIndex(EncodeDate(1900, 1, 1), 1);
+  //SetDateByIndex(EncodeDate(Year, Month-1, 1), 1);
+  //SetDateByIndex(EncodeDate(Year, Month, Day+1), 2);
   R:= vleDate.Selection;
   dtPicker.Date:= GetDateByIndex(R.Top-1);
+end;
+
+procedure TfrmAnalyzeDebitDebt.SetDefaultTransposeParams();
+begin
+  AList.SetTransposeParams(', ', idNull, DefSelValues[False], idInsertSelections + '(', ')');
 end;
 
 procedure TfrmAnalyzeDebitDebt.OnChangeDate(Sender: TObject);
@@ -1172,38 +1353,62 @@ for i := 1 to vleSelections.RowCount-1 do
 vleSelections.Values[vleSelections.Keys[i]]:= '';
 end;
 
+function TfrmAnalyzeDebitDebt.SelectMLKItems(sel: TSelectionType; ParamName, ParamCode: string): Integer;
+begin
+  Result:= SelectMLKItemsByDialog(
+           Self, Temp, idLocalOwnerName, ParamName, ParamCode, True, AList.GetChild(Ord(sel)));
+end;
+
+function TfrmAnalyzeDebitDebt.SelectDateItems(sel: TSelectionType): Integer;
+var Child: TStrings;
+begin
+  Child:= AList.GetChild(Ord(sel));
+  PrepareStrValues(GetSelectionStrByIndex(Ord(sel)), Temp);
+  Result:= SelectDateItemsDlg(Temp, Child, StrToDate(dtDateStart));
+end;
+
 procedure TfrmAnalyzeDebitDebt.PushEditButtonForSelection();
 const
 AQuote = '';
 var i, z: Integer; Items: TStrings; S: String; R: TGridRect; P: PChar;
+    st: TSelectionType;
 begin
 //  R:= vleSelections.Selection;
 //  i:= R.Top-1;
 //  Items:= vleSelections.Strings;
+  z:= -1; S:= '';
   i:= vleSelections.Row-1;
   //S:= AnsiDequotedStr(Items.ValueFromIndex[i], '"');
-  case i of
-  0:
-     z:= SelectMLKItemsByDialog(Self, Temp, idLocalOwnerName, 'fltOtdel', 'VIDOTDEL');
-  1:
-     z:= SelectMLKItemsByDialog(Self, Temp, idLocalOwnerName, 'fltVidTov', 'VIDTOV');
-  2:
-     z:= SelectMLKItemsByDialog(Self, Temp, idLocalOwnerName, 'fltSotrud', 'SOTRUD');
-  3:
-     z:= SelectMLKItemsByDialog(Self, Temp, idLocalOwnerName, 'fltBuhType', 'd_buh_type');
-  4:
-     z:= SelectMLKItemsByDialog(Self, Temp, idLocalOwnerName, 'fltAgent', 'Post');
-  5:
-     z:= SelectMLKItemsByDialog(Self, Temp, idLocalOwnerName, 'fltNaklNo', 'NaklR');
-  6:
-     z:= SelectMLKItemsByDialog(Self, Temp, idLocalOwnerName, 'fltAddress', 'AddressPost');
+  {
+    TSelectionType = ( stOtdel, stVid, stSotrud, stBuh, stPost, stNakl, stAddress, stDoc,
+                     stDayNakl, stDayOpl, stDayExp);
+  }
+  st:= TSelectionType(i);
+  case st of
+  stOtdel:
+     z:= SelectMLKItems(st, 'fltOtdel', 'VIDOTDEL');
+  stVid:
+     z:= SelectMLKItems(st, 'fltVidTov', 'VIDTOV');
+  stSotrud:
+     z:= SelectMLKItems(st, 'fltSotrud', 'SOTRUD');
+  stBuh:
+     z:= SelectMLKItems(st, 'fltBuhType', 'd_buh_type');
+  stPost:
+     z:= SelectMLKItems(st, 'fltAgent', 'Post');
+  stNakl:
+     z:= SelectMLKItems(st, 'fltNaklNo', 'NaklR');
+  stAddress:
+     z:= SelectMLKItems(st, 'fltAddress', 'AddressPost');
+  stDayNakl, stDayOpl:
+     z:= SelectDateItems(st);
   end;
   if (z>=0) then
   begin
     S:= Temp.CommaText;
     S:= Trim(S);
     P:= PChar(S);
-    if (S<>'') and (i<>5) and (i<>6) and (AnsiExtractQuotedStr(P, '"')='') then S:= AnsiQuotedStr(S, '"');
+    if (S<>'') and (not (st in [stNakl, stAddress, stDayNakl, stDayOpl]))
+    and (AnsiExtractQuotedStr(P, '"')='') then S:= AnsiQuotedStr(S, '"');
     //Items.ValueFromIndex[i]:= S;
     vleSelections.Values[vleSelections.Keys[vleSelections.Row]]:= S;
   end;
@@ -1223,13 +1428,6 @@ begin
   
 //  Rect:= GetCellRect(vleDate, ARow, ACol);
 //  ShowStatusMsg(4, Format('C:X:%d;Y:%d', [Rect.Left, Rect.Top]));
-end;
-
-procedure TfrmAnalyzeDebitDebt.vleDateMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  inherited;
-  //ShowStatusMsg(3, Format('M:X:%d;Y:%d', [X, Y]));
 end;
 
 procedure TfrmAnalyzeDebitDebt.mnuSet_All_Exp_FalseClick(Sender: TObject);
@@ -1268,6 +1466,26 @@ procedure TfrmAnalyzeDebitDebt.mnuDeleteAllSelectionsClick(
 begin
   inherited;
   DeleteAllSelections();
+end;
+
+procedure TfrmAnalyzeDebitDebt.clbExpansionsClickCheck(Sender: TObject);
+var i: Integer;
+begin
+  inherited;
+  i:= clbExpansions.ItemIndex;
+  clbExpansions.Items.Objects[i]:= Pointer(clbExpansions.Checked[i]);
+end;
+
+procedure TfrmAnalyzeDebitDebt.acRefreshExecute(Sender: TObject);
+begin
+  inherited;
+  ExecuteScript;
+end;
+
+procedure TfrmAnalyzeDebitDebt.acExportToExcelExecute(Sender: TObject);
+begin
+  inherited;
+  ExportToExcel();
 end;
 
 end.

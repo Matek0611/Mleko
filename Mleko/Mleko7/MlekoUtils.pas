@@ -3,7 +3,7 @@ unit MlekoUtils;
 interface
 
 uses
-  Windows, Classes, SysUtils, SysProcs, Data, CFLMLKCustom, CFLMLKSelect;
+  Windows, Classes, SysUtils, Data, CFLMLKCustom, CFLMLKSelect;
 
 type
   TTimeTracer = class
@@ -34,9 +34,13 @@ function Shift_Is_Down(): Boolean;
 function Alt_Is_Down(): Boolean;
 
 function SelectMLKItemsByDialog(MLKForm: TCFLMLKCustomForm; Items: TStrings;
-         OwnerName, ParamName, ParamCode: string; MultiSelect: Boolean = True): Integer;
+         OwnerName, ParamName, ParamCode: string;
+         MultiSelect: BOOL = True; KeyValues: TStrings = nil): Integer;
+function GetStartPosIndex( Source: TStrings; S: string; MaxCount: Integer = 0;
+                           LookForward: Boolean = True): Integer;
 
 implementation
+uses StrUtils;
 
 constructor TTimeTracer.Create;
 begin
@@ -113,7 +117,7 @@ begin
 end;
 
 function SelectMLKItemsByDialog(MLKForm: TCFLMLKCustomForm; Items: TStrings;
-  OwnerName, ParamName, ParamCode: string; MultiSelect: Boolean = True): Integer;
+  OwnerName, ParamName, ParamCode: string; MultiSelect: BOOL = True; KeyValues: TStrings = nil): Integer;
 var
   Keys: TStrings;
   i, c, v: Integer;
@@ -132,22 +136,43 @@ begin
   if TCFLMLKSelectDlg.OpenHoldSelect(l_Owner, l_param_name, l_param_code,
     is_multiselect, l_query_filter, l_style) then
   begin
-    Keys := TStringList.Create;
+    if (KeyValues<>nil) then
+       Keys:= KeyValues else
+       Keys := TStringList.Create;
     try
       Result := dmDataModule.get_selected_value(OwnerName, ParamName, ParamCode,
         Items, Keys);
-      for i := 0 to Result - 1 do
-      begin
-        Val(Keys[i], v, c);
-        if (c = 0) then
-          Items.Objects[i] := Pointer(v)
-        else
-          Items[i] := Items[i] + '=' + Keys[i];
-      end;
+      if (KeyValues=nil) then
+        for i := 0 to Result - 1 do
+        begin
+          Val(Keys[i], v, c);
+          if (c = 0) then
+            Items.Objects[i] := Pointer(v)
+          else
+            Items[i] := Items[i] + '=' + Keys[i];
+        end;
     finally
-      Keys.Free;
+      if (KeyValues=nil) then Keys.Free;
     end;
   end;
+end;
+
+function GetStartPosIndex( Source: TStrings; S: string; MaxCount: Integer = 0;
+                           LookForward: Boolean = True): Integer;
+begin
+  if (MaxCount<=0) or (MaxCount>Source.Count) then
+      MaxCount:= Source.Count;
+  if LookForward then
+  begin
+    for Result := 0 to MaxCount - 1 do
+      if AnsiStartsText(S, Source[Result]) then Exit
+  end
+  else
+  begin
+    for Result := Source.Count-1 downto Source.Count-MaxCount do
+      if AnsiStartsText(S, Source[Result]) then Exit;
+  end;
+  Result := -1;
 end;
 
 end.
