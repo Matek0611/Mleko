@@ -393,7 +393,16 @@ uses
   CurrencyExchange in 'CurrencyExchange.pas' {CurrencyExchangeForm},
   EditCurrencyExchange in 'EditCurrencyExchange.pas' {EditCurrencyExchangeForm},
   VidRashodGroup in 'VidRashodGroup.pas' {VidRashodGroupForm},
-  EditVidRashodGroup in 'EditVidRashodGroup.pas' {EditVidRashodGroupForm};
+  EditVidRashodGroup in 'EditVidRashodGroup.pas' {EditVidRashodGroupForm},
+  ListPlusPostForClosePlatRIsEconom in 'ListPlusPostForClosePlatRIsEconom.pas' {ListPlusPostForClosePlatRIsEconomForm},
+  EditDocPlat in 'EditDocPlat.pas' {EditDocPlatDlg},
+  DocPlatHead in 'DocPlatHead.pas' {DocPlatHeadForm},
+  ListVidOtdelForAPP in 'ListVidOtdelForAPP.pas' {ListVidOtdelForAPPaForm},
+  MlekoUtils in 'MlekoUtils.pas',
+  MlekoBlankListLight in 'MlekoBlankListLight.pas' {MlekoBlankListLightForm},
+  UAnalyzeDebitDebt in 'UAnalyzeDebitDebt.pas' {frmAnalyzeDebitDebt},
+  UFastDatasetView in 'UFastDatasetView.pas' {frmFastDatasetView},
+  USelectDateItemsDlg in 'USelectDateItemsDlg.pas' {frmSelectDateItemsDlg};
 
 {$R *.RES}
 var
@@ -517,6 +526,14 @@ begin
   Application.CreateForm(TEditCurrencyExchangeForm, EditCurrencyExchangeForm);
   Application.CreateForm(TVidRashodGroupForm, VidRashodGroupForm);
   Application.CreateForm(TEditVidRashodGroupForm, EditVidRashodGroupForm);
+  Application.CreateForm(TListPlusPostForClosePlatRIsEconomForm, ListPlusPostForClosePlatRIsEconomForm);
+  Application.CreateForm(TListVidOtdelForAPPaForm, ListVidOtdelForAPPaForm);
+  Application.CreateForm(TfrmAnalyzeDebitDebt, frmAnalyzeDebitDebt);
+  Application.CreateForm(TfrmFastDatasetView, frmFastDatasetView);
+  Application.CreateForm(TfrmSelectDateItemsDlg, frmSelectDateItemsDlg);
+  //  Application.CreateForm(TMlekoBlankListLightForm, MlekoBlankListLightForm);
+  //  Application.CreateForm(TEditDocPlatDlg, EditDocPlatDlg);
+//  Application.CreateForm(TDocPlatHeadForm, DocPlatHeadForm);
   //  Application.CreateForm(TListVidTovForGroupCuttingForm, ListVidTovForGroupCuttingForm);
 //  Application.CreateForm(TCheckMeshCuttingForm, CheckMeshCuttingForm);
 //  Application.CreateForm(TMlekoCrossBlankOrderTmpForm, MlekoCrossBlankOrderTmpForm);
