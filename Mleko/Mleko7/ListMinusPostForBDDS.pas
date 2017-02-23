@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, GridsEh, DBGridEh, DB, MemDS, DBAccess, MSAccess, ExtCtrls,
-  StdCtrls, citCtrls, citmask, citDBComboEdit, CFLMLKCustom;
+  StdCtrls, citCtrls, citmask, citDBComboEdit, CFLMLKCustom, Mask,
+  DBCtrlsEh;
 
 type
   TListMinusPostForBDDSForm = class(TCFLMLKCustomForm)
@@ -20,6 +21,12 @@ type
     quListMinusPostForBDDSPostNo: TSmallintField;
     quListMinusPostForBDDSPostName: TStringField;
     quListMinusPostForBDDSCheckMinus: TBooleanField;
+    Panel1: TPanel;
+    DBDateTimeEditEh1: TDBDateTimeEditEh;
+    Label1: TLabel;
+    dsDateForBDDS: TMSDataSource;
+    quDateForBDDS: TMSQuery;
+    quDateForBDDSDataBDDS: TDateTimeField;
     procedure OKClick(Sender: TObject);
     procedure JnvtyfClick(Sender: TObject);
     procedure DBGridEh1KeyDown(Sender: TObject; var Key: Word;
@@ -45,6 +52,7 @@ uses data;
 procedure TListMinusPostForBDDSForm.OKClick(Sender: TObject);
 begin
   if quListMinusPostForBDDS.State in [dsInsert, dsEdit] then quListMinusPostForBDDS.Post;
+  if quDateForBDDS.State in [dsInsert, dsEdit] then quDateForBDDS.Post;
   ModalResult := mrOk;
 end;
 

@@ -1,8 +1,8 @@
 object ListMinusPostForBDDSForm: TListMinusPostForBDDSForm
-  Left = 1014
-  Top = 205
-  Width = 482
-  Height = 336
+  Left = 954
+  Top = 382
+  Width = 473
+  Height = 344
   Caption = #1057#1087#1080#1089#1086#1082' '#1085#1077' '#1091#1095#1080#1090#1099#1074#1072#1077#1084#1099#1093' '#1087#1072#1088#1090#1085#1077#1088#1086#1074' '#1074' '#1041#1044#1044#1057
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -15,9 +15,9 @@ object ListMinusPostForBDDSForm: TListMinusPostForBDDSForm
   TextHeight = 13
   object DBGridEh1: TDBGridEh
     Left = 0
-    Top = 0
-    Width = 466
-    Height = 256
+    Top = 49
+    Width = 457
+    Height = 215
     Align = alClient
     DataSource = dsListMinusPostForBDDS
     Flat = False
@@ -54,8 +54,8 @@ object ListMinusPostForBDDSForm: TListMinusPostForBDDSForm
   end
   object Panel2: TPanel
     Left = 0
-    Top = 256
-    Width = 466
+    Top = 264
+    Width = 457
     Height = 41
     Align = alBottom
     TabOrder = 1
@@ -118,6 +118,33 @@ object ListMinusPostForBDDSForm: TListMinusPostForBDDSForm
       AutoTabControl = True
     end
   end
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 457
+    Height = 49
+    Align = alTop
+    TabOrder = 2
+    object Label1: TLabel
+      Left = 8
+      Top = 13
+      Width = 137
+      Height = 13
+      Caption = #1053#1077' '#1074#1099#1074#1086#1076#1080#1090#1100' '#1084#1077#1085#1100#1096#1077' '#1076#1072#1090#1099
+    end
+    object DBDateTimeEditEh1: TDBDateTimeEditEh
+      Left = 172
+      Top = 8
+      Width = 121
+      Height = 21
+      DataField = 'DataBDDS'
+      DataSource = dsDateForBDDS
+      EditButtons = <>
+      Kind = dtkDateEh
+      TabOrder = 0
+      Visible = True
+    end
+  end
   object dsListMinusPostForBDDS: TMSDataSource
     DataSet = quListMinusPostForBDDS
   end
@@ -170,5 +197,24 @@ object ListMinusPostForBDDSForm: TListMinusPostForBDDSForm
         Name = 'UserNo'
         ParamType = ptInput
       end>
+  end
+  object dsDateForBDDS: TMSDataSource
+    DataSet = quDateForBDDS
+    Left = 296
+  end
+  object quDateForBDDS: TMSQuery
+    SQLInsert.Strings = (
+      'insert into DateForBDDS (DataBDDS)'
+      'values (:DataBDDS)')
+    SQLUpdate.Strings = (
+      'update DateForBDDS'
+      'set DataBDDS = :DataBDDS')
+    Connection = dmDataModule.DB
+    SQL.Strings = (
+      'select * from DateForBDDS')
+    Left = 320
+    object quDateForBDDSDataBDDS: TDateTimeField
+      FieldName = 'DataBDDS'
+    end
   end
 end
