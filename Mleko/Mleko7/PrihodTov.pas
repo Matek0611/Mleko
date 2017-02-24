@@ -8,7 +8,7 @@ uses
   citCtrls, citmask, citDBComboEdit, DBAccess, MsAccess, CFLMLKCustom,
   MemDS, ActnList, cxGraphics, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, cxDropDownEdit, cxLookupEdit, cxDBLookupEdit,
-  cxDBLookupComboBox, cxCalendar, cxDBEdit, DBCtrlsEh;
+  cxDBLookupComboBox, cxCalendar, cxDBEdit, DBCtrlsEh, DBGridEh, DBLookupEh;
 
 type
   TfmPrihodTov = class(TCFLMLKCustomForm)
@@ -170,6 +170,9 @@ type
     quNaklPCurrencyHead: TStringField;
     Label13: TLabel;
     DBTCurrencyHead: TDBText;
+    Label14: TLabel;
+    DBText1: TDBText;
+    DBLookupComboboxEh1: TDBLookupComboboxEh;
     procedure ScrollBoxExit(Sender: TObject);
     procedure bbOKClick(Sender: TObject);
     procedure DBGrid1KeyUp(Sender: TObject; var Key: Word;

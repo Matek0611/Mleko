@@ -20,7 +20,7 @@ uses
 
 type
   TParamType = ( ptUserNo, ptSPID, ptOwnerName,
-                 ptExpansion, ptSelection,
+                 ptExpansion, ptSelection, ptDisableExclusion,
                  ptFormDate, ptBegDate, ptStartDate, ptVeryOld,
                  ptOrderBy,
                  ptEndDate);
@@ -33,7 +33,7 @@ type
   TParamKeys = array[TParamType] of string;
 
   TfrmAnalyzeDebitDebt = class(TCFLMLKCustomForm)
-    Panel2: TPanel;
+    pnlBottom: TPanel;
     Panel3: TPanel;
     dsDebt: TMSDataSource;
     quDebt: TMSQuery;
@@ -46,9 +46,6 @@ type
     quSession: TMSQuery;
     quSessionParamValue: TIntegerField;
     pnlControls: TPanel;
-    vleDate: TValueListEditor;
-    spl1: TSplitter;
-    spl2: TSplitter;
     vleSelections: TValueListEditor;
     pmExpansion: TPopupMenu;
     mnuSet_All_Exp_False: TMenuItem;
@@ -80,6 +77,12 @@ type
     spl3: TSplitter;
     acRefresh: TAction;
     acExportToExcel: TAction;
+    pnlLeft: TPanel;
+    vleDate: TValueListEditor;
+    Splitter1: TSplitter;
+    Splitter2: TSplitter;
+    btnSettings: TButton;
+    acGetSettingsDlg: TAction;
     procedure dbgDebtsTitleBtnClick(Sender: TObject; ACol: Integer; Column: TColumnEh);
     procedure dbgDebtsKeyPress(Sender: TObject; var Key: Char);
     procedure dbgDebtsKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -104,6 +107,7 @@ type
     procedure clbExpansionsClickCheck(Sender: TObject);
     procedure acRefreshExecute(Sender: TObject);
     procedure acExportToExcelExecute(Sender: TObject);
+    procedure acGetSettingsDlgExecute(Sender: TObject);
   private
     { Private declarations }
     cbxExpansion: TCheckBox;
@@ -127,6 +131,11 @@ type
     DisableParamIndexes, ItemIsInteger,
     TestMode, CopySourceOnRefresh: Boolean;
     OrderFullStr: String;
+    {$IFDEF SystemMenu}
+    DisableExclusion: Boolean;
+    SysMenu: THandle;
+    DisableExclusionItem: THandle;
+    {$ENDIF}
     procedure ShowStatusMsg(Index: Integer; Msg: string);
     procedure ShowRecordCount(SetMaxCount: Boolean = False);
     procedure SetParamsBeforeOpen;
@@ -141,10 +150,11 @@ type
     procedure SetParameterByTypeEx(pt: TParamType);
 
     {$IFDEF SystemMenu}
-    procedure InsertCommands(SysMenu: THandle);
+    procedure InsertCommands();
     procedure wmSysCommand(var Message: TMessage); message WM_SYSCOMMAND;
     procedure CopySQLParams;
     procedure CollectSQLParams;
+    procedure ToggleDisableExclusionItem();
     {$ENDIF}
     function CreateSQLContainer(SetCaption: string; GetSQLText: Boolean = True): TForm;
     procedure VerifyNaklNoEditText;
@@ -176,6 +186,7 @@ type
     function GetOrderFields(var FieldName: String; Index: Integer): String;
     procedure ExportToExcel;
     procedure ExecuteScript;
+    procedure GetSettingsDlg;
   public
     { Public declarations }
     procedure RefreshResults(SetMaxCount: Boolean = False);
@@ -190,7 +201,7 @@ implementation
 
 uses
   data, About, StrUtils, DateUtils, CommCtrl,
-  UFastDatasetView, USelectDateItemsDlg;
+  UFastDatasetView, USelectDateItemsDlg, UListMinusPostForDebit;
 
 {$R *.dfm}
 
@@ -228,6 +239,10 @@ const
   idVeryOldDay = 'VeryOldDay';
   idVeryOldVal = -10000;
   idOrderBy = 'ORDER BY';
+  idDisableExclusion = 'DisableExclusion';
+
+  idDayNaklAttr = 'накладной';
+  idDayOplAttr = 'оплаты';
 
 //  idBegDate = 'p_date_nakl_beg';
 //  idEndDate = 'p_date_nakl_end';
@@ -564,8 +579,9 @@ end;
 
 procedure TfrmAnalyzeDebitDebt.ShowRecordCount(SetMaxCount: Boolean = False);
 begin
-  if (MaxRecordCount = 0) or SetMaxCount then
-    MaxRecordCount := quDebt.RecordCount;
+  if (MaxRecordCount = 0) or (quDebt.Active and (quDebt.RecordCount>MaxRecordCount)) or
+     SetMaxCount then
+     MaxRecordCount := quDebt.RecordCount;
   if (MaxRecordCount > 0) then
   begin
     ShowStatusMsg(idCurRecordCount, Format('Записей: %d', [quDebt.RecordCount]));
@@ -766,6 +782,7 @@ begin
   ParamKeys[ptBegDate] := idBegDate;
   ParamKeys[ptStartDate] := idStartDate;
   ParamKeys[ptVeryOld] := idVeryOldDay;
+  ParamKeys[ptDisableExclusion] := idDisableExclusion;
   ParamKeys[ptOrderBy] := idOrderBy;
   //ParamKeys[ptEndDate] := idEndDate;
 //  ParamKeys[ptOwnerName] := idOwnerName;
@@ -774,7 +791,7 @@ begin
   ParamList := sthSource.Strings;
 //  for pt := Low(TParamType) to High(TParamType) do
 //    ParamIndexes[pt] := GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
-   for pt := ptFormDate to ptVeryOld do
+   for pt := ptDisableExclusion to ptVeryOld do
    ParamIndexes[pt]:= GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
 
    ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
@@ -809,6 +826,8 @@ begin
           SetParameterByType(pt, QuotedStr(dtDateStart));
       ptVeryOld:
           SetParameterByType(pt, IntToStr(idVeryOldVal));
+      ptDisableExclusion:
+          SetParameterByType(pt, IntToStr(Ord(DisableExclusion)));
       ptOrderBy:
       begin
         ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
@@ -868,12 +887,13 @@ procedure TfrmAnalyzeDebitDebt.dbgDebtsTitleBtnClick(Sender: TObject; ACol:
 var
   OrderFields, MainField: String;
 begin
-  if not EnableExpansion(Column.Tag) and (Column.Tag>=0) then Exit;
+  if (not quDebt.Active) or (not EnableExpansion(Column.Tag) and (Column.Tag>=0)) then Exit;
   MainField:= Column.FieldName;
   OrderFields:= GetOrderFields(MainField, Column.Tag);
   OrderFullStr:=
   SortMSQueryInEhGrid( OldCol, OldDir, ACol, ParamIndexes[ptOrderBy], Column,
-                       quDebt.SQL, quDebt, MainField, OrderFields, True);
+                       quDebt.SQL, quDebt, MainField, OrderFields, False);
+  RefreshResults;
 //  TovarNo := quAnalisPlanningOrderTovarNo.Value;
 //  quDebt.Close;
 //  case ACol of
@@ -1010,14 +1030,16 @@ const
   idCopySQLParams = $401;
   idCollectSQLParams = $402;
   idTransposeSelections = $403;
+  id_DisableExclusion = $404;
 
-procedure TfrmAnalyzeDebitDebt.InsertCommands(SysMenu: THandle);
+procedure TfrmAnalyzeDebitDebt.InsertCommands();
 var
   uIDShowItem: THandle;
 begin
-  if (SysMenu = 0) then
-    SysMenu := GetSystemMenu(Handle, False);
+  SysMenu := GetSystemMenu(Handle, False);
   InsertMenu(SysMenu, Word(-1), MF_SEPARATOR, WM_USER, '');
+  DisableExclusionItem := THandle(InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
+    id_DisableExclusion, 'Disable Exclusion'));
   uIDShowItem := THandle(InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
     idCollectSQLParams, 'Collect SQL Params'));
   uIDShowItem := THandle(InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
@@ -1037,6 +1059,14 @@ begin
     DisableParamIndexes := False;
     ShowModal;
   end;
+end;
+
+procedure TfrmAnalyzeDebitDebt.ToggleDisableExclusionItem();
+const Checks: array[Boolean] of UINT = (MF_UNCHECKED, MF_CHECKED);
+begin
+  DisableExclusion:= not DisableExclusion;
+  // 8 means index of menu item
+  CheckMenuItem(SysMenu, 8, MF_BYPOSITION + Checks[DisableExclusion]);
 end;
 
 procedure TfrmAnalyzeDebitDebt.TransposeSelections();
@@ -1070,6 +1100,8 @@ begin
       CollectSQLParams();
     idTransposeSelections:
       TransposeSelections();
+    id_DisableExclusion:
+      ToggleDisableExclusionItem();
   end;
   inherited;
 end;
@@ -1097,7 +1129,7 @@ begin
   FillComponentLists();
   DetectParamIndexes;
   {$IFDEF SystemMenu}
-  InsertCommands(0);
+  InsertCommands();
   {$ENDIF}
 //  DisableParams;
 //  EnableParams;
@@ -1283,9 +1315,7 @@ var i: Integer; Prop: TItemProp; V: Variant;
 begin
 for i := 0 to vleSelections.RowCount-2 do
 begin
-  V:= i;
-  //Prop:= TItemProp.Create(vleSelections);
-  //vleSelections.ItemProps[v]:= Prop;
+  if ((TSelectionType(i) in [stDoc, stDayExp])) then Continue;
   Prop:= vleSelections.ItemProps[i];
   Prop.EditStyle:= esEllipsis;
 end;
@@ -1360,11 +1390,16 @@ begin
 end;
 
 function TfrmAnalyzeDebitDebt.SelectDateItems(sel: TSelectionType): Integer;
-var Child: TStrings;
+var Child: TStrings; DateAttribute: String;
 begin
   Child:= AList.GetChild(Ord(sel));
   PrepareStrValues(GetSelectionStrByIndex(Ord(sel)), Temp);
-  Result:= SelectDateItemsDlg(Temp, Child, StrToDate(dtDateStart));
+  case sel of
+    stDayNakl: DateAttribute:= idDayNaklAttr;
+    stDayOpl: DateAttribute:= idDayOplAttr;
+    else DateAttribute:= '';
+  end;
+  Result:= SelectDateItemsDlg(Temp, Child, StrToDate(dtDateStart), DateAttribute);
 end;
 
 procedure TfrmAnalyzeDebitDebt.PushEditButtonForSelection();
@@ -1419,7 +1454,7 @@ procedure TfrmAnalyzeDebitDebt.vleDateSelectCell(Sender: TObject; ACol,
 begin
   inherited;
   //Offset:= GetOffsetPoint(Self, vleDate);
-  vleDate.Tag:= ARow-1;
+  //vleDate.Tag:= ARow-1;
   dtPicker.Date:= GetDateByIndex(ARow-1);
   InsertChildInStringGrid(dtPicker, vleDate, ARow, ACol);
   vleDate.Selection:= TGridRect(Rect(ACol, ARow, ACol, ARow));
@@ -1486,6 +1521,22 @@ procedure TfrmAnalyzeDebitDebt.acExportToExcelExecute(Sender: TObject);
 begin
   inherited;
   ExportToExcel();
+end;
+
+procedure TfrmAnalyzeDebitDebt.GetSettingsDlg();
+begin
+  inherited;
+  if (frmListMinusPostForDebit=nil) then
+    frmListMinusPostForDebit:= TfrmListMinusPostForDebit.Create(Application);
+    frmListMinusPostForDebit.ShowModal;
+    FreeAndNil(frmListMinusPostForDebit);
+end;
+
+
+procedure TfrmAnalyzeDebitDebt.acGetSettingsDlgExecute(Sender: TObject);
+begin
+  inherited;
+  GetSettingsDlg();
 end;
 
 end.

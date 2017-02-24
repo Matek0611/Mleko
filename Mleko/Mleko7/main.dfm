@@ -1,6 +1,6 @@
 inherited fmMain: TfmMain
-  Left = 441
-  Top = 231
+  Left = 370
+  Top = 137
   VertScrollBar.Range = 0
   Anchors = [akLeft, akTop, akRight, akBottom]
   AutoScroll = False
@@ -1213,6 +1213,10 @@ inherited fmMain: TfmMain
       object ClampingBDDS: TMenuItem
         Caption = #1041#1044#1044#1057
         OnClick = ClampingBDDSClick
+      end
+      object mnuDebtSettings: TMenuItem
+        Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1076#1083#1103' '#1072#1085#1072#1083#1080#1079#1072' '#1044#1090
+        OnClick = mnuDebtSettingsClick
       end
     end
     object N104: TMenuItem

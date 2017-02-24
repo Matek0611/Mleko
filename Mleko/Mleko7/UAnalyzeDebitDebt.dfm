@@ -1,48 +1,56 @@
 inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
-  Left = 267
-  Top = 119
-  Width = 1013
+  Left = 416
+  Top = 188
+  Width = 1014
   Height = 604
   Caption = #1040#1085#1072#1083#1080#1079' '#1076#1077#1073#1080#1090#1086#1088#1089#1082#1086#1081' '#1079#1072#1076#1086#1083#1078#1077#1085#1085#1086#1089#1090#1080
   Position = poDesktopCenter
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object Panel2: TPanel [0]
+  object pnlBottom: TPanel [0]
     Left = 0
     Top = 505
-    Width = 997
+    Width = 998
     Height = 41
     Align = alBottom
     TabOrder = 0
     object btnRefresh: TButton
-      Left = 136
+      Left = 88
       Top = 8
-      Width = 107
+      Width = 130
       Height = 25
       Action = acRefresh
       TabOrder = 0
     end
     object btnExportToExcel: TButton
-      Left = 280
+      Left = 272
       Top = 8
-      Width = 129
+      Width = 140
       Height = 25
       Action = acExportToExcel
       TabOrder = 1
+    end
+    object btnSettings: TButton
+      Left = 448
+      Top = 8
+      Width = 130
+      Height = 25
+      Action = acGetSettingsDlg
+      TabOrder = 2
     end
   end
   object Panel3: TPanel [1]
     Left = 0
     Top = 0
-    Width = 997
+    Width = 998
     Height = 505
     Align = alClient
     TabOrder = 1
     object spl3: TSplitter
       Left = 1
       Top = 138
-      Width = 995
+      Width = 996
       Height = 4
       Cursor = crVSplit
       Align = alTop
@@ -51,7 +59,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
     object dbgDebts: TDBGridEh
       Left = 1
       Top = 142
-      Width = 995
+      Width = 996
       Height = 362
       Align = alClient
       DataSource = dsDebt
@@ -217,7 +225,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
     object pnlControls: TPanel
       Left = 1
       Top = 1
-      Width = 995
+      Width = 996
       Height = 137
       Align = alTop
       BevelInner = bvLowered
@@ -225,51 +233,26 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       Constraints.MinHeight = 100
       TabOrder = 1
       DesignSize = (
-        995
+        996
         137)
-      object spl1: TSplitter
-        Left = 308
+      object Splitter1: TSplitter
+        Left = 273
         Top = 2
         Width = 4
         Height = 133
         Beveled = True
       end
-      object spl2: TSplitter
+      object Splitter2: TSplitter
         Left = 449
         Top = 2
         Width = 4
         Height = 133
         Beveled = True
       end
-      object vleDate: TValueListEditor
-        Tag = 1
-        Left = 2
-        Top = 2
-        Width = 306
-        Height = 133
-        Hint = #1042#1099#1073#1086#1088' '#1076#1072#1090#1099' '#1074#1088#1091#1095#1085#1091#1102' '#1080#1083#1080' '#1080#1079' '#1076#1080#1072#1083#1086#1075#1072
-        Align = alLeft
-        DefaultRowHeight = 22
-        FixedCols = 1
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goRowSelect, goThumbTracking]
-        ParentShowHint = False
-        PopupMenu = pmDate
-        ShowHint = True
-        Strings.Strings = (
-          #1044#1072#1090#1072' '#1092#1086#1088#1084#1080#1088#1086#1074#1072#1085#1080#1103'=')
-        TabOrder = 0
-        TitleCaptions.Strings = (
-          #1055#1072#1088#1072#1084#1077#1090#1088
-          #1044#1072#1090#1072)
-        OnSelectCell = vleDateSelectCell
-        ColWidths = (
-          123
-          177)
-      end
       object vleSelections: TValueListEditor
         Left = 453
         Top = 2
-        Width = 538
+        Width = 539
         Height = 133
         Anchors = [akLeft, akTop, akRight, akBottom]
         FixedCols = 1
@@ -286,7 +269,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
           #1044#1072#1090#1099' '#1085#1072#1082#1083#1072#1076#1085#1086#1081'='
           #1044#1072#1090#1099' '#1086#1087#1083#1072#1090#1099'='
           #1044#1083#1080#1090'. '#1087#1088#1086#1089#1088#1086#1095#1082#1080'=')
-        TabOrder = 1
+        TabOrder = 0
         TitleCaptions.Strings = (
           #1055#1072#1088#1072#1084#1077#1090#1088
           #1042#1099#1073#1088#1072#1085#1085#1099#1077' '#1079#1085#1072#1095#1077#1085#1080#1103)
@@ -294,7 +277,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         OnEditButtonClick = vleSelectionsEditButtonClick
         ColWidths = (
           123
-          392)
+          393)
         RowHeights = (
           18
           18
@@ -310,18 +293,18 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
           18)
       end
       object gbxExpansions: TGroupBox
-        Left = 312
+        Left = 277
         Top = 2
-        Width = 137
+        Width = 172
         Height = 133
         Align = alLeft
         Caption = #1056#1072#1089#1096#1080#1088#1080#1090#1100' '#1087#1086
         PopupMenu = pmExpansion
-        TabOrder = 2
+        TabOrder = 1
         object clbExpansions: TCheckListBox
           Left = 2
           Top = 15
-          Width = 133
+          Width = 168
           Height = 116
           OnClickCheck = clbExpansionsClickCheck
           Align = alClient
@@ -342,12 +325,45 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
           TabOrder = 0
         end
       end
+      object pnlLeft: TPanel
+        Left = 2
+        Top = 2
+        Width = 271
+        Height = 133
+        Align = alLeft
+        BevelInner = bvLowered
+        TabOrder = 2
+        object vleDate: TValueListEditor
+          Left = 2
+          Top = 2
+          Width = 267
+          Height = 129
+          Hint = #1042#1099#1073#1086#1088' '#1076#1072#1090#1099' '#1074#1088#1091#1095#1085#1091#1102' '#1080#1083#1080' '#1080#1079' '#1076#1080#1072#1083#1086#1075#1072
+          Align = alClient
+          DefaultRowHeight = 22
+          FixedCols = 1
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goRowSelect, goThumbTracking]
+          ParentShowHint = False
+          PopupMenu = pmDate
+          ShowHint = True
+          Strings.Strings = (
+            #1044#1072#1090#1072' '#1092#1086#1088#1084#1080#1088#1086#1074#1072#1085#1080#1103'=')
+          TabOrder = 0
+          TitleCaptions.Strings = (
+            #1055#1072#1088#1072#1084#1077#1090#1088
+            #1044#1072#1090#1072)
+          OnSelectCell = vleDateSelectCell
+          ColWidths = (
+            123
+            138)
+        end
+      end
     end
   end
   object sbStatus: TStatusBar [2]
     Left = 0
     Top = 546
-    Width = 997
+    Width = 998
     Height = 19
     Panels = <
       item
@@ -382,6 +398,11 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ShortCut = 113
       OnExecute = acExportToExcelExecute
     end
+    object acGetSettingsDlg: TAction
+      Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' - F4'
+      ShortCut = 115
+      OnExecute = acGetSettingsDlgExecute
+    end
   end
   object dsDebt: TMSDataSource
     DataSet = quDebt
@@ -409,11 +430,13 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ',@p_is_expr_tovar int'
       ', @VeryOldDay int'
       ', @DateStart date'
+      ', @DisableExclusion bit'
       ''
       'SET @p_date_beg = '#39'01.01.1900'#39
       'SET @p_date_end = '#39'22.02.2017'#39
       'SET @DateStart = '#39'01.01.2000'#39
       'SET @VeryOldDay = -10000'
+      'SET @DisableExclusion = 0'
       ''
       'BEGIN TRY  '
       'CREATE TABLE #Expansions'
@@ -486,7 +509,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ' '
       'INSERT INTO #AllTypes Values('
       #39#1042#1089#1077' '#1086#1090#1076#1077#1083#1099#39', '#39#1042#1089#1077' '#1074#1080#1076#1099#39', '#39#1042#1089#1077' '#1089#1086#1090#1088#1091#1076#1085#1080#1082#1080#39', '
-      #39#1042#1089#1077' '#1073#1091#1093'. '#1090#1080#1087#1099#39', '#39#1042#1089#1077' '#1082'/'#1072#1075#1077#1085#1090#1099#39', '#39#1042#1089#1077' '#1085#1072#1082#1083'.'#39', '#39#1042#1089#1077' '#1072#1076#1088#1077#1089#1072#39', '
+      
+        #39#1042#1089#1077' '#1073#1091#1093'. '#1090#1080#1087#1099#39', '#39#1042#1089#1077' '#1082#1086#1085#1090#1088#1072#1075#1077#1085#1090#1099#39', '#39#1042#1089#1077' '#1085#1086#1084'. '#1085#1072#1082#1083'.'#39', '#39#1042#1089#1077' '#1072#1076#1088#1077#1089 +
+        #1072#39', '
       #39#1042#1089#1077' '#1076#1086#1082'-'#1090#1099#39', '#39#1042#1089#1077' '#1076#1072#1090#1099' '#1085#1072#1082#1083'.'#39', '#39#1042#1089#1077' '#1076#1072#1090#1099' '#1086#1087#1083'.'#39', '#39#1042#1089#1077' '#1087#1088'.'#39')'
       ''
       'SELECT'
@@ -669,6 +694,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '     where (h1.vidnaklno=1 and h1.SummaDolg>0) --and (h1.NaklNo=' +
         '401149)'
       '     and (h1.DateNakl between @p_date_beg and @p_date_end)'
+      #9' and ((@DisableExclusion=1) or (not (h1.PostNo in '
+      #9' (select PostNo from ListMinusPostForDebit lmp where '
+      #9#9' (h1.PostNo = lmp.PostNo) and (lmp.CheckMinus=1)))))'
       '     ) h2'
       '     group by      '
       '     h2.NaklNo'
@@ -859,11 +887,13 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c40705f69735f657870725f746f76617220696e74'
       '2c2040566572794f6c6444617920696e74'
       '2c20404461746553746172742064617465'
+      '2c204044697361626c654578636c7573696f6e20626974'
       ''
       '5345542040705f646174655f626567203d202730312e30312e3139303027'
       '5345542040705f646174655f656e64203d202732322e30322e3230313727'
       '5345542040446174655374617274203d202730312e30312e3230303027'
       '5345542040566572794f6c64446179203d202d3130303030'
+      '534554204044697361626c654578636c7573696f6e203d2030'
       ''
       '424547494e205452592020'
       '435245415445205441424c452023457870616e73696f6e73'
@@ -942,9 +972,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '27c2f1e520eef2e4e5ebfb272c2027c2f1e520e2e8e4fb272c2027c2f1e520f1' +
         'eef2f0f3e4ede8eae8272c20'
       
-        '27c2f1e520e1f3f52e20f2e8effb272c2027c2f1e520ea2fe0e3e5edf2fb272c' +
-        '2027c2f1e520edeeec2e20ede0eaeb2e272c2027c2f1e520e0e4f0e5f1e0272c' +
-        '20'
+        '27c2f1e520e1f3f52e20f2e8effb272c2027c2f1e520eaeeedf2f0e0e3e5edf2' +
+        'fb272c2027c2f1e520edeeec2e20ede0eaeb2e272c2027c2f1e520e0e4f0e5f1' +
+        'e0272c20'
       
         '27c2f1e520e4eeea2df2fb272c2027c2f1e520e4e0f2fb20ede0eaeb2e272c20' +
         '27c2f1e520e4e0f2fb20eeefeb2e272c2027c2f1e520eff02e2729'
@@ -1221,6 +1251,15 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '2020202020616e64202868312e446174654e616b6c206265747765656e204070' +
         '5f646174655f62656720616e642040705f646174655f656e6429'
+      
+        '0920616e642028284044697361626c654578636c7573696f6e3d3129206f7220' +
+        '286e6f74202868312e506f73744e6f20696e20'
+      
+        '09202873656c65637420506f73744e6f2066726f6d204c6973744d696e757350' +
+        '6f7374466f724465626974206c6d7020776865726520'
+      
+        '0909202868312e506f73744e6f203d206c6d702e506f73744e6f2920616e6420' +
+        '286c6d702e436865636b4d696e75733d312929292929'
       '202020202029206832'
       '202020202067726f7570206279202020202020'
       '202020202068322e4e616b6c4e6f'
@@ -1377,8 +1416,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
     end
   end
   object pmDate: TPopupMenu
-    Left = 200
-    Top = 57
+    Left = 192
+    Top = 209
     object mnuSetDefaultDates: TMenuItem
       Caption = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1076#1072#1090#1099' '#1087#1086' '#1091#1084#1086#1083#1095#1072#1085#1080#1102
       OnClick = mnuSetDefaultDatesClick

@@ -20,6 +20,7 @@ type
     procedure dtPickerChange(Sender: TObject);
     procedure lvDatesClick(Sender: TObject);
     procedure btnAddClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     procedure InputDateItems(DateItems: TStrings);
     procedure OutputDateItems(DateItems, DateKeys: TStrings);
@@ -37,22 +38,27 @@ type
 var
   frmSelectDateItemsDlg: TfrmSelectDateItemsDlg;
 
-  function SelectDateItemsDlg(DateItems, DateKeys: TStrings; AStartDate: TDate): Integer;
+  function SelectDateItemsDlg(DateItems, DateKeys: TStrings; AStartDate: TDate; DateAttribute: String = ''): Integer;
 
 implementation
 uses DateUtils;
 
 {$R *.dfm}
 
+const
+  DefaultCaption = 'Выбор списка дат '; // one space for attribute appending
+
 var
   BadDate: TDate;
   StartDate: TDate;
 
-function SelectDateItemsDlg(DateItems, DateKeys: TStrings; AStartDate: TDate): Integer;
+function SelectDateItemsDlg(DateItems, DateKeys: TStrings; AStartDate: TDate; DateAttribute: String = ''): Integer;
 begin
   Result:= -1;
   if (frmSelectDateItemsDlg=nil) then
      frmSelectDateItemsDlg:= TfrmSelectDateItemsDlg.Create(Application);
+     if DateAttribute<>'' then
+        frmSelectDateItemsDlg.Caption:= DefaultCaption + DateAttribute;
      BadDate:= StrToDate('01.01.1900');
      StartDate:= AStartDate;
      frmSelectDateItemsDlg.InputDateItems(DateItems);
@@ -171,6 +177,11 @@ procedure TfrmSelectDateItemsDlg.btnAddClick(Sender: TObject);
 begin
   if AddDateItemStr(DateToStr(dtPicker.DateTime)) then
   btnAdd.Enabled:= False;
+end;
+
+procedure TfrmSelectDateItemsDlg.FormCreate(Sender: TObject);
+begin
+  Caption:= DefaultCaption;
 end;
 
 end.

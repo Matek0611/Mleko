@@ -316,7 +316,7 @@ uses
   BankAndInvoice in 'BankAndInvoice.pas' {BankAndInvoiceForm},
   EditBankAndInvoice in 'EditBankAndInvoice.pas' {EditBankAndInvoiceForm},
   Kassa in 'Kassa.pas' {KassaForm},
-  ListMinusPostForBDDS in 'ListMinusPostForBDDS.pas' {ListMinusPostForBDDSForm},
+  UListMinusPostForDebit in 'UListMinusPostForDebit.pas' {frmListMinusPostForDebit},
   BDDS in 'BDDS.pas' {BDDSForm},
   VidSotrudInPepsico in 'VidSotrudInPepsico.pas' {VidSotrudInPepsicoForm},
   EditVidSotrudInPepsico in 'EditVidSotrudInPepsico.pas' {EditVidSotrudInPepsicoForm},
@@ -528,9 +528,6 @@ begin
   Application.CreateForm(TEditVidRashodGroupForm, EditVidRashodGroupForm);
   Application.CreateForm(TListPlusPostForClosePlatRIsEconomForm, ListPlusPostForClosePlatRIsEconomForm);
   Application.CreateForm(TListVidOtdelForAPPaForm, ListVidOtdelForAPPaForm);
-  Application.CreateForm(TfrmAnalyzeDebitDebt, frmAnalyzeDebitDebt);
-  Application.CreateForm(TfrmFastDatasetView, frmFastDatasetView);
-  Application.CreateForm(TfrmSelectDateItemsDlg, frmSelectDateItemsDlg);
   //  Application.CreateForm(TMlekoBlankListLightForm, MlekoBlankListLightForm);
   //  Application.CreateForm(TEditDocPlatDlg, EditDocPlatDlg);
 //  Application.CreateForm(TDocPlatHeadForm, DocPlatHeadForm);

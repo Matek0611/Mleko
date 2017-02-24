@@ -337,6 +337,7 @@ type
     ClampingBDDS: TMenuItem;
     AnalyzeDebitDebt: TMenuItem;
     BlankListLight: TMenuItem;
+    mnuDebtSettings: TMenuItem;
     procedure N3Click(Sender: TObject);
     procedure N8Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
@@ -584,6 +585,7 @@ type
     procedure ClampingBDDSClick(Sender: TObject);
     procedure AnalyzeDebitDebtClick(Sender: TObject);
     procedure BlankListLightClick(Sender: TObject);
+    procedure mnuDebtSettingsClick(Sender: TObject);
   private
     { Private declarations }
     FFileName: string;
@@ -657,8 +659,8 @@ uses Post0, NaklP0, Tovar0, Ostatok2, About,
   ListMinusPostForDolg, PrihodTovWithExel, MlekoSelectFIrm, EditClientCard, VidDoc, DocClientCardHead,
   ControlVidRashodForPlat, GroupCutting, ListVidTovForGroupCutting, CheckMeshCutting, PostFromGroupCutting,
   AnalisCuttingMesh, Currency, CurrencyExchange, VidRashodGroup, ListPlusPostForClosePlatRIsEconom,
-  MlekoClosePlatRLight, EditDocPlat, DocPlatHead, ListVidOtdelForAPP, ListMinusPostForBDDS, UAnalyzeDebitDebt,
-  MlekoBlankListLight;
+  MlekoClosePlatRLight, EditDocPlat, DocPlatHead, ListVidOtdelForAPP, ListMinusPostForBDDS,
+  UAnalyzeDebitDebt, UListMinusPostForDebit, MlekoBlankListLight;
 
 {$R *.DFM}
 
@@ -809,7 +811,7 @@ var
   Connect1C: Boolean;
 begin
   inherited;
-  OnSetModule;  
+  OnSetModule;
   if not TMlekoSelectDayDeptDlg.SelectDayDept then
   begin
     MessageDlg('Для входа в программу необходимо выбрать подразделение и рабочую дату', mtInformation, [mbOk], 0);
@@ -5016,6 +5018,13 @@ begin
     else
       ld_date := GlobalDateNakl + 1;
   TMlekoBlankListLightForm.ShowListForm(GlobalOtdelNo, ld_date);
+end;
+
+procedure TfmMain.mnuDebtSettingsClick(Sender: TObject);
+begin
+  inherited;
+  with TfrmListMinusPostForDebit.Create(Application) do
+     ShowModal;
 end;
 
 end.

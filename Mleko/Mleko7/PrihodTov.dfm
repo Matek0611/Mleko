@@ -1,7 +1,7 @@
 inherited fmPrihodTov: TfmPrihodTov
   Left = 597
   Top = 185
-  Width = 903
+  Width = 1114
   Height = 577
   Caption = #1055#1088#1080#1093#1086#1076' '#1090#1086#1074#1072#1088#1072
   ParentFont = True
@@ -11,7 +11,7 @@ inherited fmPrihodTov: TfmPrihodTov
   object paTop: TPanel [0]
     Left = 0
     Top = 0
-    Width = 887
+    Width = 1098
     Height = 99
     Align = alTop
     BevelInner = bvLowered
@@ -20,7 +20,7 @@ inherited fmPrihodTov: TfmPrihodTov
     object ScrollBox: TScrollBox
       Left = 2
       Top = 2
-      Width = 883
+      Width = 1094
       Height = 95
       HorzScrollBar.Margin = 6
       HorzScrollBar.Range = 341
@@ -49,7 +49,7 @@ inherited fmPrihodTov: TfmPrihodTov
         FocusControl = EditDate
       end
       object Label4: TLabel
-        Left = 422
+        Left = 592
         Top = 48
         Width = 34
         Height = 13
@@ -57,7 +57,7 @@ inherited fmPrihodTov: TfmPrihodTov
         FocusControl = EditSumma
       end
       object Label5: TLabel
-        Left = 397
+        Left = 567
         Top = 69
         Width = 60
         Height = 13
@@ -65,14 +65,14 @@ inherited fmPrihodTov: TfmPrihodTov
         FocusControl = EditSummaDolg
       end
       object Label2: TLabel
-        Left = 530
+        Left = 700
         Top = 38
         Width = 19
         Height = 13
         Caption = #1058#1080#1087
       end
       object Label6: TLabel
-        Left = 685
+        Left = 854
         Top = 38
         Width = 19
         Height = 13
@@ -101,14 +101,14 @@ inherited fmPrihodTov: TfmPrihodTov
         Caption = #1058#1080#1087' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
       end
       object Label10: TLabel
-        Left = 687
+        Left = 856
         Top = 3
         Width = 34
         Height = 13
         Caption = #1057#1090#1072#1090#1091#1089
       end
       object Label11: TLabel
-        Left = 625
+        Left = 819
         Top = 77
         Width = 31
         Height = 13
@@ -124,7 +124,7 @@ inherited fmPrihodTov: TfmPrihodTov
         WordWrap = True
       end
       object Label12: TLabel
-        Left = 852
+        Left = 1022
         Top = 20
         Width = 100
         Height = 13
@@ -133,19 +133,40 @@ inherited fmPrihodTov: TfmPrihodTov
         Visible = False
       end
       object Label13: TLabel
-        Left = 288
-        Top = 48
-        Width = 38
+        Left = 693
+        Top = 16
+        Width = 68
         Height = 13
-        Caption = #1042#1072#1083#1102#1090#1072
+        Caption = #1042#1072#1083#1102#1090#1072' '#1091#1095#1077#1090#1072
       end
       object DBTCurrencyHead: TDBText
-        Left = 336
-        Top = 48
+        Left = 777
+        Top = 16
         Width = 65
         Height = 17
         DataField = 'CurrencyHead'
         DataSource = dsNaklP
+      end
+      object Label14: TLabel
+        Left = 284
+        Top = 66
+        Width = 112
+        Height = 13
+        Caption = #1042#1072#1083#1102#1090#1072' '#1085#1072#1082#1083#1072#1076#1085#1086#1081
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object DBText1: TDBText
+        Left = 396
+        Top = 66
+        Width = 42
+        Height = 13
+        AutoSize = True
+        DataField = 'CurrencyHead'
       end
       object EditDate: TcxDBDateEdit
         Left = 191
@@ -156,7 +177,7 @@ inherited fmPrihodTov: TfmPrihodTov
         Width = 92
       end
       object EditSumma: TDBEdit
-        Left = 459
+        Left = 629
         Top = 45
         Width = 65
         Height = 21
@@ -167,7 +188,7 @@ inherited fmPrihodTov: TfmPrihodTov
         TabOrder = 6
       end
       object EditSummaDolg: TDBEdit
-        Left = 459
+        Left = 629
         Top = 67
         Width = 65
         Height = 21
@@ -187,7 +208,7 @@ inherited fmPrihodTov: TfmPrihodTov
         TabOrder = 3
       end
       object lcBuh: TcxDBLookupComboBox
-        Left = 528
+        Left = 698
         Top = 50
         DataBinding.DataField = 'buh'
         DataBinding.DataSource = dsNaklP
@@ -215,7 +236,7 @@ inherited fmPrihodTov: TfmPrihodTov
         OnKeyDown = deNamePostKeyDown
       end
       object lcVidNakl: TcxDBLookupComboBox
-        Left = 685
+        Left = 855
         Top = 50
         DataBinding.DataField = 'VidNaklNo'
         DataBinding.DataSource = dsNaklP
@@ -230,7 +251,7 @@ inherited fmPrihodTov: TfmPrihodTov
         Width = 155
       end
       object cbPriceWithNDS: TCheckBox
-        Left = 529
+        Left = 699
         Top = 72
         Width = 84
         Height = 17
@@ -241,7 +262,7 @@ inherited fmPrihodTov: TfmPrihodTov
         TabOrder = 10
       end
       object ep_Prihod_id: TcitDBComboEdit
-        Left = 852
+        Left = 1022
         Top = 74
         Width = 155
         Height = 21
@@ -304,7 +325,7 @@ inherited fmPrihodTov: TfmPrihodTov
         Width = 161
       end
       object DbLCbStatus: TcxDBLookupComboBox
-        Left = 684
+        Left = 854
         Top = 16
         TabStop = False
         DataBinding.DataField = 'edit_status_id'
@@ -319,7 +340,7 @@ inherited fmPrihodTov: TfmPrihodTov
         Width = 155
       end
       object cxDBLookupComboBox1: TcxDBLookupComboBox
-        Left = 686
+        Left = 856
         Top = 73
         DataBinding.DataField = 'otdelno'
         DataBinding.DataSource = dsNaklP
@@ -346,19 +367,32 @@ inherited fmPrihodTov: TfmPrihodTov
         OnExit = cbSetArticleGroupExit
       end
       object cxDBDateEdit1: TcxDBDateEdit
-        Left = 962
+        Left = 1132
         Top = 17
         DataBinding.DataField = 'DateOfManufacture'
         DataBinding.DataSource = dsNaklP
         TabOrder = 14
         Width = 92
       end
+      object DBLookupComboboxEh1: TDBLookupComboboxEh
+        Left = 438
+        Top = 66
+        Width = 121
+        Height = 22
+        DataField = 'CurrencyHead'
+        EditButtons = <>
+        KeyField = 'L_CODE'
+        ListField = 'NAME'
+        ListSource = dmDataModule.dsCurrency
+        TabOrder = 15
+        Visible = True
+      end
     end
   end
   object paMiddle: TPanel [1]
     Left = 0
     Top = 99
-    Width = 887
+    Width = 1098
     Height = 410
     Align = alClient
     BevelInner = bvLowered
@@ -368,7 +402,7 @@ inherited fmPrihodTov: TfmPrihodTov
     object DBGrid1: TDBGrid
       Left = 4
       Top = 4
-      Width = 879
+      Width = 1090
       Height = 402
       Align = alClient
       DataSource = dsPrihod
@@ -443,7 +477,7 @@ inherited fmPrihodTov: TfmPrihodTov
   object paBottom: TPanel [2]
     Left = 0
     Top = 509
-    Width = 887
+    Width = 1098
     Height = 29
     Align = alBottom
     TabOrder = 2
