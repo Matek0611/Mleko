@@ -3,7 +3,8 @@ unit MlekoUtils;
 interface
 
 uses
-  Windows, Classes, SysUtils, Data, CFLMLKCustom, CFLMLKSelect;
+  Windows, Classes, SysUtils, Data, CFLMLKCustom, CFLMLKSelect,
+  DBAccess, MSAccess, GridsEh, DBGridEh, DBGridXLS;
 
 type
   TTimeTracer = class
@@ -38,6 +39,12 @@ function SelectMLKItemsByDialog(MLKForm: TCFLMLKCustomForm; Items: TStrings;
          MultiSelect: BOOL = True; KeyValues: TStrings = nil): Integer;
 function GetStartPosIndex( Source: TStrings; S: string; MaxCount: Integer = 0;
                            LookForward: Boolean = True): Integer;
+function IndexOfColumnByTag(DBGridEh: TDBGridEh; TagValue: Integer): Integer;
+function SortMSQueryInEhGrid( var OldCol, OldDir: Integer;
+          Col, OrderLine: Integer; Column: TColumnEh; Source: TStrings;
+          MSQuery: TMSQuery; MainField: String; OrderFields: String = '';
+          DoOpen: Boolean = True): String;
+procedure SaveDBGridToXLSFile(DBGridEh: TCustomDBGridEh; const FileName: String; IsSaveAll: Boolean);          
 
 implementation
 uses StrUtils;
@@ -174,6 +181,77 @@ begin
   end;
   Result := -1;
 end;
+
+function IndexOfColumnByTag(DBGridEh: TDBGridEh; TagValue: Integer): Integer;
+begin
+  for Result := 0 to DBGridEh.Columns.Count-1 do
+      if DBGridEh.Columns[Result].Tag = TagValue then Exit;
+  Result:= -1;
+end;
+
+function SortMSQueryInEhGrid( var OldCol, OldDir: Integer;
+          Col, OrderLine: Integer; Column: TColumnEh; Source: TStrings;
+          MSQuery: TMSQuery; MainField: String; OrderFields: String = '';
+          DoOpen: Boolean = True): String;
+const
+  idOrderBy = 'ORDER BY';
+//const
+//  OrderDirs: array[TSortMarkerEh] of String
+var
+  Dir: Integer; OrderStr: string;
+  DoInsert: Boolean;
+begin
+  //  TSortMarkerEh = (smNoneEh, smDownEh, smUpEh);
+  Result:= OrderFields;
+  DoInsert:= False;
+  if (OrderLine<=0) and (Source<>nil) then
+  begin
+    OrderLine:= GetStartPosIndex(Source, idOrderBy, 10, False);
+    if (OrderLine<=0) then
+    begin
+      OrderLine:= GetStartPosIndex(Source, '--'+idOrderBy, 10, False);
+      if (OrderLine>0) then
+      begin
+        DoInsert:= True;
+        Inc(OrderLine);
+      end;
+    end;
+  end;
+  if (OrderLine>0) then
+  begin
+    if (OldCol<>-2) then
+      if (OldCol<>Col) or (OldDir=0)
+         then OldDir:= 1
+         else OldDir:= -OldDir;
+         OldCol:= Col;
+   Column.Title.SortMarker:= TSortMarkerEh((3-OldDir) div 2);
+   if (OldDir<0) then OrderStr:= ' DESC, ' else OrderStr:= ' ASC, ';
+   if (OrderFields='') then OrderFields:= Column.Field.FieldName;
+   Result:= idOrderBy + ' ' + MainField + OrderStr + OrderFields;
+   MSQuery.Close;
+   if DoInsert and (Source<>nil) then
+   begin
+     MSQuery.SQL.Assign(Source);
+     MSQuery.SQL.Insert(OrderLine, Result);
+   end
+      else
+      MSQuery.SQL[OrderLine]:= Result;
+   if DoOpen then MSQuery.Open;
+  end;
+end;
+
+procedure SaveDBGridToXLSFile(DBGridEh: TCustomDBGridEh; const FileName: String; IsSaveAll: Boolean);
+var DBGridExport: TCustomDataGridExportAsXLS;
+begin
+  DBGridExport := TCustomDataGridExportAsXLS.Create;
+  try
+    DBGridExport.DBGridEh := DBGridEh;
+    DBGridExport.ExportToFile(FileName, IsSaveAll);
+  finally
+    DBGridExport.Free;
+  end;
+end;
+
 
 end.
 

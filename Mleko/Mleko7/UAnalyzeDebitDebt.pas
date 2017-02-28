@@ -4,6 +4,7 @@
 Дата формирования=
 Начальная дата накл.=
 Конечная дата накл.=
+//_BuhName in (1,2) and _SotrudName in (45)
 *)
 
 unit UAnalyzeDebitDebt;
@@ -15,11 +16,12 @@ uses
   Dialogs, CFLMLKCustom, GridsEh, DBGridEh, DB, MemDS, DBAccess, MSAccess,
   ExtCtrls, ActnList, StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, cxDropDownEdit, cxCalendar, citCtrls, citmask, citDBComboEdit,
-  DBGridEhImpExp, ComCtrls, MlekoUtils, Mask, DBCtrlsEh, rxStrHlder,
-  MemTableDataEh, MemTableEh, Grids, ValEdit, Menus, CheckLst, StrListA;
+  GridXLS, ComCtrls, MlekoUtils, Mask, DBCtrlsEh, rxStrHlder,
+  MemTableDataEh, MemTableEh, Grids, ValEdit, Menus, CheckLst, StrListA,
+  DBLookupEh, ADODB, USortedIntList;
 
 type
-  TParamType = ( ptUserNo, ptSPID, ptOwnerName,
+  TParamType = ( ptNone, ptUserNo, ptSPID, ptOwnerName, ptAllTypes,
                  ptExpansion, ptSelection, ptDisableExclusion,
                  ptFormDate, ptBegDate, ptStartDate, ptVeryOld,
                  ptOrderBy,
@@ -83,12 +85,21 @@ type
     Splitter2: TSplitter;
     btnSettings: TButton;
     acGetSettingsDlg: TAction;
+    mnuShowHide: TMenuItem;
+    acToggleSettingsVisibility: TAction;
+    quDebt_OtdelName: TIntegerField;
+    quDebt_VidName: TIntegerField;
+    quDebt_SotrudName: TIntegerField;
+    quDebt_BuhName: TIntegerField;
+    quDebt_AgentName: TIntegerField;
+    quDebt_PostAddress: TIntegerField;
+    quDebt_DocTypeName: TIntegerField;
+    quFilter: TMSQuery;
     procedure dbgDebtsTitleBtnClick(Sender: TObject; ACol: Integer; Column: TColumnEh);
     procedure dbgDebtsKeyPress(Sender: TObject; var Key: Char);
     procedure dbgDebtsKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure quDebtBeforeOpen(DataSet: TDataSet);
     procedure EdDateAnalyzeEndPropertiesChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure VerifyEditText(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -108,6 +119,12 @@ type
     procedure acRefreshExecute(Sender: TObject);
     procedure acExportToExcelExecute(Sender: TObject);
     procedure acGetSettingsDlgExecute(Sender: TObject);
+    procedure mnuShowHideClick(Sender: TObject);
+    procedure clbExpansionsDblClick(Sender: TObject);
+    procedure acToggleSettingsVisibilityExecute(Sender: TObject);
+    procedure dbgDebtsMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure quDebtFilterRecord(DataSet: TDataSet; var Accept: Boolean);
   private
     { Private declarations }
     cbxExpansion: TCheckBox;
@@ -124,13 +141,18 @@ type
     ParamIndexes: TParamIndexes;
     ParamKeys: TParamKeys;
     SelectionList, ExpansionList: TList;
-    Source, Fields, Temp, Selections: TStringList;
+    KeyField: TField;
+    SortedKeys: TSortedIntList;
+    Source, Fields, Temp, OldKeys,
+    FieldVals, FieldKeys, Selections: TStringList;
     AList: TStringListArray;
     ParamList: TStrings;
-    OldCol, OldDir: Integer;
+    OldCol, OldDir, OldTag: Integer;
     DisableParamIndexes, ItemIsInteger,
-    TestMode, CopySourceOnRefresh: Boolean;
+    TestMode, CopySourceOnRefresh,
+    DisableVerification, EnableFiltering, FirstShown: Boolean;
     OrderFullStr: String;
+    UserParamType: TParamType;
     {$IFDEF SystemMenu}
     DisableExclusion: Boolean;
     SysMenu: THandle;
@@ -183,10 +205,22 @@ type
     procedure VerifyIntValues(sel: TSelectionType; DefValue: Integer = MaxInt);
     procedure VerifyDateValues(sel: TSelectionType);
     function EnableExpansion(Index: Integer): Boolean;
-    function GetOrderFields(var FieldName: String; Index: Integer): String;
+    function GetOrderFields(var FieldName: String; Index: Integer; EnableSortField: Boolean = True): String;
     procedure ExportToExcel;
     procedure ExecuteScript;
     procedure GetSettingsDlg;
+    function MakeColumnVisible(Index: Integer;
+      IsVisible: Boolean): Boolean;
+    procedure ToggleShowHide;
+    function GetSortField(const FieldName: String; Index: Integer): String;
+    procedure GetFieldValues(Items, Keys: TStrings; DataSet: TDataSet;
+      MainFieldStr, KeyFieldStr: String);
+    procedure AcceptFilterValues(IntKeys: TSortedIntList;
+      StrKeys: TStrings);
+    procedure SortRowsByAllowedColumn(ACol: Integer; Dir: Integer = 0);
+    procedure ClearAllSortMarkers;
+    procedure ResetGridState;
+    procedure FilteringEvent(Sender: TObject);
   public
     { Public declarations }
     procedure RefreshResults(SetMaxCount: Boolean = False);
@@ -201,7 +235,7 @@ implementation
 
 uses
   data, About, StrUtils, DateUtils, CommCtrl,
-  UFastDatasetView, USelectDateItemsDlg, UListMinusPostForDebit;
+  UFastDatasetView, USelectDateItemsDlg, UListMinusPostForDebit, UColumnFilterDlg;
 
 {$R *.dfm}
 
@@ -212,6 +246,10 @@ type
   THackControl = class(TControl);
 
 const
+
+  AllowedFilterIndexes = [0, 2, 4, 10];
+  AllowedIntIndexes = [10];
+
   idCurRecordCount = 0;
   idMaxRecordCount = 1;
   idPercent = 2;
@@ -255,6 +293,10 @@ const
 
   idInsertExpansions = 'INSERT INTO #Expansions Values';
   idInsertSelections = 'INSERT INTO #Selections Values';
+  idInsertAllTypes = 'INSERT INTO #AllTypes Values';
+  idInsertAllTypesValues = '(''Все отделы'', ''Все виды'', ''Все сотрудники'', '+
+   '''Все бух. типы'', ''Все контрагенты'', ''Все ном. накл.'',' +
+   '''Все адреса'', ''Все док-ты'', ''Все даты накл.'', ''Все даты опл.'', ''Все пр.'')';
 
   NaklNo_Template = 'SELECT %s, %s FROM %s WHERE %s IN (%s) and (NomReturn is NULL)';
   SQL_Template = 'SELECT %s, %s FROM %s WHERE %s IN (%s)';
@@ -578,13 +620,17 @@ begin
 end;
 
 procedure TfrmAnalyzeDebitDebt.ShowRecordCount(SetMaxCount: Boolean = False);
+var RowCount: Integer;
 begin
   if (MaxRecordCount = 0) or (quDebt.Active and (quDebt.RecordCount>MaxRecordCount)) or
      SetMaxCount then
      MaxRecordCount := quDebt.RecordCount;
   if (MaxRecordCount > 0) then
   begin
-    ShowStatusMsg(idCurRecordCount, Format('Записей: %d', [quDebt.RecordCount]));
+    if not FirstShown then RowCount:= quDebt.RecordCount else
+                           RowCount:= dbgDebts.RowCount-1;
+    FirstShown:= True;
+    ShowStatusMsg(idCurRecordCount, Format('Записей: %d (Показ: %d)', [quDebt.RecordCount, RowCount]));
     ShowStatusMsg(idMaxRecordCount, Format('Всего: %d', [MaxRecordCount]));
     ShowStatusMsg(idPercent, Format('%6.2f%%', [quDebt.RecordCount * 100 /
       MaxRecordCount]));
@@ -682,6 +728,8 @@ var s, p: string;
 begin
   p:= '';
   case pt of
+    ptAllTypes:
+    S := idInsertAllTypes +  idInsertAllTypesValues;
     ptExpansion:
     S := idInsertExpansions + CollectBitValuesToString(clbExpansions);
     ptSelection:
@@ -691,7 +739,8 @@ begin
         //DeleteItemsInStrings(ParamList, ParamIndexes[ptSelection]+1, Selections.Count-1)
       //p:= Selections.Text;
       //VerifyInvoiceNumbers();
-      VerifyEmptySelections();
+      if not DisableVerification then
+        VerifyEmptySelections();
       AList.TransposeToStrings(Selections, False, True, True);
       S := Trim(Selections.Text);
     end;
@@ -704,6 +753,15 @@ begin
      end;
 end;
 
+procedure TfrmAnalyzeDebitDebt.ResetGridState();
+begin
+  //ClearAllSortMarkers;
+  KeyField:= nil;
+  EnableFiltering:= False;
+  OldCol:= -1; OldTag:= -1;
+end;
+
+
 procedure TfrmAnalyzeDebitDebt.ApplyChanges();
 begin
   if TestMode then
@@ -714,9 +772,11 @@ begin
   end
      else
      begin
+       quDebt.DisableControls;
        quDebt.Close;
        ParamList := quDebt.SQL;
      end;
+  ResetGridState;
   SetParameters;
 end;
 
@@ -766,9 +826,15 @@ procedure TfrmAnalyzeDebitDebt.RefreshResults(SetMaxCount: Boolean = False);
 begin
   inherited;
   Tracer.Start;
+  if quDebt.Active then
+     begin
+        quDebt.Refresh;
+        dbgDebts.Refresh;
+     end else
   quDebt.Open;
   Tracer.Stop;
   ShowRecordCount(SetMaxCount);
+  quDebt.EnableControls;
 end;
 
 procedure TfrmAnalyzeDebitDebt.DetectParamIndexes();
@@ -784,6 +850,7 @@ begin
   ParamKeys[ptVeryOld] := idVeryOldDay;
   ParamKeys[ptDisableExclusion] := idDisableExclusion;
   ParamKeys[ptOrderBy] := idOrderBy;
+  ParamKeys[ptAllTypes] := idInsertAllTypes;
   //ParamKeys[ptEndDate] := idEndDate;
 //  ParamKeys[ptOwnerName] := idOwnerName;
 //  ParamKeys[ptExpansion] := idExpansions;
@@ -799,13 +866,23 @@ begin
 
    ParamIndexes[ptExpansion]:= GetStartPosIndex(ParamList, idInsertExpansions);
    ParamIndexes[ptSelection]:= GetStartPosIndex(ParamList, idInsertSelections);
+   ParamIndexes[ptAllTypes]:= GetStartPosIndex(ParamList, idInsertAllTypes);
 end;
 
 procedure TfrmAnalyzeDebitDebt.SetParameters();
 var
-  pt: TParamType;
+  pt, ptHigh, ptLow: TParamType;
 begin
-  for pt := Low(TParamType) to High(TParamType) do
+  if (UserParamType=ptNone) then
+     begin
+       ptLow:= Low(TParamType);
+       ptHigh:= High(TParamType);
+     end else
+     begin
+       ptLow:= UserParamType;
+       ptHigh:= UserParamType;
+     end;
+  for pt := ptLow to ptHigh do
     case pt of
 //      ptUserNo:
 //        SetParameterByType(pt, IntToStr(Data.UserNo));
@@ -835,7 +912,7 @@ begin
       end;
 //      ptEndDate:
 //          SetParameterByType(pt, GetDateStrByIndex(2, True));
-      ptExpansion, ptSelection:
+      ptExpansion, ptSelection, ptAllTypes:
         SetParameterByTypeEx(pt);
     end;
 end;
@@ -866,57 +943,185 @@ begin
             clbExpansions.Checked[Index];
 end;
 
-function TfrmAnalyzeDebitDebt.GetOrderFields(var FieldName: String; Index: Integer): String;
-var Field: TField; i: Integer;
+function TfrmAnalyzeDebitDebt.GetSortField(const FieldName: String; Index: Integer): String;
+var Field: TField;
 begin
-  Result:= idDefaultSortFields;
+  Result:= FieldName;
   if EnableExpansion(Index) then
      begin
        Field:= quDebt.FindField('_' + FieldName);
-       if (Field<>nil) then FieldName:= '_' + FieldName;
+       if (Field<>nil) then Result:= '_' + FieldName;
      end;
+end;
+
+function TfrmAnalyzeDebitDebt.GetOrderFields(
+         var FieldName: String; Index: Integer; EnableSortField: Boolean = True): String;
+begin
+  Result:= idDefaultSortFields;
+  if EnableSortField then
+  FieldName:= GetSortField(FieldName, Index);
   PrepareStrValues(idDefaultSortFields, Temp);
-  i:= Temp.IndexOf(FieldName);
-  if (i>=0) then Temp.Delete(i);
+  Index:= Temp.IndexOf(FieldName);
+  if (Index>=0) then Temp.Delete(Index);
   //Temp.Insert(0, FieldName);
   Result:= Temp.CommaText;
+end;
+
+procedure TfrmAnalyzeDebitDebt.GetFieldValues(Items, Keys: TStrings; DataSet: TDataSet; MainFieldStr, KeyFieldStr: String);
+var MainField: TField; SKey: String; i, v: Integer;
+begin
+  Items.Clear; Keys.Clear; SortedKeys.Clear;
+  if (DataSet=nil) or (not DataSet.Active) then Exit;
+  DataSet.DisableControls;
+  try
+    DataSet.First;
+    MainField:= DataSet.FindField(MainFieldStr);
+    KeyField:= DataSet.FindField(KeyFieldStr);
+    if (MainField<>nil) and (KeyField<>nil) and
+       (MainField.DataType in [ftString, ftWideString]) and
+       (KeyField.DataType in [ftSmallint, ftInteger])  then
+    while not DataSet.Eof do
+    begin
+      SKey:= KeyField.AsString;
+      v:= KeyField.AsInteger;
+      if (not SortedKeys.Find(v, i)) then
+      begin
+        Items.Add(MainField.AsString);
+        Keys.Add(SKey);
+        SortedKeys.Insert(i, v);
+      end;
+      DataSet.Next;
+    end;
+    DataSet.First;
+  finally
+  DataSet.EnableControls;
+  end;
+end;
+
+procedure TfrmAnalyzeDebitDebt.AcceptFilterValues(IntKeys: TSortedIntList; StrKeys: TStrings);
+var i: Integer;
+begin
+//  for i := 0 to FieldVals.Count-1 do
+//  begin
+//    if (FieldVals.Objects[i]=nil) then
+//      IntKeys.Delete(StrToInt(StrKeys[i]));
+//  end;
+  IntKeys.Clear;
+  for i := 0 to FieldVals.Count-1 do
+  begin
+    if (FieldVals.Objects[i]<>nil) then
+      IntKeys.Add(StrToInt(StrKeys[i]));
+  end;
+end;
+
+procedure TfrmAnalyzeDebitDebt.SortRowsByAllowedColumn(ACol: Integer; Dir: Integer = 0);
+var
+  OrderFields, MainFieldStr, KeyFieldStr: String;
+  Column: TColumnEh; Old_Dir, Old_Col: Integer;
+begin
+  Column:= dbgDebts.Columns[ACol];
+  if (not quDebt.Active) or (not EnableExpansion(Column.Tag) and (Column.Tag>=0)) then Exit;
+    MainFieldStr:= Column.FieldName;
+    EnableFiltering:= False;
+    OrderFields:= GetOrderFields(MainFieldStr, Column.Tag, Column.Tag in AllowedIntIndexes);
+    Old_Dir:= OldDir; Old_Col:= OldCol;
+    if (Dir<>0) then
+       begin
+         Old_Dir:= Dir;
+         Old_Col:= -2;
+       end;
+    OrderFullStr:=
+    SortMSQueryInEhGrid( Old_Col, Old_Dir, ACol, ParamIndexes[ptOrderBy], Column,
+                         quDebt.SQL, quDebt, MainFieldStr, OrderFields, False);
+    if (Dir=0) then
+       begin
+         OldDir:= Old_Dir;
+         OldCol:= Old_Col;
+       end;
+    RefreshResults;
+end;
+
+
+procedure TfrmAnalyzeDebitDebt.ClearAllSortMarkers();
+var i: Integer;
+begin
+for i := 0 to dbgDebts.Columns.Count-1 do
+  begin
+    dbgDebts.Columns[i].Title.SortMarker:= smNoneEh;
+  end;
+end;
+
+procedure TfrmAnalyzeDebitDebt.FilteringEvent(Sender: TObject);
+var Option: Integer;
+begin
+  Option:= Integer(Sender);
+  if Option>0 then
+  begin
+    CloseColumnFilterDlg;
+    //ResetGridState;
+    OldTag:= -1;
+    case Option of
+    ueResetFiltering:
+      begin
+        ResetGridState;
+        RefreshResults();
+      end;
+    ueSortUp:
+        SortRowsByAllowedColumn(OldCol, -1);
+    ueSortDown:
+        SortRowsByAllowedColumn(OldCol, 1);
+    end;
+  end;
 end;
 
 procedure TfrmAnalyzeDebitDebt.dbgDebtsTitleBtnClick(Sender: TObject; ACol:
   Integer; Column: TColumnEh);
 var
-  OrderFields, MainField: String;
+  OrderFields, MainFieldStr, KeyFieldStr: String;
+  Rect: TRect;  P: TPoint; SelCount, Old_Col, Sel_Count: Integer;
+  SelKeys: TStrings;
+  NewValues: Boolean;
 begin
   if (not quDebt.Active) or (not EnableExpansion(Column.Tag) and (Column.Tag>=0)) then Exit;
-  MainField:= Column.FieldName;
-  OrderFields:= GetOrderFields(MainField, Column.Tag);
-  OrderFullStr:=
-  SortMSQueryInEhGrid( OldCol, OldDir, ACol, ParamIndexes[ptOrderBy], Column,
-                       quDebt.SQL, quDebt, MainField, OrderFields, False);
-  RefreshResults;
-//  TovarNo := quAnalisPlanningOrderTovarNo.Value;
-//  quDebt.Close;
-//  case ACol of
-//    0:
-//      quDebt.MacroByName('_order').Value := 't.SotrudOtdel';
-//    1:
-//      quDebt.MacroByName('_order').Value := 'VidName';
-//    2:
-//      quDebt.MacroByName('_order').Value := 'TipName';
-//    3:
-//      quDebt.MacroByName('_order').Value := 'TovarName';
-//    4:
-//      quDebt.MacroByName('_order').Value := 't.SotrudName';
-//    8:
-//      quDebt.MacroByName('_order').Value := 'ColName';
-//    16:
-//      quDebt.MacroByName('_order').Value :=
-//        'FactSumCorrection_SummaProdag';
-//  end;
-//
-//  quDebt.Open;
-//  quDebt.Locate('TovarNo', TovarNo, []);
-
+  MainFieldStr:= Column.FieldName; //EnableFiltering:= False;
+  //KeyField:= nil; NewValues:= True;
+  if (Column.Tag in AllowedFilterIndexes) then
+  begin
+    NewValues:= (OldTag<>Column.Tag) or (OldTag<0);
+    Old_Col:= OldCol;
+    OldCol:= Column.Index;
+    if NewValues then
+    begin
+      FieldVals.Clear;
+      SortedKeys.Clear;
+      OldTag:= Column.Tag;
+      ClearAllSortMarkers;
+    end;
+    KeyFieldStr:= GetSortField(MainFieldStr, Column.Tag);
+    if NewValues then
+       GetFieldValues(FieldVals, FieldKeys, quDebt, MainFieldStr, KeyFieldStr);
+    KeyField:= quDebt.FindField(KeyFieldStr);
+    Rect:= dbgDebts.CellRect(ACol, 1);
+    //P:= Point(Rect.Right, Rect.Bottom);
+    P:= dbgDebts.ClientToScreen(Point(Rect.Right, Rect.Bottom+10));
+    Sel_Count:= SortedKeys.Count-1;
+    SelCount:= ColumnFilterDlg( nil, P.X, P.Y, FieldVals, Column.Title.Caption,
+                                not NewValues, Self.FilteringEvent);
+    if (SelCount>0) and (SelCount<=FieldKeys.Count) then
+    begin
+      if (SelCount=FieldKeys.Count) //and (not NewValues)
+         and (Sel_Count<>SelCount) then
+         ResetGridState else
+         begin
+           EnableFiltering:= True;
+           AcceptFilterValues(SortedKeys, FieldKeys);
+         end;
+      RefreshResults();
+    end else OldCol:= Old_Col;
+  end else
+  begin
+    SortRowsByAllowedColumn(Column.Index);
+  end;
 end;
 
 procedure TfrmAnalyzeDebitDebt.dbgDebtsKeyPress(Sender: TObject; var Key: Char);
@@ -964,8 +1169,7 @@ begin
   end;
   if dlgSaveExportToExcel.Execute then
   begin
-    SaveDBGridEhToExportFile(TDBGridEhExportAsXLS, dbgDebts,
-      dlgSaveExportToExcel.FileName, True);
+    SaveDBGridToXLSFile(dbgDebts, dlgSaveExportToExcel.FileName, True);
     if FileExists(dlgSaveExportToExcel.FileName) then
     begin
       ShowMessage('Создан файл: ' + dlgSaveExportToExcel.FileName);
@@ -1121,10 +1325,15 @@ begin
   ExpansionList := TList.Create;
   Source := TStringList.Create;
   Fields := TStringList.Create;
+  OldKeys := TStringList.Create;
+  FieldKeys := TStringList.Create;
+  FieldVals := TStringList.Create;
+  Fields.Sorted:= True;
   Temp := TStringList.Create;
   Selections:= TStringList.Create;
   Selections.Add(''); // make Selections.Count = 1
   AList:= TStringListArray.Create;
+  SortedKeys:= TSortedIntList.Create;
   FillSourceList();
   FillComponentLists();
   DetectParamIndexes;
@@ -1133,6 +1342,7 @@ begin
   {$ENDIF}
 //  DisableParams;
 //  EnableParams;
+  ResetGridState;
   dtPicker:= TDateTimePicker.Create(Self);
   dtPicker.Parent:= vleDate;
   dtPicker.OnChange:= Self.OnChangeDate;
@@ -1146,6 +1356,24 @@ begin
   
 end;
 
+procedure TfrmAnalyzeDebitDebt.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  //dtPicker.Free;
+  Selections.Free;
+  AList.Free;
+  SelectionList.Free;
+  ExpansionList.Free;
+  SortedKeys.Free;
+  Temp.Free;
+  OldKeys.Free;
+  FieldKeys.Free;
+  FieldVals.Free;
+  Fields.Free;
+  Source.Free;
+  Tracer.Free;
+end;
+
 procedure TfrmAnalyzeDebitDebt.FormShow(Sender: TObject);
 begin
   inherited;
@@ -1154,40 +1382,7 @@ end;
 
 procedure TfrmAnalyzeDebitDebt.SetParamsBeforeOpen();
 begin
-//  quDebt.ParamByName('OwnerForm').Value := 'frmAnalyzeDebitDebt';
-//  quDebt.ParamByName('All_Otd').Value := 'Все отделы';
-//  quDebt.ParamByName('All_Vid').Value := 'Все виды';
-//  quDebt.ParamByName('All_Sot').Value := 'Все сотрудники';
-//  quDebt.ParamByName('AllDeparts').Value := 'AllDeparts';
-//  quDebt.ParamByName('AllKinds').Value := 'AllKinds';
-//  quDebt.ParamByName('AllTypes').Value := 'AllTypes';
-//  quDebt.ParamByName('AllGoods').Value := 'AllGoods';
-//  quDebt.ParamByName('AllWorkers').Value := 'AllWorkers';
-//  quDebt.ParamByName('AllPrices').Value := 'AllPrices';
 
-(*
-@AllDeparts  = 'AllDeparts'
-@AllKinds    = 'AllKinds'
-@AllTypes    = 'AllTypes'
-@AllGoods    = 'AllGoods'
-@AllWorkers  = 'AllWorkers'
-@AllPrices   = 'AllPrices'
-
-'AllDeparts'
-'AllKinds'
-'AllTypes'
-'AllGoods'
-'AllWorkers'
-'AllPrices'
-*)
-
-
-end;
-
-procedure TfrmAnalyzeDebitDebt.quDebtBeforeOpen(DataSet: TDataSet);
-begin
-  inherited;
-  SetParamsBeforeOpen();
 end;
 
 procedure TfrmAnalyzeDebitDebt.EdDateAnalyzeEndPropertiesChange(Sender: TObject);
@@ -1198,20 +1393,6 @@ begin
 //  quDebt.Close;
 //  quDebt.ParamByName('p_date_end').Value := EdDateAnalyzeEnd.Date;
 //  quDebt.Open;
-end;
-
-procedure TfrmAnalyzeDebitDebt.FormDestroy(Sender: TObject);
-begin
-  inherited;
-  //dtPicker.Free;
-  Selections.Free;
-  AList.Free;
-  SelectionList.Free;
-  ExpansionList.Free;
-  Temp.Free;
-  Fields.Free;
-  Source.Free;
-  Tracer.Free;
 end;
 
 procedure TfrmAnalyzeDebitDebt.CopySQLParams;
@@ -1349,21 +1530,9 @@ begin
 end;
 
 procedure TfrmAnalyzeDebitDebt.SetDefaultDates();
-var
-  Year, Month, Day: word;
-  R: TGridRect;
 begin
-  {
-  Дата формирования=
-  Начальная дата накл.=
-  }
-  DecodeDate(Date(), Year, Month, Day);
-  SetDateByIndex(EncodeDate(Year, Month, Day+1), 0);
-  //SetDateByIndex(EncodeDate(1900, 1, 1), 1);
-  //SetDateByIndex(EncodeDate(Year, Month-1, 1), 1);
-  //SetDateByIndex(EncodeDate(Year, Month, Day+1), 2);
-  R:= vleDate.Selection;
-  dtPicker.Date:= GetDateByIndex(R.Top-1);
+  SetDateByIndex(IncDay(Date(), 1), 0);
+  dtPicker.Date:= GetDateByIndex(0);
 end;
 
 procedure TfrmAnalyzeDebitDebt.SetDefaultTransposeParams();
@@ -1439,6 +1608,7 @@ begin
   end;
   if (z>=0) then
   begin
+    Fields.Clear;
     S:= Temp.CommaText;
     S:= Trim(S);
     P:= PChar(S);
@@ -1537,6 +1707,68 @@ procedure TfrmAnalyzeDebitDebt.acGetSettingsDlgExecute(Sender: TObject);
 begin
   inherited;
   GetSettingsDlg();
+end;
+
+function TfrmAnalyzeDebitDebt.MakeColumnVisible(Index: Integer; IsVisible: Boolean): Boolean;
+begin
+  Result:= False;
+  Index:= IndexOfColumnByTag(dbgDebts, Index);
+  if (Index>=0) then
+  begin
+    dbgDebts.Columns[Index].Visible:= IsVisible;
+    Result:= True;
+  end;
+end;
+
+procedure TfrmAnalyzeDebitDebt.ToggleShowHide();
+var IsVisible: Boolean; Index: Integer;
+begin
+  inherited;
+  begin
+    with clbExpansions do
+    begin
+      Index:= ItemIndex;
+      IsVisible:= not ItemEnabled[Index];
+      if MakeColumnVisible(Index, IsVisible) then
+          ItemEnabled[Index]:= IsVisible;
+    end;
+  end;
+end;
+
+procedure TfrmAnalyzeDebitDebt.mnuShowHideClick(Sender: TObject);
+begin
+  ToggleShowHide();
+end;
+
+procedure TfrmAnalyzeDebitDebt.clbExpansionsDblClick(Sender: TObject);
+begin
+  inherited;
+  ToggleShowHide();
+end;
+
+procedure TfrmAnalyzeDebitDebt.acToggleSettingsVisibilityExecute(
+  Sender: TObject);
+begin
+  inherited;
+  with btnSettings do
+  Visible:= not Visible;
+end;
+
+procedure TfrmAnalyzeDebitDebt.dbgDebtsMouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var P: TPoint;
+begin
+  inherited;
+//  P:= dbgDebts.ClientToScreen(Point(X, Y));
+//  ShowMessage(Format('X:%d; Y:%d', [P.X, P.Y]));
+end;
+
+procedure TfrmAnalyzeDebitDebt.quDebtFilterRecord(DataSet: TDataSet;
+  var Accept: Boolean);
+begin
+  inherited;
+  Accept:= (not EnableFiltering) or ((KeyField=nil) or (SortedKeys.IndexOf(KeyField.AsInteger)>=0));
+  //Accept:= quDebt_SotrudName.AsInteger = 45;
 end;
 
 end.
