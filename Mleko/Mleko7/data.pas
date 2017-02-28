@@ -928,7 +928,7 @@ procedure TdmDataModule.quSetupBeforePost(DataSet: TDataSet);
 begin
   if quSetup.State = dsInsert then
   begin
-
+    UpdateSetup.Apply(ukInsert);                      
   end
   else
     UpdateSetup.Apply(ukModify);

@@ -1,6 +1,6 @@
 inherited BDDSForm: TBDDSForm
-  Left = 301
-  Top = 324
+  Left = 259
+  Top = 202
   Width = 1447
   Height = 673
   Caption = #1041#1044#1044#1057
@@ -472,6 +472,12 @@ inherited BDDSForm: TBDDSForm
           Footers = <>
           Title.Alignment = taCenter
           Width = 46
+        end
+        item
+          EditButtons = <>
+          FieldName = 'CurrencyHead'
+          Footers = <>
+          Width = 48
         end
         item
           EditButtons = <>
@@ -1163,6 +1169,7 @@ inherited BDDSForm: TBDDSForm
       '  ,@id int'
       '  ,@DateBeg datetime'
       '  ,@DateEnd datetime'
+      '  ,@DataBDDS datetime'
       '  ,@IsEnableNaklP int'
       '  ,@IsEnablePlatPAndPlatR int'
       '  ,@IsEnableBDDS int'
@@ -1181,6 +1188,8 @@ inherited BDDSForm: TBDDSForm
       'set @DateEnd = :DateEnd'
       ''
       'set @IsSummaDolga = :IsSummaDolga'
+      ''
+      'select @DataBDDS = DataBDDS from DateForBDDS'
       ''
       'if @IsPost is null set @IsPost = 0'
       'if @IsSummaDolga is null set @IsSummaDolga = 1'
@@ -1217,6 +1226,7 @@ inherited BDDSForm: TBDDSForm
       '      , '#39'NaklP'#39' as Entity_Type'
       '      , '#39#39' as Spravka '
       '      , 0 - np.SummaDolg as AmountPrih_Rash'
+      '      , CurrencyHead'
       ' from NaklP np left join'
       '      L_Delay_NaklP ldn on ldn.NaklNo = np.pkey left join'
       
@@ -1226,6 +1236,9 @@ inherited BDDSForm: TBDDSForm
         '  where dateadd(day,(isnull(ldn.Day_Delay,0)+isnull(ldn.Day_Dela' +
         'y_Ext,0)+isnull(tpfnp.TransferDey,0)),np.DateNakl) between @Date' +
         'Beg and @DateEnd'
+      
+        '    and dateadd(day,(isnull(ldn.Day_Delay,0)+isnull(ldn.Day_Dela' +
+        'y_Ext,0)+isnull(tpfnp.TransferDey,0)),np.DateNakl) < @DataBDDS'
       
         '    and (np.PostNo not in (select PostNo from ListMinusPostForBD' +
         'DS where CheckMinus = 1) or @IsPost = 0) '
@@ -1290,8 +1303,10 @@ inherited BDDSForm: TBDDSForm
       '       , '#39#39' as Entity_Type'
       '       , '#39#39' as Spravka'
       '       , sum(pp.Summa) - 0 as AmountPrih_Rash'
+      '       , pp.CurrencyHead'
       ' from PlatP pp'
       '  where pp.DatePlat  between @DateBeg and @DateEnd'
+      '    and pp.DatePlat < @DataBDDS '
       
         '    and (isnull(pp.bank_invoice_id,0) = isnull(@id,isnull(pp.ban' +
         'k_invoice_id,0)))'
@@ -1309,7 +1324,7 @@ inherited BDDSForm: TBDDSForm
       '          else 0 '
       '        end = 1'
       ''
-      'group by DatePlat, pp.Buh, pp.Bank_Invoice_id'
+      'group by DatePlat, pp.Buh, pp.Bank_Invoice_id, pp.CurrencyHead'
       'order by DayPayment, PostName) pp'
       ''
       'union all'
@@ -1349,8 +1364,10 @@ inherited BDDSForm: TBDDSForm
       '       , '#39#39' as Entity_Type'
       '       , '#39#39' as Spravka'
       '       , 0 - sum(pr.Summa) as AmountPrih_Rash'
+      '       , pr.CurrencyHead'
       ' from PlatR pr'
       '  where pr.DatePlat  between @DateBeg and @DateEnd'
+      '    and pr.DatePlat < @DataBDDS'
       
         '    and (isnull(pr.bank_invoice_id,0) = isnull(@id,isnull(pr.ban' +
         'k_invoice_id,0)))'
@@ -1368,7 +1385,7 @@ inherited BDDSForm: TBDDSForm
       '          else 0 '
       '        end = 1'
       ''
-      'group by DatePlat, pr.Buh, pr.Bank_Invoice_id'
+      'group by DatePlat, pr.Buh, pr.Bank_Invoice_id, pr.CurrencyHead'
       'order by DayPayment, PostName) pr'
       ''
       'union all'
@@ -1405,6 +1422,7 @@ inherited BDDSForm: TBDDSForm
       '       , '#39'PlatP'#39' as Entity_Type'
       '       , pp.Spravka as Spravka'
       '       , pp.Summa - 0 as AmountPrih_Rash'
+      '       , CurrencyHead'
       ' from PlatP pp left join '
       
         '      TransferDayPaymentForPlatPBDDS tdpppbdds on tdpppbdds.Plat' +
@@ -1412,6 +1430,9 @@ inherited BDDSForm: TBDDSForm
       
         '  where dateadd(day,isnull(tdpppbdds.TransferDey,0),DatePlat)  b' +
         'etween @DateBeg and @DateEnd'
+      
+        '    and dateadd(day,isnull(tdpppbdds.TransferDey,0),DatePlat) < ' +
+        '@DataBDDS'
       
         '    and (isnull(pp.bank_invoice_id,0) = isnull(@id,isnull(pp.ban' +
         'k_invoice_id,0)))'
@@ -1465,6 +1486,7 @@ inherited BDDSForm: TBDDSForm
       '       , '#39'PlatR'#39' as Entity_Type'
       '       , pr.Spravka as Spravka'
       '       , 0 - pr.Summa as AmountPrih_Rash  '
+      '       , CurrencyHead'
       ' from PlatR pr left join'
       
         '      TransferDayPaymentForPlatRBDDS tdpprbdds on tdpprbdds.Plat' +
@@ -1472,6 +1494,9 @@ inherited BDDSForm: TBDDSForm
       
         '  where dateadd(day,isnull(tdpprbdds.TransferDey,0),DatePlat)  b' +
         'etween @DateBeg and @DateEnd'
+      
+        '    and dateadd(day,isnull(tdpprbdds.TransferDey,0),DatePlat) < ' +
+        '@DataBDDS'
       
         '    and (isnull(pr.bank_invoice_id,0) = isnull(@id,isnull(pr.ban' +
         'k_invoice_id,0)))'
@@ -1644,6 +1669,12 @@ inherited BDDSForm: TBDDSForm
       DisplayLabel = #1057#1091#1084'.'#1087#1088#1080#1093'-'#1057#1091#1084'.'#1088#1072#1089#1093' + '#1055#1088#1077#1076'.'#1089#1090#1088'.'
       DisplayWidth = 15
       FieldName = 'AmountPrih_Rash'
+    end
+    object quDataQueryCurrencyHead: TStringField
+      DisplayLabel = #1042#1072#1083#1102#1090#1072' '#1087#1083#1072#1090#1077#1078#1072
+      FieldName = 'CurrencyHead'
+      ReadOnly = True
+      Size = 5
     end
   end
   object dsInvoice: TMSDataSource
