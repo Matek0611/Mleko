@@ -27,6 +27,13 @@ type
     btnSortUp: TToolButton;
     ToolButton2: TToolButton;
     SortDown: TToolButton;
+    btn1: TToolButton;
+    btnFindBeg: TToolButton;
+    btnFindEnd: TToolButton;
+    btnFindMid: TToolButton;
+    btnFindMore: TToolButton;
+    btnFindLess: TToolButton;
+    btnFindEqual: TToolButton;
     procedure clbFilterClickCheck(Sender: TObject);
     procedure cbxRootClick(Sender: TObject);
     procedure clbFilterClick(Sender: TObject);
@@ -50,6 +57,7 @@ type
     procedure ShowStatus;
     procedure UpdateRootState;
     function SetCheckedState(i: Integer; IsChecked: Boolean): Boolean;
+    procedure UpdateFindButtons;
     { Private declarations }
   public
     { Public declarations }
@@ -73,6 +81,8 @@ var
   frmColumnFilter: TfrmColumnFilter;
 
 implementation
+uses MlekoUtils;
+
 {$R *.dfm}
 
 procedure CloseColumnFilterDlg();
@@ -142,6 +152,21 @@ begin
         SetCheckedState(-1, False);
 end;
 
+procedure TfrmColumnFilter.UpdateFindButtons();
+var VarType: TVarType;
+begin
+  if Root.Count>0 then
+     begin
+       VarType:= DetectDataType(Root[0]);
+       btnFindMore.Visible:= (VarType<>varString);
+       btnFindLess.Visible:= (VarType<>varString);
+       btnFindEqual.Visible:= (VarType<>varString);
+       btnFindBeg.Visible:= (VarType=varString);
+       btnFindEnd.Visible:= (VarType=varString);
+       btnFindMid.Visible:= (VarType=varString);
+     end;
+end;
+
 procedure TfrmColumnFilter.AcceptItems(Items: TStrings; RootName: string = ''; UseObjects: Boolean = False);
 var i: Integer;
 begin
@@ -157,6 +182,7 @@ begin
   //SetAllItemsState(True);
   if (RootName<>'') then cbxRoot.Caption:= RootName;
   UpdateRootState;
+  //UpdateFindButtons;
   btnOK.Enabled:= CheckedCount>0;
   if btnOK.Enabled then ActiveControl:= btnOK;
   ShowStatus();

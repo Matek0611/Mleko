@@ -42,6 +42,7 @@ type
     procedure Insert(Index: Integer; const Value: Integer);
     property Count: Integer read FCount write SetCount;
     property Data: Pointer read FData;
+    property Value[Index: Integer]: Integer read GetValue write SetValue; default;
   end;
 
 implementation

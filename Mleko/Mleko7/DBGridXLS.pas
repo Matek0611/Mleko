@@ -26,7 +26,7 @@ type
 
 
 implementation
-uses DB;
+uses DB, Variants, MlekoUtils;
 
 { TCustomDataGridExportAsXLS }
 
@@ -135,7 +135,7 @@ begin
 end;
 
 procedure TCustomDataGridExportAsXLS.WriteDataCell(Column: TColumnEh; FColCellParamsEh: TColCellParamsEh);
-var i, c: Integer; f: Double; s: String;
+var s: String; i, c: Integer; f: Double;
 begin
   if Column.Field = nil then
     WriteBlankCell
@@ -157,6 +157,15 @@ begin
               WriteFloatCell(f);
          end;
     end;
+//    with Column.Field do
+//    begin
+//      s:= FColCellParamsEh.Text;
+//      case DetectDataTypeVar(s, V) of
+//      varInteger: WriteIntegerCell(FindVarData(V)^.vInteger);
+//      varDouble:  WriteFloatCell(FindVarData(V)^.vDouble);
+//      varString: WriteStringCell(s);
+//      end;
+//    end;
 //      case DataType of
 //        ftSmallint, ftInteger, ftWord, ftAutoInc, ftBytes:
 //          WriteIntegerCell(AsInteger);
@@ -196,4 +205,3 @@ begin
 end;
 
 end.
- 

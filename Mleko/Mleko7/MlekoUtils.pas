@@ -6,6 +6,10 @@ uses
   Windows, Classes, SysUtils, Data, CFLMLKCustom, CFLMLKSelect,
   DBAccess, MSAccess, GridsEh, DBGridEh, DBGridXLS;
 
+Type
+
+  TSimpleDataType = (sdtInteger, sdtFloat, sdtString);
+
 type
   TTimeTracer = class
   private
@@ -44,10 +48,16 @@ function SortMSQueryInEhGrid( var OldCol, OldDir: Integer;
           Col, OrderLine: Integer; Column: TColumnEh; Source: TStrings;
           MSQuery: TMSQuery; MainField: String; OrderFields: String = '';
           DoOpen: Boolean = True): String;
-procedure SaveDBGridToXLSFile(DBGridEh: TCustomDBGridEh; const FileName: String; IsSaveAll: Boolean);          
+procedure SaveDBGridToXLSFile(DBGridEh: TCustomDBGridEh; const FileName: String; IsSaveAll: Boolean);
+function DetectDataType(s: string): TVarType;
+function DetectDataTypeVar(s: string; V: Variant): TVarType;
 
 implementation
 uses StrUtils;
+
+var
+  Missing: array[0..1] of Integer = (Integer($FFFFFFFF), Integer($FFFFFFFF));
+  FNan: Double absolute Missing;
 
 constructor TTimeTracer.Create;
 begin
@@ -250,6 +260,55 @@ begin
   finally
     DBGridExport.Free;
   end;
+end;
+
+function IsNan(const Value: Double): Boolean;
+begin
+Result:= CompareMem(@FNan, @Value, SizeOf(Value));
+end;
+
+function GetNan(): Double;
+begin
+Result:= FNan;
+end;
+
+function DetectDataType(s: string): TVarType;
+var i, c: Integer; f: Double;
+begin
+  Val(s, i, c);
+  if (c=0) then
+     Result:= varInteger else
+     begin
+       f:= StrToFloatDef(s, GetNan());
+       if IsNan(f) then
+          Result:= varString else
+          Result:= varDouble
+     end;
+end;
+
+function DetectDataTypeVar(s: string; V: Variant): TVarType;
+var i, c: Integer; f: Double;
+begin
+  Val(s, i, c);
+  if (c=0) then
+  begin
+    Result:= varInteger;
+    V:= i;
+  end
+     else
+     begin
+       f:= StrToFloatDef(s, GetNan());
+       if IsNan(f) then
+       begin
+         Result:= varString;
+         V:= s;
+       end
+          else
+          begin
+            Result:= varDouble;
+            V:= f;
+          end;
+     end;
 end;
 
 

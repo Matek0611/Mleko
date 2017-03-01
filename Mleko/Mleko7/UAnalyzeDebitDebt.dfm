@@ -1,6 +1,6 @@
 inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
-  Left = 302
-  Top = 119
+  Left = 216
+  Top = 137
   Width = 1014
   Height = 604
   Caption = #1040#1085#1072#1083#1080#1079' '#1076#1077#1073#1080#1090#1086#1088#1089#1082#1086#1081' '#1079#1072#1076#1086#1083#1078#1077#1085#1085#1086#1089#1090#1080
@@ -136,6 +136,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
           Width = 150
         end
         item
+          DisplayFormat = '0.00'
           EditButtons = <>
           FieldName = 'Summa'
           Footer.DisplayFormat = '0.00'
@@ -153,6 +154,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
           Width = 80
         end
         item
+          DisplayFormat = '0.00'
           EditButtons = <>
           FieldName = 'SummaDolg'
           Footer.DisplayFormat = '0.00'
@@ -163,7 +165,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
           Footer.Font.Style = [fsBold]
           Footer.ValueType = fvtSum
           Footers = <>
-          Tag = -1
+          Tag = -2
           Title.Alignment = taCenter
           Title.Caption = #1057#1091#1084#1084#1072' '#1076#1086#1083#1075#1072
           Title.TitleButton = True
@@ -232,6 +234,58 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
           Title.Caption = #1058#1080#1087' '#1076#1086#1082'-'#1090#1072
           Title.TitleButton = True
           Width = 100
+        end
+        item
+          Alignment = taCenter
+          EditButtons = <>
+          FieldName = 'CurHd'
+          Footers = <>
+          Tag = 11
+          Title.Alignment = taCenter
+          Title.Caption = #1042#1072#1083'. '#1086#1087#1083'.'
+          Width = 50
+        end
+        item
+          Alignment = taCenter
+          EditButtons = <>
+          FieldName = 'CurAc'
+          Footers = <>
+          Tag = 12
+          Title.Alignment = taCenter
+          Title.Caption = #1042#1072#1083'. '#1091#1095'.'
+          Width = 50
+        end
+        item
+          DisplayFormat = '0.00'
+          EditButtons = <>
+          FieldName = 'SumAc'
+          Footer.DisplayFormat = '0.00'
+          Footer.Font.Charset = DEFAULT_CHARSET
+          Footer.Font.Color = clWindowText
+          Footer.Font.Height = -11
+          Footer.Font.Name = 'MS Sans Serif'
+          Footer.Font.Style = [fsBold]
+          Footer.ValueType = fvtSum
+          Footers = <>
+          Tag = -3
+          Title.Caption = #1057#1091#1084#1084#1072' '#1074' '#1042#1059
+          Width = 80
+        end
+        item
+          DisplayFormat = '0.00'
+          EditButtons = <>
+          FieldName = 'SumDAc'
+          Footer.DisplayFormat = '0.00'
+          Footer.Font.Charset = DEFAULT_CHARSET
+          Footer.Font.Color = clWindowText
+          Footer.Font.Height = -11
+          Footer.Font.Name = 'MS Sans Serif'
+          Footer.Font.Style = [fsBold]
+          Footer.ValueType = fvtSum
+          Footers = <>
+          Tag = -4
+          Title.Caption = #1057#1091#1084#1084#1072' '#1076#1086#1083#1075#1072' '#1074' '#1042#1059
+          Width = 80
         end>
     end
     object pnlControls: TPanel
@@ -280,7 +334,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
           #1058#1080#1087#1099' '#1076#1086#1082#1091#1084#1077#1085#1090#1072'='
           #1044#1072#1090#1099' '#1085#1072#1082#1083#1072#1076#1085#1086#1081'='
           #1044#1072#1090#1099' '#1086#1087#1083#1072#1090#1099'='
-          #1044#1083#1080#1090'. '#1087#1088#1086#1089#1088#1086#1095#1082#1080'=')
+          #1044#1083#1080#1090'. '#1087#1088#1086#1089#1088#1086#1095#1082#1080'='
+          #1042#1072#1083#1102#1090#1099' '#1086#1087#1083#1072#1090#1099'='
+          #1042#1072#1083#1102#1090#1099' '#1091#1095#1077#1090#1072'=')
         TabOrder = 0
         TitleCaptions.Strings = (
           #1055#1072#1088#1072#1084#1077#1090#1088
@@ -291,6 +347,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
           123
           393)
         RowHeights = (
+          18
+          18
           18
           18
           18
@@ -332,7 +390,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
             #1058#1080#1087#1091' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
             #1044#1072#1090#1077' '#1085#1072#1082#1083#1072#1076#1085#1086#1081
             #1044#1072#1090#1077' '#1086#1087#1083#1072#1090#1099
-            #1044#1083#1080#1090'. '#1087#1088#1086#1089#1088#1086#1095#1082#1080)
+            #1044#1083#1080#1090'. '#1087#1088#1086#1089#1088#1086#1095#1082#1080
+            #1042#1072#1083#1102#1090#1077' '#1086#1087#1083#1072#1090#1099
+            #1042#1072#1083#1102#1090#1077' '#1091#1095#1077#1090#1072)
           PopupMenu = pmExpansion
           TabOrder = 0
           OnDblClick = clbExpansionsDblClick
@@ -381,7 +441,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
     Panels = <
       item
         Text = #1047#1072#1087#1080#1089#1077#1081':'
-        Width = 160
+        Width = 180
       end
       item
         Text = #1042#1089#1077#1075#1086':'
@@ -446,7 +506,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', @DisableExclusion bit'
       ''
       'SET @p_date_beg = '#39'01.01.1900'#39
-      'SET @p_date_end = '#39'22.02.2017'#39
+      'SET @p_date_end = DATEADD(D, 1, GETDATE())'
       'SET @DateStart = '#39'01.01.2000'#39
       'SET @VeryOldDay = -10000'
       'SET @DisableExclusion = 0'
@@ -466,13 +526,17 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', e_DayNakl int NULL'
       ', e_DayOpl int NULL'
       ', e_DayExp int NULL'
+      ', e_CurHd_ID int NULL '
+      ', e_CurAc_ID int NULL '
       ');  '
       'END TRY  '
       'BEGIN CATCH'
       'TRUNCATE TABLE #Expansions'
       'END CATCH; '
       ' '
-      'INSERT INTO #Expansions Values(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)'
+      
+        'INSERT INTO #Expansions Values(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ' +
+        '1, 1)'
       ''
       'BEGIN TRY  '
       'CREATE TABLE #Selections'
@@ -489,6 +553,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', s_DayNakl int NULL'
       ', s_DayOpl int NULL'
       ', s_DayExp int NULL'
+      ', s_CurHd_ID int NULL '
+      ', s_CurAc_ID int NULL '
       ');  '
       'END TRY  '
       'BEGIN CATCH'
@@ -497,7 +563,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ' '
       
         'INSERT INTO #Selections Values(-1, -1, -1, -1, -1, -1, -1, -1, -' +
-        '1, -1, @VeryOldDay)'
+        '1, -1, @VeryOldDay, -1, -1)'
       ''
       'BEGIN TRY  '
       'CREATE TABLE #AllTypes'
@@ -514,6 +580,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', a_DayNakl varchar(20)'
       ', a_DayOpl varchar(20)'
       ', a_DayExp varchar(20)'
+      ', a_CurHd_ID varchar(20)'
+      ', a_CurAc_ID varchar(20)'
       ');  '
       'END TRY  '
       'BEGIN CATCH'
@@ -523,8 +591,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         'INSERT INTO #AllTypes Values('#39'a_OtdelNo'#39', '#39'a_VidNo'#39', '#39'a_SotrudNo' +
         #39', '#39'a_Buh'#39', '#39'a_PostNo'#39', '#39'a_NaklNo'#39', '#39'a_AddressID'#39', '#39'a_DOC_TYPE_I' +
-        'D'#39', '#39'a_DayNakl'#39', '#39'a_DayOpl'#39', '#39'a_DayExp'#39')'
-      ''
+        'D'#39', '#39'a_DayNakl'#39', '#39'a_DayOpl'#39', '#39'a_DayExp'#39', '#39'a_CurHd_ID'#39', '#39'a_CurAc_' +
+        'ID'#39')'
       ''
       'SELECT'
       'T4.OtdelNo as _OtdelName'
@@ -590,6 +658,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       'END) AS DocTypeName'
       ', CONVERT(FLOAT, T4.Summa) AS Summa'
       ', CONVERT(FLOAT, T4.SummaDolg) AS SummaDolg'
+      ', CONVERT(FLOAT, T4.SumAc) AS SumAc'
+      ', CONVERT(FLOAT, T4.SumDAc) AS SumDAc'
       ', T4.DayNakl as _DateNakl'
       
         ', (CASE WHEN (T4.DayNakl = -1) THEN (select a_DayNakl from #AllT' +
@@ -609,6 +679,20 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         ', (CASE WHEN (T4.DayExp = @VeryOldDay) THEN (select a_DayExp fro' +
         'm #AllTypes) ELSE '
       'CAST(T4.DayExp as varchar(20)) END) AS DayExp'
+      ', T4.CurHd_ID as _CurHd'
+      
+        ', (CASE WHEN (T4.CurHd_ID = -1) THEN (select a_CurHd_ID from #Al' +
+        'lTypes) ELSE '
+      
+        '(select d.L_CODE from D_CURRENCY d where d.ID = T4.CurHd_ID) END' +
+        ') as CurHd  '
+      ', T4.CurAc_ID as _CurAc'
+      
+        ', (CASE WHEN (T4.CurAc_ID = -1) THEN (select a_CurAc_ID from #Al' +
+        'lTypes) ELSE '
+      
+        '(select d.L_CODE from D_CURRENCY d where d.ID = T4.CurAc_ID) END' +
+        ') as CurAc '
       ''
       'FROM ('
       'SELECT'
@@ -622,9 +706,13 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', T3.DOC_TYPE_ID AS DOC_TYPE_ID'
       ', CONVERT(FLOAT, SUM(T3.Summa)) AS Summa'
       ', CONVERT(FLOAT, SUM(T3.SummaDolg)) AS SummaDolg'
+      ', CONVERT(FLOAT, SUM(T3.SumAc)) AS SumAc'
+      ', CONVERT(FLOAT, SUM(T3.SumDAc)) AS SumDAc'
       ', T3.DayNakl AS DayNakl'
       ', T3.DayOpl AS DayOpl'
       ', T3.DayExp AS DayExp'
+      ', T3.CurHd_ID AS CurHd_ID'
+      ', T3.CurAc_ID AS CurAc_ID'
       ''
       'FROM ('
       'SELECT'
@@ -654,6 +742,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         ' T2.DOC_TYPE_ID ELSE -1 END) AS DOC_TYPE_ID'
       ', CONVERT(FLOAT, T2.Summa) AS Summa'
       ', CONVERT(FLOAT, T2.SummaDolg) AS SummaDolg'
+      ', CONVERT(FLOAT, T2.SumAc) AS SumAc'
+      ', CONVERT(FLOAT, T2.SumDAc) AS SumDAc'
       
         ', (CASE WHEN (1 IN (SELECT e_DayNakl FROM #Expansions)) THEN T2.' +
         'DayNakl ELSE -1 END) AS DayNakl'
@@ -663,10 +753,15 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         ', (CASE WHEN (1 IN (SELECT e_DayExp FROM #Expansions)) THEN T2.D' +
         'ayExp ELSE @VeryOldDay END) AS DayExp'
-      ''
+      
+        ', (CASE WHEN (1 IN (SELECT e_CurHd_ID FROM #Expansions)) THEN T2' +
+        '.CurHd_ID ELSE -1 END) AS CurHd_ID'
+      
+        ', (CASE WHEN (1 IN (SELECT e_CurAc_ID FROM #Expansions)) THEN T2' +
+        '.CurAc_ID ELSE -1 END) AS CurAc_ID'
       'FROM ('
       'SELECT * FROM ('
-      'select '
+      'SELECT '
       '  nr.OtdelNo'
       ', h3.VidNo '
       ', nr.SotrudNo'
@@ -680,6 +775,26 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', datediff(d, @DateStart, nr.DateNakl) as DayNakl'
       ', datediff(d, @DateStart, nr.DateOpl) as DayOpl'
       ', datediff(dd, nr.DateOpl, @p_date_end) as DayExp'
+      '--, nr.CurrencyHead as CurHd'
+      '--, nr.CurrencyAccounting as CurAc'
+      ', CONVERT(FLOAT, nr.SummaCurrencyAccounting) as SumAc'
+      ', CONVERT(FLOAT, nr.SummaDolgCurrencyAccounting) as SumDAc'
+      ''
+      
+        '--, (SELECT dc.ID from D_CURRENCY dc WHERE dc.L_CODE=nr.Currency' +
+        'Head) AS CurHd_ID'
+      ''
+      ', (CASE WHEN (nr.CurrencyHead IS NULL) THEN '
+      #9'(SELECT dc.ID from D_CURRENCY dc WHERE dc.IsDefault=1) ELSE '
+      
+        #9'(SELECT dc.ID from D_CURRENCY dc WHERE dc.L_CODE=nr.CurrencyHea' +
+        'd) END) AS CurHd_ID'
+      ''
+      ', (CASE WHEN (nr.CurrencyAccounting IS NULL) THEN '
+      #9'(SELECT dc.ID from D_CURRENCY dc WHERE dc.IsDefault=1) ELSE '
+      
+        #9'(SELECT dc.ID from D_CURRENCY dc WHERE dc.L_CODE=nr.CurrencyAcc' +
+        'ounting) END) AS CurAc_ID'
       ''
       'from'
       'Naklr nr with (nolock) inner join'
@@ -776,6 +891,14 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '  (EXISTS(SELECT 1 FROM #Selections WHERE s_DayExp=@VeryOldDay) ' +
         'OR (DayExp IN (SELECT s_DayExp FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_CurHd_ID=-1) OR (Cur' +
+        'Hd_ID IN (SELECT s_CurHd_ID FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_CurAc_ID=-1) OR (Cur' +
+        'Ac_ID IN (SELECT s_CurAc_ID FROM #Selections)))'
       ') AS T2'
       ') AS T3'
       'GROUP BY'
@@ -790,9 +913,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', T3.DayNakl'
       ', T3.DayOpl'
       ', T3.DayExp'
-      ') AS T4'
-      ''
-      'ORDER BY OtdelName, VidName, SotrudName, _NomNakl')
+      ', T3.CurHd_ID'
+      ', T3.CurAc_ID'
+      ') T4')
     ReadOnly = True
     Filtered = True
     OnFilterRecord = quDebtFilterRecord
@@ -910,6 +1033,24 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
     object quDebt_DocTypeName: TIntegerField
       FieldName = '_DocTypeName'
     end
+    object quDebtSumAc: TFloatField
+      FieldName = 'SumAc'
+    end
+    object quDebtSumDAc: TFloatField
+      FieldName = 'SumDAc'
+    end
+    object quDebt_CurHd: TIntegerField
+      FieldName = '_CurHd'
+    end
+    object quDebtCurHd: TStringField
+      FieldName = 'CurHd'
+    end
+    object quDebt_CurAc: TIntegerField
+      FieldName = '_CurAc'
+    end
+    object quDebtCurAc: TStringField
+      FieldName = 'CurAc'
+    end
   end
   object dlgSaveExportToExcel: TSaveDialog
     DefaultExt = '.xls'
@@ -919,7 +1060,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
     Top = 464
   end
   object sthSource: TStrHolder
-    Capacity = 285
+    Capacity = 356
     Macros = <>
     Left = 456
     Top = 257
@@ -942,7 +1083,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c204044697361626c654578636c7573696f6e20626974'
       ''
       '5345542040705f646174655f626567203d202730312e30312e3139303027'
-      '5345542040705f646174655f656e64203d202732322e30322e3230313727'
+      
+        '5345542040705f646174655f656e64203d204441544541444428442c20312c20' +
+        '47455444415445282929'
       '5345542040446174655374617274203d202730312e30312e3230303027'
       '5345542040566572794f6c64446179203d202d3130303030'
       '534554204044697361626c654578636c7573696f6e203d2030'
@@ -962,6 +1105,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c20655f4461794e616b6c20696e74204e554c4c'
       '2c20655f4461794f706c20696e74204e554c4c'
       '2c20655f44617945787020696e74204e554c4c'
+      '2c20655f43757248645f494420696e74204e554c4c20'
+      '2c20655f43757241635f494420696e74204e554c4c20'
       '293b2020'
       '454e44205452592020'
       '424547494e204341544348'
@@ -970,7 +1115,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '20'
       
         '494e5345525420494e544f2023457870616e73696f6e732056616c7565732831' +
-        '2c20312c20312c20312c20312c20312c20312c20312c20312c20312c203129'
+        '2c20312c20312c20312c20312c20312c20312c20312c20312c20312c20312c20' +
+        '312c203129'
       ''
       '424547494e205452592020'
       '435245415445205441424c45202353656c656374696f6e73'
@@ -987,6 +1133,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c20735f4461794e616b6c20696e74204e554c4c'
       '2c20735f4461794f706c20696e74204e554c4c'
       '2c20735f44617945787020696e74204e554c4c'
+      '2c20735f43757248645f494420696e74204e554c4c20'
+      '2c20735f43757241635f494420696e74204e554c4c20'
       '293b2020'
       '454e44205452592020'
       '424547494e204341544348'
@@ -996,7 +1144,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '494e5345525420494e544f202353656c656374696f6e732056616c756573282d' +
         '312c202d312c202d312c202d312c202d312c202d312c202d312c202d312c202d' +
-        '312c202d312c2040566572794f6c6444617929'
+        '312c202d312c2040566572794f6c644461792c202d312c202d3129'
       ''
       '424547494e205452592020'
       '435245415445205441424c452023416c6c5479706573'
@@ -1013,6 +1161,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c20615f4461794e616b6c207661726368617228323029'
       '2c20615f4461794f706c207661726368617228323029'
       '2c20615f446179457870207661726368617228323029'
+      '2c20615f43757248645f4944207661726368617228323029'
+      '2c20615f43757241635f4944207661726368617228323029'
       '293b2020'
       '454e44205452592020'
       '424547494e204341544348'
@@ -1025,8 +1175,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '272c2027615f427568272c2027615f506f73744e6f272c2027615f4e616b6c4e' +
         '6f272c2027615f416464726573734944272c2027615f444f435f545950455f49' +
         '44272c2027615f4461794e616b6c272c2027615f4461794f706c272c2027615f' +
-        '4461794578702729'
-      ''
+        '446179457870272c2027615f43757248645f4944272c2027615f43757241635f' +
+        '49442729'
       ''
       '53454c454354'
       '54342e4f7464656c4e6f206173205f4f7464656c4e616d65'
@@ -1134,6 +1284,12 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '2c20434f4e5645525428464c4f41542c2054342e53756d6d61446f6c67292041' +
         '532053756d6d61446f6c67'
+      
+        '2c20434f4e5645525428464c4f41542c2054342e53756d416329204153205375' +
+        '6d4163'
+      
+        '2c20434f4e5645525428464c4f41542c2054342e53756d444163292041532053' +
+        '756d444163'
       '2c2054342e4461794e616b6c206173205f446174654e616b6c'
       
         '2c202843415345205748454e202854342e4461794e616b6c203d202d31292054' +
@@ -1166,6 +1322,24 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '434153542854342e446179457870206173207661726368617228323029292045' +
         '4e442920415320446179457870'
+      '2c2054342e43757248645f4944206173205f4375724864'
+      
+        '2c202843415345205748454e202854342e43757248645f4944203d202d312920' +
+        '5448454e202873656c65637420615f43757248645f49442066726f6d2023416c' +
+        '6c54797065732920454c534520'
+      
+        '2873656c65637420642e4c5f434f44452066726f6d20445f43555252454e4359' +
+        '206420776865726520642e4944203d2054342e43757248645f49442920454e44' +
+        '292061732043757248642020'
+      '2c2054342e43757241635f4944206173205f4375724163'
+      
+        '2c202843415345205748454e202854342e43757241635f4944203d202d312920' +
+        '5448454e202873656c65637420615f43757241635f49442066726f6d2023416c' +
+        '6c54797065732920454c534520'
+      
+        '2873656c65637420642e4c5f434f44452066726f6d20445f43555252454e4359' +
+        '206420776865726520642e4944203d2054342e43757241635f49442920454e44' +
+        '2920617320437572416320'
       ''
       '46524f4d2028'
       '53454c454354'
@@ -1183,9 +1357,17 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '2c20434f4e5645525428464c4f41542c2053554d2854332e53756d6d61446f6c' +
         '6729292041532053756d6d61446f6c67'
+      
+        '2c20434f4e5645525428464c4f41542c2053554d2854332e53756d4163292920' +
+        '41532053756d4163'
+      
+        '2c20434f4e5645525428464c4f41542c2053554d2854332e53756d4441632929' +
+        '2041532053756d444163'
       '2c2054332e4461794e616b6c204153204461794e616b6c'
       '2c2054332e4461794f706c204153204461794f706c'
       '2c2054332e44617945787020415320446179457870'
+      '2c2054332e43757248645f49442041532043757248645f4944'
+      '2c2054332e43757241635f49442041532043757241635f4944'
       ''
       '46524f4d2028'
       '53454c454354'
@@ -1231,6 +1413,12 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '2c20434f4e5645525428464c4f41542c2054322e53756d6d61446f6c67292041' +
         '532053756d6d61446f6c67'
       
+        '2c20434f4e5645525428464c4f41542c2054322e53756d416329204153205375' +
+        '6d4163'
+      
+        '2c20434f4e5645525428464c4f41542c2054322e53756d444163292041532053' +
+        '756d444163'
+      
         '2c202843415345205748454e20283120494e202853454c45435420655f446179' +
         '4e616b6c2046524f4d2023457870616e73696f6e732929205448454e2054322e' +
         '4461794e616b6c20454c5345202d3120454e4429204153204461794e616b6c'
@@ -1243,10 +1431,19 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '4578702046524f4d2023457870616e73696f6e732929205448454e2054322e44' +
         '617945787020454c53452040566572794f6c6444617920454e44292041532044' +
         '6179457870'
-      ''
+      
+        '2c202843415345205748454e20283120494e202853454c45435420655f437572' +
+        '48645f49442046524f4d2023457870616e73696f6e732929205448454e205432' +
+        '2e43757248645f494420454c5345202d3120454e44292041532043757248645f' +
+        '4944'
+      
+        '2c202843415345205748454e20283120494e202853454c45435420655f437572' +
+        '41635f49442046524f4d2023457870616e73696f6e732929205448454e205432' +
+        '2e43757241635f494420454c5345202d3120454e44292041532043757241635f' +
+        '4944'
       '46524f4d2028'
       '53454c454354202a2046524f4d2028'
-      '73656c65637420'
+      '53454c45435420'
       '20206e722e4f7464656c4e6f'
       '2c2068332e5669644e6f20'
       '2c206e722e536f747275644e6f'
@@ -1270,6 +1467,43 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '2c2064617465646966662864642c206e722e446174654f706c2c2040705f6461' +
         '74655f656e642920617320446179457870'
+      '2d2d2c206e722e43757272656e637948656164206173204375724864'
+      
+        '2d2d2c206e722e43757272656e63794163636f756e74696e6720617320437572' +
+        '4163'
+      
+        '2c20434f4e5645525428464c4f41542c206e722e53756d6d6143757272656e63' +
+        '794163636f756e74696e67292061732053756d4163'
+      
+        '2c20434f4e5645525428464c4f41542c206e722e53756d6d61446f6c67437572' +
+        '72656e63794163636f756e74696e67292061732053756d444163'
+      ''
+      
+        '2d2d2c202853454c4543542064632e49442066726f6d20445f43555252454e43' +
+        '592064632057484552452064632e4c5f434f44453d6e722e43757272656e6379' +
+        '48656164292041532043757248645f4944'
+      ''
+      
+        '2c202843415345205748454e20286e722e43757272656e637948656164204953' +
+        '204e554c4c29205448454e20'
+      
+        '092853454c4543542064632e49442066726f6d20445f43555252454e43592064' +
+        '632057484552452064632e497344656661756c743d312920454c534520'
+      
+        '092853454c4543542064632e49442066726f6d20445f43555252454e43592064' +
+        '632057484552452064632e4c5f434f44453d6e722e43757272656e6379486561' +
+        '642920454e44292041532043757248645f4944'
+      ''
+      
+        '2c202843415345205748454e20286e722e43757272656e63794163636f756e74' +
+        '696e67204953204e554c4c29205448454e20'
+      
+        '092853454c4543542064632e49442066726f6d20445f43555252454e43592064' +
+        '632057484552452064632e497344656661756c743d312920454c534520'
+      
+        '092853454c4543542064632e49442066726f6d20445f43555252454e43592064' +
+        '632057484552452064632e4c5f434f44453d6e722e43757272656e6379416363' +
+        '6f756e74696e672920454e44292041532043757241635f4944'
       ''
       '66726f6d'
       
@@ -1417,6 +1651,18 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '6f6e7320574845524520735f4461794578703d40566572794f6c644461792920' +
         '4f52202844617945787020494e202853454c45435420735f4461794578702046' +
         '524f4d202353656c656374696f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f43757248645f49443d2d3129204f522028437572' +
+        '48645f494420494e202853454c45435420735f43757248645f49442046524f4d' +
+        '202353656c656374696f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f43757241635f49443d2d3129204f522028437572' +
+        '41635f494420494e202853454c45435420735f43757241635f49442046524f4d' +
+        '202353656c656374696f6e73292929'
       '29204153205432'
       '29204153205433'
       '47524f5550204259'
@@ -1431,11 +1677,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c2054332e4461794e616b6c'
       '2c2054332e4461794f706c'
       '2c2054332e446179457870'
-      '29204153205434'
-      ''
-      
-        '4f52444552204259204f7464656c4e616d652c205669644e616d652c20536f74' +
-        '7275644e616d652c205f4e6f6d4e616b6c')
+      '2c2054332e43757248645f4944'
+      '2c2054332e43757241635f4944'
+      '29205434')
   end
   object quSession: TMSQuery
     Connection = dmDataModule.DB

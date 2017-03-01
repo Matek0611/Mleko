@@ -95,6 +95,12 @@ type
     quDebt_PostAddress: TIntegerField;
     quDebt_DocTypeName: TIntegerField;
     quFilter: TMSQuery;
+    quDebtSumAc: TFloatField;
+    quDebtSumDAc: TFloatField;
+    quDebt_CurHd: TIntegerField;
+    quDebtCurHd: TStringField;
+    quDebt_CurAc: TIntegerField;
+    quDebtCurAc: TStringField;
     procedure dbgDebtsTitleBtnClick(Sender: TObject; ACol: Integer; Column: TColumnEh);
     procedure dbgDebtsKeyPress(Sender: TObject; var Key: Char);
     procedure dbgDebtsKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -157,6 +163,7 @@ type
     DisableExclusion: Boolean;
     SysMenu: THandle;
     DisableExclusionItem: THandle;
+    VisibleRowCount: Cardinal;
     {$ENDIF}
     procedure ShowStatusMsg(Index: Integer; Msg: string);
     procedure ShowRecordCount(SetMaxCount: Boolean = False);
@@ -248,7 +255,7 @@ type
 const
 
   AllowedFilterIndexes = [0, 2, 4, 10];
-  AllowedIntIndexes = [10];
+  AllowedIntIndexes = [8, 9, 10];
 
   idCurRecordCount = 0;
   idMaxRecordCount = 1;
@@ -294,9 +301,10 @@ const
   idInsertExpansions = 'INSERT INTO #Expansions Values';
   idInsertSelections = 'INSERT INTO #Selections Values';
   idInsertAllTypes = 'INSERT INTO #AllTypes Values';
-  idInsertAllTypesValues = '(''Все отделы'', ''Все виды'', ''Все сотрудники'', '+
-   '''Все бух. типы'', ''Все контрагенты'', ''Все ном. накл.'',' +
-   '''Все адреса'', ''Все док-ты'', ''Все даты накл.'', ''Все даты опл.'', ''Все пр.'')';
+  idInsertAllTypesValues = '(' + '''Все отделы'', ''Все виды'', ''Все сотрудники'', '+
+   '''Все бух. типы'', ''Все контрагенты'', ''Все ном. накл.'', ' +
+   '''Все адреса'', ''Все док-ты'', ''Все даты накл.'', ''Все даты опл.'', ''Все пр.'', '+
+   '''Все вал. опл.'', ''Все вал. уч.'''+')';
 
   NaklNo_Template = 'SELECT %s, %s FROM %s WHERE %s IN (%s) and (NomReturn is NULL)';
   SQL_Template = 'SELECT %s, %s FROM %s WHERE %s IN (%s)';
@@ -620,17 +628,19 @@ begin
 end;
 
 procedure TfrmAnalyzeDebitDebt.ShowRecordCount(SetMaxCount: Boolean = False);
-var RowCount: Integer;
+//var RowCount: Integer;
 begin
   if (MaxRecordCount = 0) or (quDebt.Active and (quDebt.RecordCount>MaxRecordCount)) or
      SetMaxCount then
      MaxRecordCount := quDebt.RecordCount;
   if (MaxRecordCount > 0) then
   begin
-    if not FirstShown then RowCount:= quDebt.RecordCount else
-                           RowCount:= dbgDebts.RowCount-1;
+//    if not FirstShown then RowCount:= quDebt.RecordCount else
+
+//                           RowCount:= dbgDebts.RowCount-1;
     FirstShown:= True;
-    ShowStatusMsg(idCurRecordCount, Format('Записей: %d (Показ: %d)', [quDebt.RecordCount, RowCount]));
+    ShowStatusMsg(idCurRecordCount, Format('Записей: %d', [quDebt.RecordCount]));
+    //ShowStatusMsg(idCurRecordCount, Format('Записей: %d (Показ: %d)', [quDebt.RecordCount, VisibleRowCount]));
     ShowStatusMsg(idMaxRecordCount, Format('Всего: %d', [MaxRecordCount]));
     ShowStatusMsg(idPercent, Format('%6.2f%%', [quDebt.RecordCount * 100 /
       MaxRecordCount]));
@@ -826,6 +836,7 @@ procedure TfrmAnalyzeDebitDebt.RefreshResults(SetMaxCount: Boolean = False);
 begin
   inherited;
   Tracer.Start;
+  VisibleRowCount:= 0;
   if quDebt.Active then
      begin
         quDebt.Refresh;
@@ -986,7 +997,7 @@ begin
       v:= KeyField.AsInteger;
       if (not SortedKeys.Find(v, i)) then
       begin
-        Items.Add(MainField.AsString);
+        Items.AddObject(MainField.AsString, Pointer(1));
         Keys.Add(SKey);
         SortedKeys.Insert(i, v);
       end;
@@ -1104,9 +1115,9 @@ begin
     Rect:= dbgDebts.CellRect(ACol, 1);
     //P:= Point(Rect.Right, Rect.Bottom);
     P:= dbgDebts.ClientToScreen(Point(Rect.Right, Rect.Bottom+10));
-    Sel_Count:= SortedKeys.Count-1;
+    Sel_Count:= SortedKeys.Count;
     SelCount:= ColumnFilterDlg( nil, P.X, P.Y, FieldVals, Column.Title.Caption,
-                                not NewValues, Self.FilteringEvent);
+                                True, Self.FilteringEvent);
     if (SelCount>0) and (SelCount<=FieldKeys.Count) then
     begin
       if (SelCount=FieldKeys.Count) //and (not NewValues)
@@ -1768,6 +1779,8 @@ procedure TfrmAnalyzeDebitDebt.quDebtFilterRecord(DataSet: TDataSet;
 begin
   inherited;
   Accept:= (not EnableFiltering) or ((KeyField=nil) or (SortedKeys.IndexOf(KeyField.AsInteger)>=0));
+  Inc(VisibleRowCount);
+  //Inc(VisibleRowCount, Ord(Accept));
   //Accept:= quDebt_SotrudName.AsInteger = 45;
 end;
 
