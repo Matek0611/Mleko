@@ -168,11 +168,15 @@ type
     Button1: TButton;
     Button2: TButton;
     quNaklPCurrencyHead: TStringField;
-    Label13: TLabel;
-    DBTCurrencyHead: TDBText;
     Label14: TLabel;
     DBText1: TDBText;
     DBLookupComboboxEh1: TDBLookupComboboxEh;
+    dbedtCurrencyAccounting: TDBEditEh;
+    Label13: TLabel;
+    quNaklPCurrencyAccounting: TStringField;
+    dbnedtRateCurrencyAccounting: TDBNumberEditEh;
+    Label15: TLabel;
+    quNaklPRateCurrencyAccounting: TFloatField;
     procedure ScrollBoxExit(Sender: TObject);
     procedure bbOKClick(Sender: TObject);
     procedure DBGrid1KeyUp(Sender: TObject; var Key: Word;
@@ -226,7 +230,8 @@ uses data, PrintNaklP, TovarPrih, Post0, MlekoDbDsMSSQL, main,
 procedure PrihodTovar(OtdelNo: integer; var Pkey: Int64);
 var
   msg,msg1: string;
-
+  CurrencyAccounting: string;
+  RateCurrencyAccounting: real;
 begin
   fmPrihodTov := TfmPrihodTov.Create(Application);
   fmPrihodTov.dhead_id := pkey;
@@ -264,6 +269,8 @@ begin
     begin
       QuSetArtGroup.Open;
 
+      dmDataModule.quCurrency.Open;
+
       quDocType.Open;
       quOtdel.Open;
       quBuh.Open;
@@ -280,8 +287,18 @@ begin
         quNaklP.FieldByName('edit_status_id').Value := 3;
         quNaklP.FieldByName('otdelNo').Value := OtdelNo;
 
-        dmDataModule.OpenSQL('select c.l_code, c.Name from D_CURRENCY c inner join CurrencyExchange ce on c.IsDefault = 1 and ce.IsActive = 1 and ce.CurrencyId = c.ID and isnull(c.isTrash,0) = 0');
-        quNaklPCurrencyHead.Value := dmDataModule.QFO.FieldByName('l_code').Value;
+        CurrencyAccounting := '';
+        dmDataModule.OpenSQL('select l_code from d_currency where isDefault = 1');
+        CurrencyAccounting := dmDataModule.QFO.FieldByName('l_code').Value;
+
+        RateCurrencyAccounting:= 0;
+        dmDataModule.OpenSQL('select ce.Rate from D_CURRENCY c inner join CurrencyExchange ce on c.IsDefault = 1 and ce.IsActive = 1 and ce.CurrencyId = c.ID and isnull(c.isTrash,0) = 0');
+        RateCurrencyAccounting := dmDataModule.QFO.FieldByName('Rate').Value;
+
+//        ShowMessage(dmDataModule.QFO.FieldByName('Rate').AsString);
+        quNaklP.FieldByName('CurrencyAccounting').AsString := CurrencyAccounting;
+        quNaklP.FieldByName('RateCurrencyAccounting').Value := RateCurrencyAccounting;
+        
 {
         quNaklPDelay.Open;
         dsNaklPDelay.Edit;
@@ -302,13 +319,6 @@ begin
         quNaklP.Close;
         quNaklP.ParamByName('dhead_id').Value := pkey;
         quNaklP.Open;
-
-        if quNaklPCurrencyHead.IsNull then begin
-                                             if not (quNaklP.State in [dsInsert,dsEdit]) then quNaklP.Edit;
-                                             dmDataModule.OpenSQL('select c.l_code, c.Name from D_CURRENCY c inner join CurrencyExchange ce on c.IsDefault = 1 and ce.IsActive = 1 and ce.CurrencyId = c.ID and c.isTrash = 0');
-                                             quNaklPCurrencyHead.Value := dmDataModule.QFO.FieldByName('l_code').Value;
-                                           end;
-
 
         QuSetArtGroup.Close;
 {
@@ -370,6 +380,29 @@ begin
                                                   raise Exception.Create(msg);
                                                 end;
         quNaklP.Edit;
+
+        CurrencyAccounting := '';
+        dmDataModule.OpenSQL('select l_code from d_currency where isDefault = 1');
+        CurrencyAccounting := dmDataModule.QFO.FieldByName('l_code').Value;
+
+        if quNaklPCurrencyAccounting.IsNull then quNaklPCurrencyAccounting.AsString := CurrencyAccounting;
+
+//        showmessage(quNaklRCurrencyAccounting.AsString);
+
+        dbedtCurrencyAccounting.Text := CurrencyAccounting; //quNaklRCurrencyAccounting.AsString;
+
+        RateCurrencyAccounting:= 0;
+        dmDataModule.OpenSQL('select ce.Rate from D_CURRENCY c inner join CurrencyExchange ce on c.IsDefault = 1 and ce.IsActive = 1 and ce.CurrencyId = c.ID and isnull(c.isTrash,0) = 0');
+        RateCurrencyAccounting := dmDataModule.QFO.FieldByName('Rate').Value;
+
+        if quNaklPRateCurrencyAccounting.IsNull then quNaklPRateCurrencyAccounting.Value := RateCurrencyAccounting;
+
+        if quNaklPCurrencyHead.IsNull then begin
+                                             if not (quNaklP.State in [dsInsert,dsEdit]) then quNaklP.Edit;
+                                             dmDataModule.OpenSQL('select c.l_code, c.Name from D_CURRENCY c inner join CurrencyExchange ce on c.IsDefault = 1 and ce.IsActive = 1 and ce.CurrencyId = c.ID and c.isTrash = 0');
+                                             quNaklPCurrencyHead.Value := dmDataModule.QFO.FieldByName('l_code').Value;
+                                           end;
+                                           
       end;
       OtdelNoWork := OtdelNo;
       if OtdelNo = 3 then
@@ -403,6 +436,7 @@ begin
 
     fmPrihodTov.QuSetArtGroup.Close;
     fmPrihodTov.quNaklPDelay.Close;
+    dmDataModule.quCurrency.Open;
     fmPrihodTov.Free;
   end;
 end;
@@ -519,7 +553,7 @@ var
   Delta                        : Boolean;
   l_str                        : string;
   is_Post                      : Boolean;
-
+  OldSeparator                 : Char;
 begin
   is_insert := true;
   TMlekoDbDsMSSQLDm(CustomDm).quDSPEC.Append;
@@ -557,18 +591,29 @@ begin
                       ' по ' + floattostr(quPriceInInst.FieldByName('PriceInInst').AsFloat + DeltaPriceInInst) + #10#13 +
                       'Продолжить (Да) отменить (Нет)?';
              if Application.MessageBox(PChar(l_str), 'Внимание!', MB_YESNO) = IDYES then begin
+
+                                                                                           OldSeparator := SysUtils.DecimalSeparator;
+                                                                                           SysUtils.DecimalSeparator := '.';
+
                                                                                            quInsInD_Control_PriceInInst:=TMSQuery.Create(nil);
                                                                                            quInsInD_Control_PriceInInst.Connection:=dmDataModule.DB;
                                                                                            quInsInD_Control_PriceInInst.SQL.Clear;
-                                                                                           quInsInD_Control_PriceInInst.SQL.Text:= 'insert into D_Control_PriceInInst (UserNo,TovarNo,PriceInInst,Price_ECO,Date,PostNo,HostName,Dhead_id)'
-                                                                                                                                  +'values (:UserNo,:TovarNo,:PriceInInst,:Price_ECO,GetDate(),:PostNo,HOST_NAME(),:Dhead_id)';
+                                                                                           quInsInD_Control_PriceInInst.SQL.Text:= 'declare '
+                                                                                                                                  +'    @PriceInInst decimal(18,2) '
+                                                                                                                                  +'   ,@Price_ECO decimal(18,2) '
+                                                                                                                                  +'set @PriceInInst = convert(float,:PriceInInst) '
+                                                                                                                                  +'set @Price_ECO = convert(float,:Price_ECO) '
+                                                                                                                                  +'insert into D_Control_PriceInInst (UserNo,TovarNo,PriceInInst,Price_ECO,Date,PostNo,HostName,Dhead_id)'
+                                                                                                                                  +'values (:UserNo,:TovarNo,@PriceInInst,@Price_ECO,GetDate(),:PostNo,HOST_NAME(),:Dhead_id)';
                                                                                            quInsInD_Control_PriceInInst.ParamByName('UserNo').Value := Data.UserNo;
                                                                                            quInsInD_Control_PriceInInst.ParamByName('TovarNo').Value := Prih.TovarNo;
                                                                                            quInsInD_Control_PriceInInst.ParamByName('PriceInInst').Value := quPriceInInst.FieldByName('PriceInInst').AsFloat;
+                                                                                           //ShowMessage(quPriceInInst.FieldByName('PriceInInst').AsString);
                                                                                            quInsInD_Control_PriceInInst.ParamByName('Price_ECO').Value := c;
                                                                                            quInsInD_Control_PriceInInst.ParamByName('PostNo').Value := PostNo;
                                                                                            quInsInD_Control_PriceInInst.ParamByName('Dhead_id').Value := dhead_id;
                                                                                            quInsInD_Control_PriceInInst.Execute;
+                                                                                           SysUtils.DecimalSeparator := OldSeparator;
                                                                                            is_Post := True;
                                                                                          end
                                                                                     else begin

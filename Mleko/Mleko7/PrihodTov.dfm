@@ -1,7 +1,7 @@
 inherited fmPrihodTov: TfmPrihodTov
-  Left = 597
-  Top = 185
-  Width = 1114
+  Left = 511
+  Top = 208
+  Width = 1095
   Height = 577
   Caption = #1055#1088#1080#1093#1086#1076' '#1090#1086#1074#1072#1088#1072
   ParentFont = True
@@ -11,7 +11,7 @@ inherited fmPrihodTov: TfmPrihodTov
   object paTop: TPanel [0]
     Left = 0
     Top = 0
-    Width = 1098
+    Width = 1079
     Height = 99
     Align = alTop
     BevelInner = bvLowered
@@ -20,7 +20,7 @@ inherited fmPrihodTov: TfmPrihodTov
     object ScrollBox: TScrollBox
       Left = 2
       Top = 2
-      Width = 1094
+      Width = 1075
       Height = 95
       HorzScrollBar.Margin = 6
       HorzScrollBar.Range = 341
@@ -132,21 +132,6 @@ inherited fmPrihodTov: TfmPrihodTov
         FocusControl = cxDBDateEdit1
         Visible = False
       end
-      object Label13: TLabel
-        Left = 693
-        Top = 16
-        Width = 68
-        Height = 13
-        Caption = #1042#1072#1083#1102#1090#1072' '#1091#1095#1077#1090#1072
-      end
-      object DBTCurrencyHead: TDBText
-        Left = 777
-        Top = 16
-        Width = 65
-        Height = 17
-        DataField = 'CurrencyHead'
-        DataSource = dsNaklP
-      end
       object Label14: TLabel
         Left = 284
         Top = 66
@@ -167,6 +152,26 @@ inherited fmPrihodTov: TfmPrihodTov
         Height = 13
         AutoSize = True
         DataField = 'CurrencyHead'
+      end
+      object Label13: TLabel
+        Left = 285
+        Top = 45
+        Width = 148
+        Height = 13
+        Caption = #1042#1072#1083#1102#1090#1072' '#1091#1095#1077#1090#1072' '#1085#1072#1082#1083#1072#1076#1085#1086#1081
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label15: TLabel
+        Left = 701
+        Top = 1
+        Width = 96
+        Height = 13
+        Caption = #1050#1091#1088#1089' '#1074#1072#1083#1102#1090#1099' '#1091#1095#1077#1090#1072
       end
       object EditDate: TcxDBDateEdit
         Left = 191
@@ -372,14 +377,16 @@ inherited fmPrihodTov: TfmPrihodTov
         DataBinding.DataField = 'DateOfManufacture'
         DataBinding.DataSource = dsNaklP
         TabOrder = 14
+        Visible = False
         Width = 92
       end
       object DBLookupComboboxEh1: TDBLookupComboboxEh
         Left = 438
         Top = 66
         Width = 121
-        Height = 22
+        Height = 21
         DataField = 'CurrencyHead'
+        DataSource = dsNaklP
         EditButtons = <>
         KeyField = 'L_CODE'
         ListField = 'NAME'
@@ -387,12 +394,38 @@ inherited fmPrihodTov: TfmPrihodTov
         TabOrder = 15
         Visible = True
       end
+      object dbedtCurrencyAccounting: TDBEditEh
+        Left = 438
+        Top = 42
+        Width = 70
+        Height = 21
+        DataField = 'CurrencyAccounting'
+        DataSource = dsNaklP
+        EditButtons = <>
+        Enabled = False
+        ReadOnly = True
+        TabOrder = 16
+        Visible = True
+      end
+      object dbnedtRateCurrencyAccounting: TDBNumberEditEh
+        Left = 701
+        Top = 16
+        Width = 103
+        Height = 21
+        currency = True
+        DataField = 'RateCurrencyAccounting'
+        DataSource = dsNaklP
+        EditButtons = <>
+        MaxValue = 1000.000000000000000000
+        TabOrder = 17
+        Visible = True
+      end
     end
   end
   object paMiddle: TPanel [1]
     Left = 0
     Top = 99
-    Width = 1098
+    Width = 1079
     Height = 410
     Align = alClient
     BevelInner = bvLowered
@@ -402,7 +435,7 @@ inherited fmPrihodTov: TfmPrihodTov
     object DBGrid1: TDBGrid
       Left = 4
       Top = 4
-      Width = 1090
+      Width = 1071
       Height = 402
       Align = alClient
       DataSource = dsPrihod
@@ -471,13 +504,24 @@ inherited fmPrihodTov: TfmPrihodTov
           Title.Caption = #1044#1072#1090#1072' '#1087#1088#1086#1080#1079#1074#1086#1076#1089#1090#1074#1072
           Width = 109
           Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Currency'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PaymentPrice'
+          Width = 112
+          Visible = True
         end>
     end
   end
   object paBottom: TPanel [2]
     Left = 0
     Top = 509
-    Width = 1098
+    Width = 1079
     Height = 29
     Align = alBottom
     TabOrder = 2
@@ -678,7 +722,9 @@ inherited fmPrihodTov: TfmPrihodTov
       
         '   OtdelNo, DatePrih, doc_type, parent_NaklNo, OurFirmNo,pkey,Ed' +
         'it_status_id,'
-      '   d_bank_invoice_id, CurrencyHead)'
+      
+        '   d_bank_invoice_id, CurrencyHead, CurrencyAccounting, RateCurr' +
+        'encyAccounting)'
       'values'
       
         '  (:NaklNo, :Nom, :PostNo, :DateNakl, :Summa, :SummaDolg, :Buh, ' +
@@ -686,7 +732,9 @@ inherited fmPrihodTov: TfmPrihodTov
       
         '   :VidNaklNo, :OtdelNo, :DatePrih, :doc_type, :parent_NaklNo, :' +
         'OurFirmNo, '
-      '   :pkey, :Edit_status_id, @d_bank_invoice_id, :CurrencyHead)')
+      
+        '   :pkey, :Edit_status_id, @d_bank_invoice_id, :CurrencyHead, :C' +
+        'urrencyAccounting, :RateCurrencyAccounting)')
     SQLDelete.Strings = (
       'delete from NaklP'
       'where'
@@ -694,9 +742,12 @@ inherited fmPrihodTov: TfmPrihodTov
     SQLUpdate.Strings = (
       'BEGIN'
       ''
-      '  DECLARE  @Old_Edit_status_id BIGINT'
-      '           ,@Edit_status_id    BIGINT'
-      '           ,@dhead_id          BIGINT'
+      '  DECLARE  @Old_Edit_status_id      BIGINT'
+      '           ,@Edit_status_id         BIGINT'
+      '           ,@dhead_id               BIGINT'
+      '           ,@CurrencyAccounting     varchar(5)'
+      '           ,@RateCurrencyAccounting Decimal(18,2)'
+      ''
       '  SET @Edit_status_id = :Edit_status_id'
       '  SET @dhead_id = :pkey'
       ''
@@ -721,6 +772,8 @@ inherited fmPrihodTov: TfmPrihodTov
       '         ,ourfirmno = :OurFirmNo'
       '         ,edit_status_id = @Edit_status_id'
       '         ,CurrencyHead = :CurrencyHead'
+      '         ,CurrencyAccounting = :CurrencyAccounting'
+      '         ,RateCurrencyAccounting = :RateCurrencyAccounting'
       '  WHERE  pkey = @dhead_id'
       ''
       '  IF @Edit_status_id <> @old_Edit_status_id'
@@ -734,9 +787,11 @@ inherited fmPrihodTov: TfmPrihodTov
         'SELECT naklp.NaklNo, naklp.Nom, naklp.PostNo, naklp.DateNakl, na' +
         'klp.DatePrih, naklp.Summa, naklp.SummaDolg, naklp.Buh, naklp.Use' +
         'rNo, naklp.VidNaklNo, naklp.OtdelNo, naklp.doc_type, naklp.paren' +
-        't_NaklNo, naklp.OurFirmNo, naklp.pkey FROM naklp'
+        't_NaklNo, naklp.OurFirmNo, naklp.pkey, naklp.edit_status_id, nak' +
+        'lp.DateOfManufacture, naklp.CurrencyHead, naklp.CurrencyAccounti' +
+        'ng, naklp.RateCurrencyAccounting FROM naklp'
       'WHERE'
-      '  pkey = :Old_pkey')
+      '  pkey = :pkey')
     Connection = dmDataModule.DB
     SQL.Strings = (
       'SELECT h.naklno'
@@ -757,17 +812,9 @@ inherited fmPrihodTov: TfmPrihodTov
       '       ,h.pkey'
       '       ,h.edit_status_id'
       '       ,h.DateOfManufacture '
-      '       ,isnull(h.CurrencyHead,(select c.l_code '
-      '                                from D_CURRENCY c inner join '
-      
-        '                                     CurrencyExchange ce on c.Is' +
-        'Default = 1 and ce.IsActive = 1 '
-      
-        '                                                                ' +
-        '            and ce.CurrencyId = c.ID '
-      
-        '                                                                ' +
-        '            and isnull(c.isTrash,0) = 0)) as CurrencyHead'
+      '       ,h.CurrencyHead'
+      '       ,h.CurrencyAccounting'
+      '       ,h.RateCurrencyAccounting'
       'FROM   naklp h inner join post p on h.PostNo=p.PostNo'
       'WHERE  h.pkey = :dhead_id')
     BeforePost = quNaklPBeforePost
@@ -841,6 +888,13 @@ inherited fmPrihodTov: TfmPrihodTov
       DisplayLabel = #1042#1072#1083#1102#1090#1072
       FieldName = 'CurrencyHead'
       Size = 5
+    end
+    object quNaklPCurrencyAccounting: TStringField
+      FieldName = 'CurrencyAccounting'
+      Size = 5
+    end
+    object quNaklPRateCurrencyAccounting: TFloatField
+      FieldName = 'RateCurrencyAccounting'
     end
   end
   object dsNaklP: TDataSource

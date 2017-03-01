@@ -73,12 +73,13 @@ type
     quFilter: TMSQuery;
     dsFilter: TMSDataSource;
     quFilterPostName: TStringField;
-    DBLookupComboboxEhFilter: TDBLookupComboboxEh;
     Label5: TLabel;
     quDataQueryAmountPrih_Rash: TFloatField;
     Button2: TButton;
     Button3: TButton;
     sdExportBDDSInExel: TSaveDialog;
+    DBLookupComboboxEhFilter: TDBLookupComboboxEh;
+    quDataQueryCurrencyHead: TStringField;
     procedure cbListMinusPostForBDDSClick(Sender: TObject);
     procedure p_bank_invoice_idSelectOk(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -195,6 +196,7 @@ procedure TBDDSForm.cbListMinusPostForBDDSClick(Sender: TObject);
 begin
   inherited;
   if cbListMinusPostForBDDS.Checked then begin
+{
                                            with TListMinusPostForBDDSForm.Create(Application) do
                                             try
                                              quListMinusPostForBDDS.Open;
@@ -203,6 +205,7 @@ begin
                                              quListMinusPostForBDDS.Close;
                                              Free;
                                             end;
+}
                                            quSaldo.Close;
                                            quSaldo.ParamByName('IsPost').AsBoolean := cbListMinusPostForBDDS.Checked;
                                            quSaldo.Open;

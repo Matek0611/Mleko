@@ -1,13 +1,13 @@
 inherited dmDataModule: TdmDataModule
-  Left = 407
-  Top = 144
-  Height = 680
+  Left = 469
+  Top = 229
+  Height = 755
   Width = 1030
   inherited DB: TMSConnection
     ConnectionTimeout = 0
     Options.ApplicationName = 'MLEKO'
-    Password = '3#_KVAZAR@'
-    Server = 'SIRIUS\KVAZAR'
+    Password = '3#_SVD@'
+    Server = '192.168.2.207\SVD'
     Connected = True
     Left = 220
     Top = 132
