@@ -1,12 +1,5 @@
 {$DEFINE SystemMenu}
 
-(*
-Дата формирования=
-Начальная дата накл.=
-Конечная дата накл.=
-//_BuhName in (1,2) and _SotrudName in (45)
-*)
-
 unit UAnalyzeDebitDebt;
 
 interface
@@ -16,7 +9,7 @@ uses
   Dialogs, CFLMLKCustom, GridsEh, DBGridEh, DB, MemDS, DBAccess, MSAccess,
   ExtCtrls, ActnList, StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, cxDropDownEdit, cxCalendar, citCtrls, citmask, citDBComboEdit,
-  GridXLS, ComCtrls, MlekoUtils, Mask, DBCtrlsEh, rxStrHlder,
+  ComCtrls, MlekoUtils, Mask, DBCtrlsEh, rxStrHlder,
   MemTableDataEh, MemTableEh, Grids, ValEdit, Menus, CheckLst, StrListA,
   DBLookupEh, ADODB, USortedIntList;
 
