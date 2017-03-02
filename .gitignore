@@ -22,6 +22,7 @@ $RECYCLE.BIN/
 *.bpl
 *.exe
 *.dll
+*.ddp
 
 # Delphi temporary files
 *.~*
