@@ -1,6 +1,6 @@
 object frmSelectDateItemsDlg: TfrmSelectDateItemsDlg
-  Left = 737
-  Top = 368
+  Left = 555
+  Top = 294
   BorderIcons = [biMinimize]
   BorderStyle = bsDialog
   Caption = #1042#1099#1073#1086#1088' '#1089#1087#1080#1089#1082#1072' '#1076#1072#1090

@@ -8,10 +8,10 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, CFLMLKCustom, GridsEh, DBGridEh, DB, MemDS, DBAccess, MSAccess,
   ExtCtrls, ActnList, StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit,
-  cxMaskEdit, cxDropDownEdit, cxCalendar, citCtrls, citmask, citDBComboEdit,
-  ComCtrls, MlekoUtils, Mask, DBCtrlsEh, rxStrHlder,
-  MemTableDataEh, MemTableEh, Grids, ValEdit, Menus, CheckLst, StrListA,
-  DBLookupEh, ADODB, USortedIntList;
+  cxMaskEdit, cxDropDownEdit, cxCalendar, citmask, citDBComboEdit,
+  ComCtrls, MlekoUtils, DBCtrlsEh, rxStrHlder,
+  MemTableDataEh, Grids, ValEdit, Menus, CheckLst, StrListA,
+  ADODB, USortedIntList, UColumnObjects;
 
 type
   TParamType = ( ptNone, ptUserNo, ptSPID, ptOwnerName, ptAllTypes,
@@ -140,6 +140,7 @@ type
     ParamIndexes: TParamIndexes;
     ParamKeys: TParamKeys;
     SelectionList, ExpansionList: TList;
+    ColObjs: TColumnObjects;
     KeyField: TField;
     SortedKeys: TSortedIntList;
     Source, Fields, Temp, OldKeys,
@@ -217,10 +218,12 @@ type
       MainFieldStr, KeyFieldStr: String);
     procedure AcceptFilterValues(IntKeys: TSortedIntList;
       StrKeys: TStrings);
-    procedure SortRowsByAllowedColumn(ACol: Integer; Dir: Integer = 0);
+    procedure SortRowsByAllowedColumn(Column: TColumnEh; Dir: Integer = 0);
     procedure ClearAllSortMarkers;
     procedure ResetGridState;
     procedure FilteringEvent(Sender: TObject);
+    procedure AfterColumnFilterSelection(SelCount: Integer);
+    procedure RefreshFilterList(Column: TColumnEh);
   public
     { Public declarations }
     procedure RefreshResults(SetMaxCount: Boolean = False);
@@ -234,7 +237,7 @@ var
 implementation
 
 uses
-  data, About, StrUtils, DateUtils, CommCtrl,
+  data, About, StrUtils, DateUtils, 
   UFastDatasetView, USelectDateItemsDlg, UListMinusPostForDebit, UColumnFilterDlg;
 
 {$R *.dfm}
@@ -247,7 +250,7 @@ type
 
 const
 
-  AllowedFilterIndexes = [0, 2, 4, 10];
+  AllowedFilterIndexes = [0, 2, 3, 4, 10];
   AllowedIntIndexes = [8, 9, 10];
 
   idCurRecordCount = 0;
@@ -758,10 +761,11 @@ end;
 
 procedure TfrmAnalyzeDebitDebt.ResetGridState();
 begin
-  //ClearAllSortMarkers;
+  ClearAllSortMarkers;
   KeyField:= nil;
   EnableFiltering:= False;
   OldCol:= -1; OldTag:= -1;
+  ColObjs.ClearItems;
 end;
 
 
@@ -925,6 +929,7 @@ procedure TfrmAnalyzeDebitDebt.ExecuteScript();
 var
   Ctrl_Down, Shift_Down: Boolean;
 begin
+  if IsColumnFilterDlgVisible() then Exit;
   Ctrl_Down := Ctrl_Is_Down;
   Shift_Down:= Shift_Is_Down;
   TestMode:= Shift_Down or Ctrl_Down;
@@ -1018,15 +1023,16 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.SortRowsByAllowedColumn(ACol: Integer; Dir: Integer = 0);
+procedure TfrmAnalyzeDebitDebt.SortRowsByAllowedColumn(Column: TColumnEh; Dir: Integer = 0);
 var
   OrderFields, MainFieldStr, KeyFieldStr: String;
-  Column: TColumnEh; Old_Dir, Old_Col: Integer;
+  Old_Dir, Old_Col, ACol: Integer;
 begin
-  Column:= dbgDebts.Columns[ACol];
+  //Column:= dbgDebts.Columns[ACol];
+  ACol:= Column.Index;
   if (not quDebt.Active) or (not EnableExpansion(Column.Tag) and (Column.Tag>=0)) then Exit;
     MainFieldStr:= Column.FieldName;
-    EnableFiltering:= False;
+    //EnableFiltering:= False;
     OrderFields:= GetOrderFields(MainFieldStr, Column.Tag, Column.Tag in AllowedIntIndexes);
     Old_Dir:= OldDir; Old_Col:= OldCol;
     if (Dir<>0) then
@@ -1055,76 +1061,121 @@ for i := 0 to dbgDebts.Columns.Count-1 do
   end;
 end;
 
+procedure TfrmAnalyzeDebitDebt.AfterColumnFilterSelection(SelCount: Integer);
+begin
+  if (SelCount>0) then
+       begin
+         EnableFiltering:= True;
+         ColObjs.AcceptFilterValues();
+         RefreshResults();
+       end;
+end;
+
+procedure TfrmAnalyzeDebitDebt.RefreshFilterList(Column: TColumnEh);
+var Rect: TRect; P: TPoint; Ptr: Pointer;
+    Info: TColumnObjectInfo; RootName: string;
+begin
+  if (Column<>nil) then
+    Info:= ColObjs.GetColumnObjectInfo(Column.Tag, True) else
+    Info:= ColObjs.GetColumnObjectInfo(-1, True);
+    //SelKeys:= ColObjs.GetFieldValues(Column.Tag, False);
+    if (Info.FieldVals<>nil) and (Info.Column<>nil) then
+       begin
+          if (Column<>nil) then
+          begin
+            Rect:= dbgDebts.CellRect(Column.Index+1, 1);
+            P:= dbgDebts.ClientToScreen(Point(Rect.Right, Rect.Bottom));
+            Ptr:= @P;
+            RootName:= Column.Title.Caption;
+          end else
+          begin
+            Ptr:= nil; RootName:= Info.Column.Title.Caption;
+          end;
+          ColumnFilterDlg( nil, Info.FieldVals, Info.QtyList,
+                                      RootName, Ptr,
+                                      True, Self.FilteringEvent, False);
+       end;
+end;
+
 procedure TfrmAnalyzeDebitDebt.FilteringEvent(Sender: TObject);
 var Option: Integer;
 begin
   Option:= Integer(Sender);
   if Option>0 then
   begin
-    CloseColumnFilterDlg;
+    //CloseColumnFilterDlg;
     //ResetGridState;
     OldTag:= -1;
     case Option of
     ueResetFiltering:
       begin
+        acRefresh.Enabled:= True;
         ResetGridState;
         RefreshResults();
+        CloseColumnFilterDlg;
       end;
     ueSortUp:
-        SortRowsByAllowedColumn(OldCol, -1);
+        SortRowsByAllowedColumn(ColObjs.GetCurrentColumn, -1);
     ueSortDown:
-        SortRowsByAllowedColumn(OldCol, 1);
-    end;
-  end;
+        SortRowsByAllowedColumn(ColObjs.GetCurrentColumn, 1);
+    ueRefreshList:
+        RefreshFilterList(nil);
+    end
+  end else
+       begin
+         acRefresh.Enabled:= True;
+         AfterColumnFilterSelection(-Option);
+         CloseColumnFilterDlg;
+       end;
 end;
 
 procedure TfrmAnalyzeDebitDebt.dbgDebtsTitleBtnClick(Sender: TObject; ACol:
   Integer; Column: TColumnEh);
 var
-  OrderFields, MainFieldStr, KeyFieldStr: String;
   Rect: TRect;  P: TPoint; SelCount, Old_Col, Sel_Count: Integer;
+  Info: TColumnObjectInfo;
   SelKeys: TStrings;
   NewValues: Boolean;
 begin
   if (not quDebt.Active) or (not EnableExpansion(Column.Tag) and (Column.Tag>=0)) then Exit;
-  MainFieldStr:= Column.FieldName; //EnableFiltering:= False;
-  //KeyField:= nil; NewValues:= True;
   if (Column.Tag in AllowedFilterIndexes) then
   begin
-    NewValues:= (OldTag<>Column.Tag) or (OldTag<0);
-    Old_Col:= OldCol;
-    OldCol:= Column.Index;
-    if NewValues then
-    begin
-      FieldVals.Clear;
-      SortedKeys.Clear;
-      OldTag:= Column.Tag;
-      ClearAllSortMarkers;
-    end;
-    KeyFieldStr:= GetSortField(MainFieldStr, Column.Tag);
-    if NewValues then
-       GetFieldValues(FieldVals, FieldKeys, quDebt, MainFieldStr, KeyFieldStr);
-    KeyField:= quDebt.FindField(KeyFieldStr);
-    Rect:= dbgDebts.CellRect(ACol, 1);
-    //P:= Point(Rect.Right, Rect.Bottom);
-    P:= dbgDebts.ClientToScreen(Point(Rect.Right, Rect.Bottom+10));
-    Sel_Count:= SortedKeys.Count;
-    SelCount:= ColumnFilterDlg( nil, P.X, P.Y, FieldVals, Column.Title.Caption,
-                                True, Self.FilteringEvent);
-    if (SelCount>0) and (SelCount<=FieldKeys.Count) then
-    begin
-      if (SelCount=FieldKeys.Count) //and (not NewValues)
-         and (Sel_Count<>SelCount) then
-         ResetGridState else
-         begin
-           EnableFiltering:= True;
-           AcceptFilterValues(SortedKeys, FieldKeys);
-         end;
-      RefreshResults();
-    end else OldCol:= Old_Col;
+    if IsColumnFilterDlgVisible() then Exit;
+    //Sel_Count:= ColObjs.UpdateFieldValues(Column.Tag);
+    Info:= ColObjs.GetColumnObjectInfo(Column.Tag, True);
+    //SelKeys:= ColObjs.GetFieldValues(Column.Tag, False);
+    if (Info.FieldVals<>nil) then
+       begin
+         RefreshFilterList(Column);
+//          Rect:= dbgDebts.CellRect(Column.Index+1, 1);
+//          P:= dbgDebts.ClientToScreen(Point(Rect.Right, Rect.Bottom));
+//          SelCount:= ColumnFilterDlg( nil, P.X, P.Y,
+//                                      Info.FieldVals, Info.QtyList,
+//                                      Column.Title.Caption,
+//                                      True, Self.FilteringEvent, False);
+          acRefresh.Enabled:= False;
+//          SelCount:=0;
+//    if (SelCount>0) then
+//         //ResetGridState else
+//         begin
+//           EnableFiltering:= True;
+//           ColObjs.AcceptFilterValues();
+//         end;
+      //RefreshResults();
+       end;
+//    NewValues:= (OldTag<>Column.Tag) or (OldTag<0);
+//    Old_Col:= OldCol;
+//    OldCol:= Column.Index;
+//    if NewValues then
+//    begin
+//      FieldVals.Clear;
+//      SortedKeys.Clear;
+//      OldTag:= Column.Tag;
+//      ClearAllSortMarkers;
+//    end;
   end else
   begin
-    SortRowsByAllowedColumn(Column.Index);
+    SortRowsByAllowedColumn(Column);
   end;
 end;
 
@@ -1213,6 +1264,31 @@ procedure TfrmAnalyzeDebitDebt.FillComponentLists();
   AList.AddItem(Items.Names[i], nil);
   end;
 
+  procedure FillColumnObjects();
+  var Columns: TDBGridColumnsEh;
+      Column: TColumnEh;
+  function IndexOfColumnTag(ColumnTag: Integer): Integer;
+  begin
+  for Result := 0 to Columns.Count-1 do
+    begin
+      Column:= Columns[Result];
+      if Column.Tag=ColumnTag then Exit;
+    end;
+    Result:= -1;
+  end;
+  var i, n, k: Integer;
+  begin
+    Columns:= dbgDebts.Columns;
+    n:= 0; k:= clbExpansions.Items.Count;
+    for  i:= 0 to k-1 do
+      if (IndexOfColumnTag(i)>=0) then
+      begin
+        ColObjs.AddColumnObject(Column);
+        Inc(n);
+      end;
+    if (n<>k) then
+       raise Exception.Create('All Expansions items should be used');
+  end;
 
   procedure FillFieldList();
   begin
@@ -1227,10 +1303,11 @@ procedure TfrmAnalyzeDebitDebt.FillComponentLists();
   end;
 
 begin
-  FillExpansionList;
-  FillSelectionList;
-  FillFieldList;
+//  FillExpansionList;
+//  FillSelectionList;
+//  FillFieldList;
   FillArrayList();
+  FillColumnObjects();
 end;
 
 {$IFDEF SystemMenu}
@@ -1338,6 +1415,7 @@ begin
   Selections.Add(''); // make Selections.Count = 1
   AList:= TStringListArray.Create;
   SortedKeys:= TSortedIntList.Create;
+  ColObjs:= TColumnObjects.Create(quDebt, Self.EnableExpansion);
   FillSourceList();
   FillComponentLists();
   DetectParamIndexes;
@@ -1364,6 +1442,7 @@ procedure TfrmAnalyzeDebitDebt.FormDestroy(Sender: TObject);
 begin
   inherited;
   //dtPicker.Free;
+  ColObjs.Free;
   Selections.Free;
   AList.Free;
   SelectionList.Free;
@@ -1681,6 +1760,7 @@ procedure TfrmAnalyzeDebitDebt.clbExpansionsClickCheck(Sender: TObject);
 var i: Integer;
 begin
   inherited;
+  if IsColumnFilterDlgVisible() then Exit;
   i:= clbExpansions.ItemIndex;
   clbExpansions.Items.Objects[i]:= Pointer(clbExpansions.Checked[i]);
 end;
@@ -1728,6 +1808,7 @@ procedure TfrmAnalyzeDebitDebt.ToggleShowHide();
 var IsVisible: Boolean; Index: Integer;
 begin
   inherited;
+  if IsColumnFilterDlgVisible() then Exit;
   begin
     with clbExpansions do
     begin
@@ -1771,9 +1852,10 @@ procedure TfrmAnalyzeDebitDebt.quDebtFilterRecord(DataSet: TDataSet;
   var Accept: Boolean);
 begin
   inherited;
-  Accept:= (not EnableFiltering) or ((KeyField=nil) or (SortedKeys.IndexOf(KeyField.AsInteger)>=0));
-  Inc(VisibleRowCount);
-  //Inc(VisibleRowCount, Ord(Accept));
+  Accept:= (not EnableFiltering) or (ColObjs.ValuesExist());
+  //((KeyField=nil) or (SortedKeys.IndexOf(KeyField.AsInteger)>=0));
+  //Inc(VisibleRowCount);
+  Inc(VisibleRowCount, Ord(Accept));
   //Accept:= quDebt_SotrudName.AsInteger = 45;
 end;
 

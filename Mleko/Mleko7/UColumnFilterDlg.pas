@@ -10,6 +10,7 @@ const
   ueResetFiltering = 1;
   ueSortUp = 2;
   ueSortDown = 3;
+  ueRefreshList = 4;
 
 type
 
@@ -34,6 +35,8 @@ type
     btnFindMore: TToolButton;
     btnFindLess: TToolButton;
     btnFindEqual: TToolButton;
+    btnRefreshList: TToolButton;
+    ToolButton3: TToolButton;
     procedure clbFilterClickCheck(Sender: TObject);
     procedure cbxRootClick(Sender: TObject);
     procedure clbFilterClick(Sender: TObject);
@@ -41,13 +44,19 @@ type
     procedure btnResetClick(Sender: TObject);
     procedure btnSortUpClick(Sender: TObject);
     procedure SortDownClick(Sender: TObject);
+    procedure btnOKClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+    procedure btnRefreshListClick(Sender: TObject);
   private
-    Root: TStrings;
+    Root, Data: TStrings;
     CheckedCount, DisableCount: Integer;
     XPos, YPos: Integer;
+    TotalSum, SelSum: Integer;
+    QtyList: TList;
     XYPosUsed: Boolean;
     FiltEvent: TNotifyEvent;
-    procedure AcceptItems(Items: TStrings; RootName: string = ''; UseObjects: Boolean = False);
+    procedure AcceptItems( Items: TStrings; Counts: TList;
+                           RootName: string = ''; UseObjects: Boolean = False);
     procedure SetAllItemsState(IsChecked: Boolean);
     function GetCheckedState(i: Integer): Boolean;
     procedure SetGrayState;
@@ -58,16 +67,23 @@ type
     procedure UpdateRootState;
     function SetCheckedState(i: Integer; IsChecked: Boolean): Boolean;
     procedure UpdateFindButtons;
+    procedure ClearItems;
+    function GetItemCount: Integer;
+    procedure AddItem(AText: String; AState, ACount: Integer;
+      var IsChecked: Boolean);
     { Private declarations }
   public
     { Public declarations }
   end;
 
+  function IsColumnFilterDlgVisible(): Boolean;
   procedure CloseColumnFilterDlg();
-  function ColumnFilterDlg(  Owner: TComponent;
-           XPos, YPos: Integer; Items: TStrings; RootName: string = '';
-           UseObjects: Boolean = False;
-           FiltEvent: TNotifyEvent = nil): Integer;
+function ColumnFilterDlg( Owner: TComponent;
+                          Items: TStrings; Counts: TList; RootName: string = '';
+                          P: PPoint = nil;
+                          UseObjects: Boolean = False;
+                          FiltEvent: TNotifyEvent = nil;
+                          AsModal: Boolean = True): Integer;
 
 const
 //ImageList.StateIndex=0 has some bugs, so we add one dummy image to position 0
@@ -85,6 +101,12 @@ uses MlekoUtils;
 
 {$R *.dfm}
 
+function IsColumnFilterDlgVisible(): Boolean;
+begin
+  Result:= (frmColumnFilter<>nil) and
+           (frmColumnFilter.Visible);
+end;
+
 procedure CloseColumnFilterDlg();
 begin
   if (frmColumnFilter<>nil) then
@@ -94,28 +116,49 @@ begin
   end;
 end;
 
-
-function ColumnFilterDlg( Owner: TComponent; XPos, YPos: Integer; Items: TStrings; RootName: string = '';
+function ColumnFilterDlg( Owner: TComponent;
+                          Items: TStrings; Counts: TList; RootName: string = '';
+                          P: PPoint = nil;
                           UseObjects: Boolean = False;
-                          FiltEvent: TNotifyEvent = nil): Integer;
+                          FiltEvent: TNotifyEvent = nil;
+                          AsModal: Boolean = True): Integer;
 begin
   if (frmColumnFilter=nil) then
   begin
     if (Owner=nil) then Owner:= Application;
     frmColumnFilter:= TfrmColumnFilter.Create(Owner);
   end;
-     if (XPos>0) then
-     frmColumnFilter.XPos:= XPos;
-     if (YPos>0) then
-     frmColumnFilter.YPos:= YPos;
+     if (P<>nil) then
+     with P^ do
+     begin
+       if (X>0) then
+       frmColumnFilter.XPos:= X;
+       if (Y>0) then
+       frmColumnFilter.YPos:= Y;
+     end;
      frmColumnFilter.XYPosUsed:= False;
      frmColumnFilter.FiltEvent:= FiltEvent;
-  frmColumnFilter.AcceptItems(Items, RootName, UseObjects);
-  Result:= frmColumnFilter.ShowModal;
-  frmColumnFilter.UpdateItems(Items);
-  if Result = mrOk then
-    Result := frmColumnFilter.CheckedCount else
-    Result := -1;
+     //frmColumnFilter.Data:= Items;
+     //frmColumnFilter.QtyList:= QtyList;
+  frmColumnFilter.AcceptItems(Items, Counts, RootName, UseObjects);
+  AsModal:= AsModal or (not Assigned(FiltEvent));
+  if AsModal then
+  begin
+    frmColumnFilter.FormStyle:= fsNormal;
+    Result:= frmColumnFilter.ShowModal;
+  end
+  else
+  begin
+    frmColumnFilter.Show;
+    frmColumnFilter.FormStyle:= fsStayOnTop;
+  end;
+  if AsModal then
+     begin
+        frmColumnFilter.UpdateItems(Items);
+        if Result = mrOk then
+          Result := frmColumnFilter.CheckedCount else
+          Result := -1;
+     end;
   //FreeAndNil(frmColumnFilter);
 end;
 
@@ -167,20 +210,55 @@ begin
      end;
 end;
 
-procedure TfrmColumnFilter.AcceptItems(Items: TStrings; RootName: string = ''; UseObjects: Boolean = False);
-var i: Integer;
+procedure TfrmColumnFilter.AddItem( AText: String; AState: Integer; ACount: Integer;
+                                    var IsChecked: Boolean);
 begin
-  clbFilter.Items.Assign(Items);
-  Root:= clbFilter.Items;
-  CheckedCount:= 0;
-  for i := 0 to Root.Count-1 do
-  begin
-    if SetCheckedState(i, (not UseObjects) or (Items.Objects[i]<>nil)) then
-       Inc(CheckedCount);
-  end;
+  IsChecked:= Boolean(AState);
+  clbFilter.Checked[Root.Add(Format('%s (%d)', [AText, ACount]))]:= IsChecked;
+end;
 
+procedure TfrmColumnFilter.ClearItems();
+begin
+  clbFilter.Clear;
+  //Root.Clear;
+end;
+
+function TfrmColumnFilter.GetItemCount(): Integer;
+begin
+  Result:= Root.Count;
+end;
+
+procedure TfrmColumnFilter.AcceptItems(
+          Items: TStrings; Counts: TList; RootName: string = '';
+          UseObjects: Boolean = False);
+var i, n: Integer; IsChecked: Boolean;
+begin
+  //clbFilter.Items.Assign(Items);
+  Data:= Items;
+  QtyList:= Counts;
+  Root:= clbFilter.Items;
+  Root.BeginUpdate;
+  ClearItems;
+  CheckedCount:= 0; TotalSum:= 0; SelSum:= 0;
+  if (QtyList<>nil) and (QtyList.Count<>Items.Count) then
+     raise Exception.Create('Invalid Count in QtyList');
+  for i := 0 to Items.Count-1 do
+  begin
+    if (QtyList=nil) then n:= 1 else
+                          n:= Integer(QtyList[i]);
+    AddItem(Items[i], Integer((not UseObjects) or (Items.Objects[i]<>nil)),
+                      n, IsChecked);
+    Inc(TotalSum, n);
+    if IsChecked then
+    begin
+      Inc(CheckedCount);
+      Inc(SelSum, n);
+    end;
+  end;
+  Root.EndUpdate;
+  clbFilter.Refresh;
   //SetAllItemsState(True);
-  if (RootName<>'') then cbxRoot.Caption:= RootName;
+  if (RootName<>'') then cbxRoot.Caption:= RootName + Format(' (%d)', [TotalSum]);
   UpdateRootState;
   //UpdateFindButtons;
   btnOK.Enabled:= CheckedCount>0;
@@ -192,15 +270,17 @@ function TfrmColumnFilter.UpdateItems(Items: TStrings): Integer;
 var i: Integer;
 begin
   Result:= 0;
-for i := 0 to Items.Count-1 do
-  begin
-    if GetCheckedState(i) then
+  if (Items=nil) then Items:= Data;
+  if (Items<>nil) then
+  for i := 0 to Items.Count-1 do
     begin
-      Items.Objects[i]:= Pointer(1);
-      Inc(Result);
-    end else
-      Items.Objects[i]:= nil;
-  end;
+      if GetCheckedState(i) then
+      begin
+        Items.Objects[i]:= Pointer(1);
+        Inc(Result);
+      end else
+        Items.Objects[i]:= nil;
+    end;
 end;
 
 function TfrmColumnFilter.ToggleCheckedState(i: Integer): Boolean;
@@ -216,26 +296,45 @@ Inc(DisableCount);
 for i := 0 to Root.Count-1 do
   SetCheckedState(i, IsChecked);
   if IsChecked then
-     CheckedCount:= Root.Count else
-     CheckedCount:= 0;
+  begin
+    CheckedCount:= Root.Count;
+    SelSum:= TotalSum;
+  end
+  else
+  begin
+   CheckedCount:= 0;
+   SelSum:= 0;
+  end;
 Dec(DisableCount);
 end;
 
 procedure TfrmColumnFilter.ShowStatus();
 begin
-  sbStatus.SimpleText:= Format('Выбр.: %d; Всего: %d', [CheckedCount, Root.Count]);
+  sbStatus.SimpleText:= Format('Выбр.: %d; Всего: %d; Cумма: %d',
+                        [CheckedCount, Root.Count, SelSum]);
 end;
 
 procedure TfrmColumnFilter.ChangeItemState(i: Integer; DoToggle: Boolean = False);
-var NewState: Boolean;
+var n: Integer; NewState: Boolean;
 begin
   if DoToggle then
      NewState:= ToggleCheckedState(i) else
      NewState:= GetCheckedState(i);
   if (i>=0) then
   begin
-    if not NewState then Dec(CheckedCount)
-                    else Inc(CheckedCount);
+    if (QtyList=nil) then
+       n:= 1 else
+       n:= Integer(QtyList[i]);
+    if not NewState then
+    begin
+      Dec(CheckedCount);
+      Dec(SelSum, n);
+    end
+    else
+    begin
+      Inc(CheckedCount);
+      Inc(SelSum, n);
+    end;
     UpdateRootState;
   end else
   SetAllItemsState(NewState);
@@ -293,6 +392,37 @@ begin
   if Assigned(FiltEvent) then
      FiltEvent(Pointer(ueSortDown));
 end;
+
+procedure TfrmColumnFilter.btnRefreshListClick(Sender: TObject);
+begin
+  if Assigned(FiltEvent) then
+     FiltEvent(Pointer(ueRefreshList));
+end;
+
+procedure TfrmColumnFilter.btnOKClick(Sender: TObject);
+begin
+  if not (fsModal in FormState) then
+     begin
+     UpdateItems(nil);
+     if Assigned(FiltEvent) then
+       FiltEvent(Pointer(-CheckedCount));
+       ModalResult:= mrOk;
+       Close;
+     end;
+end;
+
+procedure TfrmColumnFilter.btnCancelClick(Sender: TObject);
+begin
+  if not (fsModal in FormState) then
+     begin
+       UpdateItems(nil);
+       if Assigned(FiltEvent) then
+         FiltEvent(nil);
+       ModalResult:= mrCancel;
+       Close;
+     end;
+end;
+
 
 end.
 

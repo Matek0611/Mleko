@@ -1,6 +1,7 @@
 unit USortedIntList;
 
 interface
+uses Classes;
 
 type
   PIntegerArray = ^TIntegerArray;
@@ -16,6 +17,9 @@ type
 //    function IndexOf(const Value: Integer): Integer; abstract;
 //    procedure Insert(Index: Integer; const Value: Integer); abstract;
 //  end;
+
+  TIntList = class(TList)
+  end;
 
   TSortedIntList = class
   private
