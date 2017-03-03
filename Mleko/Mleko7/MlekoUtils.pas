@@ -9,6 +9,7 @@ uses
 Type
 
   TSimpleDataType = (sdtInteger, sdtFloat, sdtString);
+  TIntBoolFunc = function(Index: Integer): Boolean of object;
 
 type
   TTimeTracer = class
