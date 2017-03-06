@@ -310,7 +310,7 @@ const
   DefSelValues : array[Boolean] of TBoolStrValue = ('-1', '0');
   DefPrefValues : array[Boolean] of TBoolStrValue = ('', ', ');
 
-  idDefaultSortFields = ' OtdelName, VidName, SotrudName, _NomNakl';
+  idDefaultSortFields = ' OtdelName, VidName, SotrudName, _NomNakl, _DayExp DESC';
 
   BoolStrValues: array[Boolean] of TBoolStrValue =
   //('Нет', 'Да');
@@ -970,7 +970,8 @@ begin
   if EnableSortField then
   FieldName:= GetSortField(FieldName, Index);
   PrepareStrValues(idDefaultSortFields, Temp);
-  Index:= Temp.IndexOf(FieldName);
+  Index:= GetStartPosIndex(Temp, FieldName);
+  //Index:= Temp.IndexOf(FieldName);
   if (Index>=0) then Temp.Delete(Index);
   //Temp.Insert(0, FieldName);
   Result:= Temp.CommaText;
@@ -1031,6 +1032,7 @@ begin
   //Column:= dbgDebts.Columns[ACol];
   ACol:= Column.Index;
   if (not quDebt.Active) or (not EnableExpansion(Column.Tag) and (Column.Tag>=0)) then Exit;
+    //MainFieldStr:= GetSortField(Column.FieldName, Column.Index);
     MainFieldStr:= Column.FieldName;
     //EnableFiltering:= False;
     OrderFields:= GetOrderFields(MainFieldStr, Column.Tag, Column.Tag in AllowedIntIndexes);
@@ -1115,9 +1117,15 @@ begin
         CloseColumnFilterDlg;
       end;
     ueSortUp:
-        SortRowsByAllowedColumn(ColObjs.GetCurrentColumn, -1);
+    begin
+      SortRowsByAllowedColumn(ColObjs.GetCurrentColumn, -1);
+      //RefreshFilterList(nil);
+    end;
     ueSortDown:
-        SortRowsByAllowedColumn(ColObjs.GetCurrentColumn, 1);
+    begin
+      SortRowsByAllowedColumn(ColObjs.GetCurrentColumn, 1);
+      //RefreshFilterList(nil);
+    end;
     ueRefreshList:
         RefreshFilterList(nil);
     end
@@ -1141,38 +1149,12 @@ begin
   if (Column.Tag in AllowedFilterIndexes) then
   begin
     if IsColumnFilterDlgVisible() then Exit;
-    //Sel_Count:= ColObjs.UpdateFieldValues(Column.Tag);
     Info:= ColObjs.GetColumnObjectInfo(Column.Tag, True);
-    //SelKeys:= ColObjs.GetFieldValues(Column.Tag, False);
     if (Info.FieldVals<>nil) then
        begin
          RefreshFilterList(Column);
-//          Rect:= dbgDebts.CellRect(Column.Index+1, 1);
-//          P:= dbgDebts.ClientToScreen(Point(Rect.Right, Rect.Bottom));
-//          SelCount:= ColumnFilterDlg( nil, P.X, P.Y,
-//                                      Info.FieldVals, Info.QtyList,
-//                                      Column.Title.Caption,
-//                                      True, Self.FilteringEvent, False);
-          acRefresh.Enabled:= False;
-//          SelCount:=0;
-//    if (SelCount>0) then
-//         //ResetGridState else
-//         begin
-//           EnableFiltering:= True;
-//           ColObjs.AcceptFilterValues();
-//         end;
-      //RefreshResults();
+         acRefresh.Enabled:= False;
        end;
-//    NewValues:= (OldTag<>Column.Tag) or (OldTag<0);
-//    Old_Col:= OldCol;
-//    OldCol:= Column.Index;
-//    if NewValues then
-//    begin
-//      FieldVals.Clear;
-//      SortedKeys.Clear;
-//      OldTag:= Column.Tag;
-//      ClearAllSortMarkers;
-//    end;
   end else
   begin
     SortRowsByAllowedColumn(Column);
