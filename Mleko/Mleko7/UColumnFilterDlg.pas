@@ -435,20 +435,24 @@ procedure TfrmColumnFilter.SelectAllUpDown(Direction: Integer);
 var i, n: Integer;
 begin
   if Abs(Direction)<>1 then Exit;
-  n:= clbFilter.Items.Count;
-  i:= clbFilter.ItemIndex;
-  while (i>=0) and (i<n) do
-  begin
-    clbFilter.Checked[i]:= False;
-    Dec(i, Direction);
+  clbFilter.Items.BeginUpdate;
+  try
+    n:= clbFilter.Items.Count;
+    i:= clbFilter.ItemIndex;
+    while (i>=0) and (i<n) do
+    begin
+      clbFilter.Checked[i]:= False;
+      Dec(i, Direction);
+    end;
+    i:= clbFilter.ItemIndex;
+    while (i>=0) and (i<n) do
+    begin
+      clbFilter.Checked[i]:= True;
+      Inc(i, Direction);
+    end;
+  finally
+  clbFilter.Items.EndUpdate;
   end;
-  i:= clbFilter.ItemIndex;
-  while (i>=0) and (i<n) do
-  begin
-    clbFilter.Checked[i]:= True;
-    Inc(i, Direction);
-  end;
-
 end;
 
 procedure TfrmColumnFilter.SelectAllUp();
