@@ -1,10 +1,10 @@
 inherited fmEditTovar: TfmEditTovar
-  Left = 996
-  Top = 141
+  Left = 1026
+  Top = 191
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1058#1086#1074#1072#1088
-  ClientHeight = 586
+  ClientHeight = 641
   ClientWidth = 397
   ParentFont = True
   Position = poScreenCenter
@@ -13,22 +13,23 @@ inherited fmEditTovar: TfmEditTovar
   TextHeight = 13
   inherited ButtonOK: TButton
     Left = 167
-    Top = 559
+    Top = 614
   end
   inherited ButtonCancel: TButton
     Left = 242
-    Top = 559
+    Top = 614
   end
   inherited ButtonApply: TButton
     Left = 317
-    Top = 559
+    Top = 614
   end
   inherited PageControl: TcxPageControl
     Left = 4
     Width = 393
-    Height = 547
+    Height = 602
+    ActivePage = tsExtendedProp
     MultiLine = True
-    ClientRectBottom = 546
+    ClientRectBottom = 601
     ClientRectRight = 392
     inherited tsMainProp: TcxTabSheet
       ImageIndex = 0
@@ -145,7 +146,7 @@ inherited fmEditTovar: TfmEditTovar
       end
       object Label22: TLabel
         Left = 240
-        Top = 386
+        Top = 401
         Width = 105
         Height = 25
         AutoSize = False
@@ -173,6 +174,20 @@ inherited fmEditTovar: TfmEditTovar
         Width = 184
         Height = 13
         Caption = #1052#1080#1085#1080#1084#1072#1083#1100#1085#1099#1081' '#1087#1077#1088#1077#1093#1086#1076#1085#1086#1081' '#1086#1089#1090#1072#1090#1086#1082' :'
+      end
+      object Label29: TLabel
+        Left = 16
+        Top = 357
+        Width = 73
+        Height = 13
+        Caption = #1050#1086#1076' '#1059#1050#1058'_'#1047#1069#1044
+      end
+      object Label30: TLabel
+        Left = 8
+        Top = 547
+        Width = 71
+        Height = 13
+        Caption = #1042#1072#1083#1102#1090#1072' '#1091#1095#1077#1090#1072':'
       end
       object cbExport1C: TDBCheckBox
         Left = 16
@@ -322,7 +337,7 @@ inherited fmEditTovar: TfmEditTovar
       end
       object DBCheckBox2: TDBCheckBox
         Left = 108
-        Top = 380
+        Top = 395
         Width = 117
         Height = 17
         Caption = #1042#1077#1089#1086#1074#1072#1103' '#1091#1087#1072#1082#1086#1074#1082#1072
@@ -336,7 +351,7 @@ inherited fmEditTovar: TfmEditTovar
       end
       object DBCheckBox3: TDBCheckBox
         Left = 108
-        Top = 401
+        Top = 416
         Width = 95
         Height = 17
         Caption = #1042#1077#1089#1086#1074#1086#1081' '#1090#1086#1074#1072#1088
@@ -348,7 +363,7 @@ inherited fmEditTovar: TfmEditTovar
       end
       object DBCheckBox1: TDBCheckBox
         Left = 13
-        Top = 381
+        Top = 396
         Width = 88
         Height = 17
         Caption = #1057#1087#1088#1103#1090#1072#1090#1100
@@ -360,7 +375,7 @@ inherited fmEditTovar: TfmEditTovar
       end
       object Social_Tovar: TDBCheckBox
         Left = 108
-        Top = 423
+        Top = 438
         Width = 120
         Height = 17
         Caption = #1057#1086#1094#1080#1072#1083#1100#1085#1099#1081' '#1090#1086#1074#1072#1088
@@ -392,7 +407,7 @@ inherited fmEditTovar: TfmEditTovar
       end
       object Our_Tovar: TDBCheckBox
         Left = 13
-        Top = 403
+        Top = 418
         Width = 93
         Height = 17
         Caption = #1053#1077' '#1085#1072#1096' '#1090#1086#1074#1072#1088
@@ -404,7 +419,7 @@ inherited fmEditTovar: TfmEditTovar
       end
       object is_Service: TDBCheckBox
         Left = 14
-        Top = 423
+        Top = 438
         Width = 83
         Height = 17
         Caption = #1059#1089#1083#1091#1075#1072
@@ -416,7 +431,7 @@ inherited fmEditTovar: TfmEditTovar
       end
       object gbNDS: TGroupBox
         Left = 8
-        Top = 441
+        Top = 456
         Width = 337
         Height = 81
         Caption = #1053#1044#1057
@@ -530,7 +545,7 @@ inherited fmEditTovar: TfmEditTovar
       end
       object DBEditEhNo_pp: TDBEditEh
         Left = 240
-        Top = 418
+        Top = 433
         Width = 41
         Height = 21
         DataField = 'No_pp'
@@ -562,7 +577,7 @@ inherited fmEditTovar: TfmEditTovar
       end
       object DBCheckBoxEh1: TDBCheckBoxEh
         Left = 13
-        Top = 362
+        Top = 377
         Width = 149
         Height = 17
         Caption = #1058#1086#1074#1072#1088' '#1074#1085#1091#1090#1088#1077#1085#1085#1077#1075#1086' '#1091#1095#1077#1090#1072
@@ -581,6 +596,30 @@ inherited fmEditTovar: TfmEditTovar
         DataSource = DS
         MaxLength = 18
         TabOrder = 27
+      end
+      object DBUKT_ZED: TDBEdit
+        Left = 104
+        Top = 354
+        Width = 112
+        Height = 21
+        DataField = 'UKT_ZED'
+        DataSource = DS
+        MaxLength = 18
+        TabOrder = 28
+      end
+      object DBLookupComboboxEh1: TDBLookupComboboxEh
+        Left = 82
+        Top = 544
+        Width = 138
+        Height = 21
+        DataField = 'Currency'
+        DataSource = dsCurrencyTovar
+        EditButtons = <>
+        KeyField = 'l_code'
+        ListField = 'Name'
+        ListSource = dsCurrency
+        TabOrder = 29
+        Visible = True
       end
     end
     inherited tsExtendedProp: TcxTabSheet
@@ -941,13 +980,6 @@ inherited fmEditTovar: TfmEditTovar
     object quTovarPostPostNo: TSmallintField
       FieldName = 'PostNo'
     end
-    object quTovarPostTovarNo: TSmallintField
-      FieldName = 'TovarNo'
-    end
-    object quTovarPostTovarNoPost: TIntegerField
-      DisplayWidth = 128
-      FieldName = 'TovarNoPost'
-    end
     object quTovarPostNameTovarPost: TStringField
       FieldName = 'NameTovarPost'
       Size = 128
@@ -967,12 +999,18 @@ inherited fmEditTovar: TfmEditTovar
       FieldName = 'TovarNoPostText'
       Size = 50
     end
-    object quTovarPostTovarNoPostSecond: TIntegerField
-      FieldName = 'TovarNoPostSecond'
-    end
     object quTovarPostTovarNoPostSecondText: TStringField
       FieldName = 'TovarNoPostSecondText'
       Size = 50
+    end
+    object quTovarPostTovarNo: TLargeintField
+      FieldName = 'TovarNo'
+    end
+    object quTovarPostTovarNoPost: TLargeintField
+      FieldName = 'TovarNoPost'
+    end
+    object quTovarPostTovarNoPostSecond: TLargeintField
+      FieldName = 'TovarNoPostSecond'
     end
   end
   object quPostForTovar: TMSQuery
@@ -1714,8 +1752,8 @@ inherited fmEditTovar: TfmEditTovar
     SQL.Strings = (
       'Select * from TovarNDS where TovarNo = :TovarNo')
     BeforePost = quTovarNdsBeforePost
-    Left = 65524
-    Top = 360
+    Left = 36
+    Top = 400
     ParamData = <
       item
         DataType = ftInteger
@@ -1915,5 +1953,100 @@ inherited fmEditTovar: TfmEditTovar
     DataSet = quTovarFromDeliveryOfGoods
     Left = 333
     Top = 317
+  end
+  object dsCurrency: TMSDataSource
+    DataSet = quCurrency
+    Left = 333
+    Top = 573
+  end
+  object quCurrency: TMSQuery
+    Connection = dmDataModule.DB
+    SQL.Strings = (
+      'select l_code, Name from d_currency')
+    Left = 365
+    Top = 573
+    object quCurrencyl_code: TStringField
+      DisplayLabel = #1050#1086#1076
+      FieldName = 'l_code'
+      Size = 3
+    end
+    object quCurrencyName: TStringField
+      DisplayLabel = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
+      DisplayWidth = 20
+      FieldName = 'Name'
+      Size = 100
+    end
+  end
+  object quCurrencyTovar: TMSQuery
+    SQLInsert.Strings = (
+      'declare @cnt int'
+      '      , @TovarNo int'
+      ''
+      'set @TovarNo = :TovarNo'
+      ''
+      'select @cnt = count(*) from PriceForVeb where TovarNo = @TovarNo'
+      ''
+      'if @cnt = 0'
+      ' insert into PriceForVeb (TovarNo,Currency)'
+      '  values (@TovarNo,:Currency)'
+      'else'
+      ' update PriceForVeb'
+      '  set Currency = :Currency'
+      ' where TovarNo = @TovarNo')
+    SQLUpdate.Strings = (
+      'declare @cnt int'
+      '      , @TovarNo int'
+      ''
+      'set @TovarNo = :TovarNo'
+      ''
+      'select @cnt = count(*) from PriceForVeb where TovarNo = @TovarNo'
+      ''
+      'if @cnt = 0'
+      ' insert into PriceForVeb (TovarNo,Currency)'
+      '  values (@TovarNo,:Currency)'
+      'else'
+      ' update PriceForVeb'
+      '  set Currency = :Currency'
+      ' where TovarNo = @TovarNo')
+    Connection = dmDataModule.DB
+    SQL.Strings = (
+      'declare @TovarNo int'
+      '      , @cnt int'
+      ''
+      'set @TovarNo = :TovarNo'
+      ''
+      
+        'Select @cnt = count(*) from PriceForVeb where TovarNo = isnull(@' +
+        'TovarNo,TovarNo)'
+      ''
+      
+        'if @cnt = 0 select @TovarNo as TovarNo, convert(varchar(5),:Curr' +
+        'ency) as Currency'
+      
+        'else Select TovarNo, Currency from PriceForVeb where TovarNo = i' +
+        'snull(@TovarNo,TovarNo)')
+    Left = 300
+    Top = 576
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TovarNo'
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Currency'
+      end>
+    object quCurrencyTovarTovarNo: TIntegerField
+      FieldName = 'TovarNo'
+    end
+    object quCurrencyTovarCurrency: TStringField
+      FieldName = 'Currency'
+      Size = 5
+    end
+  end
+  object dsCurrencyTovar: TMSDataSource
+    DataSet = quCurrencyTovar
+    Left = 268
+    Top = 576
   end
 end

@@ -1,6 +1,6 @@
 inherited fmMain: TfmMain
-  Left = 370
-  Top = 137
+  Left = 546
+  Top = 208
   VertScrollBar.Range = 0
   Anchors = [akLeft, akTop, akRight, akBottom]
   AutoScroll = False
@@ -33,7 +33,7 @@ inherited fmMain: TfmMain
     Top = 72
     Width = 312
     Height = 24
-    Caption = #1054#1073#1085#1086#1074#1083#1077#1085#1080#1077' (6.2.59)  22.02.2017'
+    Caption = #1054#1073#1085#1086#1074#1083#1077#1085#1080#1077' (6.2.67)  06.03.2017'
     Color = clMoneyGreen
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack

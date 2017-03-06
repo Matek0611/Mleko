@@ -2234,8 +2234,8 @@ inherited fmOtchets: TfmOtchets
       ''
       
         '        case when (select NotPlatNDS from Post where PostNo = (s' +
-        'elect PostNo from d_our_firm)) = 1 then abs(Rashod.Kol)*Rashod.P' +
-        'riceOut'
+        'elect PostNo from d_our_firm)) = 1 then abs(Rashod.Kol)*convert(' +
+        'float,Rashod.PriceOut)'
       #9#9'     when ((isnull((select IsStavNDS '
       '                          from TovarNDS st'
       
@@ -2247,38 +2247,43 @@ inherited fmOtchets: TfmOtchets
       
         '                                                                ' +
         '                  where st.TovarNo = Tovar.TovarNo),0) = 1)) the' +
-        'n abs(Rashod.Kol)*Rashod.PriceOut'
+        'n abs(Rashod.Kol)*convert(float,Rashod.PriceOut)'
       #9#9#9' when isnull((select IsStavNDS '
       '                          from TovarNDS st'
       
         '                           where st.TovarNo = Tovar.TovarNo),0) ' +
-        '= 1 then Rashod.Kol*Rashod.PriceOut - (abs(Rashod.Kol)*Rashod.Pr' +
-        'iceOut/(100+isnull((select StavNDS '
+        '= 1 then Rashod.Kol*convert(float,Rashod.PriceOut) - (abs(Rashod' +
+        '.Kol)*convert(float,Rashod.PriceOut)/(100+isnull((select StavNDS' +
+        ' '
       
         '                                                                ' +
         '                                                                ' +
-        '                    from TovarNDS st'
+        '                                                   from TovarNDS' +
+        ' st'
       
         '                                                                ' +
         '                                                                ' +
-        '                     where st.TovarNo = Tovar.TovarNo),0))*isnul' +
-        'l((select StavNDS '
+        '                                                    where st.Tov' +
+        'arNo = Tovar.TovarNo),0))*isnull((select StavNDS '
       
         '                                                                ' +
         '                                                                ' +
-        '                    from TovarNDS st'
+        '                                                                ' +
+        '                                   from TovarNDS st'
       
         '                                                                ' +
         '                                                                ' +
-        '                     where st.TovarNo = Tovar.TovarNo),0))'
+        '                                                                ' +
+        '                                    where st.TovarNo = Tovar.Tov' +
+        'arNo),0))'
       '             when isnull((select IsStavNDS '
       '                          from TovarNDS st'
       
         '                           where st.TovarNo = Tovar.TovarNo),0) ' +
-        '= 0 then abs(Rashod.Kol)*Rashod.PriceOut/1.2'
+        '= 0 then abs(Rashod.Kol)*convert(float,Rashod.PriceOut)/1.2'
       '             '
       '        end as SummaWIthNoNds'
-      '        '
+      '       '
       ' FROM VidTov RIGHT OUTER JOIN'
       '      Tovar INNER JOIN'
       
@@ -2359,10 +2364,6 @@ inherited fmOtchets: TfmOtchets
       FieldName = 'AvgPriceIn'
       ReadOnly = True
     end
-    object quRashodPrintArticle: TIntegerField
-      FieldName = 'Article'
-      ReadOnly = True
-    end
     object quRashodPrintWithNoNDS: TBooleanField
       FieldName = 'WithNoNDS'
       ReadOnly = True
@@ -2388,6 +2389,10 @@ inherited fmOtchets: TfmOtchets
     end
     object quRashodPrintIsStavNDS: TIntegerField
       FieldName = 'IsStavNDS'
+      ReadOnly = True
+    end
+    object quRashodPrintArticle: TLargeintField
+      FieldName = 'Article'
       ReadOnly = True
     end
   end

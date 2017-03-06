@@ -410,7 +410,6 @@ type
     quRashodPrintNewSocial: TBooleanField;
     quRashodPrintSocial: TBooleanField;
     quRashodPrintAvgPriceIn: TFloatField;
-    quRashodPrintArticle: TIntegerField;
     quNaklRPrintNaklNo: TIntegerField;
     quNaklRPrintContract_id: TIntegerField;
     quNaklRPrintCar: TStringField;
@@ -434,6 +433,7 @@ type
     quRashodPrintBarCode: TLargeintField;
     quRashodPrintIsStavNDS: TIntegerField;
     quTovarVidNameOtdelName: TStringField;
+    quRashodPrintArticle: TLargeintField;
     
     procedure frReport3GetValue(const ParName: String;
       var ParValue: Variant);
@@ -1960,8 +1960,13 @@ begin
 //   frReport12.DesignReport;
    Screen.Cursor:=crDefault;
 
+   if DesignCode = 200 then ViewDatasetFast('Загрузки без торговых точек', mdLoadCar, True) else
+   ShowReportOrDesignerExt(frReport12, Copies, Preview, DesignCode=100);
+
+{
    if DesignCode = 200 then ViewDatasetFast(mdLoadCar) else
    ShowReportOrDesignerExt(frReport12, Copies, Preview, DesignCode=100);
+}
 //   if InDesigner then
 //      frReport12.DesignReport else
 //   if Preview then
@@ -4227,8 +4232,10 @@ begin
   ParValue:= IntToStringUkr(Trunc(quNaklRPrintSumma.AsFloat))+' , '+
   format('%.2d ',[Round(Frac(quNaklRPrintSumma.AsFloat)*100)]);
 }
- if ParName='Summa' then
-  ParValue:= UkrRecognizeAmount(quNaklRPrintSumma.AsFloat,'','');
+
+ dmDataModule.OpenSQL('select c.l_code from D_CURRENCY c inner join CurrencyExchange ce on c.IsDefault = 1 and ce.IsActive = 1 and ce.CurrencyId = c.ID and c.isTrash = 0');
+ if ParName='Summa' then if dmDataModule.QFO.FieldByName('l_code').Value = 'UAH' then ParValue:= UkrRecognizeAmount(quNaklRPrintSumma.AsFloat,'грн.','коп.')
+                                                                                 else ParValue:= UkrRecognizeAmount(quNaklRPrintSumma.AsFloat,'','');
 
  if ParName='WNDS' then
   ParValue:=quNaklRPrintSumma.AsFloat/1.2;

@@ -7,7 +7,7 @@ uses
   StdCtrls, Forms, MlekoForm, DBCtrls, DB, Mask, ExtCtrls, Buttons, Dialogs,
   ActnList, MLKPropDb, cxPC, cxControls, MlekoDbDsMSSQL, MemDS, DBAccess, ComCtrls,
   MSAccess, data, citCtrls, citmask, citDBComboEdit, citDBCalendar, ToolWin,
-  citDBCtrls,MlekoSelectFIrm, DBCtrlsEh, GridsEh, DBGridEh;
+  citDBCtrls,MlekoSelectFIrm, DBCtrlsEh, GridsEh, DBGridEh, DBLookupEh;
 
 type
   TfmEditTovar = class(TMLKPropDbDlg)
@@ -61,8 +61,6 @@ type
     Label16: TLabel;
     quTovarPostid: TIntegerField;
     quTovarPostPostNo: TSmallintField;
-    quTovarPostTovarNo: TSmallintField;
-    quTovarPostTovarNoPost: TIntegerField;
     quTovarPostNameTovarPost: TStringField;
     quTovarPostNameTovar: TStringField;
     quTovarPostNameTovarShort: TStringField;
@@ -166,13 +164,27 @@ type
     Label25: TLabel;
     TovarNoPostSecond: TDBEdit;
     Label26: TLabel;
-    quTovarPostTovarNoPostSecond: TIntegerField;
     quTovarPostTovarNoPostSecondText: TStringField;
     Label27: TLabel;
     TovarNoPostSecondText: TDBEdit;
     Label28: TLabel;
     quPricePriceOld: TFloatField;
     deMinCarryover: TDBEdit;
+    Label29: TLabel;
+    DBUKT_ZED: TDBEdit;
+    dsCurrency: TMSDataSource;
+    quCurrency: TMSQuery;
+    quCurrencyl_code: TStringField;
+    quCurrencyName: TStringField;
+    DBLookupComboboxEh1: TDBLookupComboboxEh;
+    Label30: TLabel;
+    quCurrencyTovar: TMSQuery;
+    dsCurrencyTovar: TMSDataSource;
+    quCurrencyTovarTovarNo: TIntegerField;
+    quCurrencyTovarCurrency: TStringField;
+    quTovarPostTovarNo: TLargeintField;
+    quTovarPostTovarNoPost: TLargeintField;
+    quTovarPostTovarNoPostSecond: TLargeintField;
 
     procedure ActionOKExecute(Sender: TObject);
     procedure quSocialTovarBeforePost(DataSet: TDataSet);
@@ -310,7 +322,8 @@ begin
   if quService.State in [dsInsert, dsEdit] then quService.Post;
   if quTovarNOPP.State in [dsInsert, dsEdit] then quTovarNOPP.Post;
   if quTovarSupplier.State in [dsInsert, dsEdit]  then quTovarSupplier.Post;
-  if quTovarFromDeliveryOfGoods.State in [dsInsert, dsEdit]  then quTovarFromDeliveryOfGoods.Post; 
+  if quTovarFromDeliveryOfGoods.State in [dsInsert, dsEdit]  then quTovarFromDeliveryOfGoods.Post;
+  if quCurrencyTovar.State in [dsInsert, dsEdit]  then quCurrencyTovar.Post;  
   end;
 
 procedure TfmEditTovar.quSocialTovarBeforePost(DataSet: TDataSet);
@@ -475,6 +488,12 @@ begin
   quPrice.ParamByName('TovarNo').AsInteger := TovarNo;
   quPrice.Open;
 
+  quCurrencyTovar.Close;
+  quCurrencyTovar.ParamByName('TovarNo').AsInteger := TovarNo;
+  quCurrencyTovar.Open;
+
+  quCurrency.Open;
+
   ActiveControl := EditNameTovar;
 
  //   GoodStandart := dmDataModule.quWork.FieldByName('TovarNo').AsInteger;
@@ -501,6 +520,7 @@ begin
   if quTovarNOPP.State in [dsInsert, dsEdit] then quTovarNOPP.Post;
   if ((quTovarSupplier.State in [dsInsert, dsEdit]) and (deNamePost.Text <> ''))  then quTovarSupplier.Post;
   if quTovarFromDeliveryOfGoods.State in [dsInsert, dsEdit]  then quTovarFromDeliveryOfGoods.Post;
+  if quCurrencyTovar.State in [dsInsert, dsEdit]  then quCurrencyTovar.Post; 
 end;
 
 
@@ -555,19 +575,14 @@ begin
 
   if quTovarWIthNoNDS.State = dsEdit then
    begin
+     dmDataModule.quWork.SQL.Clear;
+     dmDataModule.quWork.SQL.Add('select id from TovarWIthNoNDS where TovarNo = :TovarNo');
+     dmDataModule.quWork.ParamByName('TovarNo').AsInteger := TovarNom;
+     dmDataModule.quWork.Open;
 
-
-
-    dmDataModule.quWork.SQL.Clear;
-    dmDataModule.quWork.SQL.Add('select id from TovarWIthNoNDS where TovarNo = :TovarNo');
-    dmDataModule.quWork.ParamByName('TovarNo').AsInteger := TovarNom;
-    dmDataModule.quWork.Open;
-
-    quTovarWIthNoNDSID.AsInteger := dmDataModule.quWork.FieldByName('ID').AsInteger;
-    quTovarWIthNoNDSTovarNo.AsInteger := TovarNom;
-    quTovarWIthNoNDSWIthNoNDS.AsBoolean := not rbIsTovarNDS.Checked;
-
-
+     quTovarWIthNoNDSID.AsInteger := dmDataModule.quWork.FieldByName('ID').AsInteger;
+     quTovarWIthNoNDSTovarNo.AsInteger := TovarNom;
+     quTovarWIthNoNDSWIthNoNDS.AsBoolean := not rbIsTovarNDS.Checked;
    end
 end;
 
@@ -584,6 +599,7 @@ begin
   quTovarForReturn.Close;
   quOurTovar.Close;
   quService.Close;
+  quCurrency.Close;
 end;
 
 procedure TfmEditTovar.quPriceBeforePost(DataSet: TDataSet);
