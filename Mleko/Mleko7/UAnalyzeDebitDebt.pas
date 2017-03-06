@@ -14,8 +14,11 @@ uses
   ADODB, USortedIntList, UColumnObjects;
 
 type
+
+
   TParamType = ( ptNone, ptUserNo, ptSPID, ptOwnerName, ptAllTypes,
-                 ptExpansion, ptSelection, ptDisableExclusion,
+                 ptExpansion, ptSelection,
+                 ptDisableExclusion, ptDisableZeroSumAcn,
                  ptFormDate, ptBegDate, ptStartDate, ptVeryOld,
                  ptOrderBy,
                  ptEndDate);
@@ -121,8 +124,6 @@ type
     procedure mnuShowHideClick(Sender: TObject);
     procedure clbExpansionsDblClick(Sender: TObject);
     procedure acToggleSettingsVisibilityExecute(Sender: TObject);
-    procedure dbgDebtsMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure quDebtFilterRecord(DataSet: TDataSet; var Accept: Boolean);
   private
     { Private declarations }
@@ -155,6 +156,7 @@ type
     UserParamType: TParamType;
     {$IFDEF SystemMenu}
     DisableExclusion: Boolean;
+    DisableZeroSumAcn: Integer;
     SysMenu: THandle;
     DisableExclusionItem: THandle;
     VisibleRowCount: Cardinal;
@@ -224,6 +226,8 @@ type
     procedure FilteringEvent(Sender: TObject);
     procedure AfterColumnFilterSelection(SelCount: Integer);
     procedure RefreshFilterList(Column: TColumnEh);
+    procedure InputValueForDisableZeroSumAcn;
+    procedure ShowTotalSumValues;
   public
     { Public declarations }
     procedure RefreshResults(SetMaxCount: Boolean = False);
@@ -250,8 +254,10 @@ type
 
 const
 
-  AllowedFilterIndexes = [0, 2, 3, 4, 10];
-  AllowedIntIndexes = [8, 9, 10];
+  AllowedSumIndexes: array[0..3] of Integer = (-1, -2, -3, -4);
+
+  AllowedFilterIndexes = [0, 1, 2, 3, 4, 10]; // used for filtering
+  AllowedIntIndexes = [5, 8, 9, 10]; // used for sorting
 
   idCurRecordCount = 0;
   idMaxRecordCount = 1;
@@ -281,6 +287,7 @@ const
   idVeryOldVal = -10000;
   idOrderBy = 'ORDER BY';
   idDisableExclusion = 'DisableExclusion';
+  idDisableZeroSumAcn = 'DisableZeroSumAcn';
 
   idDayNaklAttr = 'накладной';
   idDayOplAttr = 'оплаты';
@@ -623,6 +630,17 @@ begin
   sbStatus.Panels[Index].Text := Msg;
 end;
 
+procedure TfrmAnalyzeDebitDebt.ShowTotalSumValues();
+var i: Integer; ColObj: TColumnObject;
+begin
+  for i:= 0 to ColObjs.GetAggregatedCount-1 do
+  begin
+    ColObj:= ColObjs.GetAggregatedObject(i);
+    ColObj.Column.Footer.Value:= FormatFloat(
+    ColObj.Column.Footer.DisplayFormat, ColObjs.GetAggregatedValue(i));
+  end;
+end;
+
 procedure TfrmAnalyzeDebitDebt.ShowRecordCount(SetMaxCount: Boolean = False);
 //var RowCount: Integer;
 begin
@@ -635,8 +653,8 @@ begin
 
 //                           RowCount:= dbgDebts.RowCount-1;
     FirstShown:= True;
-    ShowStatusMsg(idCurRecordCount, Format('Записей: %d', [quDebt.RecordCount]));
-    //ShowStatusMsg(idCurRecordCount, Format('Записей: %d (Показ: %d)', [quDebt.RecordCount, VisibleRowCount]));
+    //ShowStatusMsg(idCurRecordCount, Format('Записей: %d', [quDebt.RecordCount]));
+    ShowStatusMsg(idCurRecordCount, Format('Записей: %d (Показ: %d)', [quDebt.RecordCount, VisibleRowCount]));
     ShowStatusMsg(idMaxRecordCount, Format('Всего: %d', [MaxRecordCount]));
     ShowStatusMsg(idPercent, Format('%6.2f%%', [quDebt.RecordCount * 100 /
       MaxRecordCount]));
@@ -647,6 +665,7 @@ begin
     ShowStatusMsg(0, 'Всего: 0');
     ShowStatusMsg(1, '');
   end;
+  ShowTotalSumValues();
   ShowStatusMsg(idTime, Format(' %8.2f сек', [Tracer.LastTime]));
 end;
 
@@ -833,6 +852,7 @@ procedure TfrmAnalyzeDebitDebt.RefreshResults(SetMaxCount: Boolean = False);
 begin
   inherited;
   Tracer.Start;
+  ColObjs.ClearAggregItems;
   VisibleRowCount:= 0;
   if quDebt.Active then
      begin
@@ -857,6 +877,7 @@ begin
   ParamKeys[ptStartDate] := idStartDate;
   ParamKeys[ptVeryOld] := idVeryOldDay;
   ParamKeys[ptDisableExclusion] := idDisableExclusion;
+  ParamKeys[ptDisableZeroSumAcn] := idDisableZeroSumAcn;
   ParamKeys[ptOrderBy] := idOrderBy;
   ParamKeys[ptAllTypes] := idInsertAllTypes;
   //ParamKeys[ptEndDate] := idEndDate;
@@ -913,6 +934,8 @@ begin
           SetParameterByType(pt, IntToStr(idVeryOldVal));
       ptDisableExclusion:
           SetParameterByType(pt, IntToStr(Ord(DisableExclusion)));
+      ptDisableZeroSumAcn:
+          SetParameterByType(pt, IntToStr(Ord(DisableZeroSumAcn)));
       ptOrderBy:
       begin
         ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
@@ -974,7 +997,8 @@ begin
   //Index:= Temp.IndexOf(FieldName);
   if (Index>=0) then Temp.Delete(Index);
   //Temp.Insert(0, FieldName);
-  Result:= Temp.CommaText;
+  //Result:= Temp.CommaText;
+  Result:= GetDelimText(Temp, ', ');
 end;
 
 procedure TfrmAnalyzeDebitDebt.GetFieldValues(Items, Keys: TStrings; DataSet: TDataSet; MainFieldStr, KeyFieldStr: String);
@@ -1074,7 +1098,7 @@ begin
 end;
 
 procedure TfrmAnalyzeDebitDebt.RefreshFilterList(Column: TColumnEh);
-var Rect: TRect; P: TPoint; Ptr: Pointer;
+var Rect: TRect; P: PRect; Ptr: Pointer;
     Info: TColumnObjectInfo; RootName: string;
 begin
   if (Column<>nil) then
@@ -1086,8 +1110,9 @@ begin
           if (Column<>nil) then
           begin
             Rect:= dbgDebts.CellRect(Column.Index+1, 1);
-            P:= dbgDebts.ClientToScreen(Point(Rect.Right, Rect.Bottom));
-            Ptr:= @P;
+            Rect.TopLeft:= dbgDebts.ClientToScreen(Point(Rect.Left, Rect.Bottom));
+            Rect.BottomRight:= dbgDebts.ClientToScreen(Point(Rect.Right, Rect.Bottom));
+            Ptr:= @Rect;
             RootName:= Column.Title.Caption;
           end else
           begin
@@ -1270,6 +1295,13 @@ procedure TfrmAnalyzeDebitDebt.FillComponentLists();
       end;
     if (n<>k) then
        raise Exception.Create('All Expansions items should be used');
+    k:= Columns.Count;
+    for  i:= 0 to k-1 do
+      begin
+        Column:= Columns[i];
+        if (Column.Tag<0) then
+           ColObjs.AddColumnObject(Column, fvtSum);
+      end;
   end;
 
   procedure FillFieldList();
@@ -1298,6 +1330,7 @@ const
   idCollectSQLParams = $402;
   idTransposeSelections = $403;
   id_DisableExclusion = $404;
+  id_DisableZeroSumAcn = $405;
 
 procedure TfrmAnalyzeDebitDebt.InsertCommands();
 var
@@ -1307,6 +1340,8 @@ begin
   InsertMenu(SysMenu, Word(-1), MF_SEPARATOR, WM_USER, '');
   DisableExclusionItem := THandle(InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
     id_DisableExclusion, 'Disable Exclusion'));
+  InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
+    id_DisableZeroSumAcn, 'Disable ZeroSumAcn');
   uIDShowItem := THandle(InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
     idCollectSQLParams, 'Collect SQL Params'));
   uIDShowItem := THandle(InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
@@ -1335,6 +1370,15 @@ begin
   // 8 means index of menu item
   CheckMenuItem(SysMenu, 8, MF_BYPOSITION + Checks[DisableExclusion]);
 end;
+
+procedure TfrmAnalyzeDebitDebt.InputValueForDisableZeroSumAcn();
+var Value: string;
+begin
+  Value:= IntToStr(DisableZeroSumAcn);
+  if InputQuery('Input value for DisableZeroSumAcn', 'DisableZeroSumAcn', Value) then
+     DisableZeroSumAcn:= StrToIntDef(Value, 0);
+end;
+
 
 procedure TfrmAnalyzeDebitDebt.TransposeSelections();
 var
@@ -1369,6 +1413,8 @@ begin
       TransposeSelections();
     id_DisableExclusion:
       ToggleDisableExclusionItem();
+    id_DisableZeroSumAcn:
+      InputValueForDisableZeroSumAcn();
   end;
   inherited;
 end;
@@ -1821,24 +1867,13 @@ begin
   Visible:= not Visible;
 end;
 
-procedure TfrmAnalyzeDebitDebt.dbgDebtsMouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-var P: TPoint;
-begin
-  inherited;
-//  P:= dbgDebts.ClientToScreen(Point(X, Y));
-//  ShowMessage(Format('X:%d; Y:%d', [P.X, P.Y]));
-end;
-
 procedure TfrmAnalyzeDebitDebt.quDebtFilterRecord(DataSet: TDataSet;
   var Accept: Boolean);
 begin
   inherited;
-  Accept:= (not EnableFiltering) or (ColObjs.ValuesExist());
-  //((KeyField=nil) or (SortedKeys.IndexOf(KeyField.AsInteger)>=0));
-  //Inc(VisibleRowCount);
+  Accept:= (not EnableFiltering) or (ColObjs.ValuesExist(False));
+  if Accept then ColObjs.AggregateMainValues;
   Inc(VisibleRowCount, Ord(Accept));
-  //Accept:= quDebt_SotrudName.AsInteger = 45;
 end;
 
 end.

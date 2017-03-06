@@ -42,6 +42,7 @@ function Alt_Is_Down(): Boolean;
 function SelectMLKItemsByDialog(MLKForm: TCFLMLKCustomForm; Items: TStrings;
          OwnerName, ParamName, ParamCode: string;
          MultiSelect: BOOL = True; KeyValues: TStrings = nil): Integer;
+function GetDelimText(Source: TStrings; Delim: String): string;
 function GetStartPosIndex( Source: TStrings; S: string; MaxCount: Integer = 0;
                            LookForward: Boolean = True): Integer;
 function IndexOfColumnByTag(DBGridEh: TDBGridEh; TagValue: Integer): Integer;
@@ -172,6 +173,18 @@ begin
     finally
       if (KeyValues=nil) then Keys.Free;
     end;
+  end;
+end;
+
+function GetDelimText(Source: TStrings; Delim: String): string;
+var i, h: Integer;
+begin
+  Result:= ''; h:= Source.Count-1;
+  for i := 0 to h do
+  begin
+    Result:= Result + Source[i];
+    if (i<h) then
+       Result:= Result + Delim;
   end;
 end;
 

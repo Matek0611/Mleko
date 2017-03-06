@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ComCtrls, ImgList, StdCtrls, ExtCtrls, CheckLst, ToolWin;
+  Dialogs, ComCtrls, ImgList, StdCtrls, ExtCtrls, CheckLst, ToolWin, Menus;
 
 const
   ueResetFiltering = 1;
@@ -37,6 +37,9 @@ type
     btnFindEqual: TToolButton;
     btnRefreshList: TToolButton;
     ToolButton3: TToolButton;
+    pmFilter: TPopupMenu;
+    mnuSelectAllUp: TMenuItem;
+    mnuSelectAllDown: TMenuItem;
     procedure clbFilterClickCheck(Sender: TObject);
     procedure cbxRootClick(Sender: TObject);
     procedure clbFilterClick(Sender: TObject);
@@ -47,6 +50,8 @@ type
     procedure btnOKClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnRefreshListClick(Sender: TObject);
+    procedure mnuSelectAllUpClick(Sender: TObject);
+    procedure mnuSelectAllDownClick(Sender: TObject);
   private
     Root, Data: TStrings;
     CheckedCount, DisableCount: Integer;
@@ -71,6 +76,9 @@ type
     function GetItemCount: Integer;
     procedure AddItem(AText: String; AState, ACount: Integer;
       var IsChecked: Boolean);
+    procedure SelectAllUpDown(Direction: Integer);
+    procedure SelectAllDown;
+    procedure SelectAllUp;
     { Private declarations }
   public
     { Public declarations }
@@ -80,7 +88,7 @@ type
   procedure CloseColumnFilterDlg();
 function ColumnFilterDlg( Owner: TComponent;
                           Items: TStrings; Counts: TList; RootName: string = '';
-                          P: PPoint = nil;
+                          P: PRect = nil;
                           UseObjects: Boolean = False;
                           FiltEvent: TNotifyEvent = nil;
                           AsModal: Boolean = True): Integer;
@@ -97,7 +105,7 @@ var
   frmColumnFilter: TfrmColumnFilter;
 
 implementation
-uses MlekoUtils;
+uses MlekoUtils, Types;
 
 {$R *.dfm}
 
@@ -118,7 +126,7 @@ end;
 
 function ColumnFilterDlg( Owner: TComponent;
                           Items: TStrings; Counts: TList; RootName: string = '';
-                          P: PPoint = nil;
+                          P:PRect = nil;
                           UseObjects: Boolean = False;
                           FiltEvent: TNotifyEvent = nil;
                           AsModal: Boolean = True): Integer;
@@ -131,10 +139,10 @@ begin
      if (P<>nil) then
      with P^ do
      begin
-       if (X>0) then
-       frmColumnFilter.XPos:= X;
-       if (Y>0) then
-       frmColumnFilter.YPos:= Y;
+       frmColumnFilter.Top:= Top;
+       if (Right + frmColumnFilter.Width < Screen.Width) then
+           frmColumnFilter.Left:= Right else
+           frmColumnFilter.Left:= Left - frmColumnFilter.Width;
      end;
      frmColumnFilter.XYPosUsed:= False;
      frmColumnFilter.FiltEvent:= FiltEvent;
@@ -358,19 +366,19 @@ end;
 
 procedure TfrmColumnFilter.clbFilterClick(Sender: TObject);
 begin
-  if (DisableCount>0) then Exit;
-  ChangeItemState(clbFilter.ItemIndex, True);
+//  if (DisableCount>0) then Exit;
+//  ChangeItemState(clbFilter.ItemIndex, True);
 end;
 
 procedure TfrmColumnFilter.FormShow(Sender: TObject);
 begin
-  if not XYPosUsed then
-     begin
-       if (XPos>0) then Left:= XPos;
-       if (YPos>0) then Top:= YPos;
-       XYPosUsed:= True;
-       //sbStatus.SimpleText:= Format('%d, %d, %d, %d', [Left, Top, XPos, YPos]);
-     end;
+//  if not XYPosUsed then
+//     begin
+//       if (XPos>0) then Left:= XPos;
+//       if (YPos>0) then Top:= YPos;
+//       XYPosUsed:= True;
+//       //sbStatus.SimpleText:= Format('%d, %d, %d, %d', [Left, Top, XPos, YPos]);
+//     end;
 end;
 
 procedure TfrmColumnFilter.btnResetClick(Sender: TObject);
@@ -423,6 +431,45 @@ begin
      end;
 end;
 
+procedure TfrmColumnFilter.SelectAllUpDown(Direction: Integer);
+var i, n: Integer;
+begin
+  if Abs(Direction)<>1 then Exit;
+  n:= clbFilter.Items.Count;
+  i:= clbFilter.ItemIndex;
+  while (i>=0) and (i<n) do
+  begin
+    clbFilter.Checked[i]:= False;
+    Dec(i, Direction);
+  end;
+  i:= clbFilter.ItemIndex;
+  while (i>=0) and (i<n) do
+  begin
+    clbFilter.Checked[i]:= True;
+    Inc(i, Direction);
+  end;
+
+end;
+
+procedure TfrmColumnFilter.SelectAllUp();
+begin
+  SelectAllUpDown(-1);
+end;
+
+procedure TfrmColumnFilter.SelectAllDown();
+begin
+  SelectAllUpDown(1);
+end;
+
+procedure TfrmColumnFilter.mnuSelectAllUpClick(Sender: TObject);
+begin
+  SelectAllUp();
+end;
+
+procedure TfrmColumnFilter.mnuSelectAllDownClick(Sender: TObject);
+begin
+  SelectAllDown();
+end;
 
 end.
 

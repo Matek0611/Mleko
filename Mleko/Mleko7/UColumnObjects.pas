@@ -17,15 +17,18 @@ type
 
   TColumnObject = class
   private
+    FAggregValue: Double;
     DataSet: TDataSet;
     FOwner: TColumnObjects;
-    Column: TColumnEh;
+    FColumn: TColumnEh;
     KeyField, MainField: TField;
     FieldVals: TStringList;
     FieldKeys, QtyList: TIntList;
     SortedKeys: TSortedIntList;
     EnableColTag: TIntBoolFunc;
     FIsUpdated: Boolean;
+    FIsAggregated: Boolean;
+    FooterValueType: TFooterValueType;
     function GetKey(Index: Integer; Sorted: Boolean = True): Integer;
     function KeyIndex(Key: Integer; Sorted: Boolean = True): Integer;
     function FindKeyField: TField;
@@ -39,13 +42,17 @@ type
     function GetColumnObjectInfo: TColumnObjectInfo;
   public
     constructor Create( AColumn: TColumnEh;
-                        AOwner: TColumnObjects);
+                        AOwner: TColumnObjects;
+                        AValueType: TFooterValueType = fvtNon);
     destructor Destroy; override;
+    procedure AggregateMainValue;
     function IsUpdated: Boolean;
     function IsActive: Boolean;
     function GetFieldValues: TStrings;
     function FindValueIndex(Sorted: Boolean = True): Integer;
     function UpdateFieldValues(NewValues: Boolean = False): Integer;
+    property IsAggregated: Boolean read FIsAggregated;
+    property Column: TColumnEh read FColumn;
   end;
 
   TColumnObjects = class(TList)
@@ -54,22 +61,28 @@ type
     FoundIndex: Integer;
     EnableColTag: TIntBoolFunc;
     FDataSet: TDataSet;
+    FAggregItems: TList;
     function IndexOfTag(ColumnTag: Integer): Integer;
     procedure FreeItems;
   public
     constructor Create(ADataSet: TDataSet; EnableIndex: TIntBoolFunc);
     destructor Destroy; override;
     procedure ClearItems;
+    procedure ClearAggregItems;
     function AcceptFilterValues: Boolean;
     procedure ResetUpdateFlags;
     function GetCurrentColumn: TColumnEh;
     function UpdateFieldValues(ColumnTag: Integer): Integer;
+    procedure AggregateMainValues;
+    function GetAggregatedValue(Index: Integer): Double;
+    function GetAggregatedObject(Index: Integer): TColumnObject;
+    function GetAggregatedCount: Integer;
     function GetColumnObject(Index: Integer): TColumnObject;
     function GetColumnObjectInfo(ColumnTag: Integer; DoUpdate: Boolean = True): TColumnObjectInfo;
     function FindValueIndex(Sorted: Boolean = True): Integer;
-    function AddColumnObject(AColumn: TColumnEh): TColumnObject;
+    function AddColumnObject(AColumn: TColumnEh; AValueType: TFooterValueType = fvtNon): TColumnObject;
     function GetFieldValues(ColumnTag: Integer; DoUpdate: Boolean = True ): TStrings;
-    function ValuesExist(): Boolean;
+    function ValuesExist(DoAggregate: Boolean = True): Boolean;
   end;
 
 implementation
@@ -154,7 +167,7 @@ begin
   Result.FieldVals:= FieldVals;
   Result.QtyList:= QtyList;
   Result.SelCount:= SortedKeys.Count;
-  Result.Column:= Column;
+  Result.Column:= FColumn;
 end;  
 
 function TColumnObject.GetCountValues(): TList;
@@ -168,6 +181,7 @@ begin
   FieldKeys.Clear;
   SortedKeys.Clear;
   QtyList.Clear;
+  FAggregValue:= 0;
   FIsUpdated:= False;
 end;
 
@@ -179,6 +193,14 @@ end;
 function TColumnObject.GetUpdateFlag: Boolean;
 begin
   Result:= FIsUpdated;
+end;
+
+procedure TColumnObject.AggregateMainValue();
+begin
+  //(fvtNon, fvtSum, fvtAvg, fvtCount, fvtFieldValue, fvtStaticText);
+  case FooterValueType of
+  fvtSum: FAggregValue:= FAggregValue + MainField.AsFloat;
+  end;
 end;
 
 function TColumnObject.UpdateFieldValues(NewValues: Boolean = False): Integer;
@@ -253,18 +275,22 @@ begin
      Result:= DataSet.FindField('_' + MainField.FieldName);
 end;
 
-constructor TColumnObject.Create(AColumn: TColumnEh; AOwner: TColumnObjects);
+constructor TColumnObject.Create(
+            AColumn: TColumnEh; AOwner: TColumnObjects;
+            AValueType: TFooterValueType = fvtNon);
 begin
-  Column:= AColumn;
+  FColumn:= AColumn;
   FieldVals := TStringList.Create;
   FieldKeys := TIntList.Create;
   QtyList := TIntList.Create;
   SortedKeys := TSortedIntList.Create;
-  MainField:= Column.Field;
+  MainField:= FColumn.Field;
   FOwner := AOwner;
   DataSet:= FOwner.FDataSet;
   EnableColTag:= FOwner.EnableColTag;
   KeyField:= FindKeyField();
+  FooterValueType:= AValueType;
+  FIsAggregated:= FooterValueType <> fvtNon;
 end;
 
 destructor TColumnObject.Destroy;
@@ -278,6 +304,21 @@ end;
 
 { TColumnObjects }
 
+procedure FreeItemsInList(List: TList);
+var i: Integer;
+begin
+for i := 0 to List.Count-1 do
+  TObject(List[i]).Free;
+end;
+
+procedure TColumnObjects.ClearAggregItems();
+var i: Integer;
+begin
+for i := 0 to FAggregItems.Count-1 do
+  TColumnObject(FAggregItems[i]).Clear;
+end;
+
+
 procedure TColumnObjects.ClearItems();
 var i: Integer;
 begin
@@ -286,15 +327,17 @@ for i := 0 to Count-1 do
 end;
 
 procedure TColumnObjects.FreeItems();
-var i: Integer;
+//var i: Integer;
 begin
-for i := 0 to Count-1 do
-  GetColumnObject(i).Free;
+  FreeItemsInList(Self);
+//for i := 0 to Count-1 do
+//  GetColumnObject(i).Free;
 end;
 
 constructor TColumnObjects.Create(ADataSet: TDataSet; EnableIndex: TIntBoolFunc);
 begin
   inherited Create;
+  FAggregItems:= TList.Create;
   EnableColTag:= EnableIndex;
   FDataSet:= ADataSet;
   FoundIndex:= -1;
@@ -303,14 +346,19 @@ end;
 
 destructor TColumnObjects.Destroy;
 begin
+  FreeItemsInList(FAggregItems);
+  FAggregItems.Free;
   FreeItems();
   inherited;
 end;
 
-function TColumnObjects.AddColumnObject(AColumn: TColumnEh): TColumnObject;
+function TColumnObjects.AddColumnObject( AColumn: TColumnEh;
+                                         AValueType: TFooterValueType = fvtNon): TColumnObject;
 begin
-  Result := TColumnObject.Create(AColumn, Self);
-  Add(Result);
+  Result := TColumnObject.Create(AColumn, Self, AValueType);
+  if (Result.IsAggregated) then
+      FAggregItems.Add(Result) else
+      Add(Result);
 end;
 
 function TColumnObjects.GetColumnObject(Index: Integer): TColumnObject;
@@ -332,24 +380,47 @@ begin
   Result := -1;
 end;
 
-function TColumnObjects.ValuesExist(): Boolean;
+procedure TColumnObjects.AggregateMainValues();
+var i: Integer;
+begin
+  for i := 0 to FAggregItems.Count - 1 do
+    TColumnObject(FAggregItems[i]).AggregateMainValue;
+end;
+
+function TColumnObjects.GetAggregatedValue(Index: Integer): Double;
+begin
+  Result:= TColumnObject(FAggregItems[Index]).FAggregValue;
+end;
+
+function TColumnObjects.GetAggregatedObject(Index: Integer): TColumnObject;
+begin
+  Result:= TColumnObject(FAggregItems[Index]);
+end;
+
+function TColumnObjects.GetAggregatedCount(): Integer;
+begin
+  Result:=FAggregItems.Count;
+end;
+
+function TColumnObjects.ValuesExist(DoAggregate: Boolean = True): Boolean;
 var Item: TColumnObject; i: Integer;
 begin
   Result:= False;
   for i := 0 to Count - 1 do
   begin
     Item:= GetColumnObject(i);
-    if (Item<>nil) and Item.IsActive() then
-       if Item.FindValueIndex(True) < 0 then Exit;
+    if (Item<>nil) and Item.IsActive() and
+        (Item.FindValueIndex(True) < 0) then Exit;
   end;
   Result:= True;
+  if DoAggregate then AggregateMainValues;
 end;
 
 function TColumnObjects.IndexOfTag(ColumnTag: Integer): Integer;
 begin
 for Result := 0 to Count-1 do
   begin
-    if GetColumnObject(Result).Column.Tag=ColumnTag then Exit;
+    if GetColumnObject(Result).FColumn.Tag=ColumnTag then Exit;
   end;
   Result:= -1;
 end;
@@ -396,7 +467,7 @@ begin
      begin
        ColObj:= GetColumnObject(FoundIndex);
        if (ColObj<>nil) then
-          Result:= ColObj.Column;
+          Result:= ColObj.FColumn;
      end;
 end;
 
