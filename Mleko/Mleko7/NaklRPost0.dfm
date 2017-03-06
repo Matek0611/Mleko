@@ -352,8 +352,8 @@ object fmNaklRPost: TfmNaklRPost
         Width = 105
         Height = 21
         Hint = #1050#1086#1085#1077#1094' '#1087#1077#1088#1080#1086#1076#1072
-        Date = 36890.648717442130000000
-        Time = 36890.648717442130000000
+        Date = 36890.648717442120000000
+        Time = 36890.648717442120000000
         ParentShowHint = False
         ShowHint = True
         TabOrder = 1
@@ -476,7 +476,7 @@ object fmNaklRPost: TfmNaklRPost
         DataType = ftInteger
         Name = 'NomNaklR'
       end>
-    object quNaklRpostExportTovarNoP: TIntegerField
+    object quNaklRpostExportTovarNoP: TLargeintField
       FieldName = 'TovarNoP'
       ReadOnly = True
     end

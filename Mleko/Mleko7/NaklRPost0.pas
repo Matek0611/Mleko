@@ -20,7 +20,6 @@ type
     qu_NaklRPostExport: TMSQuery;
     ds_NaklRPostExport: TDataSource;
     quNaklRpostExport: TMSQuery;
-    quNaklRpostExportTovarNoP: TIntegerField;
     quNaklRpostExportBarCode: TLargeintField;
     quNaklRpostExportNameTov: TStringField;
     quNaklRpostExportEdIzm: TStringField;
@@ -65,6 +64,7 @@ type
     lbDateEnd: TLabel;
     dtDateEnd: TDateTimePicker;
     cbxDate: TCheckBox;
+    quNaklRpostExportTovarNoP: TLargeintField;
 //    function DeleteDir(sDir : string) : Boolean;
     procedure makedir(value:string);
     procedure cbFilterPostExit(Sender: TObject);
