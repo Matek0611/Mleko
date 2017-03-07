@@ -38,8 +38,11 @@ type
     btnRefreshList: TToolButton;
     ToolButton3: TToolButton;
     pmFilter: TPopupMenu;
-    mnuSelectAllUp: TMenuItem;
-    mnuSelectAllDown: TMenuItem;
+    mnuEnableAllUp: TMenuItem;
+    mnuEnableAllDown: TMenuItem;
+    mnuDisableAllUp: TMenuItem;
+    mnuDisableAllDown: TMenuItem;
+    mnuFindItem: TMenuItem;
     procedure clbFilterClickCheck(Sender: TObject);
     procedure cbxRootClick(Sender: TObject);
     procedure clbFilterClick(Sender: TObject);
@@ -50,9 +53,13 @@ type
     procedure btnOKClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnRefreshListClick(Sender: TObject);
-    procedure mnuSelectAllUpClick(Sender: TObject);
-    procedure mnuSelectAllDownClick(Sender: TObject);
+    procedure mnuEnableAllUpClick(Sender: TObject);
+    procedure mnuEnableAllDownClick(Sender: TObject);
+    procedure mnuDisableAllUpClick(Sender: TObject);
+    procedure mnuDisableAllDownClick(Sender: TObject);
+    procedure mnuFindItemClick(Sender: TObject);
   private
+    LastSearchStr: String;
     Root, Data: TStrings;
     CheckedCount, DisableCount: Integer;
     XPos, YPos: Integer;
@@ -60,25 +67,26 @@ type
     QtyList: TList;
     XYPosUsed: Boolean;
     FiltEvent: TNotifyEvent;
+    DataVarType: TVarType;
     procedure AcceptItems( Items: TStrings; Counts: TList;
                            RootName: string = ''; UseObjects: Boolean = False);
     procedure SetAllItemsState(IsChecked: Boolean);
     function GetCheckedState(i: Integer): Boolean;
     procedure SetGrayState;
     function ToggleCheckedState(i: Integer): Boolean;
-    procedure ChangeItemState(i: Integer; DoToggle: Boolean = False);
+    procedure ChangeItemState( i: Integer; DoToggle: Boolean = False;
+                               ToggleIsNewState: Boolean = False);
     function UpdateItems(Items: TStrings): Integer;
     procedure ShowStatus;
     procedure UpdateRootState;
     function SetCheckedState(i: Integer; IsChecked: Boolean): Boolean;
-    procedure UpdateFindButtons;
+    procedure UpdateFindButtons(DoUpdate: Boolean);
     procedure ClearItems;
     function GetItemCount: Integer;
     procedure AddItem(AText: String; AState, ACount: Integer;
       var IsChecked: Boolean);
-    procedure SelectAllUpDown(Direction: Integer);
-    procedure SelectAllDown;
-    procedure SelectAllUp;
+    procedure EnableAllUpDown(Direction: Integer; Enable: Boolean);
+    procedure FindItem;
     { Private declarations }
   public
     { Public declarations }
@@ -203,18 +211,18 @@ begin
         SetCheckedState(-1, False);
 end;
 
-procedure TfrmColumnFilter.UpdateFindButtons();
-var VarType: TVarType;
+procedure TfrmColumnFilter.UpdateFindButtons(DoUpdate: Boolean);
 begin
-  if Root.Count>0 then
+  if Data.Count>0 then
      begin
-       VarType:= DetectDataType(Root[0]);
-       btnFindMore.Visible:= (VarType<>varString);
-       btnFindLess.Visible:= (VarType<>varString);
-       btnFindEqual.Visible:= (VarType<>varString);
-       btnFindBeg.Visible:= (VarType=varString);
-       btnFindEnd.Visible:= (VarType=varString);
-       btnFindMid.Visible:= (VarType=varString);
+       DataVarType:= DetectDataType(Data[0]);
+       if not DoUpdate then Exit;
+       btnFindMore.Visible:= (DataVarType<>varString);
+       btnFindLess.Visible:= (DataVarType<>varString);
+       btnFindEqual.Visible:= (DataVarType<>varString);
+       btnFindBeg.Visible:= (DataVarType=varString);
+       btnFindEnd.Visible:= (DataVarType=varString);
+       btnFindMid.Visible:= (DataVarType=varString);
      end;
 end;
 
@@ -268,7 +276,7 @@ begin
   //SetAllItemsState(True);
   if (RootName<>'') then cbxRoot.Caption:= RootName + Format(' (%d)', [TotalSum]);
   UpdateRootState;
-  //UpdateFindButtons;
+  UpdateFindButtons(False);
   btnOK.Enabled:= CheckedCount>0;
   if btnOK.Enabled then ActiveControl:= btnOK;
   ShowStatus();
@@ -322,13 +330,25 @@ begin
                         [CheckedCount, Root.Count, SelSum]);
 end;
 
-procedure TfrmColumnFilter.ChangeItemState(i: Integer; DoToggle: Boolean = False);
-var n: Integer; NewState: Boolean;
+procedure TfrmColumnFilter.ChangeItemState( i: Integer; DoToggle: Boolean = False;
+                                            ToggleIsNewState: Boolean = False);
+var n: Integer; NewState, OldState, StateChanged: Boolean;
 begin
-  if DoToggle then
-     NewState:= ToggleCheckedState(i) else
-     NewState:= GetCheckedState(i);
-  if (i>=0) then
+  if ToggleIsNewState then
+  begin
+    OldState:= GetCheckedState(i);
+    StateChanged:= (OldState<>DoToggle);
+    if StateChanged then
+    NewState:= SetCheckedState(i, DoToggle);
+  end
+  else
+  begin
+    StateChanged:= True;
+    if DoToggle then
+    NewState:= ToggleCheckedState(i) else
+    NewState:= GetCheckedState(i);
+  end;
+  if (i>=0) and StateChanged then
   begin
     if (QtyList=nil) then
        n:= 1 else
@@ -431,7 +451,29 @@ begin
      end;
 end;
 
-procedure TfrmColumnFilter.SelectAllUpDown(Direction: Integer);
+procedure TfrmColumnFilter.FindItem();
+var Value: string; i, LookForPos: Integer;
+begin
+  i:= clbFilter.ItemIndex;
+  if LastSearchStr<>'' then
+     Value:= LastSearchStr else
+  if (i>=0) then
+     Value:= Data[i] else
+     Value:= '';
+  if InputQuery('Поиск значения', 'Найти значение:', Value) then
+     begin
+       if (DataVarType=varString) then
+          LookForPos:= idSearchAllPos else
+          LookForPos:= idSearchFirstPos;
+       LastSearchStr:= Value;
+       i:= GetContainsPosIndex(
+           Data, Value, LookForPos);
+       if (i>=0) then clbFilter.ItemIndex:= i;
+     end;
+end;
+
+procedure TfrmColumnFilter.EnableAllUpDown(
+          Direction: Integer; Enable: Boolean);
 var i, n: Integer;
 begin
   if Abs(Direction)<>1 then Exit;
@@ -441,13 +483,8 @@ begin
     i:= clbFilter.ItemIndex;
     while (i>=0) and (i<n) do
     begin
-      clbFilter.Checked[i]:= False;
-      Dec(i, Direction);
-    end;
-    i:= clbFilter.ItemIndex;
-    while (i>=0) and (i<n) do
-    begin
-      clbFilter.Checked[i]:= True;
+      ChangeItemState(i, Enable, True);
+      //clbFilter.Checked[i]:= Enable;
       Inc(i, Direction);
     end;
   finally
@@ -455,24 +492,30 @@ begin
   end;
 end;
 
-procedure TfrmColumnFilter.SelectAllUp();
+procedure TfrmColumnFilter.mnuEnableAllUpClick(Sender: TObject);
 begin
-  SelectAllUpDown(-1);
+  EnableAllUpDown(-1, True);
 end;
 
-procedure TfrmColumnFilter.SelectAllDown();
+procedure TfrmColumnFilter.mnuEnableAllDownClick(Sender: TObject);
 begin
-  SelectAllUpDown(1);
+  EnableAllUpDown(1, True);
 end;
 
-procedure TfrmColumnFilter.mnuSelectAllUpClick(Sender: TObject);
+procedure TfrmColumnFilter.mnuDisableAllUpClick(Sender: TObject);
 begin
-  SelectAllUp();
+  EnableAllUpDown(-1, False);
 end;
 
-procedure TfrmColumnFilter.mnuSelectAllDownClick(Sender: TObject);
+procedure TfrmColumnFilter.mnuDisableAllDownClick(Sender: TObject);
 begin
-  SelectAllDown();
+  EnableAllUpDown(1, False);
+end;
+
+
+procedure TfrmColumnFilter.mnuFindItemClick(Sender: TObject);
+begin
+  FindItem;
 end;
 
 end.

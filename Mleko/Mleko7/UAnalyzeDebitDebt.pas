@@ -180,6 +180,7 @@ type
     procedure CopySQLParams;
     procedure CollectSQLParams;
     procedure ToggleDisableExclusionItem();
+    procedure InputValueForDisableZeroSumAcn;
     {$ENDIF}
     function CreateSQLContainer(SetCaption: string; GetSQLText: Boolean = True): TForm;
     procedure VerifyNaklNoEditText;
@@ -226,7 +227,6 @@ type
     procedure FilteringEvent(Sender: TObject);
     procedure AfterColumnFilterSelection(SelCount: Integer);
     procedure RefreshFilterList(Column: TColumnEh);
-    procedure InputValueForDisableZeroSumAcn;
     procedure ShowTotalSumValues;
   public
     { Public declarations }
@@ -1378,7 +1378,6 @@ begin
   if InputQuery('Input value for DisableZeroSumAcn', 'DisableZeroSumAcn', Value) then
      DisableZeroSumAcn:= StrToIntDef(Value, 0);
 end;
-
 
 procedure TfrmAnalyzeDebitDebt.TransposeSelections();
 var

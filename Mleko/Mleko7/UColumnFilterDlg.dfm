@@ -1,11 +1,11 @@
 object frmColumnFilter: TfrmColumnFilter
-  Left = 467
-  Top = 255
+  Left = 547
+  Top = 257
   BorderIcons = []
   BorderStyle = bsSingle
   Caption = #1060#1080#1083#1100#1090#1088' '#1079#1085#1072#1095#1077#1085#1080#1081
   ClientHeight = 321
-  ClientWidth = 311
+  ClientWidth = 273
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,22 +15,22 @@ object frmColumnFilter: TfrmColumnFilter
   OldCreateOrder = False
   OnShow = FormShow
   DesignSize = (
-    311
+    273
     321)
   PixelsPerInch = 96
   TextHeight = 13
   object pnlBottom: TPanel
     Left = 0
     Top = 258
-    Width = 311
+    Width = 273
     Height = 44
     Align = alBottom
     TabOrder = 0
     DesignSize = (
-      311
+      273
       44)
     object btnOK: TButton
-      Left = 125
+      Left = 87
       Top = 11
       Width = 75
       Height = 25
@@ -42,7 +42,7 @@ object frmColumnFilter: TfrmColumnFilter
       OnClick = btnOKClick
     end
     object btnCancel: TButton
-      Left = 221
+      Left = 183
       Top = 11
       Width = 75
       Height = 25
@@ -57,7 +57,7 @@ object frmColumnFilter: TfrmColumnFilter
   object clbFilter: TCheckListBox
     Left = 3
     Top = 56
-    Width = 304
+    Width = 266
     Height = 200
     OnClickCheck = clbFilterClickCheck
     Anchors = [akLeft, akTop, akRight, akBottom]
@@ -69,7 +69,7 @@ object frmColumnFilter: TfrmColumnFilter
   object sbStatus: TStatusBar
     Left = 0
     Top = 302
-    Width = 311
+    Width = 273
     Height = 19
     Panels = <>
     SimplePanel = True
@@ -77,7 +77,7 @@ object frmColumnFilter: TfrmColumnFilter
   object ToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 311
+    Width = 273
     Height = 29
     Caption = 'ToolBar'
     Images = ImageList1
@@ -217,7 +217,7 @@ object frmColumnFilter: TfrmColumnFilter
   object cbxRoot: TCheckBox
     Left = 3
     Top = 32
-    Width = 304
+    Width = 266
     Height = 17
     Hint = #1048#1084#1103' '#1092#1080#1083#1100#1090#1088#1072
     Anchors = [akLeft, akTop, akRight]
@@ -770,13 +770,25 @@ object frmColumnFilter: TfrmColumnFilter
   object pmFilter: TPopupMenu
     Left = 152
     Top = 120
-    object mnuSelectAllUp: TMenuItem
-      Caption = #1042#1099#1073#1088#1072#1090#1100' '#1074#1089#1077' '#1074#1074#1077#1088#1093
-      OnClick = mnuSelectAllUpClick
+    object mnuEnableAllUp: TMenuItem
+      Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1074#1089#1077' '#1074#1074#1077#1088#1093
+      OnClick = mnuEnableAllUpClick
     end
-    object mnuSelectAllDown: TMenuItem
-      Caption = #1042#1099#1073#1088#1072#1090#1100' '#1074#1089#1077' '#1074#1085#1080#1079
-      OnClick = mnuSelectAllDownClick
+    object mnuEnableAllDown: TMenuItem
+      Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1074#1089#1077' '#1074#1085#1080#1079
+      OnClick = mnuEnableAllDownClick
+    end
+    object mnuDisableAllUp: TMenuItem
+      Caption = #1054#1095#1080#1089#1090#1080#1090#1100' '#1074#1089#1077' '#1074#1074#1077#1088#1093
+      OnClick = mnuDisableAllUpClick
+    end
+    object mnuDisableAllDown: TMenuItem
+      Caption = #1054#1095#1080#1089#1090#1080#1090#1100' '#1074#1089#1077' '#1074#1085#1080#1079
+      OnClick = mnuDisableAllDownClick
+    end
+    object mnuFindItem: TMenuItem
+      Caption = #1053#1072#1081#1090#1080' ...'
+      OnClick = mnuFindItemClick
     end
   end
 end

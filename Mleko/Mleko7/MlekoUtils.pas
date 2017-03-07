@@ -6,6 +6,10 @@ uses
   Windows, Classes, SysUtils, Data, CFLMLKCustom, CFLMLKSelect,
   DBAccess, MSAccess, GridsEh, DBGridEh, DBGridXLS;
 
+const
+  idSearchAllPos = 0;
+  idSearchFirstPos = 1;
+
 Type
 
   TSimpleDataType = (sdtInteger, sdtFloat, sdtString);
@@ -43,6 +47,10 @@ function SelectMLKItemsByDialog(MLKForm: TCFLMLKCustomForm; Items: TStrings;
          OwnerName, ParamName, ParamCode: string;
          MultiSelect: BOOL = True; KeyValues: TStrings = nil): Integer;
 function GetDelimText(Source: TStrings; Delim: String): string;
+function GetContainsPosIndex( Source: TStrings; S: string;
+                              LookForPos: Integer = idSearchAllPos;
+                              MaxCount: Integer = 0;
+                              LookForward: Boolean = True): Integer;
 function GetStartPosIndex( Source: TStrings; S: string; MaxCount: Integer = 0;
                            LookForward: Boolean = True): Integer;
 function IndexOfColumnByTag(DBGridEh: TDBGridEh; TagValue: Integer): Integer;
@@ -186,6 +194,38 @@ begin
     if (i<h) then
        Result:= Result + Delim;
   end;
+end;
+
+function AnsiTextPos(const Substr, S: string): Integer;
+begin
+  Result:= AnsiPos(AnsiUppercase(Substr), AnsiUppercase(S));
+end;
+
+function GetContainsPosIndex( Source: TStrings; S: string;
+                              LookForPos: Integer = idSearchAllPos;
+                              MaxCount: Integer = 0;
+                              LookForward: Boolean = True): Integer;
+function IsFound(i: Integer): Boolean;
+var p: Integer;
+begin
+  p:=  AnsiTextPos(S, Source[i]);
+  Result:= (p>0) and ((LookForPos=idSearchAllPos) or (LookForPos=p));
+end;
+
+begin
+  if (MaxCount<=0) or (MaxCount>Source.Count) then
+      MaxCount:= Source.Count;
+  if LookForward then
+  begin
+    for Result := 0 to MaxCount - 1 do
+      if IsFound(Result) then Exit
+  end
+  else
+  begin
+    for Result := Source.Count-1 downto Source.Count-MaxCount do
+      if IsFound(Result) then Exit
+  end;
+  Result := -1;
 end;
 
 function GetStartPosIndex( Source: TStrings; S: string; MaxCount: Integer = 0;
