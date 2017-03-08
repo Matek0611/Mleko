@@ -551,8 +551,9 @@ begin
 end;
 
 function VerifyTextValues(Variables, Table, KeyField, TextField: string;
-         List, Keys: TStrings; SQL: string = ''; AsInteger: Boolean = False; MaxLength: Integer = 20; InitValue:
-  Integer = -1): Integer;
+         List, Keys: TStrings; SQL: string = '';
+         AsInteger: Boolean = False; MaxLength: Integer = 20;
+         InitValue: Integer = -1; UseKeyValues: Boolean = True): Integer;
 var
   P: PAnsiChar;
   aSQL, Values, s, t: string;
@@ -585,6 +586,11 @@ begin
       Inc(Result);
     end;
   end;
+//  if  (Result > 0) and (not UseKeyValues) then
+//     begin
+//       if (Keys<>nil) then Keys.Assign(List);
+//       Exit;
+//     end;
   //1-Бруно-Худошин
   if Result > 0 then
   begin
@@ -606,7 +612,11 @@ begin
         v := dmDataModule.QFO.FieldByName(KeyField).AsInteger;
         List.Objects[i] := Pointer(v);
         if (Keys<>nil) then
-            Keys.Add(IntToStr(v));
+              if UseKeyValues then
+                 if Keys.IndexOf(IntToStr(v))<0 then
+                    Keys.Add(IntToStr(v)) else else
+                 if Keys.IndexOf(s)<0 then
+                    Keys.Add(s);
         Inc(Result);
       end;
       dmDataModule.QFO.Next;
@@ -714,7 +724,7 @@ procedure TfrmAnalyzeDebitDebt.VerifyInvoiceNumbers();
 begin
   VerifyTextValues(
   GetSelectionStrByIndex(Ord(stNakl)), 'NaklR', 'NaklNo', 'Nom', Temp,
-  AList.GetChild(Ord(stNakl)), NaklNo_Template, True);
+  AList.GetChild(Ord(stNakl)), NaklNo_Template, True, 20, -1, False);
 end;
 
 procedure TfrmAnalyzeDebitDebt.VerifyIntValues(sel: TSelectionType; DefValue: Integer = MaxInt);
@@ -736,16 +746,18 @@ procedure TfrmAnalyzeDebitDebt.VerifyEmptySelections();
 var i: Integer; sel: TSelectionType;
 begin
 for i := 0 to AList.Count-1 do
-  if (TSelectionType(i)<>stDayExp) and (Trim(GetSelectionStrByIndex(i))='') then
+  if (not (TSelectionType(i) in [stDayExp, stDayNakl, stDayOpl, stDayExp])) and
+     (Trim(GetSelectionStrByIndex(i))='') then
      AList.GetChild(i).Clear else
      begin
        sel:= TSelectionType(i);
        case sel of
          stNakl: VerifyInvoiceNumbers;
+         //stNakl: VerifyIntValues(sel, -1);
          stDayNakl, stDayOpl: VerifyDateValues(sel);
          stDayExp: VerifyIntValues(sel, idVeryOldVal);
        end;
-     end;  
+     end;
 end;
 
 procedure TfrmAnalyzeDebitDebt.SetParameterByTypeEx(pt: TParamType);

@@ -517,16 +517,18 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', @VeryOldDay int'
       ', @DateStart date'
       ', @DisableExclusion bit'
+      ', @UseColnPrice bit'
       ', @DisableZeroSumAcn int'
       ''
-      '--SET @p_date_beg = '#39'01.01.1900'#39
-      'SET @p_date_beg = DATEADD(D, -90, GETDATE())'
-      'SET @p_date_end = DATEADD(D, 1, GETDATE())'
+      'SET @p_date_beg = '#39'01.01.1900'#39
+      'SET @p_date_end = '#39'08.03.2017'#39
       'SET @DateStart = '#39'01.01.2000'#39
       'SET @VeryOldDay = -10000'
       'SET @DisableExclusion = 0'
-      'SET @DisableZeroSumAcn = 0 '
+      'SET @DisableZeroSumAcn = 0'
+      'SET @UseColnPrice = 0'
       ''
+      '--DROP TABLE #Expansions'
       'BEGIN TRY  '
       'CREATE TABLE #Expansions'
       '( '
@@ -554,11 +556,12 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         'INSERT INTO #Expansions Values(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ' +
         '1, 1)'
       ''
+      '--DROP TABLE #Selections'
       'BEGIN TRY  '
       'CREATE TABLE #Selections'
       '( '
-      '--  ID Int Identity(1,1),'
-      '  s_OtdelNo int NULL'
+      '  --ID Int Identity(1,1),'
+      '  s_OtdelNo smallint NULL'
       ', s_VidNo int NULL'
       ', s_SotrudNo int NULL'
       ', s_Buh int NULL'
@@ -579,8 +582,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ' '
       
         'INSERT INTO #Selections Values(-1, -1, -1, -1, -1, -1, -1, -1, -' +
-        '1, -1, @VeryOldDay, -1, -1)'
+        '1, -1, -10000, -1, -1)'
       ''
+      '--DROP TABLE #AllTypes'
       'BEGIN TRY  '
       'CREATE TABLE #AllTypes'
       '( '
@@ -646,18 +650,11 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '(select Name from Post where PostNo = T4.PostNo) '
       '--CAST(T4.PostNo as varchar(20)) '
       'END) AS AgentName'
-      ', (select Nom from NaklR nr where (nr.NaklNo = T4.NaklNo) '
-      '--and (nr.NomReturn is NULL)'
-      ') as _NomNakl '
       
-        ', (CASE WHEN (T4.NaklNo = -1) THEN (select a_NaklNo from #AllTyp' +
-        'es) ELSE '
-      '--CAST(T4.NaklNo as varchar(20))'
-      'CAST('
-      '(select Nom from NaklR nr where (nr.NaklNo = T4.NaklNo)) '
-      '--and (nr.NomReturn is NULL)'
-      'as varchar(20))  '
-      'END) AS NomNakl'
+        ', (CASE WHEN (T4.Nom = -1) THEN (select a_NaklNo from #AllTypes)' +
+        ' ELSE '
+      '   CAST(T4.Nom as varchar(20)) END) AS NomNakl'
+      ', T4.Nom AS _NomNakl'
       ', T4.AddressID as _PostAddress'
       
         ', (CASE WHEN (T4.AddressID = -1) THEN (select a_AddressID from #' +
@@ -710,14 +707,15 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '(select d.L_CODE from D_CURRENCY d where d.ID = T4.CurAc_ID) END' +
         ') as CurAc '
       ''
-      'FROM ('
+      'FROM ( '
       'SELECT'
       '  T3.OtdelNo AS OtdelNo'
       ', T3.VidNo AS VidNo'
       ', T3.SotrudNo AS SotrudNo'
       ', T3.Buh AS Buh'
       ', T3.PostNo AS PostNo'
-      ', T3.NaklNo AS NaklNo'
+      '--, T3.NaklNo AS NaklNo'
+      ', T3.Nom AS Nom'
       ', T3.AddressID AS AddressID'
       ', T3.DOC_TYPE_ID AS DOC_TYPE_ID'
       ', CONVERT(FLOAT, SUM(T3.Summa)) AS Summa'
@@ -729,8 +727,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', T3.DayExp AS DayExp'
       ', T3.CurHd_ID AS CurHd_ID'
       ', T3.CurAc_ID AS CurAc_ID'
-      ''
-      'FROM ('
+      'FROM ( '
       'SELECT'
       
         '  (CASE WHEN (1 IN (SELECT e_OtdelNo FROM #Expansions)) THEN T2.' +
@@ -749,7 +746,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         'ostNo ELSE -1 END) AS PostNo'
       
         ', (CASE WHEN (1 IN (SELECT e_NaklNo FROM #Expansions)) THEN T2.N' +
-        'aklNo ELSE -1 END) AS NaklNo'
+        'om ELSE -1 END) AS Nom'
       
         ', (CASE WHEN (1 IN (SELECT e_AddressID FROM #Expansions)) THEN T' +
         '2.AddressID ELSE -1 END) AS AddressID'
@@ -775,26 +772,25 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         ', (CASE WHEN (1 IN (SELECT e_CurAc_ID FROM #Expansions)) THEN T2' +
         '.CurAc_ID ELSE -1 END) AS CurAc_ID'
-      'FROM ('
-      'SELECT * FROM ('
-      'SELECT '
+      'FROM (  '
+      ' select * from ('
+      ' select'
       '  nr.OtdelNo'
-      ', h3.VidNo '
       ', nr.SotrudNo'
       ', nr.Buh'
       ', nr.PostNo'
-      ', h3.NaklNo '
+      ', nr.Nom '
+      ',  L5.VidNo'
+      ', L5.DOC_TYPE_ID'
+      ',  L5.Summa '
+      ',  L5.SumAc'
+      ',  L5.SummaDolg '
+      ',  L5.SumDAc'
       ', ap.ID as AddressID '
-      ', h3.DOC_TYPE_ID'
-      ', CONVERT(FLOAT, h3.Summa) as Summa'
-      ', CONVERT(FLOAT, h3.SummaDolg) as SummaDolg'
-      ', CONVERT(FLOAT, SumAc) as SumAc'
-      ', CONVERT(FLOAT, SumDAc) as SumDAc'
       ''
-      ', datediff(d, @DateStart, nr.DateNakl) as DayNakl'
-      ', datediff(d, @DateStart, nr.DateOpl) as DayOpl'
+      ', datediff(d, @DateStart, nr.DateNakl) as  DayNakl'
+      ', datediff(d, @DateStart, nr.DateOpl) as   DayOpl'
       ', datediff(dd, nr.DateOpl, @p_date_end) as DayExp'
-      ''
       ', (CASE WHEN (nr.CurrencyHead IS NULL) THEN '
       #9'(SELECT dc.ID from D_CURRENCY dc WHERE dc.IsDefault=1) ELSE '
       
@@ -806,131 +802,144 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         #9'(SELECT dc.ID from D_CURRENCY dc WHERE dc.L_CODE=nr.CurrencyAcc' +
         'ounting) END) AS CurAc_ID'
-      ''
-      'from'
-      'Naklr nr with (nolock) inner join'
-      '('
-      'select '
-      '  NaklNo'
-      ', VidNo'
-      ', DOC_TYPE_ID'
-      '     '
-      
-        ', CONVERT(FLOAT, CAST(SUM(SummaDolg) as decimal(18, 2))) as Summ' +
-        'aDolg '
-      
-        ', CONVERT(FLOAT, CAST(SUM(Summa) as decimal(18, 2))) as Summa   ' +
-        '  '
-      ', CONVERT(FLOAT, CAST(SUM(SumDAc) as decimal(18, 2))) as SumDAc '
-      ', CONVERT(FLOAT, CAST(SUM(SumAc) as decimal(18, 2))) as SumAc'
+      ' '
+      'from '
+      'NaklR nr with (nolock) inner join ( '
+      '  select '
+      '  L4.NaklNo'
+      ', L4.VidNo'
+      ', L4.DOC_TYPE_ID'
+      ',  CONVERT(FLOAT, ROUND(SUM(Summa), 4)) as Summa '
+      ',  CONVERT(FLOAT, ROUND(SUM(SumAc), 4)) as SumAc'
+      ',  CONVERT(FLOAT, ROUND(SUM(SummaDolg), 4)) as SummaDolg '
+      ',  CONVERT(FLOAT, ROUND(SUM(SumDAc), 4)) as SumDAc'
       'from ('
-      'SELECT'
-      '  VidNo'
-      ', NaklNo '
-      ', DOC_TYPE_ID'
-      ', CONVERT(FLOAT, SumTov*SumDNak/SumNak) as SummaDolg'
-      ', CONVERT(FLOAT, SumNak) as Summa  '
-      ', CONVERT(FLOAT, case when (SumAcn<>0) '
-      #9#9#9#9'then SumTovAcn*SumDAcn/SumAcn else'
-      #9#9#9#9'0.0 end) as SumDAc'
-      ', CONVERT(FLOAT, SumAcn) as SumAc  '
-      ''
-      'FROM ('
-      'SELECT'
-      '  VidNo'
-      ', NaklNo '
-      ', DOC_TYPE_ID'
-      ', CONVERT(FLOAT, SumTov) as SumTov'
-      ', CONVERT(FLOAT, SumNak) as SumNak'
-      ', CONVERT(FLOAT, SumDNak) as SumDNak'
-      ''
-      
-        ', CONVERT(FLOAT, (case when (SumAcn<>0) then SumAcn else 0.0 end' +
-        ')) as SumAcn'
-      #9
-      
-        ', CONVERT(FLOAT, (case when (SumAcn<>0) then SumDAcn else 0.0 en' +
-        'd)) as SumDAcn'
-      #9#9
-      
-        ', CONVERT(FLOAT, SumTov * (SELECT ex.Rate FROM CurrencyExchange ' +
-        'ex '
-      
-        #9'WHERE (CurHd_ID=ex.CurrencyId) and (ex.IsActive=1))/Rate_Ac) as' +
-        ' SumTovAcn'
-      ''
-      'FROM'
-      '('
-      'SELECT'
-      '  t.VidNo'
-      ', h1.NaklNo '
-      ', ds.DOC_TYPE_ID'
-      
-        ', CONVERT(FLOAT, ISNULL(h1.RateCurrencyAccounting, 1)) AS Rate_A' +
-        'c'
-      ', CONVERT(FLOAT, (CASE WHEN (h1.CurrencyHead IS NULL) THEN '
-      #9'(SELECT dc.ID FROM D_CURRENCY dc WHERE dc.IsDefault=1) ELSE '
-      
-        #9'(SELECT dc.ID FROM D_CURRENCY dc WHERE dc.L_CODE=h1.CurrencyHea' +
-        'd) END)) AS CurHd_ID     '
-      ''
-      
-        ', CONVERT(FLOAT, (CASE WHEN (h1.CurrencyAccounting IS NULL) THEN' +
-        ' '
-      #9'(SELECT dc.ID FROM D_CURRENCY dc WHERE dc.IsDefault=1) ELSE '
-      
-        #9'(SELECT dc.ID FROM D_CURRENCY dc WHERE dc.L_CODE=h1.CurrencyAcc' +
-        'ounting) END)) '
-      #9'AS CurAc_ID'
-      '  '
-      ' , CONVERT(FLOAT, h1.Summa) as SumNak'
-      ' , CONVERT(FLOAT, h1.SummaDolg) as SumDNak  '
-      
-        ' , CONVERT(FLOAT, ISNULL(h1.SummaCurrencyAccounting, 0)) as SumA' +
-        'cn'
-      
-        ' , CONVERT(FLOAT, ISNULL(h1.SummaDolgCurrencyAccounting, 0)) as ' +
-        'SumDAcn  '
-      ' , CONVERT(FLOAT, (ds.PaymentPrice*ds.QTY)) as SumTov'
-      
-        '    -- , CONVERT(FLOAT, (ds.PaymentPrice*ds.QTY)*h1.SummaDolg/h1' +
-        '.Summa) as SummaDolg'
-      '     --, t.NameTovarShort'
-      '     FROM NaklR h1 with (nolock)          '
+      '  select'
+      '  -- L3  '
+      '  VidNo,'
+      '  NaklNo,'
+      '  DOC_TYPE_ID,'
+      '  CONVERT(FLOAT, SumTov) as Summa,'
+      '  CONVERT(FLOAT, SumTovAc) as SumAc,  '
+      '  CONVERT(FLOAT, case when _Summa<>0 then '
+      #9#9#9#9'SumTov*_SummaDolg/_Summa else'
+      #9#9#9#9'0 end) as SummaDolg,'
+      '  CONVERT(FLOAT, (case when _SumAc<>0 '
+      #9#9#9#9#9'   then SumTov*_SumDAc/_SumAc'
+      #9#9#9#9#9'   else 0 end )) as SumDAc  '
+      '  from ( '
+      'select '
+      '  L2.VidNo'
+      ', L2.NaklNo '
+      ', L2.DOC_TYPE_ID'
+      ', L2._SumTov * ce.Rate / ceh.Rate  as SumTov'
+      ', L2._SumTov * ce_a.Rate / ceh_a.Rate  as SumTovAc'
+      ', isnull(nr.Summa, 0) as _Summa'
+      ', isnull(nr.SummaDolg, 0) as _SummaDolg'
+      ', isnull(nr.SummaCurrencyAccounting, 0) as _SumAc'
+      ', isnull(nr.SummaDolgCurrencyAccounting, 0) as _SumDAc'#9
+      'from '
+      'NaklR nr with (nolock) inner join (   '
+      '-- L1'
+      'select '
+      '  L1.VidNo'
+      ', L1.TovarNo'
+      ', L1.NaklNo '
+      ', L1.DOC_TYPE_ID'
+      ', pfv.Currency'
+      ', '
+      '   (case when @UseColnPrice=0 then L1.PaymentPrice * L1.QTY '
+      '   else '
+      '   (case '
+      '        when ColnPrice = 1 then  Isnull(k.Price, 0)'
+      '        when nr.ColnPrice = 2 then  Isnull(k.Price1, 0)'
+      '        when nr.ColnPrice = 3 then  Isnull(k.Price2, 0)'
+      '        when nr.ColnPrice = 4 then  Isnull(k.Price3, 0)'
+      '        when nr.ColnPrice = 5 then  Isnull(k.Price4, 0)'
+      '        when nr.ColnPrice = 6 then  Isnull(k.Price5, 0)'
+      '        when nr.ColnPrice = 7 then  Isnull(k.Price6, 0)'
+      '        when nr.ColnPrice = 8 then  Isnull(k.Price7, 0)'
+      '        when nr.ColnPrice = 10 then Isnull(k.Price8, 0)'
+      '        when nr.ColnPrice = 11 then Isnull(k.Price9, 0)'
+      '        when nr.ColnPrice = 12 then Isnull(k.Price10, 0)'
+      '        when nr.ColnPrice = 9 then  Isnull(k.Avgpricein, 0)'
+      '        when nr.ColnPrice = 13 then Isnull(Price13, 0)'
+      '        when nr.ColnPrice = 14 then Isnull(Price14, 0)'
+      '        when nr.ColnPrice = 15 then Isnull(Price15, 0)'
+      '        when nr.ColnPrice = 17 then Isnull(pfv.PriceVeb, 0) '
+      '        when nr.ColnPrice = 18 then Isnull(pfv.PriceInInst, 0)'
+      '                             else 0 '
+      '   end * L1.QTY) end) as _SumTov'
+      'from'
+      'NaklR nr with (nolock) inner join ('
+      'select'
+      '        t.VidNo'
+      '      ,  t.TovarNo'
+      '      , h1.NaklNo '
+      '     , ds.DOC_TYPE_ID'
+      '     , ds.QTY'
+      '     , isnull(ds.PaymentPrice, 0) as PaymentPrice'
+      '    --, t.NameTovarShort'
+      '     from NaklR h1 with (nolock)          '
       
         '    --left join l_post_set_artgroup_delay ld on ld.set_article_g' +
         'roup_id = h1.set_article_group_id and ld.postno = h1.postno and ' +
         'ld.BUH = h1.Buh'
       
         #9'left join DSPEC ds on (ds.NaklNo = h1.NaklNo) and (ds.DOC_TYPE_' +
-        'ID=12)'
+        'ID=12) --?anoiaiay oiaa?iay iaeeaaiay'
       #9'left join Tovar t on (t.TovarNo = ds.ARTICLE_ID)'
       
-        '     where (h1.vidnaklno=1 and h1.SummaDolg>0 and h1.Summa>0) --' +
-        'and (h1.NaklNo=401149)'
+        '     where (h1.vidnaklno=1 and h1.SummaDolg>0) --and (h1.NaklNo=' +
+        '401149)'
       '     and (h1.DateNakl between @p_date_beg and @p_date_end)'
       #9' and ((@DisableExclusion=1) or (not (h1.PostNo in '
-      #9' (SELECT PostNo FROM ListMinusPostForDebit lmp where '
+      #9' (select PostNo from ListMinusPostForDebit lmp where '
       #9#9' (h1.PostNo = lmp.PostNo) and (lmp.CheckMinus=1)))))'
-      ') as L1'
+      #9') L1 on (L1.NaklNo = nr.NaklNo) left join'
+      #9
+      '          Ostatok k on k.TovarNo = L1.TovarNo left join'
+      '          PriceForVeb pfv on pfv.TovarNo = L1.TovarNo'
+      '          '
+      '    ) L2 on (L2.NaklNo = nr.NaklNo) left join    '
+      #9#9'  d_currency dc on dc.L_CODE = L2.Currency left join'
+      
+        #9'      CurrencyExchange ce on ce.CurrencyId = dc.ID and ce.isAct' +
+        'ive = 1  left join'
+      #9'      d_currency dch on dch.L_CODE = nr.CurrencyHead left join'
+      
+        #9'      CurrencyExchange ceh on ceh.CurrencyId = dch.ID and ceh.I' +
+        'sActive = 1 left join'
+      #9#9'  '
+      #9#9'  d_currency dc_a on dc_a.L_CODE = L2.Currency left join'
+      
+        #9'      CurrencyExchange ce_a on ce_a.CurrencyId = dc_a.ID and ce' +
+        '_a.isActive = 1  left join'
+      
+        #9'      d_currency dch_a on dch_a.L_CODE = nr.CurrencyAccounting ' +
+        'left join'
+      
+        #9'      CurrencyExchange ceh_a on ceh_a.CurrencyId = dch.ID and c' +
+        'eh_a.IsActive = 1 '#9'      '
+      #9') L3'
       'where (@DisableZeroSumAcn=0) or '
-      #9#9'((@DisableZeroSumAcn=1) and (SumAcn=0)) or'
-      #9#9'((@DisableZeroSumAcn=2) and (SumAcn<>0)) '
-      ') as L2'
-      ') H2'
+      #9#9'((@DisableZeroSumAcn=1) and (L3._SumAc=0)) or'
+      
+        #9#9'((@DisableZeroSumAcn=2) and (L3._SumAc<>0)) '#9'                 ' +
+        '      '
+      #9') L4'
       '     group by      '
-      '     H2.NaklNo'
-      '     , H2.VidNo'
-      '     , H2.DOC_TYPE_ID'
-      '     ) h3'
-      '     on nr.NaklNo=h3.NaklNo'
+      '       L4.NaklNo'
+      '     , L4.VidNo'
+      '     , L4.DOC_TYPE_ID'
+      '    ) L5'
+      '     on (nr.NaklNo=L5.NaklNo) '
       '     left outer join Post p on p.PostNo=nr.PostNo '
       
         '     left outer join AddressPost ap on ap.AddressNo=nr.AddressNo' +
         ' and ap.PostNo=nr.PostNo'
-      '     where not h3.SummaDolg is NULL'
-      ') '
-      'AS T1'
+      #9') T1'
+      #9
       'WHERE'
       
         '  (EXISTS(SELECT 1 FROM #Selections WHERE s_OtdelNo=-1) OR (Otde' +
@@ -953,8 +962,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         'o IN (SELECT s_PostNo FROM #Selections)))'
       'AND'
       
-        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_NaklNo=-1) OR (NaklN' +
-        'o IN (SELECT s_NaklNo FROM #Selections)))'
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_NaklNo=-1) OR (Nom I' +
+        'N (SELECT s_NaklNo FROM #Selections)))'
       'AND'
       
         '  (EXISTS(SELECT 1 FROM #Selections WHERE s_AddressID=-1) OR (Ad' +
@@ -983,7 +992,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '  (EXISTS(SELECT 1 FROM #Selections WHERE s_CurAc_ID=-1) OR (Cur' +
         'Ac_ID IN (SELECT s_CurAc_ID FROM #Selections)))'
-      ') AS T2'
+      ' ) T2'
       ') AS T3'
       'GROUP BY'
       '  T3.OtdelNo'
@@ -991,7 +1000,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', T3.SotrudNo'
       ', T3.Buh'
       ', T3.PostNo'
-      ', T3.NaklNo'
+      ', T3.Nom'
       ', T3.AddressID'
       ', T3.DOC_TYPE_ID'
       ', T3.DayNakl'
@@ -1001,7 +1010,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', T3.CurAc_ID'
       ') T4'
       ''
-      'order by OtdelName, VidName, SotrudName, _NomNakl, _DayExp')
+      'ORDER BY OtdelName, VidName, SotrudName, _DateNakl, _DayExp DESC')
     ReadOnly = True
     Filtered = True
     OnFilterRecord = quDebtFilterRecord
@@ -1167,20 +1176,18 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c2040566572794f6c6444617920696e74'
       '2c20404461746553746172742064617465'
       '2c204044697361626c654578636c7573696f6e20626974'
+      '2c2040557365436f6c6e507269636520626974'
       '2c204044697361626c655a65726f53756d41636e20696e74'
       ''
-      '2d2d5345542040705f646174655f626567203d202730312e30312e3139303027'
-      
-        '5345542040705f646174655f626567203d204441544541444428442c202d3930' +
-        '2c2047455444415445282929'
-      
-        '5345542040705f646174655f656e64203d204441544541444428442c20312c20' +
-        '47455444415445282929'
+      '5345542040705f646174655f626567203d202730312e30312e3139303027'
+      '5345542040705f646174655f656e64203d202730382e30332e3230313727'
       '5345542040446174655374617274203d202730312e30312e3230303027'
       '5345542040566572794f6c64446179203d202d3130303030'
       '534554204044697361626c654578636c7573696f6e203d2030'
-      '534554204044697361626c655a65726f53756d41636e203d203020'
+      '534554204044697361626c655a65726f53756d41636e203d2030'
+      '5345542040557365436f6c6e5072696365203d2030'
       ''
+      '2d2d44524f50205441424c452023457870616e73696f6e73'
       '424547494e205452592020'
       '435245415445205441424c452023457870616e73696f6e73'
       '2820'
@@ -1209,11 +1216,12 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '2c20312c20312c20312c20312c20312c20312c20312c20312c20312c20312c20' +
         '312c203129'
       ''
+      '2d2d44524f50205441424c45202353656c656374696f6e73'
       '424547494e205452592020'
       '435245415445205441424c45202353656c656374696f6e73'
       '2820'
-      '2d2d2020494420496e74204964656e7469747928312c31292c'
-      '2020735f4f7464656c4e6f20696e74204e554c4c'
+      '20202d2d494420496e74204964656e7469747928312c31292c'
+      '2020735f4f7464656c4e6f20736d616c6c696e74204e554c4c'
       '2c20735f5669644e6f20696e74204e554c4c'
       '2c20735f536f747275644e6f20696e74204e554c4c'
       '2c20735f42756820696e74204e554c4c'
@@ -1235,8 +1243,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '494e5345525420494e544f202353656c656374696f6e732056616c756573282d' +
         '312c202d312c202d312c202d312c202d312c202d312c202d312c202d312c202d' +
-        '312c202d312c2040566572794f6c644461792c202d312c202d3129'
+        '312c202d312c202d31303030302c202d312c202d3129'
       ''
+      '2d2d44524f50205441424c452023416c6c5479706573'
       '424547494e205452592020'
       '435245415445205441424c452023416c6c5479706573'
       '2820'
@@ -1329,22 +1338,13 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '20'
       '454e4429204153204167656e744e616d65'
       
-        '2c202873656c656374204e6f6d2066726f6d204e616b6c52206e722077686572' +
-        '6520286e722e4e616b6c4e6f203d2054342e4e616b6c4e6f2920'
-      '2d2d616e6420286e722e4e6f6d52657475726e206973204e554c4c29'
-      '29206173205f4e6f6d4e616b6c20'
+        '2c202843415345205748454e202854342e4e6f6d203d202d3129205448454e20' +
+        '2873656c65637420615f4e616b6c4e6f2066726f6d2023416c6c547970657329' +
+        '20454c534520'
       
-        '2c202843415345205748454e202854342e4e616b6c4e6f203d202d3129205448' +
-        '454e202873656c65637420615f4e616b6c4e6f2066726f6d2023416c6c547970' +
-        '65732920454c534520'
-      '2d2d434153542854342e4e616b6c4e6f20617320766172636861722832302929'
-      '4341535428'
-      
-        '2873656c656374204e6f6d2066726f6d204e616b6c52206e7220776865726520' +
-        '286e722e4e616b6c4e6f203d2054342e4e616b6c4e6f292920'
-      '2d2d616e6420286e722e4e6f6d52657475726e206973204e554c4c29'
-      '6173207661726368617228323029292020'
-      '454e4429204153204e6f6d4e616b6c'
+        '202020434153542854342e4e6f6d206173207661726368617228323029292045' +
+        '4e4429204153204e6f6d4e616b6c'
+      '2c2054342e4e6f6d204153205f4e6f6d4e616b6c'
       '2c2054342e416464726573734944206173205f506f737441646472657373'
       
         '2c202843415345205748454e202854342e416464726573734944203d202d3129' +
@@ -1432,14 +1432,15 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '206420776865726520642e4944203d2054342e43757241635f49442920454e44' +
         '2920617320437572416320'
       ''
-      '46524f4d2028'
+      '46524f4d202820'
       '53454c454354'
       '202054332e4f7464656c4e6f204153204f7464656c4e6f'
       '2c2054332e5669644e6f204153205669644e6f'
       '2c2054332e536f747275644e6f20415320536f747275644e6f'
       '2c2054332e42756820415320427568'
       '2c2054332e506f73744e6f20415320506f73744e6f'
-      '2c2054332e4e616b6c4e6f204153204e616b6c4e6f'
+      '2d2d2c2054332e4e616b6c4e6f204153204e616b6c4e6f'
+      '2c2054332e4e6f6d204153204e6f6d'
       '2c2054332e41646472657373494420415320416464726573734944'
       '2c2054332e444f435f545950455f494420415320444f435f545950455f4944'
       
@@ -1459,8 +1460,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c2054332e44617945787020415320446179457870'
       '2c2054332e43757248645f49442041532043757248645f4944'
       '2c2054332e43757241635f49442041532043757241635f4944'
-      ''
-      '46524f4d2028'
+      '46524f4d202820'
       '53454c454354'
       
         '20202843415345205748454e20283120494e202853454c45435420655f4f7464' +
@@ -1486,7 +1486,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '2c202843415345205748454e20283120494e202853454c45435420655f4e616b' +
         '6c4e6f2046524f4d2023457870616e73696f6e732929205448454e2054322e4e' +
-        '616b6c4e6f20454c5345202d3120454e4429204153204e616b6c4e6f'
+        '6f6d20454c5345202d3120454e4429204153204e6f6d'
       
         '2c202843415345205748454e20283120494e202853454c45435420655f416464' +
         '7265737349442046524f4d2023457870616e73696f6e732929205448454e2054' +
@@ -1532,38 +1532,31 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '41635f49442046524f4d2023457870616e73696f6e732929205448454e205432' +
         '2e43757241635f494420454c5345202d3120454e44292041532043757241635f' +
         '4944'
-      '46524f4d2028'
-      '53454c454354202a2046524f4d2028'
-      '53454c45435420'
+      '46524f4d20282020'
+      '2073656c656374202a2066726f6d2028'
+      '2073656c656374'
       '20206e722e4f7464656c4e6f'
-      '2c2068332e5669644e6f20'
       '2c206e722e536f747275644e6f'
       '2c206e722e427568'
       '2c206e722e506f73744e6f'
-      '2c2068332e4e616b6c4e6f20'
+      '2c206e722e4e6f6d20'
+      '2c20204c352e5669644e6f'
+      '2c204c352e444f435f545950455f4944'
+      '2c20204c352e53756d6d6120'
+      '2c20204c352e53756d4163'
+      '2c20204c352e53756d6d61446f6c6720'
+      '2c20204c352e53756d444163'
       '2c2061702e49442061732041646472657373494420'
-      '2c2068332e444f435f545950455f4944'
-      
-        '2c20434f4e5645525428464c4f41542c2068332e53756d6d6129206173205375' +
-        '6d6d61'
-      
-        '2c20434f4e5645525428464c4f41542c2068332e53756d6d61446f6c67292061' +
-        '732053756d6d61446f6c67'
-      '2c20434f4e5645525428464c4f41542c2053756d4163292061732053756d4163'
-      
-        '2c20434f4e5645525428464c4f41542c2053756d444163292061732053756d44' +
-        '4163'
       ''
       
         '2c20646174656469666628642c20404461746553746172742c206e722e446174' +
-        '654e616b6c29206173204461794e616b6c'
+        '654e616b6c2920617320204461794e616b6c'
       
         '2c20646174656469666628642c20404461746553746172742c206e722e446174' +
-        '654f706c29206173204461794f706c'
+        '654f706c292061732020204461794f706c'
       
         '2c2064617465646966662864642c206e722e446174654f706c2c2040705f6461' +
         '74655f656e642920617320446179457870'
-      ''
       
         '2c202843415345205748454e20286e722e43757272656e637948656164204953' +
         '204e554c4c29205448454e20'
@@ -1585,145 +1578,164 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '092853454c4543542064632e49442066726f6d20445f43555252454e43592064' +
         '632057484552452064632e4c5f434f44453d6e722e43757272656e6379416363' +
         '6f756e74696e672920454e44292041532043757241635f4944'
-      ''
+      '20'
+      '66726f6d20'
+      
+        '4e616b6c52206e72207769746820286e6f6c6f636b2920696e6e6572206a6f69' +
+        '6e202820'
+      '202073656c65637420'
+      '20204c342e4e616b6c4e6f'
+      '2c204c342e5669644e6f'
+      '2c204c342e444f435f545950455f4944'
+      
+        '2c2020434f4e5645525428464c4f41542c20524f554e442853554d2853756d6d' +
+        '61292c203429292061732053756d6d6120'
+      
+        '2c2020434f4e5645525428464c4f41542c20524f554e442853554d2853756d41' +
+        '63292c203429292061732053756d4163'
+      
+        '2c2020434f4e5645525428464c4f41542c20524f554e442853554d2853756d6d' +
+        '61446f6c67292c203429292061732053756d6d61446f6c6720'
+      
+        '2c2020434f4e5645525428464c4f41542c20524f554e442853554d2853756d44' +
+        '4163292c203429292061732053756d444163'
+      '66726f6d2028'
+      '202073656c656374'
+      '20202d2d204c332020'
+      '20205669644e6f2c'
+      '20204e616b6c4e6f2c'
+      '2020444f435f545950455f49442c'
+      
+        '2020434f4e5645525428464c4f41542c2053756d546f76292061732053756d6d' +
+        '612c'
+      
+        '2020434f4e5645525428464c4f41542c2053756d546f76416329206173205375' +
+        '6d41632c2020'
+      
+        '2020434f4e5645525428464c4f41542c2063617365207768656e205f53756d6d' +
+        '613c3e30207468656e20'
+      
+        '0909090953756d546f762a5f53756d6d61446f6c672f5f53756d6d6120656c73' +
+        '65'
+      '090909093020656e64292061732053756d6d61446f6c672c'
+      
+        '2020434f4e5645525428464c4f41542c202863617365207768656e205f53756d' +
+        '41633c3e3020'
+      
+        '09090909092020207468656e2053756d546f762a5f53756d4441632f5f53756d' +
+        '4163'
+      
+        '0909090909202020656c7365203020656e642029292061732053756d44416320' +
+        '20'
+      '202066726f6d202820'
+      '73656c65637420'
+      '20204c322e5669644e6f'
+      '2c204c322e4e616b6c4e6f20'
+      '2c204c322e444f435f545950455f4944'
+      
+        '2c204c322e5f53756d546f76202a2063652e52617465202f206365682e526174' +
+        '65202061732053756d546f76'
+      
+        '2c204c322e5f53756d546f76202a2063655f612e52617465202f206365685f61' +
+        '2e52617465202061732053756d546f764163'
+      '2c2069736e756c6c286e722e53756d6d612c203029206173205f53756d6d61'
+      
+        '2c2069736e756c6c286e722e53756d6d61446f6c672c203029206173205f5375' +
+        '6d6d61446f6c67'
+      
+        '2c2069736e756c6c286e722e53756d6d6143757272656e63794163636f756e74' +
+        '696e672c203029206173205f53756d4163'
+      
+        '2c2069736e756c6c286e722e53756d6d61446f6c6743757272656e6379416363' +
+        '6f756e74696e672c203029206173205f53756d44416309'
+      '66726f6d20'
+      
+        '4e616b6c52206e72207769746820286e6f6c6f636b2920696e6e6572206a6f69' +
+        '6e2028202020'
+      '2d2d204c31'
+      '73656c65637420'
+      '20204c312e5669644e6f'
+      '2c204c312e546f7661724e6f'
+      '2c204c312e4e616b6c4e6f20'
+      '2c204c312e444f435f545950455f4944'
+      '2c207066762e43757272656e6379'
+      '2c20'
+      
+        '2020202863617365207768656e2040557365436f6c6e50726963653d30207468' +
+        '656e204c312e5061796d656e745072696365202a204c312e51545920'
+      '202020656c736520'
+      '202020286361736520'
+      
+        '20202020202020207768656e20436f6c6e5072696365203d2031207468656e20' +
+        '2049736e756c6c286b2e50726963652c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2032207468' +
+        '656e202049736e756c6c286b2e5072696365312c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2033207468' +
+        '656e202049736e756c6c286b2e5072696365322c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2034207468' +
+        '656e202049736e756c6c286b2e5072696365332c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2035207468' +
+        '656e202049736e756c6c286b2e5072696365342c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2036207468' +
+        '656e202049736e756c6c286b2e5072696365352c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2037207468' +
+        '656e202049736e756c6c286b2e5072696365362c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2038207468' +
+        '656e202049736e756c6c286b2e5072696365372c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2031302074' +
+        '68656e2049736e756c6c286b2e5072696365382c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2031312074' +
+        '68656e2049736e756c6c286b2e5072696365392c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2031322074' +
+        '68656e2049736e756c6c286b2e507269636531302c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2039207468' +
+        '656e202049736e756c6c286b2e4176677072696365696e2c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2031332074' +
+        '68656e2049736e756c6c28507269636531332c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2031342074' +
+        '68656e2049736e756c6c28507269636531342c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2031352074' +
+        '68656e2049736e756c6c28507269636531352c203029'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2031372074' +
+        '68656e2049736e756c6c287066762e50726963655665622c20302920'
+      
+        '20202020202020207768656e206e722e436f6c6e5072696365203d2031382074' +
+        '68656e2049736e756c6c287066762e5072696365496e496e73742c203029'
+      
+        '2020202020202020202020202020202020202020202020202020202020656c73' +
+        '65203020'
+      '202020656e64202a204c312e5154592920656e6429206173205f53756d546f76'
       '66726f6d'
       
-        '4e616b6c72206e72207769746820286e6f6c6f636b2920696e6e6572206a6f69' +
-        '6e'
-      '28'
-      '73656c65637420'
-      '20204e616b6c4e6f'
-      '2c205669644e6f'
-      '2c20444f435f545950455f4944'
-      '2020202020'
+        '4e616b6c52206e72207769746820286e6f6c6f636b2920696e6e6572206a6f69' +
+        '6e2028'
+      '73656c656374'
+      '2020202020202020742e5669644e6f'
+      '2020202020202c2020742e546f7661724e6f'
+      '2020202020202c2068312e4e616b6c4e6f20'
+      '20202020202c2064732e444f435f545950455f4944'
+      '20202020202c2064732e515459'
       
-        '2c20434f4e5645525428464c4f41542c20434153542853554d2853756d6d6144' +
-        '6f6c672920617320646563696d616c2831382c20322929292061732053756d6d' +
-        '61446f6c6720'
+        '20202020202c2069736e756c6c2864732e5061796d656e7450726963652c2030' +
+        '29206173205061796d656e745072696365'
+      '202020202d2d2c20742e4e616d65546f76617253686f7274'
       
-        '2c20434f4e5645525428464c4f41542c20434153542853554d2853756d6d6129' +
-        '20617320646563696d616c2831382c20322929292061732053756d6d61202020' +
-        '2020'
-      
-        '2c20434f4e5645525428464c4f41542c20434153542853554d2853756d444163' +
-        '2920617320646563696d616c2831382c20322929292061732053756d44416320'
-      
-        '2c20434f4e5645525428464c4f41542c20434153542853554d2853756d416329' +
-        '20617320646563696d616c2831382c20322929292061732053756d4163'
-      '66726f6d2028'
-      '53454c454354'
-      '20205669644e6f'
-      '2c204e616b6c4e6f20'
-      '2c20444f435f545950455f4944'
-      
-        '2c20434f4e5645525428464c4f41542c2053756d546f762a53756d444e616b2f' +
-        '53756d4e616b292061732053756d6d61446f6c67'
-      
-        '2c20434f4e5645525428464c4f41542c2053756d4e616b292061732053756d6d' +
-        '612020'
-      
-        '2c20434f4e5645525428464c4f41542c2063617365207768656e202853756d41' +
-        '636e3c3e302920'
-      
-        '090909097468656e2053756d546f7641636e2a53756d4441636e2f53756d4163' +
-        '6e20656c7365'
-      '09090909302e3020656e64292061732053756d444163'
-      
-        '2c20434f4e5645525428464c4f41542c2053756d41636e292061732053756d41' +
-        '632020'
-      ''
-      '46524f4d2028'
-      '53454c454354'
-      '20205669644e6f'
-      '2c204e616b6c4e6f20'
-      '2c20444f435f545950455f4944'
-      
-        '2c20434f4e5645525428464c4f41542c2053756d546f76292061732053756d54' +
-        '6f76'
-      
-        '2c20434f4e5645525428464c4f41542c2053756d4e616b292061732053756d4e' +
-        '616b'
-      
-        '2c20434f4e5645525428464c4f41542c2053756d444e616b292061732053756d' +
-        '444e616b'
-      ''
-      
-        '2c20434f4e5645525428464c4f41542c202863617365207768656e202853756d' +
-        '41636e3c3e3029207468656e2053756d41636e20656c736520302e3020656e64' +
-        '29292061732053756d41636e'
-      '09'
-      
-        '2c20434f4e5645525428464c4f41542c202863617365207768656e202853756d' +
-        '41636e3c3e3029207468656e2053756d4441636e20656c736520302e3020656e' +
-        '6429292061732053756d4441636e'
-      '0909'
-      
-        '2c20434f4e5645525428464c4f41542c2053756d546f76202a202853454c4543' +
-        '542065782e526174652046524f4d2043757272656e637945786368616e676520' +
-        '657820'
-      
-        '095748455245202843757248645f49443d65782e43757272656e637949642920' +
-        '616e64202865782e49734163746976653d3129292f526174655f416329206173' +
-        '2053756d546f7641636e'
-      ''
-      '46524f4d'
-      '28'
-      '53454c454354'
-      '2020742e5669644e6f'
-      '2c2068312e4e616b6c4e6f20'
-      '2c2064732e444f435f545950455f4944'
-      
-        '2c20434f4e5645525428464c4f41542c2049534e554c4c2868312e5261746543' +
-        '757272656e63794163636f756e74696e672c2031292920415320526174655f41' +
-        '63'
-      
-        '2c20434f4e5645525428464c4f41542c202843415345205748454e202868312e' +
-        '43757272656e637948656164204953204e554c4c29205448454e20'
-      
-        '092853454c4543542064632e49442046524f4d20445f43555252454e43592064' +
-        '632057484552452064632e497344656661756c743d312920454c534520'
-      
-        '092853454c4543542064632e49442046524f4d20445f43555252454e43592064' +
-        '632057484552452064632e4c5f434f44453d68312e43757272656e6379486561' +
-        '642920454e4429292041532043757248645f49442020202020'
-      ''
-      
-        '2c20434f4e5645525428464c4f41542c202843415345205748454e202868312e' +
-        '43757272656e63794163636f756e74696e67204953204e554c4c29205448454e' +
-        '20'
-      
-        '092853454c4543542064632e49442046524f4d20445f43555252454e43592064' +
-        '632057484552452064632e497344656661756c743d312920454c534520'
-      
-        '092853454c4543542064632e49442046524f4d20445f43555252454e43592064' +
-        '632057484552452064632e4c5f434f44453d68312e43757272656e6379416363' +
-        '6f756e74696e672920454e44292920'
-      '0941532043757241635f4944'
-      '2020'
-      
-        '202c20434f4e5645525428464c4f41542c2068312e53756d6d61292061732053' +
-        '756d4e616b'
-      
-        '202c20434f4e5645525428464c4f41542c2068312e53756d6d61446f6c672920' +
-        '61732053756d444e616b2020'
-      
-        '202c20434f4e5645525428464c4f41542c2049534e554c4c2868312e53756d6d' +
-        '6143757272656e63794163636f756e74696e672c203029292061732053756d41' +
-        '636e'
-      
-        '202c20434f4e5645525428464c4f41542c2049534e554c4c2868312e53756d6d' +
-        '61446f6c6743757272656e63794163636f756e74696e672c2030292920617320' +
-        '53756d4441636e2020'
-      
-        '202c20434f4e5645525428464c4f41542c202864732e5061796d656e74507269' +
-        '63652a64732e51545929292061732053756d546f76'
-      
-        '202020202d2d202c20434f4e5645525428464c4f41542c202864732e5061796d' +
-        '656e7450726963652a64732e515459292a68312e53756d6d61446f6c672f6831' +
-        '2e53756d6d61292061732053756d6d61446f6c67'
-      '20202020202d2d2c20742e4e616d65546f76617253686f7274'
-      
-        '202020202046524f4d204e616b6c52206831207769746820286e6f6c6f636b29' +
+        '202020202066726f6d204e616b6c52206831207769746820286e6f6c6f636b29' +
         '20202020202020202020'
       
         '202020202d2d6c656674206a6f696e206c5f706f73745f7365745f6172746772' +
@@ -1734,14 +1746,15 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '096c656674206a6f696e204453504543206473206f6e202864732e4e616b6c4e' +
         '6f203d2068312e4e616b6c4e6f2920616e64202864732e444f435f545950455f' +
-        '49443d313229'
+        '49443d313229202d2d3f616e6f6961696179206f6961613f6961792069616565' +
+        '6161696179'
       
         '096c656674206a6f696e20546f7661722074206f6e2028742e546f7661724e6f' +
         '203d2064732e41525449434c455f494429'
       
         '20202020207768657265202868312e7669646e616b6c6e6f3d3120616e642068' +
-        '312e53756d6d61446f6c673e3020616e642068312e53756d6d613e3029202d2d' +
-        '616e64202868312e4e616b6c4e6f3d34303131343929'
+        '312e53756d6d61446f6c673e3029202d2d616e64202868312e4e616b6c4e6f3d' +
+        '34303131343929'
       
         '2020202020616e64202868312e446174654e616b6c206265747765656e204070' +
         '5f646174655f62656720616e642040705f646174655f656e6429'
@@ -1749,27 +1762,71 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '0920616e642028284044697361626c654578636c7573696f6e3d3129206f7220' +
         '286e6f74202868312e506f73744e6f20696e20'
       
-        '09202853454c45435420506f73744e6f2046524f4d204c6973744d696e757350' +
+        '09202873656c65637420506f73744e6f2066726f6d204c6973744d696e757350' +
         '6f7374466f724465626974206c6d7020776865726520'
       
         '0909202868312e506f73744e6f203d206c6d702e506f73744e6f2920616e6420' +
         '286c6d702e436865636b4d696e75733d312929292929'
-      '29206173204c31'
+      
+        '0929204c31206f6e20284c312e4e616b6c4e6f203d206e722e4e616b6c4e6f29' +
+        '206c656674206a6f696e'
+      '09'
+      
+        '202020202020202020204f737461746f6b206b206f6e206b2e546f7661724e6f' +
+        '203d204c312e546f7661724e6f206c656674206a6f696e'
+      
+        '202020202020202020205072696365466f7256656220706676206f6e20706676' +
+        '2e546f7661724e6f203d204c312e546f7661724e6f'
+      '20202020202020202020'
+      
+        '2020202029204c32206f6e20284c322e4e616b6c4e6f203d206e722e4e616b6c' +
+        '4e6f29206c656674206a6f696e20202020'
+      
+        '09092020645f63757272656e6379206463206f6e2064632e4c5f434f4445203d' +
+        '204c322e43757272656e6379206c656674206a6f696e'
+      
+        '0920202020202043757272656e637945786368616e6765206365206f6e206365' +
+        '2e43757272656e63794964203d2064632e494420616e642063652e6973416374' +
+        '697665203d203120206c656674206a6f696e'
+      
+        '09202020202020645f63757272656e637920646368206f6e206463682e4c5f43' +
+        '4f4445203d206e722e43757272656e637948656164206c656674206a6f696e'
+      
+        '0920202020202043757272656e637945786368616e676520636568206f6e2063' +
+        '65682e43757272656e63794964203d206463682e494420616e64206365682e49' +
+        '73416374697665203d2031206c656674206a6f696e'
+      '09092020'
+      
+        '09092020645f63757272656e63792064635f61206f6e2064635f612e4c5f434f' +
+        '4445203d204c322e43757272656e6379206c656674206a6f696e'
+      
+        '0920202020202043757272656e637945786368616e67652063655f61206f6e20' +
+        '63655f612e43757272656e63794964203d2064635f612e494420616e64206365' +
+        '5f612e6973416374697665203d203120206c656674206a6f696e'
+      
+        '09202020202020645f63757272656e6379206463685f61206f6e206463685f61' +
+        '2e4c5f434f4445203d206e722e43757272656e63794163636f756e74696e6720' +
+        '6c656674206a6f696e'
+      
+        '0920202020202043757272656e637945786368616e6765206365685f61206f6e' +
+        '206365685f612e43757272656e63794964203d206463682e494420616e642063' +
+        '65685f612e4973416374697665203d20312009202020202020'
+      '0929204c33'
       '776865726520284044697361626c655a65726f53756d41636e3d3029206f7220'
       
-        '090928284044697361626c655a65726f53756d41636e3d312920616e64202853' +
-        '756d41636e3d302929206f72'
+        '090928284044697361626c655a65726f53756d41636e3d312920616e6420284c' +
+        '332e5f53756d41633d302929206f72'
       
-        '090928284044697361626c655a65726f53756d41636e3d322920616e64202853' +
-        '756d41636e3c3e30292920'
-      '29206173204c32'
-      '29204832'
+        '090928284044697361626c655a65726f53756d41636e3d322920616e6420284c' +
+        '332e5f53756d41633c3e30292920092020202020202020202020202020202020' +
+        '202020202020'
+      '0929204c34'
       '202020202067726f7570206279202020202020'
-      '202020202048322e4e616b6c4e6f'
-      '20202020202c2048322e5669644e6f'
-      '20202020202c2048322e444f435f545950455f4944'
-      '202020202029206833'
-      '20202020206f6e206e722e4e616b6c4e6f3d68332e4e616b6c4e6f'
+      '202020202020204c342e4e616b6c4e6f'
+      '20202020202c204c342e5669644e6f'
+      '20202020202c204c342e444f435f545950455f4944'
+      '2020202029204c35'
+      '20202020206f6e20286e722e4e616b6c4e6f3d4c352e4e616b6c4e6f2920'
       
         '20202020206c656674206f75746572206a6f696e20506f73742070206f6e2070' +
         '2e506f73744e6f3d6e722e506f73744e6f20'
@@ -1777,11 +1834,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '20202020206c656674206f75746572206a6f696e2041646472657373506f7374' +
         '206170206f6e2061702e416464726573734e6f3d6e722e416464726573734e6f' +
         '20616e642061702e506f73744e6f3d6e722e506f73744e6f'
-      
-        '20202020207768657265206e6f742068332e53756d6d61446f6c67206973204e' +
-        '554c4c'
-      '2920'
-      '4153205431'
+      '0929205431'
+      '09'
       '5748455245'
       
         '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
@@ -1814,9 +1868,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '414e44'
       
         '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
-        '6f6e7320574845524520735f4e616b6c4e6f3d2d3129204f5220284e616b6c4e' +
-        '6f20494e202853454c45435420735f4e616b6c4e6f2046524f4d202353656c65' +
-        '6374696f6e73292929'
+        '6f6e7320574845524520735f4e616b6c4e6f3d2d3129204f5220284e6f6d2049' +
+        '4e202853454c45435420735f4e616b6c4e6f2046524f4d202353656c65637469' +
+        '6f6e73292929'
       '414e44'
       
         '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
@@ -1859,7 +1913,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '6f6e7320574845524520735f43757241635f49443d2d3129204f522028437572' +
         '41635f494420494e202853454c45435420735f43757241635f49442046524f4d' +
         '202353656c656374696f6e73292929'
-      '29204153205432'
+      '2029205432'
       '29204153205433'
       '47524f5550204259'
       '202054332e4f7464656c4e6f'
@@ -1867,7 +1921,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c2054332e536f747275644e6f'
       '2c2054332e427568'
       '2c2054332e506f73744e6f'
-      '2c2054332e4e616b6c4e6f'
+      '2c2054332e4e6f6d'
       '2c2054332e416464726573734944'
       '2c2054332e444f435f545950455f4944'
       '2c2054332e4461794e616b6c'
@@ -1878,8 +1932,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '29205434'
       ''
       
-        '6f72646572206279204f7464656c4e616d652c205669644e616d652c20536f74' +
-        '7275644e616d652c205f4e6f6d4e616b6c2c205f446179457870')
+        '4f52444552204259204f7464656c4e616d652c205669644e616d652c20536f74' +
+        '7275644e616d652c205f446174654e616b6c2c205f4461794578702044455343')
   end
   object quSession: TMSQuery
     Connection = dmDataModule.DB
