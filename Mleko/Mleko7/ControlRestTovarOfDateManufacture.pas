@@ -310,8 +310,8 @@ begin
        then if Application.MessageBox('Вы уверены что хотите пересоздать остатки ?', 'Такой товар уже существует', MB_YESNO or MB_DEFBUTTON2) = ID_YES
              then begin
                     ListNameTovar := quListTovara.FieldByName('NameTovar').AsString +' ,' + #10#13;
-                    dmDataModule.ExecSQL('delete TovarDateOfManufacture where TovarNo = :p1_TovarNo)',[quListTovara.FieldByName('TovarNo').Value]);
-                    dmDataModule.ExecSQL('delete l_DspecForTovarDateOfManufacture where TovarNo = :p1_TovarNo)',[quListTovara.FieldByName('TovarNo').Value]);
+                    dmDataModule.ExecSQL('delete TovarDateOfManufacture where TovarNo = :p1_TovarNo',[quListTovara.FieldByName('TovarNo').Value]);
+                    dmDataModule.ExecSQL('delete l_DspecForTovarDateOfManufacture where TovarNo = :p1_TovarNo',[quListTovara.FieldByName('TovarNo').Value]);
                     quInsInTovarDateOfManufacture := TMSQuery.Create(nil);
                     quInsInTovarDateOfManufacture.Connection:= dmDataModule.DB;
                     quInsInTovarDateOfManufacture.SQL.Clear;

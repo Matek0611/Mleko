@@ -1,6 +1,6 @@
 inherited MlekoCrossOstatok1Form: TMlekoCrossOstatok1Form
-  Left = 332
-  Top = 180
+  Left = 400
+  Top = 268
   Width = 1204
   Height = 579
   Caption = ''

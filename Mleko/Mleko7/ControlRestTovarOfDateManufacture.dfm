@@ -1,6 +1,6 @@
 inherited ControlRestTovarOfDateManufactureForm: TControlRestTovarOfDateManufactureForm
-  Left = 542
-  Top = 219
+  Left = 480
+  Top = 201
   Width = 981
   Height = 424
   Caption = #1059#1087#1088#1072#1074#1083#1077#1085#1080#1077' '#1086#1089#1090#1072#1090#1082#1072#1084#1080' '#1087#1086' '#1076#1072#1090#1077' '#1087#1088#1086#1080#1079#1074#1086#1076#1089#1090#1074#1072

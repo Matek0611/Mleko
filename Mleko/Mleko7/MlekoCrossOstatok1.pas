@@ -630,7 +630,7 @@ begin
                                                                                            quInsInD_Control_PriceInInst.Connection:=dmDataModule.DB;
                                                                                            quInsInD_Control_PriceInInst.SQL.Clear;
                                                                                            quInsInD_Control_PriceInInst.SQL.Text:= 'insert into D_Control_PriceInInst (UserNo,TovarNo,PriceInInst,Price_ECO,Date,PostNo,HostName,Dhead_id)'
-                                                                                                                                  +'values (:UserNo,:TovarNo,:PriceInInst,:Price_ECO,GetDate(),:PostNo,HOST_NAME(),:Dhead_id)';
+                                                                                                                                  +'values (:UserNo,:TovarNo,convert(float,:PriceInInst),convert(float,:Price_ECO),GetDate(),:PostNo,HOST_NAME(),:Dhead_id)';
                                                                                            quInsInD_Control_PriceInInst.ParamByName('UserNo').Value := Data.UserNo;
                                                                                            quInsInD_Control_PriceInInst.ParamByName('TovarNo').Value := quOstatok1NaklSpecForCreateNaklP.FieldByName('TovarNo').Value;
                                                                                            quInsInD_Control_PriceInInst.ParamByName('PriceInInst').Value := quPriceInInst.FieldByName('PriceInInst').AsFloat;
