@@ -833,8 +833,8 @@ var Table, Variables, KeyField, TextField: string;
     Keys: TStrings; DataType: TVarType; n: Integer;
     UseKeyField: Boolean;
 begin
-  Result:= '';
   Variables:= GetSelectionStrByIndex(Ord(sel));
+  Result:= Trim(Variables);
   PrepareStrValues(Variables, Temp);
   DataType:= DetectDataTypeOfItems(Temp);
   if (DataType = varInteger) or (DataType = varString) and
@@ -890,12 +890,13 @@ begin
 end;
 
 procedure TfrmAnalyzeDebitDebt.VerifyNumberSelection(sel: TSelectionType);
-var Vars: string;
+var Vars: string; Keys: TStrings;
 begin
   Vars:= Trim(GetSelectionStrByIndex(Ord(sel)));
   if (Vars<>'') then
     Vars:= VerifySelectedTextValuesEx(sel, varInteger, True, True);
-  if (Vars='') then AList.GetChild(Ord(sel)).Clear
+  Keys:= AList.GetChild(Ord(sel));
+  if (Vars='') then Keys.Clear;
 end;
 
 procedure TfrmAnalyzeDebitDebt.VerifyEmptySelections();
