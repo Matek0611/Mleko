@@ -18,7 +18,7 @@ type
 
   TParamType = ( ptNone, ptUserNo, ptSPID, ptOwnerName, ptAllTypes,
                  ptExpansion, ptSelection,
-                 ptDisableExclusion, ptDisableZeroSumAcn,
+                 ptDisableExclusion, ptUseColnPrice, ptDisableZeroSumAcn,
                  ptFormDate, ptBegDate, ptStartDate, ptVeryOld,
                  ptOrderBy,
                  ptEndDate);
@@ -125,6 +125,8 @@ type
     procedure clbExpansionsDblClick(Sender: TObject);
     procedure acToggleSettingsVisibilityExecute(Sender: TObject);
     procedure quDebtFilterRecord(DataSet: TDataSet; var Accept: Boolean);
+    procedure vleSelectionsKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     cbxExpansion: TCheckBox;
@@ -155,6 +157,7 @@ type
     OrderFullStr: String;
     UserParamType: TParamType;
     {$IFDEF SystemMenu}
+    UseColnPrice: Boolean;
     DisableExclusion: Boolean;
     DisableZeroSumAcn: Integer;
     SysMenu: THandle;
@@ -180,6 +183,7 @@ type
     procedure CopySQLParams;
     procedure CollectSQLParams;
     procedure ToggleDisableExclusionItem();
+    procedure ToggleUseColnPrice();    
     procedure InputValueForDisableZeroSumAcn;
     {$ENDIF}
     function CreateSQLContainer(SetCaption: string; GetSQLText: Boolean = True): TForm;
@@ -228,6 +232,11 @@ type
     procedure AfterColumnFilterSelection(SelCount: Integer);
     procedure RefreshFilterList(Column: TColumnEh);
     procedure ShowTotalSumValues;
+    procedure VerifySelectedTextValues(sel: TSelectionType);
+    function VerifySelectedTextValuesEx(sel: TSelectionType;
+         CheckDataType: TVarType = varAny; UseKeyValues: Boolean = True;
+         TextToKeys: Boolean = False): string;
+    procedure VerifyNumberSelection(sel: TSelectionType);
   public
     { Public declarations }
     procedure RefreshResults(SetMaxCount: Boolean = False);
@@ -259,6 +268,8 @@ const
   AllowedFilterIndexes = [0, 1, 2, 3, 4, 10]; // used for filtering
   AllowedIntIndexes = [5, 8, 9, 10]; // used for sorting
 
+  AllowedIntSelectionTypes = [stOtdel, stVid, stSotrud, stBuh, stPost, stNakl, stAddress];
+
   idCurRecordCount = 0;
   idMaxRecordCount = 1;
   idPercent = 2;
@@ -288,6 +299,7 @@ const
   idOrderBy = 'ORDER BY';
   idDisableExclusion = 'DisableExclusion';
   idDisableZeroSumAcn = 'DisableZeroSumAcn';
+  idUseColnPrice = 'UseColnPrice';
 
   idDayNaklAttr = 'накладной';
   idDayOplAttr = 'оплаты';
@@ -316,6 +328,7 @@ const
   DefExpValues : array[Boolean] of TBoolStrValue = ('0', '1');
   DefSelValues : array[Boolean] of TBoolStrValue = ('-1', '0');
   DefPrefValues : array[Boolean] of TBoolStrValue = ('', ', ');
+  BoolChecks: array[Boolean] of UINT = (MF_UNCHECKED, MF_CHECKED);
 
   idDefaultSortFields = ' OtdelName, VidName, SotrudName, _NomNakl, _DayExp DESC';
 
@@ -510,7 +523,7 @@ end;
 procedure PrepareStrValues(Variables: string; Keys: TStrings);
 begin
   Keys.Clear;
-  ExtractStrings([','], [' '], PAnsiChar(Variables), Keys);
+  ExtractStrings([','], [' ', #8, #9], PAnsiChar(Variables), Keys);
 end;
 
 function VerifyIntKeys(Values: string; Keys: TStrings; DefValue: Integer = MaxInt): Integer;
@@ -524,7 +537,7 @@ begin
     if (c = 0) then
       Inc(Result)
     else
-    if (DefValue<>MaxInt) then
+    if (DefValue=MaxInt) then
        Keys.Delete(Result) else
        begin
          Keys[Result]:= IntToStr(DefValue);
@@ -553,7 +566,10 @@ end;
 function VerifyTextValues(Variables, Table, KeyField, TextField: string;
          List, Keys: TStrings; SQL: string = '';
          AsInteger: Boolean = False; MaxLength: Integer = 20;
-         InitValue: Integer = -1; UseKeyValues: Boolean = True): Integer;
+         InitValue: Integer = -1;
+         UseKeyValues: Boolean = True;
+         UseKeyField: Boolean = False;
+         TextToKeys: Boolean = False): Integer;
 var
   P: PAnsiChar;
   aSQL, Values, s, t: string;
@@ -586,19 +602,21 @@ begin
       Inc(Result);
     end;
   end;
-//  if  (Result > 0) and (not UseKeyValues) then
-//     begin
-//       if (Keys<>nil) then Keys.Assign(List);
-//       Exit;
-//     end;
-  //1-Бруно-Худошин
   if Result > 0 then
   begin
+    if TextToKeys and (Keys<>nil) then
+       begin
+         Keys.Assign(List);
+         Exit;
+       end;  
     Delete(Values, Length(Values), 1);
     if (SQL<>'') then t := SQL
                  else t:= SQL_Template;
     if (not AsInteger) and (Result=1) and (SQL='') then
-    aSQL := Format(SQL_Like, [KeyField, TextField, Table, TextField, AnsiDequotedStr(Values, '''')]) else
+    aSQL := Format(SQL_Like, [KeyField, TextField, Table, TextField,
+            AnsiDequotedStr(Values, '''')]) else
+    if UseKeyField then
+    aSQL := Format(t, [KeyField, TextField, Table, KeyField, Values]) else
     aSQL := Format(t, [KeyField, TextField, Table, TextField, Values]);
     dmDataModule.OpenSQL(aSQL);
     dmDataModule.QFO.First;
@@ -606,7 +624,10 @@ begin
     while not dmDataModule.QFO.Eof do
     begin
       s := dmDataModule.QFO.FieldByName(TextField).AsString;
-      i := List.IndexOf(S);
+      if UseKeyField then i:= Result else
+      begin
+        i := List.IndexOf(S);
+      end;
       if (i >= 0) then
       begin
         v := dmDataModule.QFO.FieldByName(KeyField).AsInteger;
@@ -720,6 +741,132 @@ while (Start < Strings.Count) do
   end;
 end;
 
+procedure GetKeyAndTextFields(sel: TSelectionType; var KeyField, TextField, Table: string);
+(*
+ID	name	code	control_code	control_class	data_type	key_field	txt_field	select_entity_class	description	data_type_code
+1	DATE                	DATE                	EDDATE              	TCITDBCOMBOEDIT               	DATE                	NULL	NULL	NULL	Дата	DATE
+2	VIDOTDEL	VIDOTDEL	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	OTDELNO	OTDELNAME	TMLEKOSELECTOTDELDLG	Справочник отделов	INTEGER
+3	TOVAR	TOVAR	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	TOVARNO	NAMETOVAR	TMLEKOSELECTTOVARDLG	Справочник товаров	INTEGER
+4	POST	POST	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	POSTNO	NAME	TMLEKOSELECTFIRMDLG	Справочник фирм	INTEGER
+5	SOTRUD	SOTRUD	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	SOTRUDNO	SOTRUDNAME	TMLEKOSELECTSOTRUDDLG	Справочник сотрудников	INTEGER
+6	ADDRESSPOST	ADDRESSPOST	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	ID	ADDRESS	TMlekoSelectAddressDlg	Справочник адресов	INTEGER
+8	NAKLR	NAKLR	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	NAKLNO	NOM	TMLEKOSELECTNAKLRDLG	Расходные накладные	INTEGER
+9	_DHEAD	_DHEAD	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	ID	SUB_NUM	TMLEKOSELECTDHEADDLG	Список документов	INTEGER
+10	USERS	USERS	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	USERNO	USERNAME	TMLEKOSELECTUSERDLG	Справочник пользователей	INTEGER
+12	BOOLEAN             	BOOLEAN             	EDBOOL              	TCHECKBOX                     	BOOL                	NULL	NULL	NULL	Логическое	BOOLEAN
+13	D_SECTOR_RESPONSE	D_SECTOR_RESPONSE	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	ID	SECTORNAME	TMLEKOSELECTSECTORDLG	Сектора ответственности	INTEGER
+14	D_ENTITY_TYPE      	D_ENTITY_TYPE      	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	ID	DESCRIPTION	TMLEKOSELECTENTITYTYPEDLG	Типы сущностей	INTEGER
+15	D_BUH_TYPE	D_BUH_TYPE	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	BUH	BUH_TYPE_NAME	TMLEKOSELECTBUHDLG	Формы бух. сущностей	INTEGER
+16	D_ACTIVITY_TYPE	D_ACTIVITY_TYPE	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	ID	NAME	TMLEKOSELECTACTIVITYDLG	Вид деятельности	INTEGER
+17	VIDRASHOD	VIDRASHOD	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	VIDRASHODNO	VIDRASHODNAME	TMLEKOSELECTVIDRASHDLG	Статьи расходов	INTEGER
+18	D_PLAT_TYPE	D_PLAT_TYPE	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	ID	NAME	TMLEKOSELECTPLATTYPEDLG	Типы платежей	INTEGER
+19	D_REPORT	D_REPORT	EDSELECT            	TCITDBCOMBOEDIT               	INT	ID	NAME	TMLEKOSELECTREPORTDLG	Отчеты	INTEGER
+21	PLATP	PLATP	EDSELECT	TCITDBCOMBOEDIT               	INT	PLATNO	NOM	TMLEKOSELECTPLATPDLG	Приходы денег	INTEGER
+22	PLATR	PLATR	EDSELECT	TCITDBCOMBOEDIT	INT	PLATNO	NOM	TMLEKOSELECTPLATRDLG	Расходы денег	INTEGER
+25	D_PROP_DLG	D_PROP_DLG	EDSELECT	TCITDBCOMBOEDIT	INT	ID	NAME	TMLEKOSELECTREPORTDLG	Диалоговые формы	INTEGER
+26	TEXT	TEXT	EDEDIT	TCITDBCOMBOEDIT	VARCHAR	NULL	NULL	NULL	Текстовое поле	TEXT
+29	FLOAT	FLOAT	EDSELECT	TCITDBCOMBOEDIT	FLOAT	FLOAT	Float	TMLEKOSELECTFLOATDLG	Числовое поле	FLOAT
+31	D_PRICE_TYPE	D_PRICE_TYPE	EDSELECT	TCITDBCOMBOEDIT	INT	COLNPRICE	COLNAME	TMLEKOSELECTPRICETYPEDLG	Типы цен	INTEGER
+32	D_RESPONSE_DEPT	D_RESPONSE_DEPT	EDSELECT	TCITDBCOMBOEDIT	INT	ID	NAME	TMLEKOSELECTRESPONSEDEPTDLG	Подразделение финансовой ответсвенности	INTEGER
+33	D_FIRM_PROP	D_FIRM_PROP	EDSELECT	TCITDBCOMBOEDIT	INT	ID	NAME	TMLEKOSELECTFIRMPROPDLG	Свойства фирмы	INTEGER
+34	D_BLANK_REASON	D_BLANK_REASON	EDSELECT	TCITDBCOMBOEDIT	INT	ID	REASONNAME	TMLEKOSELECTREASONDLG	Основание для заказа	INTEGER
+36	REGIONS	REGIONS	EDSELECT	TCITDBCOMBOEDIT	INT	REGIONNO	REGIONNAME	TMLEKOSELECTREGIONDLG	Географические районы	INTEGER
+37	POST	POST_FOR_BLANK	EDSELECT	TCITDBCOMBOEDIT	INT	POSTNO	NAME	TMLEKOSELECTFIRMFORBLANKDLG	Фирмы для заказов	INTEGER
+38	NaklP	NAKLP	EDSELECT	TCITDBCOMBOEDIT	INT	NAKLNO	NOM	TMLEKOSELECTNAKLPDLG	Приходные накладные	INTEGER
+39	INT	INT	EDSELECT	TCITDBCOMBOEDIT	INT	NULL	NULL	TMLEKOSELECTFLOATDLG	Число	INTEGER
+40	NAKLR	NAKLR_	EDSELECT            	TCITDBCOMBOEDIT               	INT                 	NAKLNO	NAKLNO	TMLEKOSELECTRASHODDLG	Номер расходной накладной	INTEGER
+41	NaklP	NaklP_	EDSELECT	TCITDBCOMBOEDIT               	INT	NAKLNO	NAKLNO	TMLEKOSELECTNAKLPDLG	Номер приходной накладной	INTEGER
+42	D_SET_ARTICLE_GROUP	D_SET_ARTICLE_GROUP	EDSELECT	TCITDBCOMBOEDIT               	BIGINT	ID	Name	TMLEKOSELECTARTICLEGROUPDLG	Группа товара	INTEGER
+43	TOVAR_	TOVAR_	EDSELECT	TCITDBCOMBOEDIT               	INT                 	TOVARNO	NAMETOVAR	TMLEKOSELECTTOVAR1DLG	Справочник товаров по "Тайфуну"	INTEGER
+44	GOODSTANDARTS	GOODSTANDARTS	EDSELECT	TCITDBCOMBOEDIT               	INT	STANDARTNO	STANDARTNAME	TMLEKOSELECTSTANDARTSDLG	Стандарты	INTEGER
+45	D_CATEGORYTT	D_CATEGORYTT	EDSELECT	TCITDBCOMBOEDIT               	INT	CATEGORYTTNO	CATEGORYTTNAME	TMLEKOSELECTCATEGORYTTDLG	Категории ТТ	INTEGER
+46	VIDTOV	VIDTOV	EDSELECT	TCITDBCOMBOEDIT               	INT	VIDNO	VIDNAME	TMLEKOSELECTVIDTOVDLG	Вид товара	INTEGER
+47	TipTovara	TipTovara	EDSELECT	TCITDBCOMBOEDIT               	INT	TipNo	TIPNAME	TMlekoSelectTipTovaraDlg	Тип товара	INTEGER
+48	VidNakl	VidNakl	EDSELECT	TCITDBCOMBOEDIT               	INT	VidNaklNo	VidNaklName	TMlekoSelectVidNaklDlg	Тип Накладной	INTEGER
+49	D_BANK_INVOICE	D_BANK_INVOICE	EDSELECT	TCITDBCOMBOEDIT               	INT	Id	Bank_Name	TMlekoSelectBankInvoiceDlg	Банковский счет	INTEGER
+50	POST	TovarSupplier	EDSELECT	TCITDBCOMBOEDIT               	INT	POSTNO	NAME	TMlekoSelectFIrmSupplierDlg	Поставщики	INTEGER
+51	TOVAR_1	TOVAR_1	EDSELECT	TCITDBCOMBOEDIT               	INT                 	TOVARNO	NAMETOVAR	TMLEKOSELECTTOVAR2DLG	Справочник товаров по "Укрпродукту"	INTEGER
+52	ReasonForUnlocking	ReasonForUnlocking	EDSELECT	TCITDBCOMBOEDIT               	INT	ReasonNo	ReasonName	TMlekoSelectReasonForUnlockingDlg	Причины разблокировки	INTEGER
+*)
+begin
+  KeyField:= ''; TextField:= ''; Table:= '';
+//  TSelectionType = ( stOtdel, stVid, stSotrud, stBuh, stPost, stNakl, stAddress,
+//                     stDoc, stDayNakl, stDayOpl, stDayExp);
+  case sel of
+  stOtdel:
+    begin
+      KeyField:= 'OTDELNO'; TextField:= 'OTDELNAME';
+    end;
+  stVid:
+    begin
+      KeyField:= 'VIDNO'; TextField:= 'VIDNAME';
+    end;
+  stSotrud:
+    begin
+      KeyField:= 'SOTRUDNO'; TextField:= 'SOTRUDNAME';
+    end;
+  stBuh:
+    begin
+      KeyField:= 'BUH'; TextField:= 'BUH_TYPE_NAME';
+    end;
+  stPost:
+    begin
+      KeyField:= 'POSTNO'; TextField:= 'NAME'; Table:= 'POST';
+    end;
+  stNakl:
+    begin
+      KeyField:= 'NAKLNO'; TextField:= 'NOM'; Table:= 'NAKLR';
+    end;
+  stAddress:
+    begin
+      KeyField:= 'ID'; TextField:= 'ADDRESS';
+    end;
+  end;
+end;
+
+function TfrmAnalyzeDebitDebt.VerifySelectedTextValuesEx(
+         sel: TSelectionType;
+         CheckDataType: TVarType = varAny;
+         UseKeyValues: Boolean = True;
+         TextToKeys: Boolean = False): string;
+var Table, Variables, KeyField, TextField: string;
+    Keys: TStrings; DataType: TVarType; n: Integer;
+    UseKeyField: Boolean;
+begin
+  Result:= '';
+  Variables:= GetSelectionStrByIndex(Ord(sel));
+  PrepareStrValues(Variables, Temp);
+  DataType:= DetectDataTypeOfItems(Temp);
+  if (DataType = varInteger) or (DataType = varString) and
+  ((CheckDataType=varAny) or (CheckDataType=DataType)) then
+  if (Temp.Count>0) then
+  begin
+    UseKeyField:= (sel<>stNakl) and (DataType=varInteger);
+    GetKeyAndTextFields(sel, KeyField, TextField, Table);
+    if ((KeyField<>'') and (TextField<>'')) then
+    begin
+      if (Table='') then
+      Table:= GetEntityTable(KeyField, TextField);
+      if (Table<>'') then
+         begin
+           Keys:= AList.GetChild(Ord(sel));
+           n:= VerifyTextValues(
+            Variables, Table, KeyField, TextField, Temp,
+            Keys, SQL_Template, True, 20, -1,
+            UseKeyValues, UseKeyField, TextToKeys);
+           Result:= GetDelimText(Keys, ', ');
+         end;
+    end;
+  end;
+end;
+
+procedure TfrmAnalyzeDebitDebt.VerifySelectedTextValues(sel: TSelectionType);
+begin
+  VerifyTextValues(
+  GetSelectionStrByIndex(Ord(stNakl)), 'NaklR', 'NaklNo', 'Nom', Temp,
+  AList.GetChild(Ord(stNakl)), NaklNo_Template, True, 20, -1, False);
+end;
+
 procedure TfrmAnalyzeDebitDebt.VerifyInvoiceNumbers();
 begin
   VerifyTextValues(
@@ -742,18 +889,24 @@ begin
   GetSelectionStrByIndex(Ord(sel)), AList.GetChild(Ord(sel)), StrToDate(dtDateStart));
 end;
 
+procedure TfrmAnalyzeDebitDebt.VerifyNumberSelection(sel: TSelectionType);
+var Vars: string;
+begin
+  Vars:= Trim(GetSelectionStrByIndex(Ord(sel)));
+  if (Vars<>'') then
+    Vars:= VerifySelectedTextValuesEx(sel, varInteger, True, True);
+  if (Vars='') then AList.GetChild(Ord(sel)).Clear
+end;
+
 procedure TfrmAnalyzeDebitDebt.VerifyEmptySelections();
 var i: Integer; sel: TSelectionType;
 begin
 for i := 0 to AList.Count-1 do
-  if (not (TSelectionType(i) in [stDayExp, stDayNakl, stDayOpl, stDayExp])) and
-     (Trim(GetSelectionStrByIndex(i))='') then
-     AList.GetChild(i).Clear else
+  if (TSelectionType(i) in AllowedIntSelectionTypes) then
+     VerifyNumberSelection(TSelectionType(i)) else
      begin
        sel:= TSelectionType(i);
        case sel of
-         stNakl: VerifyInvoiceNumbers;
-         //stNakl: VerifyIntValues(sel, -1);
          stDayNakl, stDayOpl: VerifyDateValues(sel);
          stDayExp: VerifyIntValues(sel, idVeryOldVal);
        end;
@@ -889,6 +1042,7 @@ begin
   ParamKeys[ptStartDate] := idStartDate;
   ParamKeys[ptVeryOld] := idVeryOldDay;
   ParamKeys[ptDisableExclusion] := idDisableExclusion;
+  ParamKeys[ptUseColnPrice] := idUseColnPrice;
   ParamKeys[ptDisableZeroSumAcn] := idDisableZeroSumAcn;
   ParamKeys[ptOrderBy] := idOrderBy;
   ParamKeys[ptAllTypes] := idInsertAllTypes;
@@ -946,6 +1100,8 @@ begin
           SetParameterByType(pt, IntToStr(idVeryOldVal));
       ptDisableExclusion:
           SetParameterByType(pt, IntToStr(Ord(DisableExclusion)));
+      ptUseColnPrice:
+          SetParameterByType(pt, IntToStr(Ord(UseColnPrice)));
       ptDisableZeroSumAcn:
           SetParameterByType(pt, IntToStr(Ord(DisableZeroSumAcn)));
       ptOrderBy:
@@ -1343,6 +1499,7 @@ const
   idTransposeSelections = $403;
   id_DisableExclusion = $404;
   id_DisableZeroSumAcn = $405;
+  id_UseColnPrice = $406;
 
 procedure TfrmAnalyzeDebitDebt.InsertCommands();
 var
@@ -1352,6 +1509,8 @@ begin
   InsertMenu(SysMenu, Word(-1), MF_SEPARATOR, WM_USER, '');
   DisableExclusionItem := THandle(InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
     id_DisableExclusion, 'Disable Exclusion'));
+  InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
+    id_UseColnPrice, 'Use ColnPrice');
   InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
     id_DisableZeroSumAcn, 'Disable ZeroSumAcn');
   uIDShowItem := THandle(InsertMenu(SysMenu, Word(-1), MF_BYPOSITION,
@@ -1376,11 +1535,17 @@ begin
 end;
 
 procedure TfrmAnalyzeDebitDebt.ToggleDisableExclusionItem();
-const Checks: array[Boolean] of UINT = (MF_UNCHECKED, MF_CHECKED);
 begin
   DisableExclusion:= not DisableExclusion;
   // 8 means index of menu item
-  CheckMenuItem(SysMenu, 8, MF_BYPOSITION + Checks[DisableExclusion]);
+  CheckMenuItem(SysMenu, 8, MF_BYPOSITION + BoolChecks[DisableExclusion]);
+end;
+
+procedure TfrmAnalyzeDebitDebt.ToggleUseColnPrice();
+const Checks: array[Boolean] of UINT = (MF_UNCHECKED, MF_CHECKED);
+begin
+  UseColnPrice:= not UseColnPrice;
+  CheckMenuItem(SysMenu, 9, MF_BYPOSITION + BoolChecks[UseColnPrice]);
 end;
 
 procedure TfrmAnalyzeDebitDebt.InputValueForDisableZeroSumAcn();
@@ -1424,6 +1589,8 @@ begin
       TransposeSelections();
     id_DisableExclusion:
       ToggleDisableExclusionItem();
+    id_UseColnPrice:
+      ToggleUseColnPrice();
     id_DisableZeroSumAcn:
       InputValueForDisableZeroSumAcn();
   end;
@@ -1696,7 +1863,7 @@ end;
 procedure TfrmAnalyzeDebitDebt.PushEditButtonForSelection();
 const
 AQuote = '';
-var i, z: Integer; Items: TStrings; S: String; R: TGridRect; P: PChar;
+var i, z: Integer; Items: TStrings; S, Prev: String; R: TGridRect; P: PChar;
     st: TSelectionType;
 begin
 //  R:= vleSelections.Selection;
@@ -1710,6 +1877,7 @@ begin
                      stDayNakl, stDayOpl, stDayExp);
   }
   st:= TSelectionType(i);
+  Prev:= GetSelectionStrByIndex(Ord(st)) ;
   case st of
   stOtdel:
      z:= SelectMLKItems(st, 'fltOtdel', 'VIDOTDEL');
@@ -1731,14 +1899,15 @@ begin
   if (z>=0) then
   begin
     Fields.Clear;
-    S:= Temp.CommaText;
+    S:= GetDelimText(Temp, ', ');
     S:= Trim(S);
     P:= PChar(S);
     if (S<>'') and (not (st in [stNakl, stAddress, stDayNakl, stDayOpl]))
     and (AnsiExtractQuotedStr(P, '"')='') then S:= AnsiQuotedStr(S, '"');
     //Items.ValueFromIndex[i]:= S;
     vleSelections.Values[vleSelections.Keys[vleSelections.Row]]:= S;
-  end;
+  end else
+  vleSelections.Values[vleSelections.Keys[vleSelections.Row]]:= Prev;
 end;
 
 procedure TfrmAnalyzeDebitDebt.vleDateSelectCell(Sender: TObject; ACol,
@@ -1887,6 +2056,19 @@ begin
   Inc(VisibleRowCount, Ord(Accept));
 end;
 
+procedure TfrmAnalyzeDebitDebt.vleSelectionsKeyUp(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+  var s: string;
+begin
+  inherited;
+  if (Key=13) and (ssShift in Shift) then
+     begin
+       s:= VerifySelectedTextValuesEx(
+       TSelectionType(vleSelections.Row-1), varInteger, False);
+       if (s<>'') then
+          ShowMessage(s) else
+          ShowMessage('<Error>');
+     end;
+end;
+
 end.
-
-

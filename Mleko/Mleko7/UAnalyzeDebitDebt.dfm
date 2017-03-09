@@ -356,6 +356,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
           #1042#1099#1073#1088#1072#1085#1085#1099#1077' '#1079#1085#1072#1095#1077#1085#1080#1103)
         OnDblClick = vleSelectionsDblClick
         OnEditButtonClick = vleSelectionsEditButtonClick
+        OnKeyUp = vleSelectionsKeyUp
         ColWidths = (
           123
           393)
@@ -848,7 +849,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', L1.DOC_TYPE_ID'
       ', pfv.Currency'
       ', '
-      '   (case when @UseColnPrice=0 then L1.PaymentPrice * L1.QTY '
+      
+        '   (case when (@UseColnPrice=0) and (not L1.PaymentPrice is NULL' +
+        ') then L1.PaymentPrice * L1.QTY '
       '   else '
       '   (case '
       '        when ColnPrice = 1 then  Isnull(k.Price, 0)'
@@ -878,7 +881,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '      , h1.NaklNo '
       '     , ds.DOC_TYPE_ID'
       '     , ds.QTY'
-      '     , isnull(ds.PaymentPrice, 0) as PaymentPrice'
+      '     , ds.PaymentPrice'
       '    --, t.NameTovarShort'
       '     from NaklR h1 with (nolock)          '
       
@@ -1661,8 +1664,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c207066762e43757272656e6379'
       '2c20'
       
-        '2020202863617365207768656e2040557365436f6c6e50726963653d30207468' +
-        '656e204c312e5061796d656e745072696365202a204c312e51545920'
+        '2020202863617365207768656e202840557365436f6c6e50726963653d302920' +
+        '616e6420286e6f74204c312e5061796d656e745072696365206973204e554c4c' +
+        '29207468656e204c312e5061796d656e745072696365202a204c312e51545920'
       '202020656c736520'
       '202020286361736520'
       
@@ -1730,9 +1734,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2020202020202c2068312e4e616b6c4e6f20'
       '20202020202c2064732e444f435f545950455f4944'
       '20202020202c2064732e515459'
-      
-        '20202020202c2069736e756c6c2864732e5061796d656e7450726963652c2030' +
-        '29206173205061796d656e745072696365'
+      '20202020202c2064732e5061796d656e745072696365'
       '202020202d2d2c20742e4e616d65546f76617253686f7274'
       
         '202020202066726f6d204e616b6c52206831207769746820286e6f6c6f636b29' +

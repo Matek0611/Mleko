@@ -43,6 +43,8 @@ function Shift_Is_Down(): Boolean;
 
 function Alt_Is_Down(): Boolean;
 
+function GetEntityTable(KeyField, TextField: String): String;
+
 function SelectMLKItemsByDialog(MLKForm: TCFLMLKCustomForm; Items: TStrings;
          OwnerName, ParamName, ParamCode: string;
          MultiSelect: BOOL = True; KeyValues: TStrings = nil): Integer;
@@ -60,10 +62,11 @@ function SortMSQueryInEhGrid( var OldCol, OldDir: Integer;
           DoOpen: Boolean = True): String;
 procedure SaveDBGridToXLSFile(DBGridEh: TCustomDBGridEh; const FileName: String; IsSaveAll: Boolean);
 function DetectDataType(s: string): TVarType;
+function DetectDataTypeOfItems(Items: TStrings): TVarType;
 function DetectDataTypeVar(s: string; V: Variant): TVarType;
 
 implementation
-uses StrUtils;
+uses StrUtils, DB;
 
 var
   Missing: array[0..1] of Integer = (Integer($FFFFFFFF), Integer($FFFFFFFF));
@@ -141,6 +144,14 @@ var
 begin
   GetKeyboardState(State);
   Result := ((State[VK_MENU] and 128) <> 0);
+end;
+
+function GetEntityTable(KeyField, TextField: String): String;
+begin
+  Result:= '';
+  Data.dmDataModule.OpenSQL('select Name from d_entity_type d where d.key_field= :p1 and d.txt_field=:p2', [KeyField, TextField]);
+  if (Data.dmDataModule.QFO.RecordCount=1) then
+  Result:= Data.dmDataModule.QFO.FieldByName('Name').AsString;
 end;
 
 function SelectMLKItemsByDialog(MLKForm: TCFLMLKCustomForm; Items: TStrings;
@@ -338,6 +349,22 @@ begin
           Result:= varString else
           Result:= varDouble
      end;
+end;
+
+function DetectDataTypeOfItems(Items: TStrings): TVarType;
+var i, n: Integer; f: Double;
+begin
+  Result:= varEmpty;
+  if (Items.Count>0) then
+  begin
+    Result:= DetectDataType(Items[0]);
+    for i := 1 to Items.Count-1 do
+      if (DetectDataType(Items[i])<>Result) then
+        begin
+          Result:= varError;
+          Exit;
+        end;
+  end;
 end;
 
 function DetectDataTypeVar(s: string; V: Variant): TVarType;
