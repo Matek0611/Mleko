@@ -856,8 +856,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', PriceTov'
       ', CONVERT(FLOAT, (case when (@UseColnPrice=0) then '
       
-        #9'(case when (PaymentPrice>PRICE_ECO) then PaymentPrice else PRIC' +
-        'E_ECO end) * QTY'
+        #9'--(case when (PaymentPrice>PRICE_ECO) then PaymentPrice else PR' +
+        'ICE_ECO end)'
+      ' PRICE_ECO * QTY'
       #9'else PriceTov*QTY end)) as _SumTov   '
       'from ('
       'select '
@@ -1034,8 +1035,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ') T4'
       ''
       
-        'ORDER BY _DateNakl, _NomNakl, _ OtdelName, VidName, SotrudName, ' +
-        ' _DayExp DESC')
+        'ORDER BY _DateNakl, _NomNakl, _OtdelName, VidName, SotrudName,  ' +
+        '_DayExp DESC')
     ReadOnly = True
     Filtered = True
     OnFilterRecord = quDebtFilterRecord
@@ -1695,9 +1696,10 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '2c20434f4e5645525428464c4f41542c202863617365207768656e2028405573' +
         '65436f6c6e50726963653d3029207468656e20'
       
-        '092863617365207768656e20285061796d656e7450726963653e50524943455f' +
-        '45434f29207468656e205061796d656e74507269636520656c73652050524943' +
-        '455f45434f20656e6429202a20515459'
+        '092d2d2863617365207768656e20285061796d656e7450726963653e50524943' +
+        '455f45434f29207468656e205061796d656e74507269636520656c7365205052' +
+        '4943455f45434f20656e6429'
+      '2050524943455f45434f202a20515459'
       
         '09656c7365205072696365546f762a51545920656e642929206173205f53756d' +
         '546f76202020'
@@ -1986,9 +1988,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '29205434'
       ''
       
-        '4f52444552204259205f446174654e616b6c2c205f4e6f6d4e616b6c2c205f20' +
-        '4f7464656c4e616d652c205669644e616d652c20536f747275644e616d652c20' +
-        '205f4461794578702044455343')
+        '4f52444552204259205f446174654e616b6c2c205f4e6f6d4e616b6c2c205f4f' +
+        '7464656c4e616d652c205669644e616d652c20536f747275644e616d652c2020' +
+        '5f4461794578702044455343')
   end
   object quSession: TMSQuery
     Connection = dmDataModule.DB
