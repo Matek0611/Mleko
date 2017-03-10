@@ -522,7 +522,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', @DisableZeroSumAcn int'
       ''
       'SET @p_date_beg = '#39'01.01.1900'#39
-      'SET @p_date_end = DATEADD(d, 1, getdate())'
+      'SET @p_date_end = '#39'11.03.2017'#39
       'SET @DateStart = '#39'01.01.2000'#39
       'SET @VeryOldDay = -10000'
       'SET @DisableExclusion = 0'
@@ -614,6 +614,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         #39', '#39'a_Buh'#39', '#39'a_PostNo'#39', '#39'a_NaklNo'#39', '#39'a_AddressID'#39', '#39'a_DOC_TYPE_I' +
         'D'#39', '#39'a_DayNakl'#39', '#39'a_DayOpl'#39', '#39'a_DayExp'#39', '#39'a_CurHd_ID'#39', '#39'a_CurAc_' +
         'ID'#39')'
+      ''
       ''
       'SELECT'
       'T4.OtdelNo as _OtdelName'
@@ -707,7 +708,6 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '(select d.L_CODE from D_CURRENCY d where d.ID = T4.CurAc_ID) END' +
         ') as CurAc '
-      ''
       'FROM ( '
       'SELECT'
       '  T3.OtdelNo AS OtdelNo'
@@ -730,6 +730,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', T3.CurAc_ID AS CurAc_ID'
       'FROM ( '
       'SELECT'
+      '-- T2'
       
         '  (CASE WHEN (1 IN (SELECT e_OtdelNo FROM #Expansions)) THEN T2.' +
         'OtdelNo ELSE -1 END) AS OtdelNo'
@@ -773,8 +774,11 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         ', (CASE WHEN (1 IN (SELECT e_CurAc_ID FROM #Expansions)) THEN T2' +
         '.CurAc_ID ELSE -1 END) AS CurAc_ID'
-      'FROM (  '
-      ' select * from ('
+      'FROM ( '
+      'select '
+      '-- T1'
+      '* from ('
+      '-- L5'
       ' select'
       '  nr.OtdelNo'
       ', nr.SotrudNo'
@@ -792,6 +796,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', datediff(d, @DateStart, nr.DateNakl) as  DayNakl'
       ', datediff(d, @DateStart, nr.DateOpl) as   DayOpl'
       ', datediff(dd, nr.DateOpl, @p_date_end) as DayExp'
+      ''
       ', (CASE WHEN (nr.CurrencyHead IS NULL) THEN '
       #9'(SELECT dc.ID from D_CURRENCY dc WHERE dc.IsDefault=1) ELSE '
       
@@ -805,15 +810,16 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         'ounting) END) AS CurAc_ID'
       ' '
       'from '
-      'NaklR nr with (nolock) inner join ( '
+      'NaklR nr with (nolock) inner join ('
+      '-- L4 '
       '  select '
       '  L4.NaklNo'
       ', L4.VidNo'
       ', L4.DOC_TYPE_ID'
       ',  CONVERT(FLOAT, ROUND(SUM(Summa), 4)) as Summa '
       ',  CONVERT(FLOAT, ROUND(SUM(SumAc), 4)) as SumAc'
-      ',  CONVERT(FLOAT, ROUND(SUM(SummaDolg), 4)) as SummaDolg '
-      ',  CONVERT(FLOAT, ROUND(SUM(SumDAc), 4)) as SumDAc'
+      ',  CONVERT(FLOAT, ROUND(SUM(SummaDolg), 6)) as SummaDolg '
+      ',  CONVERT(FLOAT, ROUND(SUM(SumDAc), 6)) as SumDAc'
       'from ('
       '  select'
       '  -- L3  '
@@ -843,13 +849,24 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', isnull(nr.SummaDolgCurrencyAccounting, 0) as _SumDAc'#9
       'from '
       'NaklR nr with (nolock) inner join (   '
-      '-- L1'
+      '-- L1_1'
       'select '
       '  VidNo'
       ', TovarNo'
       ', NaklNo '
       ', DOC_TYPE_ID'
-      ', Currency'
+      
+        ' , (SELECT dc.L_CODE from D_CURRENCY dc WHERE dc.IsDefault=1) as' +
+        ' DefCurrency'
+      
+        ' , (SELECT dc.ID from D_CURRENCY dc WHERE dc.IsDefault=1) as Def' +
+        'CurID'
+      ' , (SELECT ce.Rate from CurrencyExchange ce '
+      
+        #9'inner join D_CURRENCY dc on (ce.CurrencyId=dc.ID and ce.IsActiv' +
+        'e=1 and dc.IsDefault=1)) '
+      #9'as DefRate '
+      ', Currency'#9
       '--, PaymentPrice'
       '--, PRICE_ECO'
       '--, QTY'
@@ -918,20 +935,57 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '     where (h1.vidnaklno=1 and h1.SummaDolg>0) --and (h1.NaklNo=' +
         '254941)'
       '     and (h1.DateNakl between @p_date_beg and @p_date_end)'
+      '     '
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_OtdelNo=-1) OR (h1.O' +
+        'tdelNo IN (SELECT s_OtdelNo FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_VidNo=-1) OR (t.VidN' +
+        'o IN (SELECT s_VidNo FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_SotrudNo=-1) OR (h1.' +
+        'SotrudNo IN (SELECT s_SotrudNo FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_Buh=-1) OR (h1.Buh I' +
+        'N (SELECT s_Buh FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_PostNo=-1) OR (h1.Po' +
+        'stNo IN (SELECT s_PostNo FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_NaklNo=-1) OR (h1.No' +
+        'm IN (SELECT s_NaklNo FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_AddressID=-1) OR (h1' +
+        '.AddressNo IN (SELECT s_AddressID FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_DOC_TYPE_ID=-1) OR (' +
+        'ds.DOC_TYPE_ID IN (SELECT s_DOC_TYPE_ID FROM #Selections)))     '
+      #9
       #9' and ((@DisableExclusion=1) or (not (h1.PostNo in '
       #9' (select PostNo from ListMinusPostForDebit lmp where '
       #9#9' (h1.PostNo = lmp.PostNo) and (lmp.CheckMinus=1)))))'
       #9') L1 on (L1.NaklNo = nr.NaklNo) left join'
-      #9
-      '          Ostatok k on k.TovarNo = L1.TovarNo left join'
+      #9'Ostatok k on k.TovarNo = L1.TovarNo left join'
       '          PriceForVeb pfv on pfv.TovarNo = L1.TovarNo'
-      '    ) L1_1      '
+      '    ) L1_1 '
       '    ) L2 on (L2.NaklNo = nr.NaklNo) left join    '
-      #9#9'  d_currency dc on dc.L_CODE = L2.Currency left join'
+      
+        #9#9'  d_currency dc on dc.L_CODE = ISNULL(L2.Currency, L2.DefCurre' +
+        'ncy) left join'
       
         #9'      CurrencyExchange ce on ce.CurrencyId = dc.ID and ce.isAct' +
         'ive = 1  left join'
-      #9'      d_currency dch on dch.L_CODE = nr.CurrencyHead left join'
+      
+        #9'      d_currency dch on dch.L_CODE = ISNULL(nr.CurrencyHead, L2' +
+        '.DefCurrency) left join'
       
         #9'      CurrencyExchange ceh on ceh.CurrencyId = dch.ID and ceh.I' +
         'sActive = 1 left join'
@@ -941,22 +995,20 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         #9'      CurrencyExchange ce_a on ce_a.CurrencyId = dc_a.ID and ce' +
         '_a.isActive = 1  left join'
       
-        #9'      d_currency dch_a on dch_a.L_CODE = nr.CurrencyAccounting ' +
-        'left join'
+        #9'      d_currency dch_a on dch_a.L_CODE = ISNULL(nr.CurrencyAcco' +
+        'unting, L2.DefCurrency) left join'
       
         #9'      CurrencyExchange ceh_a on ceh_a.CurrencyId = dch.ID and c' +
-        'eh_a.IsActive = 1 '#9'      '
+        'eh_a.IsActive = 1          '
       #9') L3'
       'where (@DisableZeroSumAcn=0) or '
       #9#9'((@DisableZeroSumAcn=1) and (L3._SumAc=0)) or'
-      
-        #9#9'((@DisableZeroSumAcn=2) and (L3._SumAc<>0)) '#9'                 ' +
-        '      '
+      #9#9'((@DisableZeroSumAcn=2) and (L3._SumAc<>0)) '
       #9') L4'
       '     group by      '
       '       L4.NaklNo'
       '     , L4.VidNo'
-      '     , L4.DOC_TYPE_ID'
+      '     , L4.DOC_TYPE_ID'#9
       '    ) L5'
       '     on (nr.NaklNo=L5.NaklNo) '
       '     left outer join Post p on p.PostNo=nr.PostNo '
@@ -965,38 +1017,6 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         ' and ap.PostNo=nr.PostNo'
       #9') T1'
       'WHERE'
-      
-        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_OtdelNo=-1) OR (Otde' +
-        'lNo IN (SELECT s_OtdelNo FROM #Selections)))'
-      'AND'
-      
-        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_VidNo=-1) OR (VidNo ' +
-        'IN (SELECT s_VidNo FROM #Selections)))'
-      'AND'
-      
-        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_SotrudNo=-1) OR (Sot' +
-        'rudNo IN (SELECT s_SotrudNo FROM #Selections)))'
-      'AND'
-      
-        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_Buh=-1) OR (Buh IN (' +
-        'SELECT s_Buh FROM #Selections)))'
-      'AND'
-      
-        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_PostNo=-1) OR (PostN' +
-        'o IN (SELECT s_PostNo FROM #Selections)))'
-      'AND'
-      
-        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_NaklNo=-1) OR (Nom I' +
-        'N (SELECT s_NaklNo FROM #Selections)))'
-      'AND'
-      
-        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_AddressID=-1) OR (Ad' +
-        'dressID IN (SELECT s_AddressID FROM #Selections)))'
-      'AND'
-      
-        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_DOC_TYPE_ID=-1) OR (' +
-        'DOC_TYPE_ID IN (SELECT s_DOC_TYPE_ID FROM #Selections)))'
-      'AND'
       
         '  (EXISTS(SELECT 1 FROM #Selections WHERE s_DayNakl=-1) OR (DayN' +
         'akl IN (SELECT s_DayNakl FROM #Selections)))'
@@ -1017,8 +1037,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '  (EXISTS(SELECT 1 FROM #Selections WHERE s_CurAc_ID=-1) OR (Cur' +
         'Ac_ID IN (SELECT s_CurAc_ID FROM #Selections)))'
       ' ) T2'
-      ') AS T3'
-      'GROUP BY'
+      ' ) T3 '#9
+      ' GROUP BY'
       '  T3.OtdelNo'
       ', T3.VidNo'
       ', T3.SotrudNo'
@@ -1035,8 +1055,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ') T4'
       ''
       
-        'ORDER BY _DateNakl, _NomNakl, _OtdelName, VidName, SotrudName,  ' +
-        '_DayExp DESC')
+        'ORDER BY _OtdelName, VidName, SotrudName, _DateNakl, _NomNakl, _' +
+        'DayExp DESC')
     ReadOnly = True
     Filtered = True
     OnFilterRecord = quDebtFilterRecord
@@ -1206,9 +1226,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c204044697361626c655a65726f53756d41636e20696e74'
       ''
       '5345542040705f646174655f626567203d202730312e30312e3139303027'
-      
-        '5345542040705f646174655f656e64203d204441544541444428642c20312c20' +
-        '67657464617465282929'
+      '5345542040705f646174655f656e64203d202731312e30332e3230313727'
       '5345542040446174655374617274203d202730312e30312e3230303027'
       '5345542040566572794f6c64446179203d202d3130303030'
       '534554204044697361626c654578636c7573696f6e203d2030'
@@ -1305,6 +1323,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '44272c2027615f4461794e616b6c272c2027615f4461794f706c272c2027615f' +
         '446179457870272c2027615f43757248645f4944272c2027615f43757241635f' +
         '49442729'
+      ''
       ''
       '53454c454354'
       '54342e4f7464656c4e6f206173205f4f7464656c4e616d65'
@@ -1459,7 +1478,6 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '2873656c65637420642e4c5f434f44452066726f6d20445f43555252454e4359' +
         '206420776865726520642e4944203d2054342e43757241635f49442920454e44' +
         '2920617320437572416320'
-      ''
       '46524f4d202820'
       '53454c454354'
       '202054332e4f7464656c4e6f204153204f7464656c4e6f'
@@ -1490,6 +1508,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c2054332e43757241635f49442041532043757241635f4944'
       '46524f4d202820'
       '53454c454354'
+      '2d2d205432'
       
         '20202843415345205748454e20283120494e202853454c45435420655f4f7464' +
         '656c4e6f2046524f4d2023457870616e73696f6e732929205448454e2054322e' +
@@ -1560,8 +1579,11 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '41635f49442046524f4d2023457870616e73696f6e732929205448454e205432' +
         '2e43757241635f494420454c5345202d3120454e44292041532043757241635f' +
         '4944'
-      '46524f4d20282020'
-      '2073656c656374202a2066726f6d2028'
+      '46524f4d202820'
+      '73656c65637420'
+      '2d2d205431'
+      '2a2066726f6d2028'
+      '2d2d204c35'
       '2073656c656374'
       '20206e722e4f7464656c4e6f'
       '2c206e722e536f747275644e6f'
@@ -1585,6 +1607,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '2c2064617465646966662864642c206e722e446174654f706c2c2040705f6461' +
         '74655f656e642920617320446179457870'
+      ''
       
         '2c202843415345205748454e20286e722e43757272656e637948656164204953' +
         '204e554c4c29205448454e20'
@@ -1610,7 +1633,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '66726f6d20'
       
         '4e616b6c52206e72207769746820286e6f6c6f636b2920696e6e6572206a6f69' +
-        '6e202820'
+        '6e2028'
+      '2d2d204c3420'
       '202073656c65637420'
       '20204c342e4e616b6c4e6f'
       '2c204c342e5669644e6f'
@@ -1623,10 +1647,10 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '63292c203429292061732053756d4163'
       
         '2c2020434f4e5645525428464c4f41542c20524f554e442853554d2853756d6d' +
-        '61446f6c67292c203429292061732053756d6d61446f6c6720'
+        '61446f6c67292c203629292061732053756d6d61446f6c6720'
       
         '2c2020434f4e5645525428464c4f41542c20524f554e442853554d2853756d44' +
-        '4163292c203429292061732053756d444163'
+        '4163292c203629292061732053756d444163'
       '66726f6d2028'
       '202073656c656374'
       '20202d2d204c332020'
@@ -1681,13 +1705,29 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '4e616b6c52206e72207769746820286e6f6c6f636b2920696e6e6572206a6f69' +
         '6e2028202020'
-      '2d2d204c31'
+      '2d2d204c315f31'
       '73656c65637420'
       '20205669644e6f'
       '2c20546f7661724e6f'
       '2c204e616b6c4e6f20'
       '2c20444f435f545950455f4944'
-      '2c2043757272656e6379'
+      
+        '202c202853454c4543542064632e4c5f434f44452066726f6d20445f43555252' +
+        '454e43592064632057484552452064632e497344656661756c743d3129206173' +
+        '2044656643757272656e6379'
+      
+        '202c202853454c4543542064632e49442066726f6d20445f43555252454e4359' +
+        '2064632057484552452064632e497344656661756c743d312920617320446566' +
+        '4375724944'
+      
+        '202c202853454c4543542063652e526174652066726f6d2043757272656e6379' +
+        '45786368616e676520636520'
+      
+        '09696e6e6572206a6f696e20445f43555252454e4359206463206f6e20286365' +
+        '2e43757272656e637949643d64632e494420616e642063652e49734163746976' +
+        '653d3120616e642064632e497344656661756c743d31292920'
+      '096173204465665261746520'
+      '2c2043757272656e637909'
       '2d2d2c205061796d656e745072696365'
       '2d2d2c2050524943455f45434f'
       '2d2d2c20515459'
@@ -1815,6 +1855,56 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '2020202020616e64202868312e446174654e616b6c206265747765656e204070' +
         '5f646174655f62656720616e642040705f646174655f656e6429'
+      '2020202020'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f4f7464656c4e6f3d2d3129204f52202868312e4f' +
+        '7464656c4e6f20494e202853454c45435420735f4f7464656c4e6f2046524f4d' +
+        '202353656c656374696f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f5669644e6f3d2d3129204f522028742e5669644e' +
+        '6f20494e202853454c45435420735f5669644e6f2046524f4d202353656c6563' +
+        '74696f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f536f747275644e6f3d2d3129204f52202868312e' +
+        '536f747275644e6f20494e202853454c45435420735f536f747275644e6f2046' +
+        '524f4d202353656c656374696f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f4275683d2d3129204f52202868312e4275682049' +
+        '4e202853454c45435420735f4275682046524f4d202353656c656374696f6e73' +
+        '292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f506f73744e6f3d2d3129204f52202868312e506f' +
+        '73744e6f20494e202853454c45435420735f506f73744e6f2046524f4d202353' +
+        '656c656374696f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f4e616b6c4e6f3d2d3129204f52202868312e4e6f' +
+        '6d20494e202853454c45435420735f4e616b6c4e6f2046524f4d202353656c65' +
+        '6374696f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f4164647265737349443d2d3129204f5220286831' +
+        '2e416464726573734e6f20494e202853454c45435420735f4164647265737349' +
+        '442046524f4d202353656c656374696f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f444f435f545950455f49443d2d3129204f522028' +
+        '64732e444f435f545950455f494420494e202853454c45435420735f444f435f' +
+        '545950455f49442046524f4d202353656c656374696f6e732929292020202020'
+      '09'
       
         '0920616e642028284044697361626c654578636c7573696f6e3d3129206f7220' +
         '286e6f74202868312e506f73744e6f20696e20'
@@ -1827,27 +1917,28 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '0929204c31206f6e20284c312e4e616b6c4e6f203d206e722e4e616b6c4e6f29' +
         '206c656674206a6f696e'
-      '09'
       
-        '202020202020202020204f737461746f6b206b206f6e206b2e546f7661724e6f' +
-        '203d204c312e546f7661724e6f206c656674206a6f696e'
+        '094f737461746f6b206b206f6e206b2e546f7661724e6f203d204c312e546f76' +
+        '61724e6f206c656674206a6f696e'
       
         '202020202020202020205072696365466f7256656220706676206f6e20706676' +
         '2e546f7661724e6f203d204c312e546f7661724e6f'
-      '2020202029204c315f31202020202020'
+      '2020202029204c315f3120'
       
         '2020202029204c32206f6e20284c322e4e616b6c4e6f203d206e722e4e616b6c' +
         '4e6f29206c656674206a6f696e20202020'
       
         '09092020645f63757272656e6379206463206f6e2064632e4c5f434f4445203d' +
-        '204c322e43757272656e6379206c656674206a6f696e'
+        '2049534e554c4c284c322e43757272656e63792c204c322e4465664375727265' +
+        '6e637929206c656674206a6f696e'
       
         '0920202020202043757272656e637945786368616e6765206365206f6e206365' +
         '2e43757272656e63794964203d2064632e494420616e642063652e6973416374' +
         '697665203d203120206c656674206a6f696e'
       
         '09202020202020645f63757272656e637920646368206f6e206463682e4c5f43' +
-        '4f4445203d206e722e43757272656e637948656164206c656674206a6f696e'
+        '4f4445203d2049534e554c4c286e722e43757272656e6379486561642c204c32' +
+        '2e44656643757272656e637929206c656674206a6f696e'
       
         '0920202020202043757272656e637945786368616e676520636568206f6e2063' +
         '65682e43757272656e63794964203d206463682e494420616e64206365682e49' +
@@ -1862,12 +1953,13 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '5f612e6973416374697665203d203120206c656674206a6f696e'
       
         '09202020202020645f63757272656e6379206463685f61206f6e206463685f61' +
-        '2e4c5f434f4445203d206e722e43757272656e63794163636f756e74696e6720' +
-        '6c656674206a6f696e'
+        '2e4c5f434f4445203d2049534e554c4c286e722e43757272656e63794163636f' +
+        '756e74696e672c204c322e44656643757272656e637929206c656674206a6f69' +
+        '6e'
       
         '0920202020202043757272656e637945786368616e6765206365685f61206f6e' +
         '206365685f612e43757272656e63794964203d206463682e494420616e642063' +
-        '65685f612e4973416374697665203d20312009202020202020'
+        '65685f612e4973416374697665203d203120202020202020202020'
       '0929204c33'
       '776865726520284044697361626c655a65726f53756d41636e3d3029206f7220'
       
@@ -1875,13 +1967,12 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '332e5f53756d41633d302929206f72'
       
         '090928284044697361626c655a65726f53756d41636e3d322920616e6420284c' +
-        '332e5f53756d41633c3e30292920092020202020202020202020202020202020' +
-        '202020202020'
+        '332e5f53756d41633c3e30292920'
       '0929204c34'
       '202020202067726f7570206279202020202020'
       '202020202020204c342e4e616b6c4e6f'
       '20202020202c204c342e5669644e6f'
-      '20202020202c204c342e444f435f545950455f4944'
+      '20202020202c204c342e444f435f545950455f494409'
       '2020202029204c35'
       '20202020206f6e20286e722e4e616b6c4e6f3d4c352e4e616b6c4e6f2920'
       
@@ -1893,53 +1984,6 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '20616e642061702e506f73744e6f3d6e722e506f73744e6f'
       '0929205431'
       '5748455245'
-      
-        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
-        '6f6e7320574845524520735f4f7464656c4e6f3d2d3129204f5220284f746465' +
-        '6c4e6f20494e202853454c45435420735f4f7464656c4e6f2046524f4d202353' +
-        '656c656374696f6e73292929'
-      '414e44'
-      
-        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
-        '6f6e7320574845524520735f5669644e6f3d2d3129204f5220285669644e6f20' +
-        '494e202853454c45435420735f5669644e6f2046524f4d202353656c65637469' +
-        '6f6e73292929'
-      '414e44'
-      
-        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
-        '6f6e7320574845524520735f536f747275644e6f3d2d3129204f522028536f74' +
-        '7275644e6f20494e202853454c45435420735f536f747275644e6f2046524f4d' +
-        '202353656c656374696f6e73292929'
-      '414e44'
-      
-        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
-        '6f6e7320574845524520735f4275683d2d3129204f52202842756820494e2028' +
-        '53454c45435420735f4275682046524f4d202353656c656374696f6e73292929'
-      '414e44'
-      
-        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
-        '6f6e7320574845524520735f506f73744e6f3d2d3129204f522028506f73744e' +
-        '6f20494e202853454c45435420735f506f73744e6f2046524f4d202353656c65' +
-        '6374696f6e73292929'
-      '414e44'
-      
-        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
-        '6f6e7320574845524520735f4e616b6c4e6f3d2d3129204f5220284e6f6d2049' +
-        '4e202853454c45435420735f4e616b6c4e6f2046524f4d202353656c65637469' +
-        '6f6e73292929'
-      '414e44'
-      
-        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
-        '6f6e7320574845524520735f4164647265737349443d2d3129204f5220284164' +
-        '6472657373494420494e202853454c45435420735f4164647265737349442046' +
-        '524f4d202353656c656374696f6e73292929'
-      '414e44'
-      
-        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
-        '6f6e7320574845524520735f444f435f545950455f49443d2d3129204f522028' +
-        '444f435f545950455f494420494e202853454c45435420735f444f435f545950' +
-        '455f49442046524f4d202353656c656374696f6e73292929'
-      '414e44'
       
         '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
         '6f6e7320574845524520735f4461794e616b6c3d2d3129204f5220284461794e' +
@@ -1970,8 +2014,8 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '41635f494420494e202853454c45435420735f43757241635f49442046524f4d' +
         '202353656c656374696f6e73292929'
       '2029205432'
-      '29204153205433'
-      '47524f5550204259'
+      '20292054332009'
+      '2047524f5550204259'
       '202054332e4f7464656c4e6f'
       '2c2054332e5669644e6f'
       '2c2054332e536f747275644e6f'
@@ -1988,9 +2032,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '29205434'
       ''
       
-        '4f52444552204259205f446174654e616b6c2c205f4e6f6d4e616b6c2c205f4f' +
-        '7464656c4e616d652c205669644e616d652c20536f747275644e616d652c2020' +
-        '5f4461794578702044455343')
+        '4f52444552204259205f4f7464656c4e616d652c205669644e616d652c20536f' +
+        '747275644e616d652c205f446174654e616b6c2c205f4e6f6d4e616b6c2c205f' +
+        '4461794578702044455343')
   end
   object quSession: TMSQuery
     Connection = dmDataModule.DB

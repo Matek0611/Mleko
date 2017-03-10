@@ -316,6 +316,7 @@ const
   idInsertExpansions = 'INSERT INTO #Expansions Values';
   idInsertSelections = 'INSERT INTO #Selections Values';
   idInsertAllTypes = 'INSERT INTO #AllTypes Values';
+  idInsert_All_Types_Values = '(' +  '''a_OtdelNo'', ''a_VidNo'', ''a_SotrudNo'', ''a_Buh'', ''a_PostNo'', ''a_NaklNo'', ''a_AddressID'', ''a_DOC_TYPE_ID'', ''a_DayNakl'', ''a_DayOpl'', ''a_DayExp'', ''a_CurHd_ID'', ''a_CurAc_ID'''+')';
   idInsertAllTypesValues = '(' + '''Все отделы'', ''Все виды'', ''Все сотрудники'', '+
    '''Все бух. типы'', ''Все контрагенты'', ''Все ном. накл.'', ' +
    '''Все адреса'', ''Все док-ты'', ''Все даты накл.'', ''Все даты опл.'', ''Все пр.'', '+
@@ -831,7 +832,7 @@ function TfrmAnalyzeDebitDebt.VerifySelectedTextValuesEx(
          TextToKeys: Boolean = False): string;
 var Table, Variables, KeyField, TextField: string;
     Keys: TStrings; DataType: TVarType; n: Integer;
-    UseKeyField: Boolean;
+    UseKeyField: Boolean; sql: String;
 begin
   Variables:= GetSelectionStrByIndex(Ord(sel));
   Result:= Trim(Variables);
@@ -849,10 +850,13 @@ begin
       Table:= GetEntityTable(KeyField, TextField);
       if (Table<>'') then
          begin
+           if (sel=stNakl) then
+              sql:= NaklNo_Template else
+              sql:= SQL_Template;
            Keys:= AList.GetChild(Ord(sel));
            n:= VerifyTextValues(
             Variables, Table, KeyField, TextField, Temp,
-            Keys, SQL_Template, True, 20, -1,
+            Keys, sql, True, 20, -1,
             UseKeyValues, UseKeyField, TextToKeys);
            Result:= GetDelimText(Keys, ', ');
          end;
@@ -920,7 +924,9 @@ begin
   p:= '';
   case pt of
     ptAllTypes:
-    S := idInsertAllTypes +  idInsertAllTypesValues;
+    if not TestMode then
+      S := idInsertAllTypes +  idInsertAllTypesValues else
+      S := idInsertAllTypes +  idInsert_All_Types_Values;
     ptExpansion:
     S := idInsertExpansions + CollectBitValuesToString(clbExpansions);
     ptSelection:
@@ -936,6 +942,7 @@ begin
       S := Trim(Selections.Text);
     end;
   end;
+  if (S<>'') then
  if (not DisableParamIndexes) and (ParamIndexes[pt] > 0) then
      ParamList[ParamIndexes[pt]]:= S else
      begin
@@ -2022,6 +2029,7 @@ begin
     with clbExpansions do
     begin
       Index:= ItemIndex;
+      if (Index<0) then Exit;
       IsVisible:= not ItemEnabled[Index];
       if MakeColumnVisible(Index, IsVisible) then
           ItemEnabled[Index]:= IsVisible;
@@ -2059,13 +2067,14 @@ end;
 
 procedure TfrmAnalyzeDebitDebt.vleSelectionsKeyUp(Sender: TObject;
   var Key: Word; Shift: TShiftState);
-  var s: string;
+  var s: string; sel: TSelectionType;
 begin
   inherited;
   if (Key=13) and (ssShift in Shift) then
      begin
+       sel:= TSelectionType(vleSelections.Row-1);
        s:= VerifySelectedTextValuesEx(
-       TSelectionType(vleSelections.Row-1), varInteger, False);
+       sel, varInteger, sel=stNakl);
        if (s<>'') then
           ShowMessage(s) else
           ShowMessage('<Error>');
