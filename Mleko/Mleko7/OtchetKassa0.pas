@@ -8,12 +8,6 @@ uses
 
 type
   TfmOtchetKassa = class(TMlekoForm)
-    quPlatP: TMSQuery;
-    quPlatPSumma: TFloatField;
-    quPlatPName: TStringField;
-    quPlatPSpravka: TStringField;
-    quPlatPDatePlat: TDateTimeField;
-    quPlatPNom: TIntegerField;
     frReport1: TfrReport;
     frDBDataSet1: TfrDBDataSet;
     dsPlatP: TDataSource;
@@ -26,18 +20,49 @@ type
     frDBDataSet2: TfrDBDataSet;
     dsPlatR: TDataSource;
     quSaleCash: TMSQuery;
-    quPlatPNameBuh: TStringField;
     quSaleCashSumma: TFloatField;
     quPlatPSumm: TMSQuery;
     quPlatRSumm: TMSQuery;
     quPlatPSummSumm: TFloatField;
     quPlatRSummSumm: TFloatField;
+    quPlatPUSD: TMSQuery;
+    FloatField1: TFloatField;
+    StringField3: TStringField;
+    StringField4: TStringField;
+    DateTimeField2: TDateTimeField;
+    IntegerField2: TIntegerField;
+    StringField5: TStringField;
+    dsPlatPUSD: TDataSource;
+    dsPlatRUSD: TDataSource;
+    quPlatRUSD: TMSQuery;
+    FloatField2: TFloatField;
+    StringField6: TStringField;
+    StringField7: TStringField;
+    DateTimeField3: TDateTimeField;
+    IntegerField3: TIntegerField;
+    frDBDataSet3: TfrDBDataSet;
+    frDBDataSet4: TfrDBDataSet;
+    quPlatPSummUSD: TMSQuery;
+    FloatField3: TFloatField;
+    quPlatRSummUSD: TMSQuery;
+    FloatField4: TFloatField;
+    quPlatP: TMSQuery;
+    FloatField5: TFloatField;
+    StringField8: TStringField;
+    StringField9: TStringField;
+    DateTimeField4: TDateTimeField;
+    IntegerField4: TIntegerField;
+    StringField10: TStringField;
     procedure frReport1GetValue(const ParName: String;
       var ParValue: Variant);
     procedure quPlatPBeforeOpen(DataSet: TDataSet);
     procedure quPlatRBeforeOpen(DataSet: TDataSet);
     procedure quPlatPSummBeforeOpen(DataSet: TDataSet);
     procedure quPlatRSummBeforeOpen(DataSet: TDataSet);
+    procedure quPlatPUSDBeforeOpen(DataSet: TDataSet);
+    procedure quPlatRUSDBeforeOpen(DataSet: TDataSet);
+    procedure quPlatPSummUSDBeforeOpen(DataSet: TDataSet);
+    procedure quPlatRSummUSDBeforeOpen(DataSet: TDataSet);
   private
     { Private declarations }
     RepTitle:string;
@@ -84,20 +109,40 @@ begin
    quPlatP.ParamByName('Buh').AsSmallInt:=Buh;
    quPlatP.Open;
 
+   quPlatPUSD.ParamByName('DateBegin').AsDate:=Period[1];
+   quPlatPUSD.ParamByName('DateEnd').AsDate:=Period[2];
+   quPlatPUSD.ParamByName('Buh').AsSmallInt:=Buh;
+   quPlatPUSD.Open;
+
    quPlatPSumm.ParamByName('DateBegin').AsDate:=Period[1];
    quPlatPSumm.ParamByName('DateEnd').AsDate:=Period[2];
    quPlatPSumm.ParamByName('Buh').AsSmallInt:=Buh;
    quPlatPSumm.Open;
+
+   quPlatPSummUSD.ParamByName('DateBegin').AsDate:=Period[1];
+   quPlatPSummUSD.ParamByName('DateEnd').AsDate:=Period[2];
+   quPlatPSummUSD.ParamByName('Buh').AsSmallInt:=Buh;
+   quPlatPSummUSD.Open;
 
    quPlatR.ParamByName('DateBegin').AsDate:=Period[1];
    quPlatR.ParamByName('DateEnd').AsDate:=Period[2];
    quPlatR.ParamByName('Buh').AsSmallInt:=Buh;
    quPlatR.Open;
 
+   quPlatRUSD.ParamByName('DateBegin').AsDate:=Period[1];
+   quPlatRUSD.ParamByName('DateEnd').AsDate:=Period[2];
+   quPlatRUSD.ParamByName('Buh').AsSmallInt:=Buh;
+   quPlatRUSD.Open;
+
    quPlatRSumm.ParamByName('DateBegin').AsDate:=Period[1];
    quPlatRSumm.ParamByName('DateEnd').AsDate:=Period[2];
    quPlatRSumm.ParamByName('Buh').AsSmallInt:=Buh;
    quPlatRSumm.Open;
+
+   quPlatRSummUSD.ParamByName('DateBegin').AsDate:=Period[1];
+   quPlatRSummUSD.ParamByName('DateEnd').AsDate:=Period[2];
+   quPlatRSummUSD.ParamByName('Buh').AsSmallInt:=Buh;
+   quPlatRSummUSD.Open;
 
    quSaleCash.ParamByName('DateBegin').AsDate:=Period[1];
    quSaleCash.ParamByName('DateEnd').AsDate:=Period[2]+1;
@@ -106,6 +151,7 @@ begin
 
    frReport1.LoadFromFile('OtchetKassa0.frf');
    Screen.Cursor:=crDefault;
+   frReport1.DesignReport;
    frReport1.ShowReport;
   end
  finally
@@ -143,6 +189,30 @@ end;
 procedure TfmOtchetKassa.quPlatRSummBeforeOpen(DataSet: TDataSet);
 begin
   quPlatRSumm.ParamByName('OurFirmNo').AsInteger:=dmDataModule.FirmNo;
+end;
+
+procedure TfmOtchetKassa.quPlatPUSDBeforeOpen(DataSet: TDataSet);
+begin
+  inherited;
+  quPlatPUSD.ParamByName('OurFirmNo').AsInteger:=dmDataModule.FirmNo;
+end;
+
+procedure TfmOtchetKassa.quPlatRUSDBeforeOpen(DataSet: TDataSet);
+begin
+  inherited;
+  quPlatRUSD.ParamByName('OurFirmNo').AsInteger:=dmDataModule.FirmNo;
+end;
+
+procedure TfmOtchetKassa.quPlatPSummUSDBeforeOpen(DataSet: TDataSet);
+begin
+  inherited;
+  quPlatPSummUSD.ParamByName('OurFirmNo').AsInteger:=dmDataModule.FirmNo;
+end;
+
+procedure TfmOtchetKassa.quPlatRSummUSDBeforeOpen(DataSet: TDataSet);
+begin
+  inherited;
+  quPlatRSummUSD.ParamByName('OurFirmNo').AsInteger:=dmDataModule.FirmNo;
 end;
 
 end.
