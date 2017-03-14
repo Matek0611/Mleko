@@ -522,7 +522,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       ', @DisableZeroSumAcn int'
       ''
       'SET @p_date_beg = '#39'01.01.1900'#39
-      'SET @p_date_end = '#39'11.03.2017'#39
+      'SET @p_date_end = DATEADD(d, 1, GETDATE())'
       'SET @DateStart = '#39'01.01.2000'#39
       'SET @VeryOldDay = -10000'
       'SET @DisableExclusion = 0'
@@ -935,7 +935,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '     where (h1.vidnaklno=1 and h1.SummaDolg>0) --and (h1.NaklNo=' +
         '254941)'
       '     and (h1.DateNakl between @p_date_beg and @p_date_end)'
-      '     '
+      '/*     '
       'AND'
       
         '  (EXISTS(SELECT 1 FROM #Selections WHERE s_OtdelNo=-1) OR (h1.O' +
@@ -968,7 +968,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '  (EXISTS(SELECT 1 FROM #Selections WHERE s_DOC_TYPE_ID=-1) OR (' +
         'ds.DOC_TYPE_ID IN (SELECT s_DOC_TYPE_ID FROM #Selections)))     '
-      #9
+      '*/'#9
       #9' and ((@DisableExclusion=1) or (not (h1.PostNo in '
       #9' (select PostNo from ListMinusPostForDebit lmp where '
       #9#9' (h1.PostNo = lmp.PostNo) and (lmp.CheckMinus=1)))))'
@@ -1017,6 +1017,34 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         ' and ap.PostNo=nr.PostNo'
       #9') T1'
       'WHERE'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_OtdelNo=-1) OR (Otde' +
+        'lNo IN (SELECT s_OtdelNo FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_VidNo=-1) OR (VidNo ' +
+        'IN (SELECT s_VidNo FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_SotrudNo=-1) OR (Sot' +
+        'rudNo IN (SELECT s_SotrudNo FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_Buh=-1) OR (Buh IN (' +
+        'SELECT s_Buh FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_PostNo=-1) OR (PostN' +
+        'o IN (SELECT s_PostNo FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_NaklNo=-1) OR (Nom I' +
+        'N (SELECT s_NaklNo FROM #Selections)))'
+      'AND'
+      
+        '  (EXISTS(SELECT 1 FROM #Selections WHERE s_AddressID=-1) OR (Ad' +
+        'dressID IN (SELECT s_AddressID FROM #Selections)))'
+      'AND'
       
         '  (EXISTS(SELECT 1 FROM #Selections WHERE s_DayNakl=-1) OR (DayN' +
         'akl IN (SELECT s_DayNakl FROM #Selections)))'
@@ -1226,7 +1254,9 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       '2c204044697361626c655a65726f53756d41636e20696e74'
       ''
       '5345542040705f646174655f626567203d202730312e30312e3139303027'
-      '5345542040705f646174655f656e64203d202731312e30332e3230313727'
+      
+        '5345542040705f646174655f656e64203d204441544541444428642c20312c20' +
+        '47455444415445282929'
       '5345542040446174655374617274203d202730312e30312e3230303027'
       '5345542040566572794f6c64446179203d202d3130303030'
       '534554204044697361626c654578636c7573696f6e203d2030'
@@ -1855,7 +1885,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
       
         '2020202020616e64202868312e446174654e616b6c206265747765656e204070' +
         '5f646174655f62656720616e642040705f646174655f656e6429'
-      '2020202020'
+      '2f2a2020202020'
       '414e44'
       
         '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
@@ -1904,7 +1934,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '6f6e7320574845524520735f444f435f545950455f49443d2d3129204f522028' +
         '64732e444f435f545950455f494420494e202853454c45435420735f444f435f' +
         '545950455f49442046524f4d202353656c656374696f6e732929292020202020'
-      '09'
+      '2a2f09'
       
         '0920616e642028284044697361626c654578636c7573696f6e3d3129206f7220' +
         '286e6f74202868312e506f73744e6f20696e20'
@@ -1984,6 +2014,47 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
         '20616e642061702e506f73744e6f3d6e722e506f73744e6f'
       '0929205431'
       '5748455245'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f4f7464656c4e6f3d2d3129204f5220284f746465' +
+        '6c4e6f20494e202853454c45435420735f4f7464656c4e6f2046524f4d202353' +
+        '656c656374696f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f5669644e6f3d2d3129204f5220285669644e6f20' +
+        '494e202853454c45435420735f5669644e6f2046524f4d202353656c65637469' +
+        '6f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f536f747275644e6f3d2d3129204f522028536f74' +
+        '7275644e6f20494e202853454c45435420735f536f747275644e6f2046524f4d' +
+        '202353656c656374696f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f4275683d2d3129204f52202842756820494e2028' +
+        '53454c45435420735f4275682046524f4d202353656c656374696f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f506f73744e6f3d2d3129204f522028506f73744e' +
+        '6f20494e202853454c45435420735f506f73744e6f2046524f4d202353656c65' +
+        '6374696f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f4e616b6c4e6f3d2d3129204f5220284e6f6d2049' +
+        '4e202853454c45435420735f4e616b6c4e6f2046524f4d202353656c65637469' +
+        '6f6e73292929'
+      '414e44'
+      
+        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
+        '6f6e7320574845524520735f4164647265737349443d2d3129204f5220284164' +
+        '6472657373494420494e202853454c45435420735f4164647265737349442046' +
+        '524f4d202353656c656374696f6e73292929'
+      '414e44'
       
         '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
         '6f6e7320574845524520735f4461794e616b6c3d2d3129204f5220284461794e' +

@@ -1,6 +1,6 @@
 object frmColumnFilter: TfrmColumnFilter
-  Left = 547
-  Top = 257
+  Left = 512
+  Top = 300
   BorderIcons = []
   BorderStyle = bsSingle
   Caption = #1060#1080#1083#1100#1090#1088' '#1079#1085#1072#1095#1077#1085#1080#1081
@@ -13,7 +13,6 @@ object frmColumnFilter: TfrmColumnFilter
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  OnShow = FormShow
   DesignSize = (
     273
     321)
@@ -64,7 +63,6 @@ object frmColumnFilter: TfrmColumnFilter
     ItemHeight = 13
     PopupMenu = pmFilter
     TabOrder = 1
-    OnClick = clbFilterClick
   end
   object sbStatus: TStatusBar
     Left = 0
@@ -785,6 +783,10 @@ object frmColumnFilter: TfrmColumnFilter
     object mnuDisableAllDown: TMenuItem
       Caption = #1054#1095#1080#1089#1090#1080#1090#1100' '#1074#1089#1077' '#1074#1085#1080#1079
       OnClick = mnuDisableAllDownClick
+    end
+    object mnuReorderList: TMenuItem
+      Caption = #1059#1087#1086#1088#1103#1076#1086#1095#1080#1090#1100
+      OnClick = mnuReorderListClick
     end
     object mnuFindItem: TMenuItem
       Caption = #1053#1072#1081#1090#1080' ...'

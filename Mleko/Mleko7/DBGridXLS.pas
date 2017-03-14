@@ -135,7 +135,7 @@ begin
 end;
 
 procedure TCustomDataGridExportAsXLS.WriteDataCell(Column: TColumnEh; FColCellParamsEh: TColCellParamsEh);
-var s: String; i, c: Integer; f: Double;
+var s: String; i, c: Integer; f: Double; d: TDate;
 begin
   if Column.Field = nil then
     WriteBlankCell
@@ -151,29 +151,12 @@ begin
       if (c=0) then
          WriteIntegerCell(i) else
          begin
-           f:= StrToFloatDef(s, 1E101);
-           if (f>1E100) then
-              WriteStringCell(s) else
-              WriteFloatCell(f);
+           f:= StrToFloatDef(s, GetNan());
+           if not IsNan(f) then
+              WriteFloatCell(f) else
+              WriteStringCell(s);
          end;
     end;
-//    with Column.Field do
-//    begin
-//      s:= FColCellParamsEh.Text;
-//      case DetectDataTypeVar(s, V) of
-//      varInteger: WriteIntegerCell(FindVarData(V)^.vInteger);
-//      varDouble:  WriteFloatCell(FindVarData(V)^.vDouble);
-//      varString: WriteStringCell(s);
-//      end;
-//    end;
-//      case DataType of
-//        ftSmallint, ftInteger, ftWord, ftAutoInc, ftBytes:
-//          WriteIntegerCell(AsInteger);
-//        ftFloat, ftCurrency, ftBCD{$IFDEF EH_LIB_6}, ftFMTBcd{$ENDIF}:
-//          WriteFloatCell(AsFloat);
-//      else
-//        WriteStringCell(FColCellParamsEh.Text);
-//      end;
 end;
 
 procedure TCustomDataGridExportAsXLS.WriteFooterCell(DataCol, Row: Integer;

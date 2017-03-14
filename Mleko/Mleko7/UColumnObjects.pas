@@ -40,6 +40,7 @@ type
     function GetUpdateFlag: Boolean;
     function GetCountValues: TList;
     function GetColumnObjectInfo: TColumnObjectInfo;
+    function GetIndexForKey(Index: Integer): Integer;
   public
     constructor Create( AColumn: TColumnEh;
                         AOwner: TColumnObjects;
@@ -130,11 +131,23 @@ begin
     Result := FieldKeys.Add(Pointer(Key));
 end;
 
-function TColumnObject.IsSelected(Index: Integer): Boolean;
+function TColumnObject.GetKey(Index: Integer; Sorted: Boolean = True): Integer;
 begin
-  Result:= (FieldVals.Objects[Index]<>nil);
+  if Sorted then
+    Result := SortedKeys[Index]
+  else
+    Result := Integer(FieldKeys[Index]);
 end;
 
+function TColumnObject.GetIndexForKey(Index: Integer): Integer;
+begin
+  Result:= Abs(Integer(FieldVals.Objects[Index]))-1;
+end;
+
+function TColumnObject.IsSelected(Index: Integer): Boolean;
+begin
+  Result:= Integer(FieldVals.Objects[Index])>0;
+end;
 
 procedure TColumnObject.AcceptFilterValues();
 var i: Integer;
@@ -143,7 +156,7 @@ begin
   for i := 0 to FieldVals.Count-1 do
   begin
     if IsSelected(i) then
-      AddKey(GetKey(i, False), True);
+      AddKey(GetKey(GetIndexForKey(i), False), True);
   end;
 end;
 
@@ -225,7 +238,9 @@ begin
       Key:= KeyField.AsInteger;
       if (not SortedKeys.Find(Key, i)) then
       begin
-        FieldVals.AddObject(MainField.AsString, Pointer(1));
+        // default item state is checked:
+        // it's detected by sign of Integer(Objects[i]): 1 is checked, -1 is unchecked
+        FieldVals.AddObject(MainField.AsString, Pointer(FieldVals.Count+1));
         AddKey(Key, False); // add to FieldKeys
         QtyList.Add(Pointer(1));
         SortedKeys.Insert(i, Key);
@@ -244,14 +259,6 @@ begin
   finally
   DataSet.EnableControls;
   end;
-end;
-
-function TColumnObject.GetKey(Index: Integer; Sorted: Boolean = True): Integer;
-begin
-  if Sorted then
-    Result := SortedKeys[Index]
-  else
-    Result := Integer(FieldKeys[Index]);
 end;
 
 function TColumnObject.KeyIndex(Key: Integer; Sorted: Boolean = True): Integer;

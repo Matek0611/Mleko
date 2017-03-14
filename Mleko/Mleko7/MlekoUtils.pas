@@ -64,6 +64,8 @@ procedure SaveDBGridToXLSFile(DBGridEh: TCustomDBGridEh; const FileName: String;
 function DetectDataType(s: string): TVarType;
 function DetectDataTypeOfItems(Items: TStrings): TVarType;
 function DetectDataTypeVar(s: string; V: Variant): TVarType;
+function IsNan(const Value: Double): Boolean;
+function GetNan(): Double;
 
 implementation
 uses StrUtils, DB;

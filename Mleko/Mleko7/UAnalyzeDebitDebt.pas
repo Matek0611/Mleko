@@ -237,6 +237,7 @@ type
          CheckDataType: TVarType = varAny; UseKeyValues: Boolean = True;
          TextToKeys: Boolean = False): string;
     procedure VerifyNumberSelection(sel: TSelectionType);
+    procedure SetDefaultOrderFullStr;
   public
     { Public declarations }
     procedure RefreshResults(SetMaxCount: Boolean = False);
@@ -337,6 +338,7 @@ const
   //('Нет', 'Да');
   (' ', '+');
 
+  ColumnFilterDlgAsModal: Boolean = True;
 
 function GetNormalDateStr(ADate: TDate): String;
  var Settings: TFormatSettings;
@@ -832,9 +834,10 @@ function TfrmAnalyzeDebitDebt.VerifySelectedTextValuesEx(
          TextToKeys: Boolean = False): string;
 var Table, Variables, KeyField, TextField: string;
     Keys: TStrings; DataType: TVarType; n: Integer;
-    UseKeyField: Boolean; sql: String;
+    UseKeyField, AsInteger: Boolean; sql: String;
 begin
   Variables:= GetSelectionStrByIndex(Ord(sel));
+  Variables:= AnsiDequotedStr(Variables, '"');
   Result:= Trim(Variables);
   PrepareStrValues(Variables, Temp);
   DataType:= DetectDataTypeOfItems(Temp);
@@ -854,9 +857,11 @@ begin
               sql:= NaklNo_Template else
               sql:= SQL_Template;
            Keys:= AList.GetChild(Ord(sel));
+           AsInteger:= (DataType=varInteger);
+           if (CheckDataType = varAny) then UseKeyValues:= not AsInteger;
            n:= VerifyTextValues(
             Variables, Table, KeyField, TextField, Temp,
-            Keys, sql, True, 20, -1,
+            Keys, sql, AsInteger, 20, -1,
             UseKeyValues, UseKeyField, TextToKeys);
            Result:= GetDelimText(Keys, ', ');
          end;
@@ -931,11 +936,6 @@ begin
     S := idInsertExpansions + CollectBitValuesToString(clbExpansions);
     ptSelection:
     begin
-//      if (not DisableParamIndexes) and (ParamIndexes[pt]>0) then
-//         DeleteItemsInStringsUntilEmpty(ParamList, ParamIndexes[ptSelection]+1);
-        //DeleteItemsInStrings(ParamList, ParamIndexes[ptSelection]+1, Selections.Count-1)
-      //p:= Selections.Text;
-      //VerifyInvoiceNumbers();
       if not DisableVerification then
         VerifyEmptySelections();
       AList.TransposeToStrings(Selections, False, True, True);
@@ -945,15 +945,13 @@ begin
   if (S<>'') then
  if (not DisableParamIndexes) and (ParamIndexes[pt] > 0) then
      ParamList[ParamIndexes[pt]]:= S else
-     begin
        ParamList.Add(S);
-       //if (pt=ptSelection) then Selections.Text:= p;
-     end;
 end;
 
 procedure TfrmAnalyzeDebitDebt.ResetGridState();
 begin
   ClearAllSortMarkers;
+  SetDefaultOrderFullStr;
   KeyField:= nil;
   EnableFiltering:= False;
   OldCol:= -1; OldTag:= -1;
@@ -1038,6 +1036,12 @@ begin
   quDebt.EnableControls;
 end;
 
+procedure TfrmAnalyzeDebitDebt.SetDefaultOrderFullStr();
+begin
+  OrderFullStr:= idOrderBy + ' ' + idDefaultSortFields;
+end;
+
+
 procedure TfrmAnalyzeDebitDebt.DetectParamIndexes();
 var
   pt: TParamType;
@@ -1065,7 +1069,7 @@ begin
    ParamIndexes[pt]:= GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
 
    ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
-   OrderFullStr:= idOrderBy + ' ' + idDefaultSortFields;
+   SetDefaultOrderFullStr;
 
    ParamIndexes[ptExpansion]:= GetStartPosIndex(ParamList, idInsertExpansions);
    ParamIndexes[ptSelection]:= GetStartPosIndex(ParamList, idInsertSelections);
@@ -1295,8 +1299,9 @@ begin
             Ptr:= nil; RootName:= Info.Column.Title.Caption;
           end;
           ColumnFilterDlg( nil, Info.FieldVals, Info.QtyList,
-                                      RootName, Ptr,
-                                      True, Self.FilteringEvent, False);
+                                RootName, Ptr,
+                                True, Self.FilteringEvent, ColumnFilterDlgAsModal);
+          acRefresh.Enabled:= ColumnFilterDlgAsModal;
        end;
 end;
 
@@ -1332,8 +1337,8 @@ begin
     end
   end else
        begin
-         acRefresh.Enabled:= True;
          AfterColumnFilterSelection(-Option);
+         acRefresh.Enabled:= True;
          CloseColumnFilterDlg;
        end;
 end;
@@ -1352,14 +1357,9 @@ begin
     if IsColumnFilterDlgVisible() then Exit;
     Info:= ColObjs.GetColumnObjectInfo(Column.Tag, True);
     if (Info.FieldVals<>nil) then
-       begin
          RefreshFilterList(Column);
-         acRefresh.Enabled:= False;
-       end;
   end else
-  begin
     SortRowsByAllowedColumn(Column);
-  end;
 end;
 
 procedure TfrmAnalyzeDebitDebt.dbgDebtsKeyPress(Sender: TObject; var Key: Char);
@@ -2074,7 +2074,7 @@ begin
      begin
        sel:= TSelectionType(vleSelections.Row-1);
        s:= VerifySelectedTextValuesEx(
-       sel, varInteger, sel=stNakl);
+       sel, varAny, sel=stNakl);
        if (s<>'') then
           ShowMessage(s) else
           ShowMessage('<Error>');
