@@ -1,6 +1,6 @@
 inherited fmEditPost: TfmEditPost
-  Left = 341
-  Top = 230
+  Left = 331
+  Top = 193
   BorderStyle = bsDialog
   Caption = #1050#1072#1088#1090#1086#1095#1082#1072
   ClientHeight = 709
@@ -25,7 +25,7 @@ inherited fmEditPost: TfmEditPost
       Top = 5
       Width = 1302
       Height = 673
-      ActivePage = tsMain
+      ActivePage = TabSheet1
       Align = alClient
       TabOrder = 0
       object tsMain: TTabSheet
@@ -1097,8 +1097,8 @@ inherited fmEditPost: TfmEditPost
             object Label19: TLabel
               Left = 1
               Top = 1
-              Width = 496
-              Height = 27
+              Width = 153
+              Height = 13
               Align = alClient
               Caption = 'Ctrl-Del : '#1091#1076#1072#1083#1080#1090#1100' Ins: '#1076#1086#1073#1072#1074#1080#1090#1100
               Color = clInfoBk
@@ -2552,6 +2552,50 @@ inherited fmEditPost: TfmEditPost
                 FieldName = 'Id'
                 Footers = <>
                 Visible = False
+              end>
+          end
+        end
+        object GroupBox3: TGroupBox
+          Left = 761
+          Top = 401
+          Width = 289
+          Height = 184
+          Caption = #1053#1072#1089#1090#1086#1081#1082#1080' '#1076#1083#1103' '#1074#1090#1103#1078#1082#1080' '#1079#1072#1082#1072#1079#1086#1074' '#1080#1079' Exel'
+          TabOrder = 25
+          object DBGridEh6: TDBGridEh
+            Left = 2
+            Top = 15
+            Width = 285
+            Height = 167
+            Align = alClient
+            DataSource = dsVidImportExelFileForBlanks
+            Flat = False
+            FooterColor = clWindow
+            FooterFont.Charset = DEFAULT_CHARSET
+            FooterFont.Color = clWindowText
+            FooterFont.Height = -11
+            FooterFont.Name = 'MS Sans Serif'
+            FooterFont.Style = []
+            TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = []
+            TitleLines = 2
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'Name'
+                Footers = <>
+                Title.Alignment = taCenter
+                Width = 118
+              end
+              item
+                EditButtons = <>
+                FieldName = 'Column_Name_Post'
+                Footers = <>
+                Title.Alignment = taCenter
               end>
           end
         end
@@ -5582,7 +5626,7 @@ inherited fmEditPost: TfmEditPost
         'ileForNaklP_id, Column_Name, Column_Name_Post)'
       '       values (:PostNo, :Id, :Name, :Column_Name_Post)')
     SQLDelete.Strings = (
-      'L_VidImportExelFileForNaklP'
+      'delete L_VidImportExelFileForNaklP'
       '  where PostNo = :PostNo'
       '    and Column_Name = :Name')
     SQLUpdate.Strings = (
@@ -5686,8 +5730,8 @@ inherited fmEditPost: TfmEditPost
       '  where PostNo = :PostNo')
     BeforePost = qul_PostGroupCuttingBeforePost
     AfterPost = qul_PostGroupCuttingAfterPost
-    Left = 721
-    Top = 453
+    Left = 673
+    Top = 581
     ParamData = <
       item
         DataType = ftInteger
@@ -5733,7 +5777,95 @@ inherited fmEditPost: TfmEditPost
   end
   object dsl_PostGroupCutting: TMSDataSource
     DataSet = qul_PostGroupCutting
-    Left = 750
-    Top = 453
+    Left = 702
+    Top = 581
+  end
+  object quVidImportExelFileForBlanks: TMSQuery
+    SQLInsert.Strings = (
+      'declare'
+      '  @Cnt int'
+      ''
+      'select @Cnt = count(*)'
+      ' from L_VidImportExelFileForBlanks'
+      '  where PostNo = :PostNo'
+      '    and Column_Name = :Name'
+      ''
+      'if @Cnt = 0'
+      
+        'insert into L_VidImportExelFileForBlanks (PostNo,d_VidImportExel' +
+        'FileForBlanks_id, Column_Name, Column_Name_Post)'
+      '       values (:PostNo, :Id, :Name, :Column_Name_Post)')
+    SQLDelete.Strings = (
+      'delete L_VidImportExelFileForBlanks'
+      '  where PostNo = :PostNo'
+      '    and Column_Name = :Name')
+    SQLUpdate.Strings = (
+      'declare'
+      '  @Cnt int'
+      ''
+      'select @Cnt = count(*)'
+      ' from L_VidImportExelFileForBlanks'
+      '  where PostNo = :PostNo'
+      '    and Column_Name = :Name'
+      ''
+      'if @Cnt = 0'
+      
+        'insert into L_VidImportExelFileForBlanks (PostNo,d_VidImportExel' +
+        'FileForBlanks_id, Column_Name, Column_Name_Post)'
+      '       values (:PostNo, :Id, :Name, :Column_Name_Post)'
+      ''
+      'if @Cnt = 1'
+      'update L_VidImportExelFileForBlanks'
+      ' set Column_Name = :Name'
+      '    ,Column_Name_Post = :Column_Name_Post'
+      'where PostNo = :PostNo'
+      '  and Column_Name = :Name')
+    Connection = dmDataModule.DB
+    SQL.Strings = (
+      'declare @PostNo int'
+      ''
+      'set @PostNo = :PostNo'
+      ''
+      'select  dviefb.ID '
+      '      , dviefb.Name'
+      '      , lviefb.Column_Name_Post'
+      '      , isnull(lviefb.PostNo,@PostNo) as PostNo'
+      ' from d_VidImportExelFileForBlanks dviefb left join'
+      
+        '      L_VidImportExelFileForBlanks lviefb on lviefb.d_VidImportE' +
+        'xelFileForBlanks_id = dviefb.ID and lviefb.PostNo = @PostNo')
+    AfterPost = quVidImportExelFileForBlanksAfterPost
+    Left = 1017
+    Top = 573
+    ParamData = <
+      item
+        DataType = ftInteger
+        Name = 'PostNo'
+      end>
+    object quVidImportExelFileForBlanksID: TIntegerField
+      FieldName = 'ID'
+      ReadOnly = True
+    end
+    object quVidImportExelFileForBlanksName: TStringField
+      DisplayLabel = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077' '#1082#1086#1083#1086#1085#1082#1080
+      DisplayWidth = 20
+      FieldName = 'Name'
+      Size = 50
+    end
+    object quVidImportExelFileForBlanksColumn_Name_Post: TStringField
+      DisplayLabel = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077' '#1082#1086#1083#1086#1085#1082#1080' '#1091' '#1087#1072#1088#1090#1085#1077#1088#1072
+      DisplayWidth = 20
+      FieldName = 'Column_Name_Post'
+      Size = 50
+    end
+    object quVidImportExelFileForBlanksPostNo: TIntegerField
+      FieldName = 'PostNo'
+      ReadOnly = True
+    end
+  end
+  object dsVidImportExelFileForBlanks: TMSDataSource
+    DataSet = quVidImportExelFileForBlanks
+    Left = 993
+    Top = 573
   end
 end

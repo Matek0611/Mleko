@@ -3565,8 +3565,8 @@ procedure TfmMain.IndentOrdersClick(Sender: TObject);
 begin
   inherited;
 
-  if GlobalOurFirmNo = 490 then if not (FileExists('\\SIRIUS\ImportOrdersVeb\orders.csv')) then raise Exception.Create('Файла d:\ImportOrdersVeb\orders.csv не существует на сервере!');
-  if GlobalOurFirmNo = 7419 then if not (FileExists('\\SIRIUS\ImportOrdersVebMarket\orders.csv')) then raise Exception.Create('Файла d:\ImportOrdersVebMarket\orders.csv не существует на сервере!');
+  if GlobalOurFirmNo = 490 then if not (FileExists('\\192.168.0.3\ImportOrdersVeb\orders.csv')) then raise Exception.Create('Файла d:\ImportOrdersVeb\orders.csv не существует на сервере!');
+  if GlobalOurFirmNo = 7419 then if not (FileExists('\\192.168.0.3\ImportOrdersVebMarket\orders.csv')) then raise Exception.Create('Файла d:\ImportOrdersVebMarket\orders.csv не существует на сервере!');
 
   dmDataModule.QFO.Close;
   dmDataModule.QFO.SQL.Clear;

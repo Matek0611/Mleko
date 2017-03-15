@@ -442,6 +442,14 @@ type
     qul_PostGroupCuttingGroupCuttingName: TStringField;
     qul_PostGroupCuttingVidName: TStringField;
     qul_PostGroupCuttingId: TLargeintField;
+    GroupBox3: TGroupBox;
+    DBGridEh6: TDBGridEh;
+    quVidImportExelFileForBlanks: TMSQuery;
+    dsVidImportExelFileForBlanks: TMSDataSource;
+    quVidImportExelFileForBlanksID: TIntegerField;
+    quVidImportExelFileForBlanksName: TStringField;
+    quVidImportExelFileForBlanksColumn_Name_Post: TStringField;
+    quVidImportExelFileForBlanksPostNo: TIntegerField;
     procedure lcRegionNameKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure qu_ContractBeforePost(DataSet: TDataSet);
@@ -532,6 +540,7 @@ type
     procedure DBGridEh5KeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure qul_PostGroupCuttingAfterPost(DataSet: TDataSet);
+    procedure quVidImportExelFileForBlanksAfterPost(DataSet: TDataSet);
 //    procedure btn1Click(Sender: TObject);
   private
     { private declarations }
@@ -717,6 +726,7 @@ begin
     fmEditPost.quExportInExcelFile.Close;
     fmEditPost.quVidImportExelFileForNaklP.Close;
     fmEditPost.qul_PostGroupCutting.Close;
+    fmEditPost.quVidImportExelFileForBlanks.Close;
 
 
     fmEditPost.quPostBanPay.Params.ParamByName('p_PostNo').Value :=fmEditPost.MLKCustomDm.quPost.FieldByName('PostNo').AsInteger;
@@ -738,6 +748,7 @@ begin
     fmEditPost.quExportInExcelFile.ParamByName('PostNo').Value :=fmEditPost.MLKCustomDm.quPost.FieldByName('PostNo').AsInteger;
     fmEditPost.quVidImportExelFileForNaklP.ParamByName('PostNo').Value :=fmEditPost.MLKCustomDm.quPost.FieldByName('PostNo').AsInteger;
     fmEditPost.qul_PostGroupCutting.ParamByName('PostNo').Value :=fmEditPost.MLKCustomDm.quPost.FieldByName('PostNo').AsInteger;
+    fmEditPost.quVidImportExelFileForBlanks.ParamByName('PostNo').Value :=fmEditPost.MLKCustomDm.quPost.FieldByName('PostNo').AsInteger;
 
     fmEditPost.quPostBanPay.Open;
 
@@ -758,6 +769,7 @@ begin
     fmEditPost.quExportInExcelFile.Open;
     fmEditPost.quVidImportExelFileForNaklP.Open;
     fmEditPost.qul_PostGroupCutting.Open;
+    fmEditPost.quVidImportExelFileForBlanks.Open;
 
     with fmEditPost do
     begin
@@ -1311,6 +1323,7 @@ begin
   if (quExportInExcelFile.State in  [dsInsert, dsEdit]) and (is_save = true) then quExportInExcelFile.Post else quExportInExcelFile.Cancel;
   if (quVidExportExelFile.State in  [dsInsert, dsEdit]) and (is_save = true) then quVidExportExelFile.Post else quVidExportExelFile.Cancel;
   if (qul_PostGroupCutting.State in  [dsInsert, dsEdit]) and (is_save = true) then qul_PostGroupCutting.Post else qul_PostGroupCutting.Cancel;
+  if (quVidImportExelFileForBlanks.State in  [dsInsert, dsEdit]) and (is_save = true) then quVidImportExelFileForBlanks.Post else quVidImportExelFileForBlanks.Cancel;
 end;
 
 procedure TfmEditPost.ActionViewRefreshExecute(Sender: TObject);
@@ -2606,6 +2619,14 @@ begin
   qul_PostGroupCutting.Close;
   qul_PostGroupCutting.Open;
   qul_PostGroupCutting.Locate('ID', Id, []);
+end;
+
+procedure TfmEditPost.quVidImportExelFileForBlanksAfterPost(
+  DataSet: TDataSet);
+begin
+  inherited;
+  quVidImportExelFileForBlanks.Close;
+  quVidImportExelFileForBlanks.Open;
 end;
 
 end.
