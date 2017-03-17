@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, MlekoForm, ActnList, StdCtrls, ExtCtrls, Excel2000, ActiveX, Registry,
-  DBAccess, MSAccess, ComObj, DB, MemDS;
+  DBAccess, MSAccess, ComObj, DB, MemDS, ComCtrls;
 
 type
   TCreateBlankWithExelForm = class(TMlekoForm)
@@ -49,6 +49,8 @@ type
     cbIsVisebleStringOrder: TCheckBox;
     SpCheckBlank: TMSStoredProc;
     spEditBlankPosition: TMSStoredProc;
+    dtDocDate: TDateTimePicker;
+    Label1: TLabel;
     procedure leSelectFirmChange(Sender: TObject);
     procedure leSelectFirmDblClick(Sender: TObject);
     procedure leSelectFirmEnter(Sender: TObject);
@@ -62,15 +64,20 @@ type
     procedure lTypeReturnDblClick(Sender: TObject);
     procedure lTypeReturnEnter(Sender: TObject);
     procedure bLoadAndCreateOrdersClick(Sender: TObject);
+    procedure dtDocDateExit(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure dtDocDateEnter(Sender: TObject);
   private
     FPostNo: Int64;
     FBuh: Integer;
     FVidNaklNo: Integer;
     FTypeReturnNo: Integer;
+    FDocDate: TDate;
     procedure SetPostNo(const Value: Int64);
     procedure SetBuh(const Value: Integer);
     procedure SetVidNaklNo(const Value: Integer);
     procedure SetTypeReturnNo(const Value: Integer);
+    procedure SetDocDate(const Value: TDate);
     function IsOLEObjectInstalled(Name:string):boolean;
     function CheckBlank(pPostno, pReason_id: Integer; pDateNakl: TDate;
       pOtdelNo: Integer; SET_ARTICLE_GROUP_ID: Int64; var err_message: string): Integer;
@@ -83,6 +90,7 @@ type
     property Buh: Integer read FBuh write SetBuh;
     property VidNaklNo: Integer read FVidNaklNo write SetVidNaklNo;
     property TypeReturnNo: Integer read FTypeReturnNo write SetTypeReturnNo;
+    property DocDate: TDate read FDocDate write SetDocDate;
     { Public declarations }
   end;
 
@@ -92,7 +100,7 @@ var
 implementation
 uses MlekoSelectFirmForBlank, MlekoSelectBuh, MlekoSelectVidNakl,
      MlekoSelectTypeReturn,MlekoBlankParam,data,MlekoBlankList,TemplateFileFromExcelOrders,
-     MlekoSelectAddress;
+     MlekoSelectAddress, main;
 
 {$R *.dfm}
 
@@ -130,6 +138,11 @@ begin
   if FTypeReturnNo <> Value then FTypeReturnNo := Value;
 end;
 
+procedure TCreateBlankWithExelForm.SetDocDate(const Value: TDate);
+begin
+  if FDocDate <> Value then FDocDate := Value;
+end;
+
 procedure TCreateBlankWithExelForm.leSelectFirmChange(Sender: TObject);
 begin
   inherited;
@@ -165,6 +178,7 @@ begin
       begin
         PostNo := Dlg.Query.FieldByName('PostNo').Value;
         leSelectFirm.Text := Dlg.Query.FieldByName('nameshort').Value;
+        
       end;
   finally
      Dlg.Query.Close;
@@ -175,7 +189,8 @@ end;
 procedure TCreateBlankWithExelForm.leBuhChange(Sender: TObject);
 begin
   inherited;
-  ActiveControl := leVidNakl
+//  CreateBlankWithExelForm.ActiveControl := dtDocDate;
+  ActiveControl := dtDocDate;
 end;
 
 procedure TCreateBlankWithExelForm.leBuhDblClick(Sender: TObject);
@@ -330,8 +345,8 @@ var
   ListFieldName: TMSQuery;
   PrepareTovarNo: TMSQuery;
   FindStr, l_str : String;
-  isKodCol, isNameCol, isDateCol, isKolCol, IsAddressCol : Boolean;
-  Row, KodCol, NameCol, DateCol, KolCol, AddressCol: Integer;
+  isKodCol, isNameCol, isDateCol, isKolCol, IsAddressCol, IsTovarDateOfManufactureCol : Boolean;
+  Row, KodCol, NameCol, DateCol, KolCol, AddressCol, TovarDateOfManufactureCol: Integer;
   ListFieldError : String;
   FindCell : Variant;
   OldSeparator : char;
@@ -362,6 +377,8 @@ var
   quDocum : TMSQuery;
   quSumDocum : TMSQuery;
   quOrderSumma : TMSQuery;
+  isError : Boolean;
+  Address : String;
 begin
   inherited;
   
@@ -373,6 +390,7 @@ begin
                                               if Dlg2.ShowModal = mrok Then
                                                 begin
                                                   AddressNo := Dlg2.Query.FieldByName('AddressNo').Value;
+                                                  Address := Dlg2.Query.FieldByName('Address').Value;
 
                                                   quInsInAddressCorrespondence.Close;
                                                   quInsInAddressCorrespondence.ParamByName('PostNo').Value := PostNo;
@@ -388,33 +406,41 @@ begin
 // Проверяем заполненность обязательных полей
   if leSelectFirm.Text = '' then begin
                                    ActiveControl := leSelectFirm;
-                                   raise Exception.Create('Не заполнено обязательное поле Фирма!'+ #10#13 +
+                                   raise Exception.Create(' Не заполнено обязательное поле Фирма!'+ #10#13 +
                                                           'Создание заказа невозможно!'+ #10#13 +
                                                           'Заполните поле Фирма и повторите попытку!');
                                  end;
   if leBuh.Text = '' then begin
                             ActiveControl := leBuh;
-                            raise Exception.Create('Не заполнено обязательное поле Бухгалтерский тип!'+ #10#13 +
+                            raise Exception.Create(' Не заполнено обязательное поле Бухгалтерский тип!'+ #10#13 +
                                                    'Создание заказа невозможно!'+ #10#13 +
                                                    'Заполните поле Вид накладной и повторите попытку!');
                           end;
+
+  if dtDocDate.Date = StrToDate('01.01.1900') then begin
+                                                     ActiveControl := dtDocDate;
+                                                     raise Exception.Create(' Не заполнено обязательное поле Дата создания заказа!'+ #10#13 +
+                                                                            'Создание заказа невозможно!'+ #10#13 +
+                                                                            'Заполните поле Дата создания заказа и повторите попытку!');
+                                                   end;
+
   if leVidNakl.Text = '' then begin
                                  ActiveControl := leVidNakl;
-                                 raise Exception.Create('Не заполнено обязательное поле Вид накладной!'+ #10#13 +
+                                 raise Exception.Create(' Не заполнено обязательное поле Вид накладной!'+ #10#13 +
                                                         'Создание заказа невозможно!'+ #10#13 +
                                                         'Заполните поле Вид накладной и повторите попытку!');
                                end;
   if VidNaklNo = 3 then
    if lTypeReturn.Text = '' then begin
                                    ActiveControl := lTypeReturn;
-                                   raise Exception.Create('Не заполнено обязательное поле Тип возврата!'+ #10#13 +
+                                   raise Exception.Create(' Не заполнено обязательное поле Тип возврата!'+ #10#13 +
                                                           'Создание заказа невозможно!'+ #10#13 +
                                                           'Заполните поле Вид накладной и повторите попытку!');
                                  end;
 // Конец проверки
 
 
-  // Чтобы не применять локальные
+// Чтобы не применять локальные
 // для каждой версии
 // названия "Excel.Application.8", "Excel.Application.9".
 
@@ -563,12 +589,13 @@ begin
               ListFieldError := ListFieldError + ' '+FindStr+' '+ #10#13;
             end;
          end;
+
         ListFieldName.Next;
       end;
 
      if ListFieldError <> '' then
       begin
-        if (IsAddressCol = false) or (isKolCol = false) or (isKodCol = false) then
+        if (isKolCol = false) or (isKodCol = false) then
          begin
            raise Exception.Create(' В файле: '+od_InputOrderWithExcel.FileName+ #10#13+
                                   'Отсутствуют обязательные наименования столбцов: '+ #10#13 +ListFieldError+
@@ -649,60 +676,82 @@ begin
      dmDataModule.QFO.SQL.Add('truncate table OrdersFromExcel ');
      dmDataModule.QFO.Execute;
 
-     for index := Row to i do
+     index := Row;
+     isRun := True;
+     IsError := False;
+
+     while WorkSheet.Cells[index,KodCol].Text <> '' do
       begin
-        if (WorkSheet.Cells[index,KodCol].Text <> '') then
-         begin
-           OldSeparator := SysUtils.DecimalSeparator;
-           SysUtils.DecimalSeparator := '.';
+        OldSeparator := SysUtils.DecimalSeparator;
+        SysUtils.DecimalSeparator := '.';
 
-           QtyS := StringReplace(WorkSheet.Cells[index,KolCol].Text, '''', '',[rfReplaceAll, rfIgnoreCase]);
-           QtyS := StringReplace(WorkSheet.Cells[index,KolCol].Text, ' ', '',[rfReplaceAll, rfIgnoreCase]);
-           QtyS := StringReplace(QtyS, ',', '.',[rfReplaceAll, rfIgnoreCase]);
-           Qty := StrToFloat(QtyS);
+        QtyS := StringReplace(WorkSheet.Cells[index,KolCol].Text, '''', '',[rfReplaceAll, rfIgnoreCase]);
+        QtyS := StringReplace(WorkSheet.Cells[index,KolCol].Text, ' ', '',[rfReplaceAll, rfIgnoreCase]);
+        QtyS := StringReplace(QtyS, ',', '.',[rfReplaceAll, rfIgnoreCase]);
+        Qty := StrToFloat(QtyS);
 
-           SysUtils.DecimalSeparator := OldSeparator;
+        SysUtils.DecimalSeparator := OldSeparator;
 
-           PrepareTovarNo := TMSQuery.Create(nil);
-           PrepareTovarNo.Connection:= dmDataModule.DB;
-           PrepareTovarNo.SQL.Clear;
-           PrepareTovarNo.SQL.Text := 'declare @PostNo int '
-                                     +' set @PostNo = :PostNo '
-                                     +'select   PostNo '
-                                     +'       , TovarNo '
-                                     +'  	    , NameTovar '
-                                     +' from TovarPost '
-                                     +'  where PostNo = @PostNo '
-                                     +'    and TovarNoPostText = :TovarNoPost ';
-           PrepareTovarNo.ParamByName('PostNo').Value := PostNo;
-           PrepareTovarNo.ParamByName('TovarNoPost').Value := WorkSheet.Cells[index,KodCol].Text;
-           PrepareTovarNo.Open;
+        PrepareTovarNo := TMSQuery.Create(nil);
+        PrepareTovarNo.Connection:= dmDataModule.DB;
+        PrepareTovarNo.SQL.Clear;
+        PrepareTovarNo.SQL.Text := 'declare  @PostNo int '
+                                  +'       , @TovarNoPost varchar(20) '
+                                  +' set @PostNo = :PostNo '
+                                  +' set @TovarNoPost = :TovarNoPost '
+                                  +'select   PostNo '
+                                  +'       , TovarNo '
+                                  +'  	    , NameTovar '
+                                  +' from TovarPost '
+                                  +'  where PostNo = @PostNo '
+                                  +'    and (rtrim(ltrim(convert(varchar(20),TovarNoPostText))) = rtrim(ltrim(@TovarNoPost)) '
+                                  +'      or rtrim(ltrim(convert(varchar(20),TovarNoPost))) = rtrim(ltrim(@TovarNoPost)) '
+                                  +'      or rtrim(ltrim(convert(varchar(20),TovarNoPostSecondText))) = rtrim(ltrim(@TovarNoPost)) '
+                                  +'      or rtrim(ltrim(convert(varchar(20),TovarNoPostSecond))) = rtrim(ltrim(@TovarNoPost))) ';
+        PrepareTovarNo.ParamByName('PostNo').Value := PostNo;
+        PrepareTovarNo.ParamByName('TovarNoPost').Value := WorkSheet.Cells[index,KodCol].Text;
+        PrepareTovarNo.Open;
 
-           if PrepareTovarNo.RecordCount = 0 then begin
-                                                    bLoadAndCreateOrders.Enabled := False;
-                                                    ActiveControl := Panel2;
-                                                    raise Exception.Create(' По этому контрагентуагенту нет привязки соответствия товара! '+ #10#13 +
-                                                                           'Товар : '+ WorkSheet.Cells[index,KodCol].Text +' '+ WorkSheet.Cells[index,NameCol].Text + #10#13 +
-                                                                           'Заполните таблицу и повторите попытку.');
-                                                  end;
 
-           quInsInOrdersFromExcel.Close;
-           quInsInOrdersFromExcel.ParamByName('TovarNoPostText').Value := WorkSheet.Cells[index,KodCol].Text;
-           quInsInOrdersFromExcel.ParamByName('TovarNamePost').Value := WorkSheet.Cells[index,NameCol].Text;
-           quInsInOrdersFromExcel.ParamByName('OrderDate').Value := StrToDate(WorkSheet.Cells[index,DateCol].Text);
-           quInsInOrdersFromExcel.ParamByName('KolTov').Value := Qty; //StrToInt(WorkSheet.Cells[index,4].Text);
-           quInsInOrdersFromExcel.ParamByName('AddressPost').Value := WorkSheet.Cells[index,AddressCol].Text;
-           quInsInOrdersFromExcel.Execute;
 
-         end;
+        if PrepareTovarNo.RecordCount = 0 then begin
+                                                 bLoadAndCreateOrders.Enabled := False;
+                                                 ActiveControl := Panel2;
+                                                 Showmessage (' По этому контрагентуагенту нет привязки соответствия товара! '+ #10#13 +
+                                                                        'Товар : '+ WorkSheet.Cells[index,KodCol].Text +' '+ WorkSheet.Cells[index,NameCol].Text + #10#13 +
+                                                                        'Заполните таблицу и повторите попытку.');
+                                                 isRun := False;
+                                                 IsError := True;
+{
+                                                 Excel.Quit;
+                                                 Excel := UnAssigned;
+                                                 Excel := Null;
 
+                                                 raise Exception.Create(' По этому контрагентуагенту нет привязки соответствия товара! '+ #10#13 +
+                                                                        'Товар : '+ WorkSheet.Cells[index,KodCol].Text +' '+ WorkSheet.Cells[index,NameCol].Text + #10#13 +
+                                                                        'Заполните таблицу и повторите попытку.');
+}
+                                               end;
+        if isRun then begin
+                        quInsInOrdersFromExcel.Close;
+                        quInsInOrdersFromExcel.ParamByName('TovarNoPostText').Value := WorkSheet.Cells[index,KodCol].Text;
+                        quInsInOrdersFromExcel.ParamByName('TovarNamePost').Value := WorkSheet.Cells[index,NameCol].Text;
+                        quInsInOrdersFromExcel.ParamByName('OrderDate').Value := DocDate; ///StrToDate(WorkSheet.Cells[index,DateCol].Text);
+                        quInsInOrdersFromExcel.ParamByName('KolTov').Value := Qty; //StrToInt(WorkSheet.Cells[index,4].Text);
+                        if isAddressCol then quInsInOrdersFromExcel.ParamByName('AddressPost').Value := WorkSheet.Cells[index,AddressCol].Text
+                                        else quInsInOrdersFromExcel.ParamByName('AddressPost').Value := Address;
+                        quInsInOrdersFromExcel.Execute;
+                      end;
+        index := index + 1;
       end;
 
      Excel.Quit;
      Excel := UnAssigned;
      Excel := Null;
 
-     ShowMessage('Загрузка данных завершена'+ #10#13 +'Обработано ' + IntToStr(index-2)+' записей.');
+     if IsError then raise Exception.Create(' Загрузка данных завершена с ошибками! '+ #10#13 +
+                                            'Исправте ошибки и повторите попытку.')
+                else ShowMessage('Загрузка данных завершена'+ #10#13 +'Обработано ' + IntToStr(index-Row)+' записей.');
 
 
 // Формируем бланк заказа двигаясь по списку адресов в файле заказа
@@ -719,10 +768,10 @@ begin
 
 // Проверяем на наличие соответствия наименования адреса доставки
 
-        AddressNo := quOrdersCNTAddressNo.Value;
+       if isAddressCol then AddressNo := quOrdersCNTAddressNo.Value;
 
 
-
+       if isAddressCol then
         if quOrdersCNTAddressNo.IsNull then begin
                                               ShowMessage ('Для адреса '+quOrdersCNTAddressPost.AsString+ #10#13
                                                           +'Нет соответствия в базе'+ #10#13
@@ -762,11 +811,11 @@ begin
                                       +'    and OrderDate = :OrderDate ';
         CheckOrderForExcel.ParamByName('PostNo').Value := PostNo;
         CheckOrderForExcel.ParamByName('AddressNo').Value := AddressNo;
-        CheckOrderForExcel.ParamByName('OrderDate').Value := quOrdersCNTOrderDate.Value;
+        CheckOrderForExcel.ParamByName('OrderDate').Value := DocDate; //quOrdersCNTOrderDate.Value;
         CheckOrderForExcel.Open;
         if CheckOrderForExcel.RecordCount > 0 then begin
-                                                     ShowMessage('Заказ '+quOrdersCNTOrderDate.AsString+'  '+quOrdersCNTAddressPost.AsString+' уже создавался!'+ #10#13 +
-                                                                        'Повторное создание заказа запрещено!');
+                                                     ShowMessage(' Заказ '+DateToStr(DocDate)+'  '+quOrdersCNTAddressPost.AsString+' уже создавался!'+ #10#13 +
+                                                                 'Повторное создание заказа запрещено!');
                                                      isStop := true;
                                                    end;
         Dlg := TMlekoBlankParamForm.Create(Application);
@@ -777,7 +826,7 @@ begin
 //:description, :contract_id, :ln_document_id, :OurFirmNo, :descriptionOrderVeb
 
         Dlg.spAddInputOrder.ParamByName('PostNo').Value := PostNo;
-        Dlg.spAddInputOrder.ParamByName('DateNakl').Value := quOrdersCNTOrderDate.Value;
+        Dlg.spAddInputOrder.ParamByName('DateNakl').Value := DocDate; //quOrdersCNTOrderDate.Value;
         Dlg.spAddInputOrder.ParamByName('SotrudNo').Value := 152;
         Dlg.spAddInputOrder.ParamByName('VidNaklNo').Value := VidNaklNo;
         Dlg.spAddInputOrder.ParamByName('UserNo').Value := data.UserNo;
@@ -806,8 +855,8 @@ begin
         quPostArtGroup.ParamByName('PostNo1').Value := PostNo;
         quPostArtGroup.ParamByName('PostNom').Value := PostNo;
         quPostArtGroup.ParamByName('Buh').Value := Buh;
-        quPostArtGroup.ParamByName('OrderDate').Value := quOrdersCNTOrderDate.Value;
-        quPostArtGroup.ParamByName('OrderDate1').Value := quOrdersCNTOrderDate.Value;
+        quPostArtGroup.ParamByName('OrderDate').Value := DocDate; //quOrdersCNTOrderDate.Value;
+        quPostArtGroup.ParamByName('OrderDate1').Value := DocDate; //quOrdersCNTOrderDate.Value;
         quPostArtGroup.ParamByName('AddressNo').Value := AddressNo;
         quPostArtGroup.ParamByName('AddressNo1').Value := AddressNo;
         quPostArtGroup.Open;
@@ -853,7 +902,7 @@ begin
            quCheckOrder.ParamByName('PostNo1').Value := PostNo;
            quCheckOrder.ParamByName('AddressNo').Value := AddressNo;
            quCheckOrder.ParamByName('AddressNo1').Value := AddressNo;
-           quCheckOrder.ParamByName('OrderDate').Value := quOrdersCNTOrderDate.Value;
+           quCheckOrder.ParamByName('OrderDate').Value := DocDate; //quOrdersCNTOrderDate.Value;
            quCheckOrder.Open;
            if ((quCheckOrder.RecordCount > 0) and (isStop = false)) Then isRun := true else isRun := false;
            quCheckOrder.Close;
@@ -870,7 +919,7 @@ begin
               Is_PostBan := true;
             end;
 
-           if CheckBlank(PostNo, 14, quOrdersCNTOrderDate.Value, 4, SArticleGroupDouble, ErrMsg) >= 10 then
+           if CheckBlank(PostNo, 14, DocDate, 4, SArticleGroupDouble, ErrMsg) >= 10 then
             begin
              //Не Успешно
               raise Exception.Create(ErrMsg);
@@ -886,13 +935,19 @@ begin
            quColnPriceForOrder.ParamByName('PostNo1').Value := PostNo;
            quColnPriceForOrder.ParamByName('PostNom').Value := PostNo;
            quColnPriceForOrder.ParamByName('Buh').Value := Buh;
-           quColnPriceForOrder.ParamByName('OrderDate').Value := quOrdersCNTOrderDate.Value;
-           quColnPriceForOrder.ParamByName('OrderDate1').Value := quOrdersCNTOrderDate.Value;
+           quColnPriceForOrder.ParamByName('OrderDate').Value := DocDate; //quOrdersCNTOrderDate.Value;
+           quColnPriceForOrder.ParamByName('OrderDate1').Value := DocDate; //quOrdersCNTOrderDate.Value;
            quColnPriceForOrder.ParamByName('AddressNo').Value := AddressNo;
            quColnPriceForOrder.ParamByName('AddressNo1').Value := AddressNo;
            quColnPriceForOrder.ParamByName('ARTICLE_GROUP_ID').Value := ArticleGroupDouble;
+           quColnPriceForOrder.Prepare;
            quColnPriceForOrder.Open;
+
+//           ShowMessage(IntToStr(quColnPriceForOrder.RecordCount));
+
            quColnPriceForOrder.First;
+
+
 
 //         Residue, Need
 
@@ -918,7 +973,7 @@ begin
                       quSpecBlank.Close;
                       quSpecBlank.ParamByName('PostNo').Value := PostNo;
                       quSpecBlank.ParamByName('AddressNo').Value := AddressNo;
-                      quSpecBlank.ParamByName('OrderDate').Value := quOrdersCNTOrderDate.Value;
+                      quSpecBlank.ParamByName('OrderDate').Value := DocDate; //quOrdersCNTOrderDate.Value;
                       quSpecBlank.Open;
                       quSpecBlank.First;
 
@@ -940,6 +995,7 @@ begin
                                                                                                      end;
                       CheckOrderForExcel.Close;
 
+
                       while not quSpecBlank.Eof do
                        begin // quSpecBlank.Eof
                          if isStop = false then AddTovarInBlanks(documentID,quSpecBlank.FieldByName('TovarNo').Value,data.UserNo,ColNPrice,quSpecBlank.FieldByName('KolTov').Value,quSpecBlank.FieldByName('KolTov').Value,0, Residue, Need);
@@ -957,13 +1013,13 @@ begin
                                                     +'    and IdBlank = :IdBlank ';
                       CheckOrderForExcel.ParamByName('PostNo').Value := PostNo;
                       CheckOrderForExcel.ParamByName('AddressNo').Value := AddressNo;
-                      CheckOrderForExcel.ParamByName('OrderDate').Value := quOrdersCNTOrderDate.Value;
+                      CheckOrderForExcel.ParamByName('OrderDate').Value := DocDate; //quOrdersCNTOrderDate.Value;
                       CheckOrderForExcel.ParamByName('IdBlank').Value := documentID;
                       CheckOrderForExcel.Open;
                       if CheckOrderForExcel.RecordCount > 0 then isRun := false;
 
                       if (isRun = true) and (quSpecBlank.RecordCount > 0) and (isStop = false) then begin
-                                                                                                      InsInBlankForExcel(quOrdersCNTOrderDate.Value,PostNo,AddressNo,DocumentId);
+                                                                                                      InsInBlankForExcel(DocDate,PostNo,AddressNo,DocumentId);
                                                                                                       if VidNaklNo = 3 then begin
                                                                                                                               Dlg.spModifyLinkBlankReturn.ParamByName('Document_id').Value := DocumentId;
                                                                                                                               Dlg.spModifyLinkBlankReturn.Execute;
@@ -991,6 +1047,7 @@ begin
 // Окончательные проверки
 
    quOrdersCNT.Close;
+   quOrdersCNT.ParamByName('PostNo').Value := PostNo;
    quOrdersCNT.Open;
    quOrdersCNT.First;
 
@@ -1007,10 +1064,10 @@ begin
                                    +'                from l_BlankForExcel '
                                    +'         				 where PostNo = :PostNo '
                                    +'                   and AddressNo = :AddressNo '
-                                   +'                   and OrderDate = :OrderDate) ';
+                                   +'                   and OrderDate = convert(smalldatetime,:OrderDate)) ';
       quSummaBlanksHead.ParamByName('PostNo').Value := PostNo;
       quSummaBlanksHead.ParamByName('AddressNo').Value := AddressNo;
-      quSummaBlanksHead.ParamByName('OrderDate').Value := quOrdersCNTOrderDate.Value;
+      quSummaBlanksHead.ParamByName('OrderDate').AsDateTime := DocDate; //quOrdersCNTOrderDate.Value;
       quSummaBlanksHead.Open;
 
       quListBlanksDocId := TMSQuery.Create(nil);
@@ -1022,12 +1079,14 @@ begin
                                    +'                from l_BlankForExcel '
                                    +'         				 where PostNo = :PostNo '
                                    +'                   and AddressNo = :AddressNo '
-                                   +'                   and OrderDate = :OrderDate) ';
+                                   +'                   and OrderDate = convert(smalldatetime,:OrderDate)) ';
       quListBlanksDocId.ParamByName('PostNo').Value := PostNo;
       quListBlanksDocId.ParamByName('AddressNo').Value := AddressNo;
-      quListBlanksDocId.ParamByName('OrderDate').Value := quOrdersCNTOrderDate.Value;
+      quListBlanksDocId.ParamByName('OrderDate').AsDateTime := DocDate; //quOrdersCNTOrderDate.Value;
       quListBlanksDocId.Open;
       quListBlanksDocId.First;
+
+//      ShowMessage(IntToStr(quListBlanksDocId.RecordCount));
 
       while not quListBlanksDocId.Eof do
        begin // quListBlanksDocId.Eof
@@ -1094,7 +1153,7 @@ begin
       quOrdersCNT.Next;
     end; // quOrdersCNT.Eof
     ShowMessage('Проверки завершены');
-    CreateBlankWithExelForm.Close;
+//    CreateBlankWithExelForm.Close;
 
    end;
 end;
@@ -1170,13 +1229,13 @@ begin
                           quPrice.ParamByName('TovarNo').Value := TovarNo;
                           quPrice.ParamByName('ColnPrice').Value := ColNPrice;
                           quPrice.Open;
-                          if ((quPrice.FieldByName('Price').Value = 0) or (quPrice.FieldByName('Price').Value = Null)) then begin
-                                                                                                                              ErrMsg := 'Не расцененный товар!' +#13#10+
-                                                                                                                                        'Создание заказа остановлено! Сообщите программисту!' +#13#10+
-                                                                                                                                        'Код товара ' + IntToStr(TovarNo) +#13#10+
-                                                                                                                                        'Заказ в файле '+ quOrdersCNTOrderDate.AsString +' '+quOrdersCNTAddressPost.AsString;
-                                                                                                                              raise Exception.Create(ErrMsg);
-                                                                                                                            end;
+                          if ((quPrice.FieldByName('Price').Value = 0) or (quPrice.FieldByName('Price').IsNull)) then begin
+                                                                                                                        ErrMsg := 'Не расцененный товар!' +#13#10+
+                                                                                                                                  'Создание заказа остановлено! Сообщите программисту!' +#13#10+
+                                                                                                                                  'Код товара ' + IntToStr(TovarNo) +#13#10+
+                                                                                                                                  'Заказ в файле '+quOrdersCNTAddressPost.AsString;
+                                                                                                                        raise Exception.Create(ErrMsg);
+                                                                                                                      end;
                           spEditBlankPosition.ParamByName('Boss_Price').Value := quPrice.FieldByName('Price').Value;
                           quPrice.Close;
                         end
@@ -1199,6 +1258,31 @@ begin
   quInsInl_BlankForExcel.ParamByName('idBlank').Value := DocumentID;
   quInsInl_BlankForExcel.Execute;
   quInsInl_BlankForExcel.Close;
+end;
+
+procedure TCreateBlankWithExelForm.dtDocDateExit(Sender: TObject);
+begin
+  inherited;
+  DocDate := dtDocDate.Date;
+  ActiveControl := leVidNakl;
+end;
+
+procedure TCreateBlankWithExelForm.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  inherited;
+{
+  Excel.Quit;
+  Excel := UnAssigned;
+  Excel := Null;
+}  
+end;
+
+procedure TCreateBlankWithExelForm.dtDocDateEnter(Sender: TObject);
+begin
+  inherited;
+    dtDocDate.Date := main.GlobalDateNakl;
+
 end;
 
 end.

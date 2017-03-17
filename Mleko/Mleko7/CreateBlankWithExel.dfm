@@ -1,18 +1,32 @@
 inherited CreateBlankWithExelForm: TCreateBlankWithExelForm
-  Left = 815
-  Top = 309
+  Left = 986
+  Top = 249
   Width = 414
-  Height = 254
+  Height = 306
   Caption = #1057#1086#1079#1076#1072#1085#1080#1077' '#1079#1072#1082#1072#1079#1072' '#1080#1079' Exel '#1092#1072#1081#1083#1072' '#1085#1086#1074#1086#1077
+  OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel [0]
     Left = 0
     Top = 0
     Width = 398
-    Height = 174
+    Height = 226
     Align = alClient
     TabOrder = 0
+    object Label1: TLabel
+      Left = 10
+      Top = 97
+      Width = 137
+      Height = 13
+      Caption = #1044#1072#1090#1072' '#1089#1086#1079#1076#1072#1085#1080#1103' '#1079#1072#1082#1072#1079#1072
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
     object leSelectFirm: TLabeledEdit
       Left = 8
       Top = 32
@@ -33,9 +47,10 @@ inherited CreateBlankWithExelForm: TCreateBlankWithExelForm
       OnEnter = leSelectFirmEnter
     end
     object leBuh: TLabeledEdit
+      Tag = 1
       Left = 10
       Top = 72
-      Width = 121
+      Width = 143
       Height = 21
       EditLabel.Width = 113
       EditLabel.Height = 13
@@ -52,9 +67,10 @@ inherited CreateBlankWithExelForm: TCreateBlankWithExelForm
       OnEnter = leBuhEnter
     end
     object leVidNakl: TLabeledEdit
+      Tag = 3
       Left = 11
-      Top = 108
-      Width = 121
+      Top = 158
+      Width = 142
       Height = 21
       EditLabel.Width = 90
       EditLabel.Height = 13
@@ -65,15 +81,16 @@ inherited CreateBlankWithExelForm: TCreateBlankWithExelForm
       EditLabel.Font.Name = 'MS Sans Serif'
       EditLabel.Font.Style = [fsBold]
       EditLabel.ParentFont = False
-      TabOrder = 2
+      TabOrder = 3
       OnChange = leVidNaklChange
       OnDblClick = leVidNaklDblClick
       OnEnter = leVidNaklEnter
     end
     object lTypeReturn: TLabeledEdit
+      Tag = 4
       Left = 10
-      Top = 145
-      Width = 121
+      Top = 195
+      Width = 143
       Height = 21
       EditLabel.Width = 82
       EditLabel.Height = 13
@@ -84,24 +101,38 @@ inherited CreateBlankWithExelForm: TCreateBlankWithExelForm
       EditLabel.Font.Name = 'MS Sans Serif'
       EditLabel.Font.Style = [fsBold]
       EditLabel.ParentFont = False
-      TabOrder = 3
+      TabOrder = 4
       Visible = False
       OnChange = lTypeReturnChange
       OnDblClick = lTypeReturnDblClick
       OnEnter = lTypeReturnEnter
     end
     object cbIsVisebleStringOrder: TCheckBox
-      Left = 136
-      Top = 149
-      Width = 233
+      Tag = 5
+      Left = 168
+      Top = 197
+      Width = 225
       Height = 17
       Caption = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1079#1072#1087#1080#1089#1100' '#1086' '#1089#1086#1079#1076#1072#1085#1080#1080' '#1079#1072#1082#1072#1079#1072
-      TabOrder = 4
+      TabOrder = 5
+    end
+    object dtDocDate: TDateTimePicker
+      Tag = 2
+      Left = 10
+      Top = 115
+      Width = 143
+      Height = 21
+      Date = 2.000000000000000000
+      Time = 2.000000000000000000
+      DragMode = dmAutomatic
+      TabOrder = 2
+      OnEnter = dtDocDateEnter
+      OnExit = dtDocDateExit
     end
   end
   object Panel2: TPanel [1]
     Left = 0
-    Top = 174
+    Top = 226
     Width = 398
     Height = 41
     Align = alBottom
@@ -124,10 +155,10 @@ inherited CreateBlankWithExelForm: TCreateBlankWithExelForm
     SQL.Strings = (
       
         'insert into OrdersFromExcel(TovarNoPost,TovarNamePost,OrderDate,' +
-        'KolTov,AddressPost,TovarNoPostText)'
+        'KolTov,AddressPost,TovarNoPostText,TovarDateOfManufacture)'
       
         ' values (/*:TovarNoPost*/1,:TovarNamePost,:OrderDate,:KolTov,:Ad' +
-        'dressPost,:TovarNoPostText)')
+        'dressPost,:TovarNoPostText,:TovarDateOfManufacture)')
     Left = 96
     ParamData = <
       item
@@ -149,6 +180,10 @@ inherited CreateBlankWithExelForm: TCreateBlankWithExelForm
       item
         DataType = ftUnknown
         Name = 'TovarNoPostText'
+      end
+      item
+        DataType = ftUnknown
+        Name = 'TovarDateOfManufacture'
       end>
   end
   object quOrdersCNT: TMSQuery
@@ -461,8 +496,8 @@ inherited CreateBlankWithExelForm: TCreateBlankWithExelForm
         'ond) = convert(varchar(20),ofe.TovarNoPostText)) and tp.PostNo =' +
         ' ac.PostNo) ofe1 on ofe1.TovarNo = lag.ARTICLE_ID '
       
-        '  where ((ofe1.OrderDate = :OrderDate) and (ofe1.AddressNo = :Ad' +
-        'dressNo))'
+        '  where ((ofe1.OrderDate = convert(smalldatetime,:OrderDate)) an' +
+        'd (ofe1.AddressNo = :AddressNo))'
       '    and lsag.SET_ARTICLE_GROUP_ID is not null'
       '    and convert(smallint,ofe1.TovarNo) not in (select TovarNo '
       '                                               from e_blanks '
@@ -474,8 +509,8 @@ inherited CreateBlankWithExelForm: TCreateBlankWithExelForm
         '        from l_BlankForExcel '
       
         '                                                                ' +
-        '         where ((OrderDate = :OrderDate1)and(AddressNo = :Addres' +
-        'sNo1)and(PostNo = :PostNo1))))'
+        '         where ((OrderDate = convert(smalldatetime,:OrderDate1))' +
+        'and(AddressNo = :AddressNo1)and(PostNo = :PostNo1))))'
       
         '    and LEN(cast(isnull(lpsagd.SET_ARTICLE_GROUP_ID,0) as varcha' +
         'r(50))+ cast(isnull(lpsagp.SET_ARTICLE_GROUP_ID,0) as varchar(50' +
@@ -491,39 +526,39 @@ inherited CreateBlankWithExelForm: TCreateBlankWithExelForm
     Top = 104
     ParamData = <
       item
-        DataType = ftUnknown
+        DataType = ftInteger
         Name = 'PostNo'
       end
       item
-        DataType = ftUnknown
+        DataType = ftInteger
         Name = 'Buh'
       end
       item
-        DataType = ftUnknown
+        DataType = ftInteger
         Name = 'PostNom'
       end
       item
-        DataType = ftUnknown
+        DataType = ftDateTime
         Name = 'OrderDate'
       end
       item
-        DataType = ftUnknown
+        DataType = ftInteger
         Name = 'AddressNo'
       end
       item
-        DataType = ftUnknown
+        DataType = ftDateTime
         Name = 'OrderDate1'
       end
       item
-        DataType = ftUnknown
+        DataType = ftInteger
         Name = 'AddressNo1'
       end
       item
-        DataType = ftUnknown
+        DataType = ftInteger
         Name = 'PostNo1'
       end
       item
-        DataType = ftUnknown
+        DataType = ftLargeint
         Name = 'ARTICLE_GROUP_ID'
       end>
     object quColnPriceForOrderSET_ARTICLE_GROUP_ID_price: TLargeintField
