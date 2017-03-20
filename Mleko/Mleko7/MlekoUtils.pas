@@ -14,6 +14,9 @@ Type
 
   TSimpleDataType = (sdtInteger, sdtFloat, sdtString);
   TIntBoolFunc = function(Index: Integer): Boolean of object;
+  TDynIntegerArray = array of Integer;
+  PDynIntegerArray = ^TDynIntegerArray;
+
 
 type
   TTimeTracer = class
@@ -47,8 +50,13 @@ function GetEntityTable(KeyField, TextField: String): String;
 
 function SelectMLKItemsByDialog(MLKForm: TCFLMLKCustomForm; Items: TStrings;
          OwnerName, ParamName, ParamCode: string;
-         MultiSelect: BOOL = True; KeyValues: TStrings = nil): Integer;
-function GetDelimText(Source: TStrings; Delim: String): string;
+         MultiSelect: BOOL = True; KeyValues: TStrings = nil;
+         SQLFilter: string = ''): Integer;
+function GetDelimText(Source: TStrings; Delim: String; Quote: Char = #0): string;
+function GetDelimTextOfIntArray(const Source: TDynIntegerArray; Delim: String): string;
+procedure IntArrayToStrings(const Source: TDynIntegerArray; Dest: TStrings);
+procedure StackToDynArray(const Source: array of Integer; var Dest: TDynIntegerArray);
+procedure StringObjectsToDynArray(const Source: TStrings; var Dest: TDynIntegerArray);
 function GetContainsPosIndex( Source: TStrings; S: string;
                               LookForPos: Integer = idSearchAllPos;
                               MaxCount: Integer = 0;
@@ -157,7 +165,9 @@ begin
 end;
 
 function SelectMLKItemsByDialog(MLKForm: TCFLMLKCustomForm; Items: TStrings;
-  OwnerName, ParamName, ParamCode: string; MultiSelect: BOOL = True; KeyValues: TStrings = nil): Integer;
+  OwnerName, ParamName, ParamCode: string;
+  MultiSelect: BOOL = True; KeyValues: TStrings = nil;
+  SQLFilter: string = ''): Integer;
 var
   Keys: TStrings;
   i, c, v: Integer;
@@ -169,7 +179,7 @@ begin
   l_owner := OwnerName;
   l_param_name := UpperCase(ParamName);
   l_param_code := ParamCode;
-  l_query_filter := '';
+  l_query_filter := SQLFilter;
   l_style := 'unknown';
   //l_query_filter := dmDataModule.parse_flt_sql(c.SqlFilter, l_owner, l_param_name);
   is_multiselect := MultiSelect;
@@ -197,16 +207,56 @@ begin
   end;
 end;
 
-function GetDelimText(Source: TStrings; Delim: String): string;
+function GetDelimText(Source: TStrings; Delim: String; Quote: Char = #0): string;
 var i, h: Integer;
 begin
   Result:= ''; h:= Source.Count-1;
   for i := 0 to h do
   begin
-    Result:= Result + Source[i];
+    if (Quote=#0) then
+       Result:= Result + Source[i] else
+       Result:= Result + AnsiQuotedStr(Source[i], Quote);
     if (i<h) then
        Result:= Result + Delim;
   end;
+end;
+
+function GetDelimTextOfIntArray(const Source: TDynIntegerArray; Delim: String): string;
+var i, h: Integer;
+begin
+  Result:= ''; h:= High(Source);
+  for i := 0 to h do
+  begin
+    Result:= Result + IntToStr(Source[i]);
+    if (i<h) then
+       Result:= Result + Delim;
+  end;
+end;
+
+procedure IntArrayToStrings(const Source: TDynIntegerArray; Dest: TStrings);
+var i: Integer;
+begin
+  Dest.Clear;
+  for i := 0 to High(Source) do
+  Dest.Add(IntToStr(Source[i]));
+end;
+
+procedure StackToDynArray(const Source: array of Integer; var Dest: TDynIntegerArray);
+var n: Integer;
+begin
+  n:= Length(Source);
+  SetLength(Dest, n);
+  if n>0 then
+     System.Move(Source[0], Dest[0], SizeOf(Integer)*n);
+end;
+
+procedure StringObjectsToDynArray(const Source: TStrings; var Dest: TDynIntegerArray);
+var i, n: Integer;
+begin
+  n:= Source.Count;
+  SetLength(Dest, n);
+  for i := 0 to n-1 do
+  Dest[i]:= Integer(Source.Objects[i]);
 end;
 
 function AnsiTextPos(const Substr, S: string): Integer;

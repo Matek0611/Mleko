@@ -338,6 +338,7 @@ type
     AnalyzeDebitDebt: TMenuItem;
     BlankListLight: TMenuItem;
     mnuDebtSettings: TMenuItem;
+    MoneyCompensation: TMenuItem;
     procedure N3Click(Sender: TObject);
     procedure N8Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
@@ -586,6 +587,7 @@ type
     procedure AnalyzeDebitDebtClick(Sender: TObject);
     procedure BlankListLightClick(Sender: TObject);
     procedure mnuDebtSettingsClick(Sender: TObject);
+    procedure MoneyCompensationClick(Sender: TObject);
   private
     { Private declarations }
     FFileName: string;
@@ -660,7 +662,7 @@ uses Post0, NaklP0, Tovar0, Ostatok2, About,
   ControlVidRashodForPlat, GroupCutting, ListVidTovForGroupCutting, CheckMeshCutting, PostFromGroupCutting,
   AnalisCuttingMesh, Currency, CurrencyExchange, VidRashodGroup, ListPlusPostForClosePlatRIsEconom,
   MlekoClosePlatRLight, EditDocPlat, DocPlatHead, ListVidOtdelForAPP, ListMinusPostForBDDS,
-  UAnalyzeDebitDebt, UListMinusPostForDebit, MlekoBlankListLight;
+  UAnalyzeDebitDebt, UMoneyCompensation, UListMinusPostForDebit, MlekoBlankListLight;
 
 {$R *.DFM}
 
@@ -3565,8 +3567,8 @@ procedure TfmMain.IndentOrdersClick(Sender: TObject);
 begin
   inherited;
 
-  if GlobalOurFirmNo = 490 then if not (FileExists('\\192.168.0.3\ImportOrdersVeb\orders.csv')) then raise Exception.Create('Файла d:\ImportOrdersVeb\orders.csv не существует на сервере!');
-  if GlobalOurFirmNo = 7419 then if not (FileExists('\\192.168.0.3\ImportOrdersVebMarket\orders.csv')) then raise Exception.Create('Файла d:\ImportOrdersVebMarket\orders.csv не существует на сервере!');
+  if GlobalOurFirmNo = 490 then if not (FileExists('\\SIRIUS\ImportOrdersVeb\orders.csv')) then raise Exception.Create('Файла d:\ImportOrdersVeb\orders.csv не существует на сервере!');
+  if GlobalOurFirmNo = 7419 then if not (FileExists('\\SIRIUS\ImportOrdersVebMarket\orders.csv')) then raise Exception.Create('Файла d:\ImportOrdersVebMarket\orders.csv не существует на сервере!');
 
   dmDataModule.QFO.Close;
   dmDataModule.QFO.SQL.Clear;
@@ -5025,6 +5027,13 @@ begin
   inherited;
   with TfrmListMinusPostForDebit.Create(Application) do
      ShowModal;
+end;
+
+procedure TfmMain.MoneyCompensationClick(Sender: TObject);
+begin
+  inherited;
+  with TfrmMoneyCompensation.Create(Application) do
+    ShowModal;
 end;
 
 end.

@@ -1,6 +1,6 @@
 inherited fmMain: TfmMain
-  Left = 431
-  Top = 214
+  Left = 6
+  Top = 110
   VertScrollBar.Range = 0
   Anchors = [akLeft, akTop, akRight, akBottom]
   AutoScroll = False
@@ -33,7 +33,7 @@ inherited fmMain: TfmMain
     Top = 72
     Width = 312
     Height = 24
-    Caption = #1054#1073#1085#1086#1074#1083#1077#1085#1080#1077' (6.2.71)  13.03.2017'
+    Caption = #1054#1073#1085#1086#1074#1083#1077#1085#1080#1077' (6.2.59)  22.02.2017'
     Color = clMoneyGreen
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
@@ -1042,6 +1042,10 @@ inherited fmMain: TfmMain
       object LightOfGornalRash: TMenuItem
         Caption = #1046#1091#1088#1085#1072#1083' '#1087#1083#1072#1090#1077#1078#1077#1081
         OnClick = LightOfGornalRashClick
+      end
+      object MoneyCompensation: TMenuItem
+        Caption = #1050#1086#1084#1087#1077#1085#1089#1072#1094#1080#1103' '#1044#1057
+        OnClick = MoneyCompensationClick
       end
     end
     object N143: TMenuItem

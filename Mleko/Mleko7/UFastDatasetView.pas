@@ -29,6 +29,7 @@ type
     procedure acExecuteExecute(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure FormShow(Sender: TObject);
   private
     UserQuery: TDataSet;
     OldCol, OlDir: Integer;
@@ -38,6 +39,10 @@ type
     procedure ExecuteUserQuery(Source: TStrings);
     procedure ShowHideControls;
     procedure RefreshUserQuery;
+    procedure AcceptUserStringItems(Items: TStrings; ACaption,
+      ATitle: string);
+    procedure FocusCodeEditor;
+    function PutStrInStatus(S: string; AQuote: Char): Boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -46,10 +51,13 @@ type
 
 var
   frmFastDatasetView: TfrmFastDatasetView;
+  frmFastHelpView: TfrmFastDatasetView;
 
   procedure ViewDatasetFast(
   ACaption: string; ADataset: TDataSet;
   DoExecute: Boolean = False; IsModal: Boolean = False);
+  procedure ViewUserStringItems(Items: TStrings; ACaption, ATitle: string; IsModal: Boolean = False);
+
   //procedure ExecuteScript(ACaption: string; Script: TStrings);
 
 implementation
@@ -103,6 +111,43 @@ begin
     //
     //pcView.ActivePage:= tsCode;
   end;
+end;
+
+procedure TfrmFastDatasetView.FocusCodeEditor();
+begin
+  pcView.ActivePage:= tsCode;
+  FocusControl(meCode);
+end;
+
+function TfrmFastDatasetView.PutStrInStatus(S: string; AQuote: Char): Boolean;
+var P: PChar;
+begin
+  Result:= False;
+  P := PChar(S);
+  S := AnsiExtractQuotedStr(P, AQuote);
+  if (S<>'') then
+     begin
+       ShowStatusMsg(0, S);
+       Result:= True;
+     end;  
+end;
+
+procedure TfrmFastDatasetView.AcceptUserStringItems(
+          Items: TStrings; ACaption, ATitle: string);
+begin
+  tsExecute.TabVisible:= False;
+  gbxControls.Visible:= False;
+  //sbStatus.Visible:= False;
+  meCode.ReadOnly:= True;
+  Caption:= ACaption;
+  tsCode.Caption:= ATitle;
+  if (Items.Count>0) then
+  begin
+    meCode.Lines.Assign(Items);
+    if PutStrInStatus(Items[0], '|') then
+       meCode.Lines.Delete(0);
+  end else
+  meCode.Lines.Text:= 'Справка в процессе разработки';
 end;
 
 
@@ -159,6 +204,19 @@ begin
   //frmFastDatasetView.Free;
 end;
 
+procedure ViewUserStringItems(Items: TStrings; ACaption, ATitle: string; IsModal: Boolean = False);
+begin
+  if (frmFastHelpView=nil) then
+  frmFastHelpView:= TfrmFastDatasetView.Create(Application);
+  frmFastHelpView.AcceptUserStringItems(Items, ACaption, ATitle);
+  if IsModal then
+  begin
+    frmFastHelpView.ShowModal;
+  end
+     else
+     frmFastHelpView.Show;
+end;
+
 procedure TfrmFastDatasetView.ShowHideControls();
 begin
   with gbxControls do
@@ -204,6 +262,12 @@ procedure TfrmFastDatasetView.FormKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if (Key=27) then Close;
+end;
+
+procedure TfrmFastDatasetView.FormShow(Sender: TObject);
+begin
+  if Visible and (not tsExecute.TabVisible) then
+  frmFastHelpView.FocusCodeEditor();
 end;
 
 end.

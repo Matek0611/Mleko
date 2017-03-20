@@ -1,7 +1,7 @@
 object frmFastDatasetView: TfrmFastDatasetView
-  Left = 457
-  Top = 212
-  Width = 761
+  Left = 140
+  Top = 196
+  Width = 852
   Height = 540
   Caption = 'Fast Dataset View'
   Color = clBtnFace
@@ -13,12 +13,13 @@ object frmFastDatasetView: TfrmFastDatasetView
   KeyPreview = True
   OldCreateOrder = False
   OnKeyUp = FormKeyUp
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object sbStatus: TStatusBar
     Left = 0
     Top = 49
-    Width = 745
+    Width = 836
     Height = 19
     Align = alTop
     Panels = <>
@@ -28,9 +29,9 @@ object frmFastDatasetView: TfrmFastDatasetView
   object pcView: TPageControl
     Left = 0
     Top = 68
-    Width = 745
+    Width = 836
     Height = 433
-    ActivePage = tsExecute
+    ActivePage = tsCode
     Align = alClient
     TabOrder = 1
     object tsExecute: TTabSheet
@@ -63,14 +64,14 @@ object frmFastDatasetView: TfrmFastDatasetView
       object meCode: TMemo
         Left = 0
         Top = 0
-        Width = 737
+        Width = 828
         Height = 405
         Align = alClient
-        Color = 12897193
+        Color = 15658723
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Fixedsys'
+        Font.Height = -16
+        Font.Name = 'Courier New'
         Font.Style = []
         ParentFont = False
         ScrollBars = ssBoth
@@ -81,7 +82,7 @@ object frmFastDatasetView: TfrmFastDatasetView
   object gbxControls: TGroupBox
     Left = 0
     Top = 0
-    Width = 745
+    Width = 836
     Height = 49
     Align = alTop
     Caption = 'Controls'

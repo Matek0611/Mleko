@@ -13,6 +13,7 @@ type
     procedure WriteFloatCell(const AValue: Double);
     procedure WriteStringCell(const AValue: String);
     procedure IncColRow;
+    procedure WriteCellText(Text: String);
   protected
     procedure WritePrefix; override;
     procedure WriteSuffix; override;
@@ -134,6 +135,20 @@ begin
   end;
 end;
 
+procedure TCustomDataGridExportAsXLS.WriteCellText(Text: String);
+var s: String; i, c: Integer; f: Double;
+begin
+  Val(Text, i, c);
+  if (c=0) then
+     WriteIntegerCell(i) else
+     begin
+       f:= StrToFloatDef(Text, GetNan());
+       if not IsNan(f) then
+          WriteFloatCell(f) else
+          WriteStringCell(Text);
+     end;
+end;
+
 procedure TCustomDataGridExportAsXLS.WriteDataCell(Column: TColumnEh; FColCellParamsEh: TColCellParamsEh);
 var s: String; i, c: Integer; f: Double; d: TDate;
 begin
@@ -144,19 +159,7 @@ begin
   else if Column.Field.IsNull then
     WriteBlankCell
   else
-    with Column.Field do
-    begin
-      s:= FColCellParamsEh.Text;
-      Val(s, i, c);
-      if (c=0) then
-         WriteIntegerCell(i) else
-         begin
-           f:= StrToFloatDef(s, GetNan());
-           if not IsNan(f) then
-              WriteFloatCell(f) else
-              WriteStringCell(s);
-         end;
-    end;
+    WriteCellText(FColCellParamsEh.Text);
 end;
 
 procedure TCustomDataGridExportAsXLS.WriteFooterCell(DataCol, Row: Integer;
@@ -166,7 +169,7 @@ begin
   if Column.UsedFooter(Row).ValueType in [fvtSum, fvtCount] then
     WriteFloatCell(FooterValues[Row * ExpCols.Count + DataCol])
   else
-    WriteStringCell(Text);
+    WriteCellText(Text);
 end;
 
 procedure TCustomDataGridExportAsXLS.ExportToStream(AStream: TStream;

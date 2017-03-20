@@ -1,6 +1,6 @@
 inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
-  Left = 15
-  Top = 51
+  Left = -6
+  Top = 78
   Width = 1014
   Height = 707
   Caption = #1040#1085#1072#1083#1080#1079' '#1076#1077#1073#1080#1090#1086#1088#1089#1082#1086#1081' '#1079#1072#1076#1086#1083#1078#1077#1085#1085#1086#1089#1090#1080
@@ -2179,12 +2179,7 @@ inherited frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt
   end
   object quTest: TMSQuery
     Connection = dmDataModule.DB
-    Left = 560
-    Top = 272
-  end
-  object quFilter: TMSQuery
-    MasterSource = dsDebt
-    Left = 488
-    Top = 352
+    Left = 512
+    Top = 296
   end
 end

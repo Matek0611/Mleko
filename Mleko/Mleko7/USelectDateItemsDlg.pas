@@ -182,6 +182,7 @@ end;
 procedure TfrmSelectDateItemsDlg.FormCreate(Sender: TObject);
 begin
   Caption:= DefaultCaption;
+  dtPicker.Date:= Date();
 end;
 
 end.

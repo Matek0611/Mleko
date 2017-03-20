@@ -29,9 +29,9 @@ object frmSelectDateItemsDlg: TfrmSelectDateItemsDlg
       Top = 10
       Width = 186
       Height = 21
-      Date = 42787.499015497680000000
+      Date = 0.499015497676737100
       Format = 'dd.MM.yyyy'
-      Time = 42787.499015497680000000
+      Time = 0.499015497676737100
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0

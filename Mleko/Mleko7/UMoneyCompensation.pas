@@ -1,6 +1,6 @@
 {$DEFINE SystemMenu}
-
-unit UAnalyzeDebitDebt;
+// Money
+unit UMoneyCompensation;
 
 interface
 
@@ -17,20 +17,20 @@ type
 
 
   TParamType = ( ptNone, ptUserNo, ptSPID, ptOwnerName, ptAllTypes,
-                 ptExpansion, ptSelection,
+                 ptExpansion, ptSelection, ptOnlyTotals,
                  ptDisableExclusion, ptUseColnPrice, ptDisableZeroSumAcn,
                  ptFormDate, ptBegDate, ptStartDate, ptVeryOld,
                  ptOrderBy,
                  ptEndDate);
 
-  TSelectionType = ( stOtdel, stVid, stSotrud, stBuh, stPost, stNakl, stAddress,
-                     stDoc, stDayNakl, stDayOpl, stDayExp);
+  TSelectionType = ( stDepart, stAgent, stDocType, stDocNum, stDocDate,
+                     stPayType, stWorker, stExpenseItem, stNakl);
 
   TParamIndexes = array[TParamType] of Integer;
 
   TParamKeys = array[TParamType] of string;
 
-  TfrmAnalyzeDebitDebt = class(TCFLMLKCustomForm)
+  TfrmMoneyCompensation = class(TCFLMLKCustomForm)
     pnlBottom: TPanel;
     Panel3: TPanel;
     dsDebt: TMSDataSource;
@@ -41,8 +41,6 @@ type
     dlgSaveExportToExcel: TSaveDialog;
     sbStatus: TStatusBar;
     sthSource: TStrHolder;
-    quSession: TMSQuery;
-    quSessionParamValue: TIntegerField;
     pnlControls: TPanel;
     vleSelections: TValueListEditor;
     pmExpansion: TPopupMenu;
@@ -54,23 +52,6 @@ type
     clbExpansions: TCheckListBox;
     pmSelections: TPopupMenu;
     mnuDeleteAllSelections: TMenuItem;
-    quDebtOtdelName: TStringField;
-    quDebtVidName: TStringField;
-    quDebtSotrudName: TStringField;
-    quDebtBuhName: TStringField;
-    quDebtAgentName: TStringField;
-    quDebt_NomNakl: TIntegerField;
-    quDebtNomNakl: TStringField;
-    quDebtPostAddress: TStringField;
-    quDebtDocTypeName: TStringField;
-    quDebtSumma: TFloatField;
-    quDebtSummaDolg: TFloatField;
-    quDebt_DateNakl: TIntegerField;
-    quDebtDateNakl: TStringField;
-    quDebt_DateOpl: TIntegerField;
-    quDebtDateOpl: TStringField;
-    quDebt_DayExp: TIntegerField;
-    quDebtDayExp: TStringField;
     spl3: TSplitter;
     acRefresh: TAction;
     acExportToExcel: TAction;
@@ -82,20 +63,35 @@ type
     acGetSettingsDlg: TAction;
     mnuShowHide: TMenuItem;
     acToggleSettingsVisibility: TAction;
-    quDebt_OtdelName: TIntegerField;
-    quDebt_VidName: TIntegerField;
-    quDebt_SotrudName: TIntegerField;
-    quDebt_BuhName: TIntegerField;
-    quDebt_AgentName: TIntegerField;
-    quDebt_PostAddress: TIntegerField;
-    quDebt_DocTypeName: TIntegerField;
-    quDebtSumAc: TFloatField;
-    quDebtSumDAc: TFloatField;
-    quDebt_CurHd: TIntegerField;
-    quDebtCurHd: TStringField;
-    quDebt_CurAc: TIntegerField;
-    quDebtCurAc: TStringField;
     quTest: TMSQuery;
+    quDebt_key: TIntegerField;
+    quDebt_Count: TIntegerField;
+    quDebtID: TIntegerField;
+    quDebtpkey: TStringField;
+    quDebtSumma: TFloatField;
+    quDebtFreeSumma: TFloatField;
+    quDebt_Depart: TIntegerField;
+    quDebtDepart: TStringField;
+    quDebt_Agent: TSmallintField;
+    quDebtAgent: TStringField;
+    quDebt_DocType: TIntegerField;
+    quDebtDocType: TStringField;
+    quDebtDocNum: TIntegerField;
+    quDebtDocDate: TDateTimeField;
+    quDebt_PayType: TSmallintField;
+    quDebtPayType: TStringField;
+    quDebt_Worker: TIntegerField;
+    quDebtWorker: TStringField;
+    quDebt_Expense: TIntegerField;
+    quDebtExpense: TStringField;
+    quDebtDescription: TStringField;
+    btnHelp: TButton;
+    btnSetExPayTypes: TButton;
+    sthHelp: TStrHolder;
+    cbxOnlyTotals: TCheckBox;
+    quDebt_FreeSumma: TFloatField;
+    quDebt_DocDate: TIntegerField;
+    quDebt_Summa: TFloatField;
     procedure dbgDebtsTitleBtnClick(Sender: TObject; ACol: Integer; Column: TColumnEh);
     procedure dbgDebtsKeyPress(Sender: TObject; var Key: Char);
     procedure dbgDebtsKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -126,6 +122,11 @@ type
     procedure quDebtFilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure vleSelectionsKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure btnHelpClick(Sender: TObject);
+    procedure btnSetExPayTypesClick(Sender: TObject);
+    procedure dbgDebtsGetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure cbxOnlyTotalsClick(Sender: TObject);
   private
     { Private declarations }
     cbxExpansion: TCheckBox;
@@ -188,7 +189,6 @@ type
     function CreateSQLContainer(SetCaption: string; GetSQLText: Boolean = True): TForm;
     procedure VerifyNaklNoEditText;
     procedure VerifyCitDBComboEditText(cit: TcitDBComboEdit; ShowInStatus: Boolean = True);
-    function IsEmptyDatasetOfCitDBComboEdit(cit: TcitDBComboEdit): Boolean;
     procedure SetDefaultExpansions;
     procedure SetAllExpansions(Value: Boolean);
     procedure cbxExpansionClick(Sender: TObject);
@@ -199,7 +199,9 @@ type
     procedure SetDefaultEditStyleForSelections;
     procedure PushEditButtonForSelection;
     procedure DeleteAllSelections;
-    function SelectMLKItems(sel: TSelectionType; ParamName, ParamCode: string): Integer;
+    function SelectMLKItems(
+    sel: TSelectionType; ParamName, ParamCode: string;
+    SQLFilter: string = ''): Integer;
     procedure TransposeSelections;
     procedure SetDefaultTransposeParams;
     procedure ExecScript;
@@ -234,9 +236,14 @@ type
     procedure VerifySelectedTextValues(sel: TSelectionType);
     function VerifySelectedTextValuesEx(sel: TSelectionType;
          CheckDataType: TVarType = varAny; UseKeyValues: Boolean = True;
-         TextToKeys: Boolean = False): string;
+         TextToKeys: Boolean = False; IntArray: PDynIntegerArray = nil): string;
     procedure VerifyNumberSelection(sel: TSelectionType);
     procedure SetDefaultOrderFullStr;
+    procedure ShowHelpWindow;
+    procedure SetExcludedPayTypes;
+    procedure SetDefaultSelections(sel: TSelectionType;
+      SelIntArray: array of Integer);
+    procedure SetSelectionStrByIndex(Index: Integer; S: String);
   public
     { Public declarations }
     procedure RefreshResults(SetMaxCount: Boolean = False);
@@ -245,13 +252,14 @@ type
   end;
 
 var
-  frmAnalyzeDebitDebt: TfrmAnalyzeDebitDebt;
+  frmMoneyCompensation: TfrmMoneyCompensation;
 
 implementation
 
 uses
   data, About, StrUtils, DateUtils, 
-  UFastDatasetView, USelectDateItemsDlg, UListMinusPostForDebit, UColumnFilterDlg;
+  UFastDatasetView, USelectDateItemsDlg, UListMinusPostForDebit,
+  UColumnFilterDlg, ListMinusPaymentForJournalOfExpenses;
 
 {$R *.dfm}
 
@@ -268,7 +276,8 @@ const
   AllowedFilterIndexes = [0, 1, 2, 3, 4, 10]; // used for filtering
   AllowedIntIndexes = [5, 8, 9, 10]; // used for sorting
 
-  AllowedIntSelectionTypes = [stOtdel, stVid, stSotrud, stBuh, stPost, stNakl, stAddress];
+  AllowedIntSelectionTypes = [ stDepart, stAgent, stDocType, stDocNum,
+                               stPayType, stWorker, stExpenseItem];
 
   idCurRecordCount = 0;
   idMaxRecordCount = 1;
@@ -292,7 +301,8 @@ const
   idEndDate = 'p_date_end';
   idStartDate = 'DateStart';
   dtDateStart = '01.01.2000';
-  dtBegDate = '01.01.1900';
+  dtBegDate = '01.02.2017';
+  idOnlyTotals = 'OnlyTotals';
 
   idVeryOldDay = 'VeryOldDay';
   idVeryOldVal = -10000;
@@ -303,6 +313,10 @@ const
 
   idDayNaklAttr = 'накладной';
   idDayOplAttr = 'оплаты';
+
+  //Bisque  = FFE4C4: Exchange first and last byte
+  clSumBackColor: TColor = $C4E4FF;
+  clSelColumnColor: TColor = $00EEEEE3;
 
 //  idBegDate = 'p_date_nakl_beg';
 //  idEndDate = 'p_date_nakl_end';
@@ -522,10 +536,21 @@ begin
     Delete(Result, Length(Result), 1);
 end;
 
-procedure PrepareStrValues(Variables: string; Keys: TStrings);
+procedure DequoteStringItems(Items: TStrings; Dequote: Char);
+var i: Integer;
+begin
+for i := 0 to Items.Count-1 do
+  begin
+    Items[i]:= AnsiDequotedStr(Trim(Items[i]), Dequote);
+  end;
+end;
+
+procedure PrepareStrValues(Variables: string; Keys: TStrings; Dequote: Char = '"');
 begin
   Keys.Clear;
-  ExtractStrings([','], [' ', #8, #9], PAnsiChar(Variables), Keys);
+  ExtractStrings([','], [], PAnsiChar(Variables), Keys);
+  if Dequote<>#0 then
+     DequoteStringItems(Keys, Dequote);
 end;
 
 function VerifyIntKeys(Values: string; Keys: TStrings; DefValue: Integer = MaxInt): Integer;
@@ -586,12 +611,13 @@ begin
   m := 0;
   for i := 0 to n - 1 do
   begin
-    s := (AnsiDequotedStr(Trim(List[i]), '"'));
-    if AsInteger then
-    begin
-      s:= Trim(s);
-      List[i]:= s;
-    end;
+    s := Trim(AnsiDequotedStr(Trim(List[i]), '"'));
+    List[i]:= s;
+//    if AsInteger then
+//    begin
+//      s:= Trim(s);
+//      List[i]:= s;
+//    end;
     c := 0;
     List.Objects[i] := Pointer(InitValue);
     if AsInteger then
@@ -639,7 +665,7 @@ begin
                  if Keys.IndexOf(IntToStr(v))<0 then
                     Keys.Add(IntToStr(v)) else else
                  if Keys.IndexOf(s)<0 then
-                    Keys.Add(s);
+                    Keys.AddObject(s, Pointer(v));
         Inc(Result);
       end;
       dmDataModule.QFO.Next;
@@ -648,22 +674,22 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.DisableParams();
+procedure TfrmMoneyCompensation.DisableParams();
 begin
   Inc(DisableCount);
 end;
 
-procedure TfrmAnalyzeDebitDebt.EnableParams();
+procedure TfrmMoneyCompensation.EnableParams();
 begin
   Dec(DisableCount);
 end;
 
-procedure TfrmAnalyzeDebitDebt.ShowStatusMsg(Index: Integer; Msg: string);
+procedure TfrmMoneyCompensation.ShowStatusMsg(Index: Integer; Msg: string);
 begin
   sbStatus.Panels[Index].Text := Msg;
 end;
 
-procedure TfrmAnalyzeDebitDebt.ShowTotalSumValues();
+procedure TfrmMoneyCompensation.ShowTotalSumValues();
 var i: Integer; ColObj: TColumnObject;
 begin
   for i:= 0 to ColObjs.GetAggregatedCount-1 do
@@ -674,7 +700,7 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.ShowRecordCount(SetMaxCount: Boolean = False);
+procedure TfrmMoneyCompensation.ShowRecordCount(SetMaxCount: Boolean = False);
 //var RowCount: Integer;
 begin
   if (MaxRecordCount = 0) or (quDebt.Active and (quDebt.RecordCount>MaxRecordCount)) or
@@ -698,16 +724,16 @@ begin
     ShowStatusMsg(0, 'Всего: 0');
     ShowStatusMsg(1, '');
   end;
-  ShowTotalSumValues();
+//  ShowTotalSumValues();
   ShowStatusMsg(idTime, Format(' %8.2f сек', [Tracer.LastTime]));
 end;
 
-procedure TfrmAnalyzeDebitDebt.SetParameter(Index: Integer; Key, Value: string);
+procedure TfrmMoneyCompensation.SetParameter(Index: Integer; Key, Value: string);
 begin
   ParamList[Index] := idParamPrefix + Key + idParamPostfix + Value;
 end;
 
-function TfrmAnalyzeDebitDebt.SetParameterByType(ParamType: TParamType; Value:
+function TfrmMoneyCompensation.SetParameterByType(ParamType: TParamType; Value:
   string): string;
 begin
   if (ParamType<>ptOrderBy) then
@@ -795,57 +821,58 @@ begin
 //  TSelectionType = ( stOtdel, stVid, stSotrud, stBuh, stPost, stNakl, stAddress,
 //                     stDoc, stDayNakl, stDayOpl, stDayExp);
   case sel of
-  stOtdel:
+  stDepart:
     begin
       KeyField:= 'OTDELNO'; TextField:= 'OTDELNAME';
     end;
-  stVid:
-    begin
-      KeyField:= 'VIDNO'; TextField:= 'VIDNAME';
-    end;
-  stSotrud:
+  stWorker:
     begin
       KeyField:= 'SOTRUDNO'; TextField:= 'SOTRUDNAME';
     end;
-  stBuh:
-    begin
-      KeyField:= 'BUH'; TextField:= 'BUH_TYPE_NAME';
-    end;
-  stPost:
+  stAgent:
     begin
       KeyField:= 'POSTNO'; TextField:= 'NAME'; Table:= 'POST';
-    end;
-  stNakl:
-    begin
-      KeyField:= 'NAKLNO'; TextField:= 'NOM'; Table:= 'NAKLR';
-    end;
-  stAddress:
-    begin
-      KeyField:= 'ID'; TextField:= 'ADDRESS';
     end;
   end;
 end;
 
-function TfrmAnalyzeDebitDebt.VerifySelectedTextValuesEx(
+function TfrmMoneyCompensation.VerifySelectedTextValuesEx(
          sel: TSelectionType;
          CheckDataType: TVarType = varAny;
          UseKeyValues: Boolean = True;
-         TextToKeys: Boolean = False): string;
+         TextToKeys: Boolean = False;
+         IntArray: PDynIntegerArray = nil): string;
 var Table, Variables, KeyField, TextField: string;
     Keys: TStrings; DataType: TVarType; n: Integer;
     UseKeyField, AsInteger: Boolean; sql: String;
 begin
-  Variables:= GetSelectionStrByIndex(Ord(sel));
-  Variables:= AnsiDequotedStr(Variables, '"');
-  Result:= Trim(Variables);
-  PrepareStrValues(Variables, Temp);
-  DataType:= DetectDataTypeOfItems(Temp);
+  if (IntArray=nil) then
+  begin
+    Variables:= GetSelectionStrByIndex(Ord(sel));
+    //Variables:= AnsiDequotedStr(Variables, '"');
+    //Result:= Trim(Variables);
+    PrepareStrValues(Variables, Temp, '"');
+    DataType:= DetectDataTypeOfItems(Temp);
+    Result:= GetDelimText(Temp, ', ', '"');    
+  end else
+  begin
+    Result:= '';
+    DataType:= varInteger;
+    IntArrayToStrings(IntArray^, Temp);
+    Variables:= GetDelimText(Temp, ',');
+  end;
   if (DataType = varInteger) or (DataType = varString) and
   ((CheckDataType=varAny) or (CheckDataType=DataType)) then
   if (Temp.Count>0) then
   begin
     UseKeyField:= (sel<>stNakl) and (DataType=varInteger);
     GetKeyAndTextFields(sel, KeyField, TextField, Table);
+    if (sel=stDocNum) then
+       begin
+         Keys:= AList.GetChild(Ord(sel));
+         if (Keys<>nil) then Keys.Assign(Temp);
+         Exit;
+       end;  
     if ((KeyField<>'') and (TextField<>'')) then
     begin
       if (Table='') then
@@ -856,48 +883,49 @@ begin
               sql:= NaklNo_Template else
               sql:= SQL_Template;
            Keys:= AList.GetChild(Ord(sel));
+           if (Keys=nil) then Exit;
            AsInteger:= (DataType=varInteger);
            if (CheckDataType = varAny) then UseKeyValues:= not AsInteger;
            n:= VerifyTextValues(
             Variables, Table, KeyField, TextField, Temp,
             Keys, sql, AsInteger, 20, -1,
             UseKeyValues, UseKeyField, TextToKeys);
-           Result:= GetDelimText(Keys, ', ');
+           Result:= GetDelimText(Keys, ', ', '"');
          end;
     end;
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.VerifySelectedTextValues(sel: TSelectionType);
+procedure TfrmMoneyCompensation.VerifySelectedTextValues(sel: TSelectionType);
 begin
   VerifyTextValues(
   GetSelectionStrByIndex(Ord(stNakl)), 'NaklR', 'NaklNo', 'Nom', Temp,
   AList.GetChild(Ord(stNakl)), NaklNo_Template, True, 20, -1, False);
 end;
 
-procedure TfrmAnalyzeDebitDebt.VerifyInvoiceNumbers();
+procedure TfrmMoneyCompensation.VerifyInvoiceNumbers();
 begin
   VerifyTextValues(
   GetSelectionStrByIndex(Ord(stNakl)), 'NaklR', 'NaklNo', 'Nom', Temp,
   AList.GetChild(Ord(stNakl)), NaklNo_Template, True, 20, -1, False);
 end;
 
-procedure TfrmAnalyzeDebitDebt.VerifyIntValues(sel: TSelectionType; DefValue: Integer = MaxInt);
+procedure TfrmMoneyCompensation.VerifyIntValues(sel: TSelectionType; DefValue: Integer = MaxInt);
 var Child: TStrings;
 begin
   Child:= AList.GetChild(Ord(sel));
   VerifyIntKeys(
   GetSelectionStrByIndex(Ord(sel)), Child, DefValue);
-  if (sel=stDayExp) and (Child.Count=0) then Child.Add(IntToStr(DefValue));
+  if (sel=stDocDate) and (Child.Count=0) then Child.Add(IntToStr(DefValue));
 end;
 
-procedure TfrmAnalyzeDebitDebt.VerifyDateValues(sel: TSelectionType);
+procedure TfrmMoneyCompensation.VerifyDateValues(sel: TSelectionType);
 begin
   VerifyDateKeys(
   GetSelectionStrByIndex(Ord(sel)), AList.GetChild(Ord(sel)), StrToDate(dtDateStart));
 end;
 
-procedure TfrmAnalyzeDebitDebt.VerifyNumberSelection(sel: TSelectionType);
+procedure TfrmMoneyCompensation.VerifyNumberSelection(sel: TSelectionType);
 var Vars: string; Keys: TStrings;
 begin
   Vars:= Trim(GetSelectionStrByIndex(Ord(sel)));
@@ -907,7 +935,7 @@ begin
   if (Vars='') then Keys.Clear;
 end;
 
-procedure TfrmAnalyzeDebitDebt.VerifyEmptySelections();
+procedure TfrmMoneyCompensation.VerifyEmptySelections();
 var i: Integer; sel: TSelectionType;
 begin
 for i := 0 to AList.Count-1 do
@@ -916,23 +944,22 @@ for i := 0 to AList.Count-1 do
      begin
        sel:= TSelectionType(i);
        case sel of
-         stDayNakl, stDayOpl: VerifyDateValues(sel);
-         stDayExp: VerifyIntValues(sel, idVeryOldVal);
+         stDocDate: VerifyDateValues(sel);
        end;
      end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.SetParameterByTypeEx(pt: TParamType);
+procedure TfrmMoneyCompensation.SetParameterByTypeEx(pt: TParamType);
 var s, p: string;
 begin
   p:= '';
   case pt of
-    ptAllTypes:
-    if not TestMode then
-      S := idInsertAllTypes +  idInsertAllTypesValues else
-      S := idInsertAllTypes +  idInsert_All_Types_Values;
-    ptExpansion:
-    S := idInsertExpansions + CollectBitValuesToString(clbExpansions);
+//    ptAllTypes:
+//    if not TestMode then
+//      S := idInsertAllTypes +  idInsertAllTypesValues else
+//      S := idInsertAllTypes +  idInsert_All_Types_Values;
+//    ptExpansion:
+//    S := idInsertExpansions + CollectBitValuesToString(clbExpansions);
     ptSelection:
     begin
       if not DisableVerification then
@@ -947,7 +974,7 @@ begin
        ParamList.Add(S);
 end;
 
-procedure TfrmAnalyzeDebitDebt.ResetGridState();
+procedure TfrmMoneyCompensation.ResetGridState();
 begin
   ClearAllSortMarkers;
   SetDefaultOrderFullStr;
@@ -958,7 +985,7 @@ begin
 end;
 
 
-procedure TfrmAnalyzeDebitDebt.ApplyChanges();
+procedure TfrmMoneyCompensation.ApplyChanges();
 begin
   if TestMode then
   begin
@@ -976,7 +1003,7 @@ begin
   SetParameters;
 end;
 
-function TfrmAnalyzeDebitDebt.CreateSQLContainer(SetCaption: string; GetSQLText:
+function TfrmMoneyCompensation.CreateSQLContainer(SetCaption: string; GetSQLText:
   Boolean = True): TForm;
 begin
   Result := TAboutBox.Create(Application);
@@ -997,7 +1024,7 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.ShowScript();
+procedure TfrmMoneyCompensation.ShowScript();
 begin
   quTest.Close;
   try
@@ -1007,7 +1034,7 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.ExecScript();
+procedure TfrmMoneyCompensation.ExecScript();
 begin
   //ExecuteScript('Results of script execution', quDebt.SQL);
   quTest.Close;
@@ -1018,7 +1045,7 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.RefreshResults(SetMaxCount: Boolean = False);
+procedure TfrmMoneyCompensation.RefreshResults(SetMaxCount: Boolean = False);
 begin
   inherited;
   Tracer.Start;
@@ -1035,13 +1062,13 @@ begin
   quDebt.EnableControls;
 end;
 
-procedure TfrmAnalyzeDebitDebt.SetDefaultOrderFullStr();
+procedure TfrmMoneyCompensation.SetDefaultOrderFullStr();
 begin
   OrderFullStr:= idOrderBy + ' ' + idDefaultSortFields;
 end;
 
 
-procedure TfrmAnalyzeDebitDebt.DetectParamIndexes();
+procedure TfrmMoneyCompensation.DetectParamIndexes();
 var
   pt: TParamType;
 begin
@@ -1052,6 +1079,7 @@ begin
   ParamKeys[ptBegDate] := idBegDate;
   ParamKeys[ptStartDate] := idStartDate;
   ParamKeys[ptVeryOld] := idVeryOldDay;
+  ParamKeys[ptOnlyTotals] := idOnlyTotals;
   ParamKeys[ptDisableExclusion] := idDisableExclusion;
   ParamKeys[ptUseColnPrice] := idUseColnPrice;
   ParamKeys[ptDisableZeroSumAcn] := idDisableZeroSumAcn;
@@ -1064,18 +1092,23 @@ begin
   ParamList := sthSource.Strings;
 //  for pt := Low(TParamType) to High(TParamType) do
 //    ParamIndexes[pt] := GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
-   for pt := ptDisableExclusion to ptVeryOld do
+//   for pt := ptDisableExclusion to ptVeryOld do
+//   ParamIndexes[pt]:= GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
+   for pt := ptFormDate to ptStartDate do
    ParamIndexes[pt]:= GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
 
-   ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
-   SetDefaultOrderFullStr;
+   ParamIndexes[ptOnlyTotals]:=
+   GetStartPosIndex(ParamList, idParamPrefix + idOnlyTotals);
 
-   ParamIndexes[ptExpansion]:= GetStartPosIndex(ParamList, idInsertExpansions);
+//   ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
+//   SetDefaultOrderFullStr;
+
+//   ParamIndexes[ptExpansion]:= GetStartPosIndex(ParamList, idInsertExpansions);
    ParamIndexes[ptSelection]:= GetStartPosIndex(ParamList, idInsertSelections);
-   ParamIndexes[ptAllTypes]:= GetStartPosIndex(ParamList, idInsertAllTypes);
+//   ParamIndexes[ptAllTypes]:= GetStartPosIndex(ParamList, idInsertAllTypes);
 end;
 
-procedure TfrmAnalyzeDebitDebt.SetParameters();
+procedure TfrmMoneyCompensation.SetParameters();
 var
   pt, ptHigh, ptLow: TParamType;
 begin
@@ -1102,23 +1135,25 @@ begin
 //        SetParameterByType(pt, IntToStr(CollectBitValuesEx(vleSelections)));
       ptFormDate:
           SetParameterByType(pt, GetDateStrByIndex(0, True));
-      ptBegDate:
-          //SetParameterByType(pt, GetDateStrByIndex(1, True));
-          SetParameterByType(pt, QuotedStr(dtBegDate));
+//      ptBegDate:
+//          //SetParameterByType(pt, GetDateStrByIndex(1, True));
+//          SetParameterByType(pt, QuotedStr(dtBegDate));
       ptStartDate:
           SetParameterByType(pt, QuotedStr(dtDateStart));
-      ptVeryOld:
-          SetParameterByType(pt, IntToStr(idVeryOldVal));
-      ptDisableExclusion:
-          SetParameterByType(pt, IntToStr(Ord(DisableExclusion)));
-      ptUseColnPrice:
-          SetParameterByType(pt, IntToStr(Ord(UseColnPrice)));
-      ptDisableZeroSumAcn:
-          SetParameterByType(pt, IntToStr(Ord(DisableZeroSumAcn)));
+//      ptVeryOld:
+//          SetParameterByType(pt, IntToStr(idVeryOldVal));
+      ptOnlyTotals:
+            SetParameterByType(pt, IntToStr(Ord(cbxOnlyTotals.Checked)));
+//      ptDisableExclusion:
+//          SetParameterByType(pt, IntToStr(Ord(DisableExclusion)));
+//      ptUseColnPrice:
+//          SetParameterByType(pt, IntToStr(Ord(UseColnPrice)));
+//      ptDisableZeroSumAcn:
+//          SetParameterByType(pt, IntToStr(Ord(DisableZeroSumAcn)));
       ptOrderBy:
       begin
-        ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
-        SetParameterByType(pt, OrderFullStr);
+//        ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
+//        SetParameterByType(pt, OrderFullStr);
       end;
 //      ptEndDate:
 //          SetParameterByType(pt, GetDateStrByIndex(2, True));
@@ -1127,7 +1162,7 @@ begin
     end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.ExecuteScript();
+procedure TfrmMoneyCompensation.ExecuteScript();
 var
   Ctrl_Down, Shift_Down: Boolean;
 begin
@@ -1148,13 +1183,13 @@ begin
     RefreshResults;
 end;
 
-function TfrmAnalyzeDebitDebt.EnableExpansion(Index: Integer): Boolean;
+function TfrmMoneyCompensation.EnableExpansion(Index: Integer): Boolean;
 begin
   Result:= (Index>=0) and (Index<clbExpansions.Items.Count) and
             clbExpansions.Checked[Index];
 end;
 
-function TfrmAnalyzeDebitDebt.GetSortField(const FieldName: String; Index: Integer): String;
+function TfrmMoneyCompensation.GetSortField(const FieldName: String; Index: Integer): String;
 var Field: TField;
 begin
   Result:= FieldName;
@@ -1165,7 +1200,7 @@ begin
      end;
 end;
 
-function TfrmAnalyzeDebitDebt.GetOrderFields(
+function TfrmMoneyCompensation.GetOrderFields(
          var FieldName: String; Index: Integer; EnableSortField: Boolean = True): String;
 begin
   Result:= idDefaultSortFields;
@@ -1180,7 +1215,7 @@ begin
   Result:= GetDelimText(Temp, ', ');
 end;
 
-procedure TfrmAnalyzeDebitDebt.GetFieldValues(Items, Keys: TStrings; DataSet: TDataSet; MainFieldStr, KeyFieldStr: String);
+procedure TfrmMoneyCompensation.GetFieldValues(Items, Keys: TStrings; DataSet: TDataSet; MainFieldStr, KeyFieldStr: String);
 var MainField: TField; SKey: String; i, v: Integer;
 begin
   Items.Clear; Keys.Clear; SortedKeys.Clear;
@@ -1211,7 +1246,7 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.AcceptFilterValues(IntKeys: TSortedIntList; StrKeys: TStrings);
+procedure TfrmMoneyCompensation.AcceptFilterValues(IntKeys: TSortedIntList; StrKeys: TStrings);
 var i: Integer;
 begin
 //  for i := 0 to FieldVals.Count-1 do
@@ -1227,7 +1262,7 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.SortRowsByAllowedColumn(Column: TColumnEh; Dir: Integer = 0);
+procedure TfrmMoneyCompensation.SortRowsByAllowedColumn(Column: TColumnEh; Dir: Integer = 0);
 var
   OrderFields, MainFieldStr, KeyFieldStr: String;
   Old_Dir, Old_Col, ACol: Integer;
@@ -1257,7 +1292,7 @@ begin
 end;
 
 
-procedure TfrmAnalyzeDebitDebt.ClearAllSortMarkers();
+procedure TfrmMoneyCompensation.ClearAllSortMarkers();
 var i: Integer;
 begin
 for i := 0 to dbgDebts.Columns.Count-1 do
@@ -1266,7 +1301,7 @@ for i := 0 to dbgDebts.Columns.Count-1 do
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.AfterColumnFilterSelection(SelCount: Integer);
+procedure TfrmMoneyCompensation.AfterColumnFilterSelection(SelCount: Integer);
 begin
   if (SelCount>0) then
        begin
@@ -1276,7 +1311,7 @@ begin
        end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.RefreshFilterList(Column: TColumnEh);
+procedure TfrmMoneyCompensation.RefreshFilterList(Column: TColumnEh);
 var Rect: TRect; P: PRect; Ptr: Pointer;
     Info: TColumnObjectInfo; RootName: string;
 begin
@@ -1304,7 +1339,7 @@ begin
        end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.FilteringEvent(Sender: TObject);
+procedure TfrmMoneyCompensation.FilteringEvent(Sender: TObject);
 var Option: Integer;
 begin
   Option:= Integer(Sender);
@@ -1342,7 +1377,7 @@ begin
        end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.dbgDebtsTitleBtnClick(Sender: TObject; ACol:
+procedure TfrmMoneyCompensation.dbgDebtsTitleBtnClick(Sender: TObject; ACol:
   Integer; Column: TColumnEh);
 var
   Rect: TRect;  P: TPoint; SelCount, Old_Col, Sel_Count: Integer;
@@ -1361,7 +1396,7 @@ begin
     SortRowsByAllowedColumn(Column);
 end;
 
-procedure TfrmAnalyzeDebitDebt.dbgDebtsKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmMoneyCompensation.dbgDebtsKeyPress(Sender: TObject; var Key: Char);
 var
   Found: boolean;
 begin
@@ -1382,7 +1417,7 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.dbgDebtsKeyDown(Sender: TObject; var Key: Word;
+procedure TfrmMoneyCompensation.dbgDebtsKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
@@ -1392,17 +1427,21 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.ExportToExcel;
+procedure TfrmMoneyCompensation.ExportToExcel;
 var
   Settings: TFormatSettings;
+  FName: string;
 begin
   inherited;
   if (dlgSaveExportToExcel.FileName = '') then
   begin
     Settings.DateSeparator := '-';
-    Settings.ShortDateFormat := 'dd-mm-yy';
+    Settings.ShortDateFormat := 'yyyy-mm-dd';
+    if cbxOnlyTotals.Checked then
+       FName:=  'Комп_ДС_Итоги_' else
+       FName:= 'Компенсация_ДС_';
     dlgSaveExportToExcel.FileName := ExtractFilePath(Application.ExeName) +
-      'Дебит_задолж_' + DateToStr(Date(), Settings);
+      FName + DateToStr(Date(), Settings);
   end;
   if dlgSaveExportToExcel.Execute then
   begin
@@ -1419,13 +1458,33 @@ begin
 end;
 
 
-procedure TfrmAnalyzeDebitDebt.FillSourceList();
+procedure TfrmMoneyCompensation.FillSourceList();
 begin
   quDebt.Close;
   Source.Assign(quDebt.SQL);
 end;
 
-procedure TfrmAnalyzeDebitDebt.FillComponentLists();
+procedure TfrmMoneyCompensation.SetDefaultSelections(sel: TSelectionType; SelIntArray: array of Integer);
+var S: string; Values: TDynIntegerArray;
+    Keys: TStrings;
+begin
+//       "АУП", "Прочий-ДДС"
+//       s:= VerifySelectedTextValuesEx(
+//       sel, varAny, sel=stNakl);
+
+  StackToDynArray(SelIntArray, Values);
+  S:= VerifySelectedTextValuesEx(sel, varAny, False, False, @Values);
+  if (S<>'') then
+  begin
+    SetSelectionStrByIndex(Ord(sel), S);
+    Keys:= AList.GetChild(Ord(sel));
+    StringObjectsToDynArray(Keys, Values);
+    IntArrayToStrings(Values, Keys);
+  end;
+end;
+
+
+procedure TfrmMoneyCompensation.FillComponentLists();
 
   procedure FillExpansionList();
   begin
@@ -1434,7 +1493,7 @@ procedure TfrmAnalyzeDebitDebt.FillComponentLists();
 
   procedure FillSelectionList();
   begin
-
+    SetDefaultSelections(stDepart, [35]);
   end;
 
   procedure FillArrayList();
@@ -1461,21 +1520,26 @@ procedure TfrmAnalyzeDebitDebt.FillComponentLists();
   var i, n, k: Integer;
   begin
     Columns:= dbgDebts.Columns;
-    n:= 0; k:= clbExpansions.Items.Count;
-    for  i:= 0 to k-1 do
-      if (IndexOfColumnTag(i)>=0) then
-      begin
-        ColObjs.AddColumnObject(Column);
-        Inc(n);
-      end;
-    if (n<>k) then
-       raise Exception.Create('All Expansions items should be used');
+//    n:= 0; k:= Columns.Count;
+//    for  i:= 0 to k-1 do
+//    begin
+//      Column:= Columns[i];
+//      if (Column.Tag>0) then
+//        //if (IndexOfColumnTag(i)>=0) then
+//        begin
+//          ColObjs.AddColumnObject(Column);
+//          Inc(n);
+//        end;
+//    end;
+//    if (n<>k) then
+//       raise Exception.Create('All Expansions items should be used');
     k:= Columns.Count;
     for  i:= 0 to k-1 do
       begin
         Column:= Columns[i];
         if (Column.Tag<0) then
-           ColObjs.AddColumnObject(Column, fvtSum);
+           ColObjs.AddColumnObject(Column, fvtSum) else
+           ColObjs.AddColumnObject(Column);
       end;
   end;
 
@@ -1493,10 +1557,10 @@ procedure TfrmAnalyzeDebitDebt.FillComponentLists();
 
 begin
 //  FillExpansionList;
-//  FillSelectionList;
 //  FillFieldList;
   FillArrayList();
-  FillColumnObjects();
+  FillSelectionList;
+  //FillColumnObjects();
 end;
 
 {$IFDEF SystemMenu}
@@ -1508,7 +1572,7 @@ const
   id_DisableZeroSumAcn = $405;
   id_UseColnPrice = $406;
 
-procedure TfrmAnalyzeDebitDebt.InsertCommands();
+procedure TfrmMoneyCompensation.InsertCommands();
 var
   uIDShowItem: THandle;
 begin
@@ -1526,7 +1590,7 @@ begin
     idTransposeSelections, 'Transpose Selections'));
 end;
 
-procedure TfrmAnalyzeDebitDebt.CollectSQLParams();
+procedure TfrmMoneyCompensation.CollectSQLParams();
 var
   Container: TForm;
 begin
@@ -1541,21 +1605,21 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.ToggleDisableExclusionItem();
+procedure TfrmMoneyCompensation.ToggleDisableExclusionItem();
 begin
   DisableExclusion:= not DisableExclusion;
   // 8 means index of menu item
   CheckMenuItem(SysMenu, 8, MF_BYPOSITION + BoolChecks[DisableExclusion]);
 end;
 
-procedure TfrmAnalyzeDebitDebt.ToggleUseColnPrice();
+procedure TfrmMoneyCompensation.ToggleUseColnPrice();
 const Checks: array[Boolean] of UINT = (MF_UNCHECKED, MF_CHECKED);
 begin
   UseColnPrice:= not UseColnPrice;
   CheckMenuItem(SysMenu, 9, MF_BYPOSITION + BoolChecks[UseColnPrice]);
 end;
 
-procedure TfrmAnalyzeDebitDebt.InputValueForDisableZeroSumAcn();
+procedure TfrmMoneyCompensation.InputValueForDisableZeroSumAcn();
 var Value: string;
 begin
   Value:= IntToStr(DisableZeroSumAcn);
@@ -1563,7 +1627,7 @@ begin
      DisableZeroSumAcn:= StrToIntDef(Value, 0);
 end;
 
-procedure TfrmAnalyzeDebitDebt.TransposeSelections();
+procedure TfrmMoneyCompensation.TransposeSelections();
 var
   Container: TForm;
 begin
@@ -1583,7 +1647,7 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.wmSysCommand(var Message: TMessage);
+procedure TfrmMoneyCompensation.wmSysCommand(var Message: TMessage);
 var
   IsCreated: Boolean;
 begin
@@ -1605,13 +1669,13 @@ begin
 end;
 {$ENDIF}
 
-procedure TfrmAnalyzeDebitDebt.cbxExpansionClick(Sender: TObject);
+procedure TfrmMoneyCompensation.cbxExpansionClick(Sender: TObject);
 begin
   //cbxExpansion.Checked:= not cbxExpansion.Checked;
   //SetBoolValueInObjects(vleExpansions.Strings, vleExpansions.Tag, Integer(cbxExpansion.Checked));
 end;
 
-procedure TfrmAnalyzeDebitDebt.FormCreate(Sender: TObject);
+procedure TfrmMoneyCompensation.FormCreate(Sender: TObject);
 begin
   inherited;
   Tracer := TTimeTracer.Create;
@@ -1642,7 +1706,7 @@ begin
   dtPicker.Parent:= vleDate;
   dtPicker.OnChange:= Self.OnChangeDate;
   InsertChildInStringGrid(dtPicker, vleDate, 1, 1);
-  SetDefaultExpansions;
+//  SetDefaultExpansions;
   SetDefaultDates;
   SetDefaultTransposeParams;
   SetDefaultEditStyleForSelections;
@@ -1651,7 +1715,7 @@ begin
   
 end;
 
-procedure TfrmAnalyzeDebitDebt.FormDestroy(Sender: TObject);
+procedure TfrmMoneyCompensation.FormDestroy(Sender: TObject);
 begin
   inherited;
   //dtPicker.Free;
@@ -1670,18 +1734,18 @@ begin
   Tracer.Free;
 end;
 
-procedure TfrmAnalyzeDebitDebt.FormShow(Sender: TObject);
+procedure TfrmMoneyCompensation.FormShow(Sender: TObject);
 begin
   inherited;
   ShowRecordCount;
 end;
 
-procedure TfrmAnalyzeDebitDebt.SetParamsBeforeOpen();
+procedure TfrmMoneyCompensation.SetParamsBeforeOpen();
 begin
 
 end;
 
-procedure TfrmAnalyzeDebitDebt.EdDateAnalyzeEndPropertiesChange(Sender: TObject);
+procedure TfrmMoneyCompensation.EdDateAnalyzeEndPropertiesChange(Sender: TObject);
 begin
   inherited;
 //  if (DisableCount <> 0) then
@@ -1691,7 +1755,7 @@ begin
 //  quDebt.Open;
 end;
 
-procedure TfrmAnalyzeDebitDebt.CopySQLParams;
+procedure TfrmMoneyCompensation.CopySQLParams;
 begin
 
 end;
@@ -1708,28 +1772,7 @@ end;
         SetParameterByType(pt, IntToStr(CollectBitValues(SelectionList)));
 *)
 
-function TfrmAnalyzeDebitDebt.IsEmptyDatasetOfCitDBComboEdit(
-         cit: TcitDBComboEdit): Boolean;
-begin
-  quSession.Close;
-  try
-  try
-    quSession.ParamByName(idUserNo).AsInteger:= Data.UserNo;
-    quSession.ParamByName(idSPID).AsInteger:= dmDataModule.SPID;
-    quSession.ParamByName(idOwnerName).AsString:= idLocalOwnerName;
-    quSession.ParamByName(idParamName).AsString:= cit.Name;
-    quSession.Open;
-    Result:= quSession.FieldByName(idParamValue).AsInteger = 0;
-  except
-    Result:= True;
-  end;
-  finally
-    quSession.Close;
-  end;
-  
-end;
-
-procedure TfrmAnalyzeDebitDebt.VerifyCitDBComboEditText(cit: TcitDBComboEdit; ShowInStatus: Boolean = True);
+procedure TfrmMoneyCompensation.VerifyCitDBComboEditText(cit: TcitDBComboEdit; ShowInStatus: Boolean = True);
 var
   n: Integer;
 begin
@@ -1739,11 +1782,11 @@ begin
   ShowStatusMsg(idTime, IntToStr(n) + ': ' + GetObjectsAsIntegerList(Temp, False, ',', -1));
 end;
 
-procedure TfrmAnalyzeDebitDebt.VerifyNaklNoEditText();
+procedure TfrmMoneyCompensation.VerifyNaklNoEditText();
 begin
 end;
 
-procedure TfrmAnalyzeDebitDebt.VerifyEditText(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TfrmMoneyCompensation.VerifyEditText(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   inherited;
   if (Key = vk_Enter) and (ssCtrl in Shift) and
@@ -1751,7 +1794,7 @@ begin
      VerifyCitDBComboEditText(Sender as TcitDBComboEdit, True);
 end;
 
-procedure TfrmAnalyzeDebitDebt.fltNaklNoKeyUp(Sender: TObject;
+procedure TfrmMoneyCompensation.fltNaklNoKeyUp(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
   inherited;
@@ -1760,13 +1803,13 @@ begin
   ItemIsInteger:= False;
 end;
 
-procedure TfrmAnalyzeDebitDebt.fltOtdelExit(Sender: TObject);
+procedure TfrmMoneyCompensation.fltOtdelExit(Sender: TObject);
 begin
   inherited;
   ShowStatusMsg(idTime, '');
 end;
 
-procedure TfrmAnalyzeDebitDebt.fltBuhTypePushButton(Sender: TObject);
+procedure TfrmMoneyCompensation.fltBuhTypePushButton(Sender: TObject);
 begin
   inherited;
   with Sender as TcitDBComboEdit do
@@ -1774,7 +1817,7 @@ begin
      Text:= Temp.CommaText;
 end;
 
-procedure TfrmAnalyzeDebitDebt.SetAllExpansions(Value: Boolean);
+procedure TfrmMoneyCompensation.SetAllExpansions(Value: Boolean);
 var i: Integer; Items: TStrings;
 begin
 for i := 0 to clbExpansions.Count-1 do
@@ -1782,92 +1825,96 @@ for i := 0 to clbExpansions.Count-1 do
  //SetBoolValueInObjects(vleExpansions.Strings, i, Integer(Odd(i)));
 end;
 
-procedure TfrmAnalyzeDebitDebt.SetDefaultExpansions();
+procedure TfrmMoneyCompensation.SetDefaultExpansions();
 begin
   SetAllExpansions(True);
 end;
 
-procedure TfrmAnalyzeDebitDebt.SetDefaultEditStyleForSelections();
+procedure TfrmMoneyCompensation.SetDefaultEditStyleForSelections();
 var i: Integer; Prop: TItemProp; V: Variant;
 begin
 for i := 0 to vleSelections.RowCount-2 do
-begin
-  if ((TSelectionType(i) in [stDoc, stDayExp])) then Continue;
-  Prop:= vleSelections.ItemProps[i];
-  Prop.EditStyle:= esEllipsis;
-end;
+  begin
+    if ((TSelectionType(i) in [stDocNum])) then Continue;
+    Prop:= vleSelections.ItemProps[i];
+    Prop.EditStyle:= esEllipsis;
+  end;
 
 
 end;
 
 
-procedure TfrmAnalyzeDebitDebt.SetDateByIndex(ADate: TDate; Index: Integer);
+procedure TfrmMoneyCompensation.SetDateByIndex(ADate: TDate; Index: Integer);
 var i: Integer; Items: TStrings;
 begin
   Items:= vleDate.Strings;
   Items.ValueFromIndex[Index]:= GetNormalDateStr(ADate);
 end;
 
-function TfrmAnalyzeDebitDebt.GetDateStrByIndex(Index: Integer; IsQuoted: Boolean = False): String;
+function TfrmMoneyCompensation.GetDateStrByIndex(Index: Integer; IsQuoted: Boolean = False): String;
 begin
   Result:= vleDate.Strings.ValueFromIndex[Index];
   if IsQuoted then Result:= QuotedStr(Result);
 end;
 
-function TfrmAnalyzeDebitDebt.GetSelectionStrByIndex(Index: Integer; IsQuoted: Boolean = False): String;
+function TfrmMoneyCompensation.GetSelectionStrByIndex(Index: Integer; IsQuoted: Boolean = False): String;
 begin
   Result:= vleSelections.Strings.ValueFromIndex[Index];
   if IsQuoted then Result:= QuotedStr(Result);
 end;
 
-function TfrmAnalyzeDebitDebt.GetDateByIndex(Index: Integer): TDate;
+procedure TfrmMoneyCompensation.SetSelectionStrByIndex(Index: Integer; S: String);
+begin
+  vleSelections.Values[vleSelections.Keys[Index+1]]:= S;
+end;
+
+function TfrmMoneyCompensation.GetDateByIndex(Index: Integer): TDate;
 begin
   Result:= StrToDate(GetDateStrByIndex(Index));
 end;
 
-procedure TfrmAnalyzeDebitDebt.SetDefaultDates();
+procedure TfrmMoneyCompensation.SetDefaultDates();
 begin
   SetDateByIndex(IncDay(Date(), 1), 0);
   dtPicker.Date:= GetDateByIndex(0);
 end;
 
-procedure TfrmAnalyzeDebitDebt.SetDefaultTransposeParams();
+procedure TfrmMoneyCompensation.SetDefaultTransposeParams();
 begin
   AList.SetTransposeParams(', ', idNull, DefSelValues[False], idInsertSelections + '(', ')');
 end;
 
-procedure TfrmAnalyzeDebitDebt.OnChangeDate(Sender: TObject);
+procedure TfrmMoneyCompensation.OnChangeDate(Sender: TObject);
 begin
   SetDateByIndex(dtPicker.Date, vleDate.Tag);
 end;
 
-procedure TfrmAnalyzeDebitDebt.DeleteAllSelections();
+procedure TfrmMoneyCompensation.DeleteAllSelections();
 var i: Integer;
 begin
 for i := 1 to vleSelections.RowCount-1 do
 vleSelections.Values[vleSelections.Keys[i]]:= '';
 end;
 
-function TfrmAnalyzeDebitDebt.SelectMLKItems(sel: TSelectionType; ParamName, ParamCode: string): Integer;
+function TfrmMoneyCompensation.SelectMLKItems(
+sel: TSelectionType; ParamName, ParamCode: string;
+SQLFilter: string = ''): Integer;
 begin
   Result:= SelectMLKItemsByDialog(
-           Self, Temp, idLocalOwnerName, ParamName, ParamCode, True, AList.GetChild(Ord(sel)));
+           Self, Temp, idLocalOwnerName, ParamName, ParamCode, True,
+           AList.GetChild(Ord(sel)), SQLFilter);
 end;
 
-function TfrmAnalyzeDebitDebt.SelectDateItems(sel: TSelectionType): Integer;
+function TfrmMoneyCompensation.SelectDateItems(sel: TSelectionType): Integer;
 var Child: TStrings; DateAttribute: String;
 begin
   Child:= AList.GetChild(Ord(sel));
   PrepareStrValues(GetSelectionStrByIndex(Ord(sel)), Temp);
-  case sel of
-    stDayNakl: DateAttribute:= idDayNaklAttr;
-    stDayOpl: DateAttribute:= idDayOplAttr;
-    else DateAttribute:= '';
-  end;
+  DateAttribute:= 'документа';
   Result:= SelectDateItemsDlg(Temp, Child, StrToDate(dtDateStart), DateAttribute);
 end;
 
-procedure TfrmAnalyzeDebitDebt.PushEditButtonForSelection();
+procedure TfrmMoneyCompensation.PushEditButtonForSelection();
 const
 AQuote = '';
 var i, z: Integer; Items: TStrings; S, Prev: String; R: TGridRect; P: PChar;
@@ -1882,42 +1929,44 @@ begin
   {
     TSelectionType = ( stOtdel, stVid, stSotrud, stBuh, stPost, stNakl, stAddress, stDoc,
                      stDayNakl, stDayOpl, stDayExp);
+  TSelectionType = ( stDepart, stAgent, stDocType,
+  stDocNum, stDocDate, stPayType, stWorker, stExpenseItem);
   }
   st:= TSelectionType(i);
   Prev:= GetSelectionStrByIndex(Ord(st)) ;
   case st of
-  stOtdel:
+  // first item is not important
+  stDepart:
      z:= SelectMLKItems(st, 'fltOtdel', 'VIDOTDEL');
-  stVid:
-     z:= SelectMLKItems(st, 'fltVidTov', 'VIDTOV');
-  stSotrud:
+  stWorker:
      z:= SelectMLKItems(st, 'fltSotrud', 'SOTRUD');
-  stBuh:
-     z:= SelectMLKItems(st, 'fltBuhType', 'd_buh_type');
-  stPost:
+  stAgent:
      z:= SelectMLKItems(st, 'fltAgent', 'Post');
-  stNakl:
-     z:= SelectMLKItems(st, 'fltNaklNo', 'NaklR');
-  stAddress:
-     z:= SelectMLKItems(st, 'fltAddress', 'AddressPost');
-  stDayNakl, stDayOpl:
+  stDocType:
+     z:= SelectMLKItems(st, 'ENTITY_TYPE', 'D_ENTITY_TYPE',
+     'code in (''NAKLP'',''NAKLR'',''PLATP'',''PLATR'')');
+  stPayType:
+     z:= SelectMLKItems(st, 'PLAT_TYPE', 'D_PLAT_TYPE');
+  stExpenseItem:
+     z:= SelectMLKItems(st, 'VIDRASHOD', 'VIDRASHOD');
+  stDocDate:
      z:= SelectDateItems(st);
   end;
   if (z>=0) then
   begin
     Fields.Clear;
-    S:= GetDelimText(Temp, ', ');
-    S:= Trim(S);
-    P:= PChar(S);
-    if (S<>'') and (not (st in [stNakl, stAddress, stDayNakl, stDayOpl]))
-    and (AnsiExtractQuotedStr(P, '"')='') then S:= AnsiQuotedStr(S, '"');
+    S:= GetDelimText(Temp, ', ', '"');
+//    S:= Trim(S);
+//    P:= PChar(S);
+//    if (S<>'') and (not (st in [stDocDate]))
+//    and (AnsiExtractQuotedStr(P, '"')='') then S:= AnsiQuotedStr(S, '"');
     //Items.ValueFromIndex[i]:= S;
     vleSelections.Values[vleSelections.Keys[vleSelections.Row]]:= S;
   end else
   vleSelections.Values[vleSelections.Keys[vleSelections.Row]]:= Prev;
 end;
 
-procedure TfrmAnalyzeDebitDebt.vleDateSelectCell(Sender: TObject; ACol,
+procedure TfrmMoneyCompensation.vleDateSelectCell(Sender: TObject; ACol,
   ARow: Integer; var CanSelect: Boolean);
 begin
   inherited;
@@ -1933,45 +1982,45 @@ begin
 //  ShowStatusMsg(4, Format('C:X:%d;Y:%d', [Rect.Left, Rect.Top]));
 end;
 
-procedure TfrmAnalyzeDebitDebt.mnuSet_All_Exp_FalseClick(Sender: TObject);
+procedure TfrmMoneyCompensation.mnuSet_All_Exp_FalseClick(Sender: TObject);
 begin
   inherited;
   SetAllExpansions(False);
 end;
 
-procedure TfrmAnalyzeDebitDebt.mnuSet_All_Exp_TrueClick(Sender: TObject);
+procedure TfrmMoneyCompensation.mnuSet_All_Exp_TrueClick(Sender: TObject);
 begin
   inherited;
   SetAllExpansions(True);
 end;
 
-procedure TfrmAnalyzeDebitDebt.mnuSetDefaultDatesClick(Sender: TObject);
+procedure TfrmMoneyCompensation.mnuSetDefaultDatesClick(Sender: TObject);
 begin
   inherited;
   SetDefaultDates();
 end;
 
-procedure TfrmAnalyzeDebitDebt.vleSelectionsEditButtonClick(Sender: TObject);
+procedure TfrmMoneyCompensation.vleSelectionsEditButtonClick(Sender: TObject);
 begin
   inherited;
   PushEditButtonForSelection();
 end;
 
-procedure TfrmAnalyzeDebitDebt.vleSelectionsDblClick(Sender: TObject);
+procedure TfrmMoneyCompensation.vleSelectionsDblClick(Sender: TObject);
 begin
   inherited;
   PushEditButtonForSelection();
 end;
 
 
-procedure TfrmAnalyzeDebitDebt.mnuDeleteAllSelectionsClick(
+procedure TfrmMoneyCompensation.mnuDeleteAllSelectionsClick(
   Sender: TObject);
 begin
   inherited;
   DeleteAllSelections();
 end;
 
-procedure TfrmAnalyzeDebitDebt.clbExpansionsClickCheck(Sender: TObject);
+procedure TfrmMoneyCompensation.clbExpansionsClickCheck(Sender: TObject);
 var i: Integer;
 begin
   inherited;
@@ -1980,19 +2029,19 @@ begin
   clbExpansions.Items.Objects[i]:= Pointer(clbExpansions.Checked[i]);
 end;
 
-procedure TfrmAnalyzeDebitDebt.acRefreshExecute(Sender: TObject);
+procedure TfrmMoneyCompensation.acRefreshExecute(Sender: TObject);
 begin
   inherited;
   ExecuteScript;
 end;
 
-procedure TfrmAnalyzeDebitDebt.acExportToExcelExecute(Sender: TObject);
+procedure TfrmMoneyCompensation.acExportToExcelExecute(Sender: TObject);
 begin
   inherited;
   ExportToExcel();
 end;
 
-procedure TfrmAnalyzeDebitDebt.GetSettingsDlg();
+procedure TfrmMoneyCompensation.GetSettingsDlg();
 begin
   inherited;
   if (frmListMinusPostForDebit=nil) then
@@ -2002,13 +2051,13 @@ begin
 end;
 
 
-procedure TfrmAnalyzeDebitDebt.acGetSettingsDlgExecute(Sender: TObject);
+procedure TfrmMoneyCompensation.acGetSettingsDlgExecute(Sender: TObject);
 begin
   inherited;
   GetSettingsDlg();
 end;
 
-function TfrmAnalyzeDebitDebt.MakeColumnVisible(Index: Integer; IsVisible: Boolean): Boolean;
+function TfrmMoneyCompensation.MakeColumnVisible(Index: Integer; IsVisible: Boolean): Boolean;
 begin
   Result:= False;
   Index:= IndexOfColumnByTag(dbgDebts, Index);
@@ -2019,7 +2068,7 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.ToggleShowHide();
+procedure TfrmMoneyCompensation.ToggleShowHide();
 var IsVisible: Boolean; Index: Integer;
 begin
   inherited;
@@ -2036,18 +2085,18 @@ begin
   end;
 end;
 
-procedure TfrmAnalyzeDebitDebt.mnuShowHideClick(Sender: TObject);
+procedure TfrmMoneyCompensation.mnuShowHideClick(Sender: TObject);
 begin
   ToggleShowHide();
 end;
 
-procedure TfrmAnalyzeDebitDebt.clbExpansionsDblClick(Sender: TObject);
+procedure TfrmMoneyCompensation.clbExpansionsDblClick(Sender: TObject);
 begin
   inherited;
   ToggleShowHide();
 end;
 
-procedure TfrmAnalyzeDebitDebt.acToggleSettingsVisibilityExecute(
+procedure TfrmMoneyCompensation.acToggleSettingsVisibilityExecute(
   Sender: TObject);
 begin
   inherited;
@@ -2055,16 +2104,16 @@ begin
   Visible:= not Visible;
 end;
 
-procedure TfrmAnalyzeDebitDebt.quDebtFilterRecord(DataSet: TDataSet;
+procedure TfrmMoneyCompensation.quDebtFilterRecord(DataSet: TDataSet;
   var Accept: Boolean);
 begin
   inherited;
-  Accept:= (not EnableFiltering) or (ColObjs.ValuesExist(False));
-  if Accept then ColObjs.AggregateMainValues;
+//  Accept:= (not EnableFiltering) or ColObjs.ValuesExist(False);
+//  if Accept and (quDebt_key.AsInteger>0) then ColObjs.AggregateMainValues;
   Inc(VisibleRowCount, Ord(Accept));
 end;
 
-procedure TfrmAnalyzeDebitDebt.vleSelectionsKeyUp(Sender: TObject;
+procedure TfrmMoneyCompensation.vleSelectionsKeyUp(Sender: TObject;
   var Key: Word; Shift: TShiftState);
   var s: string; sel: TSelectionType;
 begin
@@ -2078,6 +2127,57 @@ begin
           ShowMessage(s) else
           ShowMessage('<Error>');
      end;
+end;
+
+//Платежи не учитываемые в журнале расходов
+
+procedure TfrmMoneyCompensation.ShowHelpWindow();
+begin
+  ViewUserStringItems(
+  sthHelp.Strings, 'Компенсация денежных средств - Описание', 'Описание', True);
+end;
+
+procedure TfrmMoneyCompensation.btnHelpClick(Sender: TObject);
+begin
+  inherited;
+  ShowHelpWindow();
+end;
+
+procedure TfrmMoneyCompensation.SetExcludedPayTypes();
+begin
+  inherited;
+  with TListMinusPaymentForJournalOfExpensesaForm.Create(Application) do
+  try
+   quListMinusPaymentForJournalOfExpensesa.Open;
+   ShowModal;
+  finally
+   quListMinusPaymentForJournalOfExpensesa.Close;
+   Free;
+  end;
+end;
+
+procedure TfrmMoneyCompensation.btnSetExPayTypesClick(Sender: TObject);
+begin
+  inherited;
+  SetExcludedPayTypes();
+end;
+
+procedure TfrmMoneyCompensation.dbgDebtsGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if (quDebt_Count.AsInteger>0) then
+  begin
+    Background:= clSumBackColor;
+    AFont.Style:= AFont.Style + [fsBold];
+  end;
+end;
+
+procedure TfrmMoneyCompensation.cbxOnlyTotalsClick(Sender: TObject);
+begin
+  inherited;
+  ExecuteScript();
 end;
 
 end.
