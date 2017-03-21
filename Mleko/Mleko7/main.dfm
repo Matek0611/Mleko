@@ -1,6 +1,6 @@
 inherited fmMain: TfmMain
-  Left = 6
-  Top = 110
+  Left = 431
+  Top = 214
   VertScrollBar.Range = 0
   Anchors = [akLeft, akTop, akRight, akBottom]
   AutoScroll = False
@@ -33,7 +33,7 @@ inherited fmMain: TfmMain
     Top = 72
     Width = 312
     Height = 24
-    Caption = #1054#1073#1085#1086#1074#1083#1077#1085#1080#1077' (6.2.59)  22.02.2017'
+    Caption = #1054#1073#1085#1086#1074#1083#1077#1085#1080#1077' (6.2.74)  20.03.2017'
     Color = clMoneyGreen
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
@@ -620,6 +620,10 @@ inherited fmMain: TfmMain
       object InputOrderExcel: TMenuItem
         Caption = #1042#1090#1103#1078#1082#1072' '#1079#1072#1082#1072#1079#1086#1074' '#1080#1079' Excel'
         OnClick = InputOrderExcelClick
+      end
+      object InputOrderExcelNew: TMenuItem
+        Caption = #1042#1090#1103#1078#1082#1072' '#1079#1072#1082#1072#1079#1086#1074' '#1080#1079' Excel '#1085#1086#1074#1086#1077
+        OnClick = InputOrderExcelNewClick
       end
       object N69: TMenuItem
         Caption = #1054#1073#1097#1080#1081' '#1073#1083#1072#1085#1082' '#1079#1072#1082#1072#1079#1086#1074

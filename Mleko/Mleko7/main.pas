@@ -587,7 +587,9 @@ type
     procedure AnalyzeDebitDebtClick(Sender: TObject);
     procedure BlankListLightClick(Sender: TObject);
     procedure mnuDebtSettingsClick(Sender: TObject);
+    procedure InputOrderExcelNewClick(Sender: TObject);
     procedure MoneyCompensationClick(Sender: TObject);
+
   private
     { Private declarations }
     FFileName: string;
@@ -662,7 +664,8 @@ uses Post0, NaklP0, Tovar0, Ostatok2, About,
   ControlVidRashodForPlat, GroupCutting, ListVidTovForGroupCutting, CheckMeshCutting, PostFromGroupCutting,
   AnalisCuttingMesh, Currency, CurrencyExchange, VidRashodGroup, ListPlusPostForClosePlatRIsEconom,
   MlekoClosePlatRLight, EditDocPlat, DocPlatHead, ListVidOtdelForAPP, ListMinusPostForBDDS,
-  UAnalyzeDebitDebt, UMoneyCompensation, UListMinusPostForDebit, MlekoBlankListLight;
+  UAnalyzeDebitDebt, UMoneyCompensation, UListMinusPostForDebit, MlekoBlankListLight,
+  CreateBlankWithExel;
 
 {$R *.DFM}
 
@@ -5027,6 +5030,21 @@ begin
   inherited;
   with TfrmListMinusPostForDebit.Create(Application) do
      ShowModal;
+end;
+
+
+
+procedure TfmMain.InputOrderExcelNewClick(Sender: TObject);
+begin
+  inherited;
+  begin
+    with TCreateBlankWithExelForm.Create(Application) do
+      try
+        ShowModal;
+      finally
+        Free;
+      end;
+  end
 end;
 
 procedure TfmMain.MoneyCompensationClick(Sender: TObject);
