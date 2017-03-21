@@ -93,6 +93,7 @@ type
     quDebt_DocDate: TIntegerField;
     quDebt_Summa: TFloatField;
     sthFields: TStrHolder;
+    quDebtCurrencyHead: TStringField;
     procedure dbgDebtsTitleBtnClick(Sender: TObject; ACol: Integer; Column: TColumnEh);
     procedure dbgDebtsKeyPress(Sender: TObject; var Key: Char);
     procedure dbgDebtsKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -308,7 +309,7 @@ const
   idEndDate = 'p_date_end';
   idStartDate = 'DateStart';
   dtDateStart = '01.01.2000';
-  dtBegDate = '01.02.2017';
+  dtBegDate =   '01.01.2000';
   idOnlyTotals = 'OnlyTotals';
 
   idVeryOldDay = 'VeryOldDay';
@@ -1159,41 +1160,18 @@ begin
      end;
   for pt := ptLow to ptHigh do
     case pt of
-//      ptUserNo:
-//        SetParameterByType(pt, IntToStr(Data.UserNo));
-//      ptSPID:
-//        SetParameterByType(pt, IntToStr(dmDataModule.SPID));
-//      ptOwnerName:
-//        SetParameterByType(pt, QuotedStr(idLocalOwnerName));
-//      ptExpansion:
-//        SetParameterByType(pt, IntToStr(CollectBitValuesEx(clbExpansions)));
-//      ptSelection:
-//        SetParameterByType(pt, IntToStr(CollectBitValuesEx(vleSelections)));
       ptFormDate:
           SetParameterByType(pt, GetDateStrByIndex(0, True));
-//      ptBegDate:
-//          //SetParameterByType(pt, GetDateStrByIndex(1, True));
-//          SetParameterByType(pt, QuotedStr(dtBegDate));
+      ptBegDate:
+        SetParameterByType(pt, QuotedStr(dtBegDate));
       ptStartDate:
           SetParameterByType(pt, QuotedStr(dtDateStart));
-//      ptVeryOld:
-//          SetParameterByType(pt, IntToStr(idVeryOldVal));
       ptOnlyTotals:
             SetParameterByType(pt, IntToStr(Ord(cbxOnlyTotals.Checked)));
-//      ptDisableExclusion:
-//          SetParameterByType(pt, IntToStr(Ord(DisableExclusion)));
-//      ptUseColnPrice:
-//          SetParameterByType(pt, IntToStr(Ord(UseColnPrice)));
-//      ptDisableZeroSumAcn:
-//          SetParameterByType(pt, IntToStr(Ord(DisableZeroSumAcn)));
         ptOrderFirst, ptOrderSecond:
-      //ptOrderBy:
       begin
-//        ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
         SetParameterByType(pt, OrderFullStrings[pt]);
       end;
-//      ptEndDate:
-//          SetParameterByType(pt, GetDateStrByIndex(2, True));
       ptExpansion, ptSelection, ptAllTypes:
         SetParameterByTypeEx(pt);
     end;

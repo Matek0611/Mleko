@@ -211,6 +211,13 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
         end
         item
           EditButtons = <>
+          FieldName = 'CurrencyHead'
+          Footers = <>
+          Title.Caption = #1042#1072#1083'. '#1087#1083#1072#1090'.'
+          Width = 40
+        end
+        item
+          EditButtons = <>
           FieldName = 'Description'
           Footers = <>
           Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
@@ -444,8 +451,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       ',@DisableExclusion bit'
       ',@OnlyTotals bit'
       ''
-      'SET @p_date_beg = '#39'01.03.2017'#39
-      '--SET @p_date_beg = '#39'01.01.1900'#39
+      'SET @p_date_beg = '#39'01.01.2000'#39
       'SET @p_date_end = DATEADD(D, 1, GETDATE())'
       'SET @DateStart = '#39'01.01.2000'#39
       'SET @DisableExclusion = 0'
@@ -497,6 +503,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       ', _Expense int'
       ', Expense varchar(50)'
       ', Description varchar(200)'
+      ', CurrencyHead varchar(5)'
       ', _Summa decimal(20, 4)'
       ', _FreeSumma decimal(20, 4)'
       ');  '
@@ -504,19 +511,6 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       'BEGIN CATCH'
       'TRUNCATE TABLE #TempData'
       'END CATCH; '
-      ''
-      ''
-      '--SELECT'
-      '--  PostNo AS _Agent'
-      '--, Summa'
-      '--, FreeSumma'
-      '-- FROM dbo.V_List_entity a'
-      '--WHERE DateEntity between @p_date_beg and @p_date_end'
-      '--and PostNo<>90'
-      '--and ((a.tip not in '
-      
-        '--(select TipNo from ListMinusPaymentForJournalOfExpenses where ' +
-        'CheckMinus = 1) or a.tip is not null ))'
       ''
       'SET NOCOUNT OFF;'
       '  declare '
@@ -545,6 +539,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       ', @_Expense int'
       ', @Expense varchar(50)'
       ', @Description varchar(200)'
+      ', @CurrencyHead varchar(5)'
       #9'   '
       '  declare CS cursor scroll local for  '
       '  '
@@ -556,9 +551,10 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       #9#9' FROM dbo.V_List_entity a'
       #9#9'WHERE DateEntity between @p_date_beg and @p_date_end'
       #9#9'and (ABS(isnull(FreeSumma, 0))>0.005)'
-      #9#9'and ((a.tip not in '
-      #9#9'(select TipNo from ListMinusPaymentForJournalOfExpenses '
-      #9#9'where CheckMinus = 1)))'#9#9
+      '        and ((a.tip is null) or (a.tip not in '
+      
+        '             (select TipNo from ListMinusPaymentForJournalOfExpe' +
+        'nses where CheckMinus = 1)))'#9
       #9' and ((@DisableExclusion=1) or (not (PostNo in '
       #9' (select PostNo from ListMinusPostForDebit lmp where '
       #9#9' (PostNo = lmp.PostNo) and (lmp.CheckMinus=1)))))'
@@ -597,21 +593,22 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       #9#9#9', entity_type_name AS DocType'
       #9#9#9', Nom AS DocNum'
       #9#9#9', DateEntity as DocDate'
-      #9#9#9', Tip AS _PayType'
-      #9#9#9', TipName AS PayType'
+      #9#9#9', ISNULL(Tip, -2) AS _PayType'
+      #9#9#9', ISNULL(TipName, '#39#39') AS PayType'
       #9#9#9', SotrudNo AS _Worker'
       #9#9#9', SotrudName AS Worker'
       #9#9#9', VidNo AS _Expense'
       #9#9#9', VidName AS Expense'
-      #9#9#9', Description'#9#9'   '
+      #9#9#9', Description'
+      #9#9#9', CurrencyHead'
       #9#9' FROM dbo.V_List_entity a'
       #9#9'WHERE DateEntity between @p_date_beg and @p_date_end'
       #9#9'and (ABS(isnull(FreeSumma, 0))>0.005)'#9#9
       #9#9'and (PostNo=@PostNo)'
-      #9#9'and ((a.tip not in '
+      '        and ((a.tip is null) or (a.tip not in '
       
-        #9#9'(select TipNo from ListMinusPaymentForJournalOfExpenses where ' +
-        'CheckMinus = 1)))'#9#9
+        '             (select TipNo from ListMinusPaymentForJournalOfExpe' +
+        'nses where CheckMinus = 1)))'#9#9#9
       #9#9'and'
       #9#9#9#9'  (EXISTS(SELECT 1 FROM #Selections WHERE s_Depart=-1) OR '
       #9#9#9#9'  (otdelNo IN (SELECT s_Depart FROM #Selections)))'
@@ -627,8 +624,10 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
         #9#9#9#9'  (datediff(d, @DateStart, DateEntity) IN (SELECT s_DocDate ' +
         'FROM #Selections)))'
       #9#9#9#9'AND'
-      #9#9#9#9'  (EXISTS(SELECT 1 FROM #Selections WHERE s_PayType=-1) OR '
-      #9#9#9#9'  (Tip IN (SELECT s_PayType FROM #Selections)))'
+      
+        #9#9#9#9'  ((Tip is null) or (EXISTS(SELECT 1 FROM #Selections WHERE ' +
+        's_PayType=-1) OR '
+      #9#9#9#9'  (Tip IN (SELECT s_PayType FROM #Selections))))'
       #9#9#9#9'AND'
       #9#9#9#9'  (EXISTS(SELECT 1 FROM #Selections WHERE s_Worker=-1) OR '
       #9#9#9#9'  (SotrudNo IN (SELECT s_Worker FROM #Selections)))'
@@ -660,42 +659,11 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       #9#9#9#9#9', @Worker '
       #9#9#9#9#9', @_Expense '
       #9#9#9#9#9', @Expense'
-      #9#9#9#9#9', @Description '#9#9#9'  '
+      #9#9#9#9#9', @Description'
+      #9#9#9#9#9', @CurrencyHead'#9#9'  '
       #9#9'      '
       #9#9#9'  if @@FETCH_STATUS <> 0 break'
-      #9#9#9'  '
-      #9#9#9'  --SET @_DocDate = datediff(d, @DateStart, @DocDate) '
-      #9#9#9#9'--IF'#9#9#9'  '
-      #9#9#9#9
-      #9#9#9#9'--  (EXISTS(SELECT 1 FROM #Selections WHERE s_Depart=-1) OR '
-      #9#9#9#9'--  (@_Depart IN (SELECT s_Depart FROM #Selections)))'
-      #9#9#9#9'--AND'
-      
-        #9#9#9#9'--  (EXISTS(SELECT 1 FROM #Selections WHERE s_DocType=-1) OR' +
-        ' '
-      #9#9#9#9'--  (@_DocType IN (SELECT s_DocType FROM #Selections)))'
-      #9#9#9#9'--AND'
-      #9#9#9#9'--  (EXISTS(SELECT 1 FROM #Selections WHERE s_DocNum=-1) OR '
-      #9#9#9#9'--  (@DocNum IN (SELECT s_DocNum FROM #Selections)))'
-      #9#9#9#9'--AND'
-      
-        #9#9#9#9'--  (EXISTS(SELECT 1 FROM #Selections WHERE s_DocDate=-1) OR' +
-        ' '
-      #9#9#9#9'--  (@_DocDate IN (SELECT s_DocDate FROM #Selections)))'
-      #9#9#9#9'--AND'
-      
-        #9#9#9#9'--  (EXISTS(SELECT 1 FROM #Selections WHERE s_PayType=-1) OR' +
-        ' '
-      #9#9#9#9'--  (@_PayType IN (SELECT s_PayType FROM #Selections)))'
-      #9#9#9#9'--AND'
-      #9#9#9#9'--  (EXISTS(SELECT 1 FROM #Selections WHERE s_Worker=-1) OR '
-      #9#9#9#9'--  (@_Worker IN (SELECT s_Worker FROM #Selections)))'
-      #9#9#9#9'--AND'
-      
-        #9#9#9#9'--  (EXISTS(SELECT 1 FROM #Selections WHERE s_Expense=-1) OR' +
-        ' '
-      #9#9#9#9'--  (@_Expense IN (SELECT s_Expense FROM #Selections)))'
-      #9#9#9#9#9#9#9'   '#9#9#9'  '
+      #9#9#9'  '#9#9#9#9#9#9#9'   '#9#9#9'  '
       #9#9#9'   begin'#9#9
       '               insert into #TempData ('
       #9#9#9#9#9#9#9'_Count'
@@ -719,6 +687,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       #9#9#9#9#9#9#9', _Expense '
       #9#9#9#9#9#9#9', Expense'
       #9#9#9#9#9#9#9', Description'
+      #9#9#9#9#9#9#9', CurrencyHead'
       #9#9#9#9#9#9#9', _Summa'
       #9#9#9#9#9#9#9', _FreeSumma   '#9
       #9#9#9#9#9#9#9')  '
@@ -741,6 +710,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       #9#9#9#9#9#9#9#9', @_Expense '
       #9#9#9#9#9#9#9#9', @Expense'
       #9#9#9#9#9#9#9#9', @Description'
+      #9#9#9#9#9#9#9#9', @CurrencyHead'
       #9#9#9#9#9#9#9#9', 0'
       #9#9#9#9#9#9#9#9', 0 '#9#9#9#9#9#9#9#9#9
       #9#9#9#9')'
@@ -770,6 +740,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       #9#9#9#9#9#9#9#9', NULL'
       #9#9#9#9#9#9#9#9', NULL'
       #9#9#9#9#9#9#9#9', NULL'
+      #9#9#9#9#9#9#9#9', NULL'
       #9#9#9#9#9#9#9#9', @Summa  '
       #9#9#9#9#9#9#9#9', @FreeSumma'#9#9#9#9#9#9#9#9#9#9#9#9#9#9#9#9'  '
       #9#9#9#9#9#9'   )'
@@ -780,17 +751,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '   end'
       '  close CS;'
       '  deallocate CS;  '
-      '  '
-      '  /*'
-      '    s_Agent int NULL'
-      ', s_DocType int NULL'
-      ', s_DocNum int NULL'
-      ', s_DocDate int NULL'
-      ', s_PayType int NULL'
-      ', s_Worker int NULL'
-      ', s_Expense int NULL'
-      '  */'
-      '  '
+      '   '
       '  select * from #TempData'
       'WHERE'
       '  (@OnlyTotals = 0) or (_Count>0) '
@@ -880,6 +841,10 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
     object quDebt_Summa: TFloatField
       FieldName = '_Summa'
     end
+    object quDebtCurrencyHead: TStringField
+      FieldName = 'CurrencyHead'
+      Size = 5
+    end
   end
   object dlgSaveExportToExcel: TSaveDialog
     DefaultExt = '.xls'
@@ -906,8 +871,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '2c4044697361626c654578636c7573696f6e20626974'
       '2c404f6e6c79546f74616c7320626974'
       ''
-      '5345542040705f646174655f626567203d202730312e30332e3230313727'
-      '2d2d5345542040705f646174655f626567203d202730312e30312e3139303027'
+      '5345542040705f646174655f626567203d202730312e30312e3230303027'
       
         '5345542040705f646174655f656e64203d204441544541444428442c20312c20' +
         '47455444415445282929'
@@ -963,6 +927,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '2c205f457870656e736520696e74'
       '2c20457870656e7365207661726368617228353029'
       '2c204465736372697074696f6e20766172636861722832303029'
+      '2c2043757272656e6379486561642076617263686172283529'
       '2c205f53756d6d6120646563696d616c2832302c203429'
       '2c205f4672656553756d6d6120646563696d616c2832302c203429'
       '293b2020'
@@ -970,23 +935,6 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '424547494e204341544348'
       '5452554e43415445205441424c45202354656d7044617461'
       '454e442043415443483b20'
-      ''
-      ''
-      '2d2d53454c454354'
-      '2d2d2020506f73744e6f204153205f4167656e74'
-      '2d2d2c2053756d6d61'
-      '2d2d2c204672656553756d6d61'
-      '2d2d2046524f4d2064626f2e565f4c6973745f656e746974792061'
-      
-        '2d2d57484552452044617465456e74697479206265747765656e2040705f6461' +
-        '74655f62656720616e642040705f646174655f656e64'
-      '2d2d616e6420506f73744e6f3c3e3930'
-      '2d2d616e64202828612e746970206e6f7420696e20'
-      
-        '2d2d2873656c656374205469704e6f2066726f6d204c6973744d696e75735061' +
-        '796d656e74466f724a6f75726e616c4f66457870656e73657320776865726520' +
-        '436865636b4d696e7573203d203129206f7220612e746970206973206e6f7420' +
-        '6e756c6c202929'
       ''
       '534554204e4f434f554e54204f46463b'
       '20206465636c61726520'
@@ -1015,6 +963,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '2c20405f457870656e736520696e74'
       '2c2040457870656e7365207661726368617228353029'
       '2c20404465736372697074696f6e20766172636861722832303029'
+      '2c204043757272656e6379486561642076617263686172283529'
       '09202020'
       
         '20206465636c61726520435320637572736f72207363726f6c6c206c6f63616c' +
@@ -1032,11 +981,13 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       
         '0909616e6420284142532869736e756c6c284672656553756d6d612c20302929' +
         '3e302e30303529'
-      '0909616e64202828612e746970206e6f7420696e20'
       
-        '09092873656c656374205469704e6f2066726f6d204c6973744d696e75735061' +
-        '796d656e74466f724a6f75726e616c4f66457870656e73657320'
-      '0909776865726520436865636b4d696e7573203d20312929290909'
+        '2020202020202020616e64202828612e746970206973206e756c6c29206f7220' +
+        '28612e746970206e6f7420696e20'
+      
+        '202020202020202020202020202873656c656374205469704e6f2066726f6d20' +
+        '4c6973744d696e75735061796d656e74466f724a6f75726e616c4f6645787065' +
+        '6e73657320776865726520436865636b4d696e7573203d203129292909'
       
         '0920616e642028284044697361626c654578636c7573696f6e3d3129206f7220' +
         '286e6f742028506f73744e6f20696e20'
@@ -1093,13 +1044,16 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '0909092c20656e746974795f747970655f6e616d6520415320446f6354797065'
       '0909092c204e6f6d20415320446f634e756d'
       '0909092c2044617465456e7469747920617320446f6344617465'
-      '0909092c20546970204153205f50617954797065'
-      '0909092c205469704e616d652041532050617954797065'
+      '0909092c2049534e554c4c285469702c202d3229204153205f50617954797065'
+      
+        '0909092c2049534e554c4c285469704e616d652c202727292041532050617954' +
+        '797065'
       '0909092c20536f747275644e6f204153205f576f726b6572'
       '0909092c20536f747275644e616d6520415320576f726b6572'
       '0909092c205669644e6f204153205f457870656e7365'
       '0909092c205669644e616d6520415320457870656e7365'
-      '0909092c204465736372697074696f6e0909202020'
+      '0909092c204465736372697074696f6e'
+      '0909092c2043757272656e637948656164'
       '09092046524f4d2064626f2e565f4c6973745f656e746974792061'
       
         '090957484552452044617465456e74697479206265747765656e2040705f6461' +
@@ -1108,11 +1062,13 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
         '0909616e6420284142532869736e756c6c284672656553756d6d612c20302929' +
         '3e302e303035290909'
       '0909616e642028506f73744e6f3d40506f73744e6f29'
-      '0909616e64202828612e746970206e6f7420696e20'
       
-        '09092873656c656374205469704e6f2066726f6d204c6973744d696e75735061' +
-        '796d656e74466f724a6f75726e616c4f66457870656e73657320776865726520' +
-        '436865636b4d696e7573203d20312929290909'
+        '2020202020202020616e64202828612e746970206973206e756c6c29206f7220' +
+        '28612e746970206e6f7420696e20'
+      
+        '202020202020202020202020202873656c656374205469704e6f2066726f6d20' +
+        '4c6973744d696e75735061796d656e74466f724a6f75726e616c4f6645787065' +
+        '6e73657320776865726520436865636b4d696e7573203d2031292929090909'
       '0909616e64'
       
         '090909092020284558495354532853454c45435420312046524f4d202353656c' +
@@ -1144,11 +1100,12 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
         '46524f4d202353656c656374696f6e73292929'
       '09090909414e44'
       
-        '090909092020284558495354532853454c45435420312046524f4d202353656c' +
-        '656374696f6e7320574845524520735f506179547970653d2d3129204f5220'
+        '0909090920202828546970206973206e756c6c29206f72202845584953545328' +
+        '53454c45435420312046524f4d202353656c656374696f6e7320574845524520' +
+        '735f506179547970653d2d3129204f5220'
       
         '0909090920202854697020494e202853454c45435420735f5061795479706520' +
-        '46524f4d202353656c656374696f6e73292929'
+        '46524f4d202353656c656374696f6e7329292929'
       '09090909414e44'
       
         '090909092020284558495354532853454c45435420312046524f4d202353656c' +
@@ -1190,70 +1147,13 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '09090909092c2040576f726b657220'
       '09090909092c20405f457870656e736520'
       '09090909092c2040457870656e7365'
-      '09090909092c20404465736372697074696f6e200909092020'
+      '09090909092c20404465736372697074696f6e'
+      '09090909092c204043757272656e63794865616409092020'
       '0909202020202020'
       
         '0909092020696620404046455443485f535441545553203c3e20302062726561' +
         '6b'
-      '0909092020'
-      
-        '09090920202d2d53455420405f446f6344617465203d20646174656469666628' +
-        '642c20404461746553746172742c2040446f63446174652920'
-      '090909092d2d49460909092020'
-      '09090909'
-      
-        '090909092d2d2020284558495354532853454c45435420312046524f4d202353' +
-        '656c656374696f6e7320574845524520735f4465706172743d2d3129204f5220'
-      
-        '090909092d2d202028405f44657061727420494e202853454c45435420735f44' +
-        '65706172742046524f4d202353656c656374696f6e73292929'
-      '090909092d2d414e44'
-      
-        '090909092d2d2020284558495354532853454c45435420312046524f4d202353' +
-        '656c656374696f6e7320574845524520735f446f63547970653d2d3129204f52' +
-        '20'
-      
-        '090909092d2d202028405f446f635479706520494e202853454c45435420735f' +
-        '446f63547970652046524f4d202353656c656374696f6e73292929'
-      '090909092d2d414e44'
-      
-        '090909092d2d2020284558495354532853454c45435420312046524f4d202353' +
-        '656c656374696f6e7320574845524520735f446f634e756d3d2d3129204f5220'
-      
-        '090909092d2d20202840446f634e756d20494e202853454c45435420735f446f' +
-        '634e756d2046524f4d202353656c656374696f6e73292929'
-      '090909092d2d414e44'
-      
-        '090909092d2d2020284558495354532853454c45435420312046524f4d202353' +
-        '656c656374696f6e7320574845524520735f446f63446174653d2d3129204f52' +
-        '20'
-      
-        '090909092d2d202028405f446f634461746520494e202853454c45435420735f' +
-        '446f63446174652046524f4d202353656c656374696f6e73292929'
-      '090909092d2d414e44'
-      
-        '090909092d2d2020284558495354532853454c45435420312046524f4d202353' +
-        '656c656374696f6e7320574845524520735f506179547970653d2d3129204f52' +
-        '20'
-      
-        '090909092d2d202028405f5061795479706520494e202853454c45435420735f' +
-        '506179547970652046524f4d202353656c656374696f6e73292929'
-      '090909092d2d414e44'
-      
-        '090909092d2d2020284558495354532853454c45435420312046524f4d202353' +
-        '656c656374696f6e7320574845524520735f576f726b65723d2d3129204f5220'
-      
-        '090909092d2d202028405f576f726b657220494e202853454c45435420735f57' +
-        '6f726b65722046524f4d202353656c656374696f6e73292929'
-      '090909092d2d414e44'
-      
-        '090909092d2d2020284558495354532853454c45435420312046524f4d202353' +
-        '656c656374696f6e7320574845524520735f457870656e73653d2d3129204f52' +
-        '20'
-      
-        '090909092d2d202028405f457870656e736520494e202853454c45435420735f' +
-        '457870656e73652046524f4d202353656c656374696f6e73292929'
-      '090909090909092020200909092020'
+      '0909092020090909090909092020200909092020'
       '090909202020626567696e0909'
       
         '202020202020202020202020202020696e7365727420696e746f202354656d70' +
@@ -1281,6 +1181,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '090909090909092c205f457870656e736520'
       '090909090909092c20457870656e7365'
       '090909090909092c204465736372697074696f6e'
+      '090909090909092c2043757272656e637948656164'
       '090909090909092c205f53756d6d61'
       '090909090909092c205f4672656553756d6d6120202009'
       '09090909090909292020'
@@ -1307,6 +1208,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '09090909090909092c20405f457870656e736520'
       '09090909090909092c2040457870656e7365'
       '09090909090909092c20404465736372697074696f6e'
+      '09090909090909092c204043757272656e637948656164'
       '09090909090909092c2030'
       '09090909090909092c203020090909090909090909'
       '0909090929'
@@ -1342,6 +1244,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '09090909090909092c204e554c4c'
       '09090909090909092c204e554c4c'
       '09090909090909092c204e554c4c'
+      '09090909090909092c204e554c4c'
       '09090909090909092c204053756d6d612020'
       
         '09090909090909092c20404672656553756d6d61090909090909090909090909' +
@@ -1354,17 +1257,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '202020656e64'
       '2020636c6f73652043533b'
       '20206465616c6c6f636174652043533b2020'
-      '2020'
-      '20202f2a'
-      '20202020735f4167656e7420696e74204e554c4c'
-      '2c20735f446f635479706520696e74204e554c4c'
-      '2c20735f446f634e756d20696e74204e554c4c'
-      '2c20735f446f634461746520696e74204e554c4c'
-      '2c20735f5061795479706520696e74204e554c4c'
-      '2c20735f576f726b657220696e74204e554c4c'
-      '2c20735f457870656e736520696e74204e554c4c'
-      '20202a2f'
-      '2020'
+      '202020'
       '202073656c656374202a2066726f6d202354656d7044617461'
       '5748455245'
       
