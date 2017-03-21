@@ -12,16 +12,19 @@ type
     Column: TColumnEh;
     FieldVals: TStringList;
     QtyList: TIntList;
-    SelCount: Integer;
+    //SelCount: Integer;
+    SortKeys: TSortedIntList;
   end;
 
   TColumnObject = class
   private
+    FEnableFieldName: String;
+    FEnableFunc: TObjBoolFunc;
     FAggregValue: Double;
     DataSet: TDataSet;
     FOwner: TColumnObjects;
     FColumn: TColumnEh;
-    KeyField, MainField: TField;
+    KeyField, MainField, EnableField: TField;
     FieldVals: TStringList;
     FieldKeys, QtyList: TIntList;
     SortedKeys: TSortedIntList;
@@ -41,10 +44,14 @@ type
     function GetCountValues: TList;
     function GetColumnObjectInfo: TColumnObjectInfo;
     function GetIndexForKey(Index: Integer): Integer;
+    function IsValueEnabled: Boolean;
+    function FindEnableField: TField;
   public
     constructor Create( AColumn: TColumnEh;
                         AOwner: TColumnObjects;
-                        AValueType: TFooterValueType = fvtNon);
+                        AValueType: TFooterValueType = fvtNon;
+                        EnableFieldFunc: TObjBoolFunc = nil;
+                        EnableFieldName: String = '');
     destructor Destroy; override;
     procedure AggregateMainValue;
     function IsUpdated: Boolean;
@@ -61,12 +68,17 @@ type
     LastTag: Integer;
     FoundIndex: Integer;
     EnableColTag: TIntBoolFunc;
+    FEnableFieldName: String;
+    FEnableFunc: TObjBoolFunc;
     FDataSet: TDataSet;
     FAggregItems: TList;
     function IndexOfTag(ColumnTag: Integer): Integer;
     procedure FreeItems;
   public
-    constructor Create(ADataSet: TDataSet; EnableIndex: TIntBoolFunc);
+    constructor Create( ADataSet: TDataSet;
+                         EnableIndex: TIntBoolFunc;
+                          EnableFieldFunc: TObjBoolFunc = nil;
+                          EnableFieldName: String = '');
     destructor Destroy; override;
     procedure ClearItems;
     procedure ClearAggregItems;
@@ -89,6 +101,9 @@ type
 implementation
 
 { TColumnObject }
+
+const
+  EnableFieldNameDef = '_key';
 
 procedure UpdateFieldValues( Items, Keys: TStrings; DataSet: TDataSet;
                           SortedKeys: TSortedIntList;
@@ -179,9 +194,10 @@ function TColumnObject.GetColumnObjectInfo(): TColumnObjectInfo;
 begin
   Result.FieldVals:= FieldVals;
   Result.QtyList:= QtyList;
-  Result.SelCount:= SortedKeys.Count;
+  //Result.SelCount:= SortedKeys.Count;
+  Result.SortKeys:= SortedKeys;
   Result.Column:= FColumn;
-end;  
+end;
 
 function TColumnObject.GetCountValues(): TList;
 begin
@@ -216,6 +232,15 @@ begin
   end;
 end;
 
+function TColumnObject.IsValueEnabled(): Boolean;
+begin
+  Result:= True;
+  if Assigned(FEnableFunc) and
+     Assigned(EnableField) then
+     Result:= FEnableFunc(EnableField);
+end;
+
+
 function TColumnObject.UpdateFieldValues(NewValues: Boolean = False): Integer;
 var Key, i: Integer;
 begin
@@ -236,6 +261,7 @@ begin
     while not DataSet.Eof do
     begin
       Key:= KeyField.AsInteger;
+      if IsValueEnabled() then
       if (not SortedKeys.Find(Key, i)) then
       begin
         // default item state is checked:
@@ -282,9 +308,18 @@ begin
      Result:= DataSet.FindField('_' + MainField.FieldName);
 end;
 
+function TColumnObject.FindEnableField(): TField;
+begin
+  Result:= nil;
+  if FEnableFieldName<>'' then
+  Result:= DataSet.FindField(FEnableFieldName);
+end;
+
 constructor TColumnObject.Create(
             AColumn: TColumnEh; AOwner: TColumnObjects;
-            AValueType: TFooterValueType = fvtNon);
+            AValueType: TFooterValueType = fvtNon;
+            EnableFieldFunc: TObjBoolFunc = nil;
+            EnableFieldName: String = '');
 begin
   FColumn:= AColumn;
   FieldVals := TStringList.Create;
@@ -298,6 +333,11 @@ begin
   KeyField:= FindKeyField();
   FooterValueType:= AValueType;
   FIsAggregated:= FooterValueType <> fvtNon;
+  if (EnableFieldName='') then
+     FEnableFieldName:= EnableFieldNameDef else
+     FEnableFieldName:= EnableFieldName;
+  EnableField:= FindEnableField();
+  FEnableFunc:= EnableFieldFunc;
 end;
 
 destructor TColumnObject.Destroy;
@@ -341,11 +381,16 @@ begin
 //  GetColumnObject(i).Free;
 end;
 
-constructor TColumnObjects.Create(ADataSet: TDataSet; EnableIndex: TIntBoolFunc);
+constructor TColumnObjects.Create( ADataSet: TDataSet;
+                                   EnableIndex: TIntBoolFunc;
+                                    EnableFieldFunc: TObjBoolFunc = nil;
+                                    EnableFieldName: String = '');
 begin
   inherited Create;
   FAggregItems:= TList.Create;
   EnableColTag:= EnableIndex;
+  FEnableFieldName:= EnableFieldName;
+  FEnableFunc:= EnableFieldFunc;
   FDataSet:= ADataSet;
   FoundIndex:= -1;
   LastTag:= -1;
@@ -362,7 +407,8 @@ end;
 function TColumnObjects.AddColumnObject( AColumn: TColumnEh;
                                          AValueType: TFooterValueType = fvtNon): TColumnObject;
 begin
-  Result := TColumnObject.Create(AColumn, Self, AValueType);
+  Result := TColumnObject.Create(
+            AColumn, Self, AValueType, FEnableFunc, FEnableFieldName);
   if (Result.IsAggregated) then
       FAggregItems.Add(Result) else
       Add(Result);
@@ -477,7 +523,6 @@ begin
           Result:= ColObj.FColumn;
      end;
 end;
-
 
 function TColumnObjects.GetColumnObjectInfo(
          ColumnTag: Integer; DoUpdate: Boolean = True): TColumnObjectInfo;

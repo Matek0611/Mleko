@@ -20,7 +20,7 @@ type
                  ptExpansion, ptSelection, ptOnlyTotals,
                  ptDisableExclusion, ptUseColnPrice, ptDisableZeroSumAcn,
                  ptFormDate, ptBegDate, ptStartDate, ptVeryOld,
-                 ptOrderBy,
+                 ptOrderBy, ptOrderFirst, ptOrderSecond,
                  ptEndDate);
 
   TSelectionType = ( stDepart, stAgent, stDocType, stDocNum, stDocDate,
@@ -92,6 +92,7 @@ type
     quDebt_FreeSumma: TFloatField;
     quDebt_DocDate: TIntegerField;
     quDebt_Summa: TFloatField;
+    sthFields: TStrHolder;
     procedure dbgDebtsTitleBtnClick(Sender: TObject; ACol: Integer; Column: TColumnEh);
     procedure dbgDebtsKeyPress(Sender: TObject; var Key: Char);
     procedure dbgDebtsKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -150,11 +151,12 @@ type
     FieldVals, FieldKeys, Selections: TStringList;
     AList: TStringListArray;
     ParamList: TStrings;
-    OldCol, OldDir, OldTag: Integer;
+    OldCol, OldDir, OldTag, RecordKey: Integer;
     DisableParamIndexes, ItemIsInteger,
     TestMode, CopySourceOnRefresh,
     DisableVerification, EnableFiltering, FirstShown: Boolean;
     OrderFullStr: String;
+    OrderFullStrings: array[ptOrderFirst..ptOrderSecond] of String;
     UserParamType: TParamType;
     {$IFDEF SystemMenu}
     UseColnPrice: Boolean;
@@ -244,6 +246,11 @@ type
     procedure SetDefaultSelections(sel: TSelectionType;
       SelIntArray: array of Integer);
     procedure SetSelectionStrByIndex(Index: Integer; S: String);
+    procedure FindOrderMarks(MarkCount: Integer; Start: TParamType);
+    function EnableFieldFunc(Obj: TObject): Boolean;
+    function EnableAgentKey: Boolean;
+    procedure AcceptSelectedItems;
+    procedure ApplyTestMode;
   public
     { Public declarations }
     procedure RefreshResults(SetMaxCount: Boolean = False);
@@ -273,7 +280,7 @@ const
 
   AllowedSumIndexes: array[0..3] of Integer = (-1, -2, -3, -4);
 
-  AllowedFilterIndexes = [0, 1, 2, 3, 4, 10]; // used for filtering
+  AllowedFilterIndexes = [7]; // used for filtering
   AllowedIntIndexes = [5, 8, 9, 10]; // used for sorting
 
   AllowedIntSelectionTypes = [ stDepart, stAgent, stDocType, stDocNum,
@@ -307,6 +314,8 @@ const
   idVeryOldDay = 'VeryOldDay';
   idVeryOldVal = -10000;
   idOrderBy = 'ORDER BY';
+  idOrderMark = '--<order by #%d>';
+
   idDisableExclusion = 'DisableExclusion';
   idDisableZeroSumAcn = 'DisableZeroSumAcn';
   idUseColnPrice = 'UseColnPrice';
@@ -345,7 +354,9 @@ const
   DefPrefValues : array[Boolean] of TBoolStrValue = ('', ', ');
   BoolChecks: array[Boolean] of UINT = (MF_UNCHECKED, MF_CHECKED);
 
-  idDefaultSortFields = ' OtdelName, VidName, SotrudName, _NomNakl, _DayExp DESC';
+  
+  idDefaultSortFields = 'Depart, DocType, DocDate';
+  OrderDefStrings: array[ptOrderFirst..ptOrderSecond] of String = ('Agent', 'Depart, DocType, DocDate');
 
   BoolStrValues: array[Boolean] of TBoolStrValue =
   //('Нет', 'Да');
@@ -736,7 +747,7 @@ end;
 function TfrmMoneyCompensation.SetParameterByType(ParamType: TParamType; Value:
   string): string;
 begin
-  if (ParamType<>ptOrderBy) then
+  if not (ParamType in [ptOrderFirst, ptOrderSecond]) then
   Result := idParamPrefix + ParamKeys[ParamType] + idParamPostfix + Value else
   Result := Value;
   if (not DisableParamIndexes) and (ParamIndexes[ParamType] > 0) then
@@ -982,19 +993,22 @@ begin
   EnableFiltering:= False;
   OldCol:= -1; OldTag:= -1;
   ColObjs.ClearItems;
+  SortedKeys.Clear;
 end;
 
+procedure TfrmMoneyCompensation.ApplyTestMode();
+begin
+  quTest.Close;
+  ParamList := quTest.SQL;
+  ParamList.Assign(quDebt.SQL);
+end;
 
 procedure TfrmMoneyCompensation.ApplyChanges();
 begin
-  if TestMode then
-  begin
-    quTest.Close;
-    ParamList := quTest.SQL;
-    ParamList.Assign(quDebt.SQL);
-  end
+  if TestMode then ApplyTestMode()
      else
      begin
+       RecordKey:= -1;
        quDebt.DisableControls;
        quDebt.Close;
        ParamList := quDebt.SQL;
@@ -1057,6 +1071,8 @@ begin
         dbgDebts.Refresh;
      end else
   quDebt.Open;
+  if (RecordKey>=0) then
+  quDebt.Locate('_key', RecordKey, []);
   Tracer.Stop;
   ShowRecordCount(SetMaxCount);
   quDebt.EnableControls;
@@ -1067,6 +1083,25 @@ begin
   OrderFullStr:= idOrderBy + ' ' + idDefaultSortFields;
 end;
 
+procedure TfrmMoneyCompensation.FindOrderMarks(MarkCount: Integer; Start: TParamType);
+var i, k: Integer;
+begin
+for i := 1 to MarkCount do
+  begin
+     k:= GetStartPosIndex(ParamList, Format(idOrderMark, [i]));
+     if (k>0) and (k<ParamList.Count-1) then
+        begin
+          Inc(k);
+          if AnsiStartsText(idOrderBy, ParamList[k]) then
+             begin
+               //OrderFullStrings[Start]:= Trim(Copy(ParamList[k], Length(idOrderBy)+1, MaxInt));
+               OrderFullStrings[Start]:= idOrderBy + ' ' + OrderDefStrings[Start];
+               ParamIndexes[Start]:= k;
+               Inc(Start);
+             end;
+        end;
+  end;
+end;
 
 procedure TfrmMoneyCompensation.DetectParamIndexes();
 var
@@ -1100,8 +1135,9 @@ begin
    ParamIndexes[ptOnlyTotals]:=
    GetStartPosIndex(ParamList, idParamPrefix + idOnlyTotals);
 
-//   ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
-//   SetDefaultOrderFullStr;
+   ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
+   SetDefaultOrderFullStr;
+   FindOrderMarks(2, ptOrderFirst);
 
 //   ParamIndexes[ptExpansion]:= GetStartPosIndex(ParamList, idInsertExpansions);
    ParamIndexes[ptSelection]:= GetStartPosIndex(ParamList, idInsertSelections);
@@ -1150,10 +1186,11 @@ begin
 //          SetParameterByType(pt, IntToStr(Ord(UseColnPrice)));
 //      ptDisableZeroSumAcn:
 //          SetParameterByType(pt, IntToStr(Ord(DisableZeroSumAcn)));
-      ptOrderBy:
+        ptOrderFirst, ptOrderSecond:
+      //ptOrderBy:
       begin
 //        ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
-//        SetParameterByType(pt, OrderFullStr);
+        SetParameterByType(pt, OrderFullStrings[pt]);
       end;
 //      ptEndDate:
 //          SetParameterByType(pt, GetDateStrByIndex(2, True));
@@ -1183,6 +1220,11 @@ begin
     RefreshResults;
 end;
 
+function TfrmMoneyCompensation.EnableFieldFunc (Obj: TObject): Boolean;
+begin
+  Result:= TField(Obj).AsInteger = 0;
+end;  
+
 function TfrmMoneyCompensation.EnableExpansion(Index: Integer): Boolean;
 begin
   Result:= (Index>=0) and (Index<clbExpansions.Items.Count) and
@@ -1206,7 +1248,7 @@ begin
   Result:= idDefaultSortFields;
   if EnableSortField then
   FieldName:= GetSortField(FieldName, Index);
-  PrepareStrValues(idDefaultSortFields, Temp);
+  PrepareStrValues(OrderDefStrings[ptOrderSecond], Temp);
   Index:= GetStartPosIndex(Temp, FieldName);
   //Index:= Temp.IndexOf(FieldName);
   if (Index>=0) then Temp.Delete(Index);
@@ -1265,23 +1307,34 @@ end;
 procedure TfrmMoneyCompensation.SortRowsByAllowedColumn(Column: TColumnEh; Dir: Integer = 0);
 var
   OrderFields, MainFieldStr, KeyFieldStr: String;
-  Old_Dir, Old_Col, ACol: Integer;
+  Old_Dir, Old_Col, ACol: Integer; pt: TParamType;
 begin
   //Column:= dbgDebts.Columns[ACol];
+  RecordKey:= -1;
+//  if quDebt.Active then
+//     RecordKey:= quDebt_key.AsInteger;
   ACol:= Column.Index;
-  if (not quDebt.Active) or (not EnableExpansion(Column.Tag) and (Column.Tag>=0)) then Exit;
-    //MainFieldStr:= GetSortField(Column.FieldName, Column.Index);
+  if (not quDebt.Active) or cbxOnlyTotals.Checked then Exit;
     MainFieldStr:= Column.FieldName;
-    //EnableFiltering:= False;
-    OrderFields:= GetOrderFields(MainFieldStr, Column.Tag, Column.Tag in AllowedIntIndexes);
+    if SameText(MainFieldStr, OrderDefStrings[ptOrderFirst])
+    then
+    begin
+      OrderFields:= '';
+      pt:= ptOrderFirst;
+    end else
+    begin
+      OrderFields:= GetOrderFields( MainFieldStr, Column.Tag,
+                                    Column.Tag in AllowedIntIndexes);
+      pt:= ptOrderSecond;
+    end;
     Old_Dir:= OldDir; Old_Col:= OldCol;
     if (Dir<>0) then
        begin
          Old_Dir:= Dir;
          Old_Col:= -2;
        end;
-    OrderFullStr:=
-    SortMSQueryInEhGrid( Old_Col, Old_Dir, ACol, ParamIndexes[ptOrderBy], Column,
+    OrderFullStrings[pt]:=
+    SortMSQueryInEhGrid( Old_Col, Old_Dir, ACol, ParamIndexes[pt], Column,
                          quDebt.SQL, quDebt, MainFieldStr, OrderFields, False);
     if (Dir=0) then
        begin
@@ -1290,7 +1343,6 @@ begin
        end;
     RefreshResults;
 end;
-
 
 procedure TfrmMoneyCompensation.ClearAllSortMarkers();
 var i: Integer;
@@ -1301,13 +1353,34 @@ for i := 0 to dbgDebts.Columns.Count-1 do
   end;
 end;
 
+procedure TfrmMoneyCompensation.AcceptSelectedItems();
+var Info: TColumnObjectInfo; Keys: TStrings;
+begin
+  Info:= ColObjs.GetColumnObjectInfo(-1, False);
+  if (Info.SortKeys<>nil) then
+     begin
+       Keys:= AList.GetChild(Info.Column.Tag);
+       if (Keys<>nil) then
+          Info.SortKeys.CopyToStrings(Keys);
+     end;
+end;
+
 procedure TfrmMoneyCompensation.AfterColumnFilterSelection(SelCount: Integer);
 begin
   if (SelCount>0) then
        begin
-         EnableFiltering:= True;
-         ColObjs.AcceptFilterValues();
-         RefreshResults();
+         if ColObjs.AcceptFilterValues() then
+         begin
+           AcceptSelectedItems();
+           EnableFiltering:= True;
+           DisableVerification:= True;
+           TestMode:= (EnteredSecretCode()<>0);
+           ApplyChanges;
+           if TestMode then
+              ShowScript() else
+              RefreshResults();
+           DisableVerification:= False;
+         end;
        end;
 end;
 
@@ -1385,7 +1458,7 @@ var
   SelKeys: TStrings;
   NewValues: Boolean;
 begin
-  if (not quDebt.Active) or (not EnableExpansion(Column.Tag) and (Column.Tag>=0)) then Exit;
+  if (not quDebt.Active) or cbxOnlyTotals.Checked then Exit;
   if (Column.Tag in AllowedFilterIndexes) then
   begin
     if IsColumnFilterDlgVisible() then Exit;
@@ -1483,7 +1556,6 @@ begin
   end;
 end;
 
-
 procedure TfrmMoneyCompensation.FillComponentLists();
 
   procedure FillExpansionList();
@@ -1539,6 +1611,7 @@ procedure TfrmMoneyCompensation.FillComponentLists();
         Column:= Columns[i];
         if (Column.Tag<0) then
            ColObjs.AddColumnObject(Column, fvtSum) else
+        if (Column.Tag>0) then
            ColObjs.AddColumnObject(Column);
       end;
   end;
@@ -1560,7 +1633,7 @@ begin
 //  FillFieldList;
   FillArrayList();
   FillSelectionList;
-  //FillColumnObjects();
+  FillColumnObjects();
 end;
 
 {$IFDEF SystemMenu}
@@ -1692,7 +1765,8 @@ begin
   Selections.Add(''); // make Selections.Count = 1
   AList:= TStringListArray.Create;
   SortedKeys:= TSortedIntList.Create;
-  ColObjs:= TColumnObjects.Create(quDebt, Self.EnableExpansion);
+  ColObjs:= TColumnObjects.Create(
+            quDebt, Self.EnableExpansion, Self.EnableFieldFunc, '_Count');
   FillSourceList();
   FillComponentLists();
   DetectParamIndexes;
@@ -1954,7 +2028,7 @@ begin
   end;
   if (z>=0) then
   begin
-    Fields.Clear;
+    //Fields.Clear;
     S:= GetDelimText(Temp, ', ', '"');
 //    S:= Trim(S);
 //    P:= PChar(S);
@@ -2104,11 +2178,29 @@ begin
   Visible:= not Visible;
 end;
 
+function TfrmMoneyCompensation.EnableAgentKey(): Boolean;
+var _Agent, _Count, Index: Integer;
+begin
+  Result:= False;
+  _Count:= quDebt_Count.AsInteger;
+  _Agent:= quDebt_Agent.AsInteger;
+  if (_Count=0) then
+     begin
+       if ColObjs.ValuesExist(False) then
+       begin
+         if not SortedKeys.Find(_Agent, Index) then
+            SortedKeys.Insert(Index, _Agent);
+         Result:= True;
+       end;
+     end else
+     Result:= (SortedKeys.IndexOf(_Agent)>=0)
+end;
+
 procedure TfrmMoneyCompensation.quDebtFilterRecord(DataSet: TDataSet;
   var Accept: Boolean);
 begin
   inherited;
-//  Accept:= (not EnableFiltering) or ColObjs.ValuesExist(False);
+  //Accept:= (not EnableFiltering); // or EnableAgentKey();
 //  if Accept and (quDebt_key.AsInteger>0) then ColObjs.AggregateMainValues;
   Inc(VisibleRowCount, Ord(Accept));
 end;

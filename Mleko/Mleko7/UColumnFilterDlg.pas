@@ -99,6 +99,7 @@ type
 function IsColumnFilterDlgVisible(): Boolean;
 
 procedure CloseColumnFilterDlg();
+function EnteredSecretCode: Integer;
 
 function ColumnFilterDlg(Owner: TComponent; Items: TStrings; Counts: TList;
   RootName: string = ''; P: PRect = nil; UseObjects: Boolean = False; FiltEvent:
@@ -128,6 +129,12 @@ const
 
 var
   SortListDirection: Integer = 1;
+  SecretCode: Integer = 0;
+
+function EnteredSecretCode: Integer;
+begin
+  Result:= SecretCode;
+end;
 
 function StringListCompareStringsDown(List: TStringList; Index1, Index2: Integer):
   Integer;
@@ -552,9 +559,15 @@ begin
 end;
 
 procedure TfrmColumnFilter.btnOKClick(Sender: TObject);
+var
+  Ctrl_Down, Shift_Down: Boolean;
 begin
   //if not (fsModal in FormState) then
   begin
+    Ctrl_Down := Ctrl_Is_Down;
+    Shift_Down:= Shift_Is_Down;
+    SecretCode:= 0;
+    if Ctrl_Down then SecretCode:= 100;
     UpdateItems(Data);
     if Assigned(FiltEvent) then
       FiltEvent(Pointer(-CheckedCount));

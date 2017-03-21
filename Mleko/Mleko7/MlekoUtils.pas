@@ -14,6 +14,8 @@ Type
 
   TSimpleDataType = (sdtInteger, sdtFloat, sdtString);
   TIntBoolFunc = function(Index: Integer): Boolean of object;
+  TObjBoolFunc = function(Obj: TObject): Boolean of object;
+
   TDynIntegerArray = array of Integer;
   PDynIntegerArray = ^TDynIntegerArray;
 
@@ -54,7 +56,10 @@ function SelectMLKItemsByDialog(MLKForm: TCFLMLKCustomForm; Items: TStrings;
          SQLFilter: string = ''): Integer;
 function GetDelimText(Source: TStrings; Delim: String; Quote: Char = #0): string;
 function GetDelimTextOfIntArray(const Source: TDynIntegerArray; Delim: String): string;
-procedure IntArrayToStrings(const Source: TDynIntegerArray; Dest: TStrings);
+procedure IntArrayToStrings(const Source: TDynIntegerArray; Dest: TStrings); overload;
+procedure IntArrayToStrings( const Source: PIntegerArray;
+                             const Count: Integer; Dest: TStrings;
+                             const DoClear: Boolean = True); overload;
 procedure StackToDynArray(const Source: array of Integer; var Dest: TDynIntegerArray);
 procedure StringObjectsToDynArray(const Source: TStrings; var Dest: TDynIntegerArray);
 function GetContainsPosIndex( Source: TStrings; S: string;
@@ -62,7 +67,7 @@ function GetContainsPosIndex( Source: TStrings; S: string;
                               MaxCount: Integer = 0;
                               LookForward: Boolean = True): Integer;
 function GetStartPosIndex( Source: TStrings; S: string; MaxCount: Integer = 0;
-                           LookForward: Boolean = True): Integer;
+                           LookForward: Boolean = True; Start: Integer = -1): Integer;
 function IndexOfColumnByTag(DBGridEh: TDBGridEh; TagValue: Integer): Integer;
 function SortMSQueryInEhGrid( var OldCol, OldDir: Integer;
           Col, OrderLine: Integer; Column: TColumnEh; Source: TStrings;
@@ -241,6 +246,17 @@ begin
   Dest.Add(IntToStr(Source[i]));
 end;
 
+procedure IntArrayToStrings( const Source: PIntegerArray;
+                             const Count: Integer; Dest: TStrings;
+                             const DoClear: Boolean = True);
+var i: Integer;
+begin
+  if DoClear then Dest.Clear;
+  if (Source<>nil) then
+  for i := 0 to Count-1 do
+  Dest.Add(IntToStr(Source[i]));
+end;
+
 procedure StackToDynArray(const Source: array of Integer; var Dest: TDynIntegerArray);
 var n: Integer;
 begin
@@ -292,18 +308,22 @@ begin
 end;
 
 function GetStartPosIndex( Source: TStrings; S: string; MaxCount: Integer = 0;
-                           LookForward: Boolean = True): Integer;
+                           LookForward: Boolean = True; Start: Integer = -1): Integer;
 begin
   if (MaxCount<=0) or (MaxCount>Source.Count) then
       MaxCount:= Source.Count;
   if LookForward then
   begin
-    for Result := 0 to MaxCount - 1 do
+    if (Start<0) then Start:= 0;
+    //if (Start>=0) then
+    for Result := Start to MaxCount - 1 do
       if AnsiStartsText(S, Source[Result]) then Exit
   end
   else
   begin
-    for Result := Source.Count-1 downto Source.Count-MaxCount do
+    if (Start<0) then Start:= Source.Count-1;
+    //if (Start>=0) then
+    for Result := Start downto Source.Count-MaxCount do
       if AnsiStartsText(S, Source[Result]) then Exit;
   end;
   Result := -1;
@@ -352,8 +372,11 @@ begin
          else OldDir:= -OldDir;
          OldCol:= Col;
    Column.Title.SortMarker:= TSortMarkerEh((3-OldDir) div 2);
-   if (OldDir<0) then OrderStr:= ' DESC, ' else OrderStr:= ' ASC, ';
-   if (OrderFields='') then OrderFields:= Column.Field.FieldName;
+   if (OldDir<0) then OrderStr:= ' DESC' else OrderStr:= ' ASC';
+   if (OrderFields='') and
+      (not SameText(MainField, Column.Field.FieldName)) then
+           OrderFields:= Column.Field.FieldName;
+   if (OrderFields<>'') then OrderStr:= OrderStr + ', ';
    Result:= idOrderBy + ' ' + MainField + OrderStr + OrderFields;
    MSQuery.Close;
    if DoInsert and (Source<>nil) then

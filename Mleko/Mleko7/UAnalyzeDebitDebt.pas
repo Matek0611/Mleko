@@ -278,7 +278,7 @@ const
   idParamPrefix = 'SET @';
   idParamPostfix = ' = ';
   idExpansions = 'Expansions';
-  idSelections = 'Selections';
+  idSelections = 'DebtSelections';
   idExpOption = 1;
   idSelOption = 2;
   idUserNo = 'UserNo';
@@ -304,17 +304,14 @@ const
   idDayNaklAttr = 'накладной';
   idDayOplAttr = 'оплаты';
 
-//  idBegDate = 'p_date_nakl_beg';
-//  idEndDate = 'p_date_nakl_end';
-
   vk_Enter = 13;
   idLocalOwnerName = 'frmAnalyzeDebitDebt';
   idParamName = 'ParamName';
   idParamValue = 'ParamValue';
   idNull = 'NULL';
 
-  idInsertExpansions = 'INSERT INTO #Expansions Values';
-  idInsertSelections = 'INSERT INTO #Selections Values';
+  idInsertExpansions = 'INSERT INTO #' + idExpansions + ' Values';
+  idInsertSelections = 'INSERT INTO #' + idSelections + ' Values';
   idInsertAllTypes = 'INSERT INTO #AllTypes Values';
   idInsert_All_Types_Values = '(' +  '''a_OtdelNo'', ''a_VidNo'', ''a_SotrudNo'', ''a_Buh'', ''a_PostNo'', ''a_NaklNo'', ''a_AddressID'', ''a_DOC_TYPE_ID'', ''a_DayNakl'', ''a_DayOpl'', ''a_DayExp'', ''a_CurHd_ID'', ''a_CurAc_ID'''+')';
   idInsertAllTypesValues = '(' + '''Все отделы'', ''Все виды'', ''Все сотрудники'', '+

@@ -6,7 +6,7 @@ uses Classes;
 type
   PIntegerArray = ^TIntegerArray;
 
-  TIntegerArray = array[0..$FFFFFF] of Integer;
+  TIntegerArray = System.IntegerArray;
 
 //  TAbstractSortedList = class
 //  protected
@@ -44,12 +44,14 @@ type
     function Find(const Value: Integer; var Index: Integer): Boolean;
     function IndexOf(const Value: Integer): Integer;
     procedure Insert(Index: Integer; const Value: Integer);
+    procedure CopyToStrings(Dest: TStrings; DoClear: Boolean = True);
     property Count: Integer read FCount write SetCount;
     property Data: Pointer read FData;
     property Value[Index: Integer]: Integer read GetValue write SetValue; default;
   end;
 
 implementation
+uses MlekoUtils;
 
 { TSortedIntList }
 
@@ -148,6 +150,11 @@ begin
   IncCount();
   ShiftIntValues(PIntegerArray(FData), Index, FCount);
   SetValue(Index, Value);
+end;
+
+procedure TSortedIntList.CopyToStrings(Dest: TStrings; DoClear: Boolean = True);
+begin
+  IntArrayToStrings(FData, FCount, Dest, DoClear);
 end;
 
 procedure TSortedIntList.DeleteItem(Index: Integer);
