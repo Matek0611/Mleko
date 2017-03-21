@@ -1,6 +1,6 @@
 inherited CreateBlankWithExelForm: TCreateBlankWithExelForm
-  Left = 986
-  Top = 249
+  Left = 447
+  Top = 322
   Width = 414
   Height = 306
   Caption = #1057#1086#1079#1076#1072#1085#1080#1077' '#1079#1072#1082#1072#1079#1072' '#1080#1079' Exel '#1092#1072#1081#1083#1072' '#1085#1086#1074#1086#1077

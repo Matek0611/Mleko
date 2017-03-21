@@ -379,6 +379,8 @@ var
   quOrderSumma : TMSQuery;
   isError : Boolean;
   Address : String;
+  quPriceZero : TMSQuery;
+
 begin
   inherited;
   
@@ -808,10 +810,10 @@ begin
                                       +' from l_BlankForExcel '
                                       +'  where PostNo = :PostNo '
                                       +'    and AddressNo = :AddressNo '
-                                      +'    and OrderDate = :OrderDate ';
+                                      +'    and OrderDate = convert(smalldatetime,:OrderDate) ';
         CheckOrderForExcel.ParamByName('PostNo').Value := PostNo;
         CheckOrderForExcel.ParamByName('AddressNo').Value := AddressNo;
-        CheckOrderForExcel.ParamByName('OrderDate').Value := DocDate; //quOrdersCNTOrderDate.Value;
+        CheckOrderForExcel.ParamByName('OrderDate').AsDateTime := DocDate; //quOrdersCNTOrderDate.Value;
         CheckOrderForExcel.Open;
         if CheckOrderForExcel.RecordCount > 0 then begin
                                                      ShowMessage(' Заказ '+DateToStr(DocDate)+'  '+quOrdersCNTAddressPost.AsString+' уже создавался!'+ #10#13 +
@@ -975,7 +977,7 @@ begin
                       quSpecBlank.ParamByName('AddressNo').Value := AddressNo;
                       quSpecBlank.ParamByName('OrderDate').Value := DocDate; //quOrdersCNTOrderDate.Value;
                       quSpecBlank.Open;
-                      quSpecBlank.First;
+
 
                       CheckOrderForExcel := TMSQuery.Create(nil);
                       CheckOrderForExcel.Connection:= dmDataModule.DB;
@@ -995,9 +997,55 @@ begin
                                                                                                      end;
                       CheckOrderForExcel.Close;
 
-
+                      quSpecBlank.First;
                       while not quSpecBlank.Eof do
-                       begin // quSpecBlank.Eof
+                       begin // quSpecBlank.Eof  Проверка расценки товара
+
+                         if ColNPrice > 0 then begin
+                                                 quPriceZero :=TMSQuery.Create(nil);
+                                                 quPriceZero.Connection:=dmDataModule.DB;
+                                                 quPriceZero.SQL.Clear;
+                                                 quPriceZero.SQL.Text:= 'select isnull(case when :ColnPrice = 1 then Isnull(convert(float,Price),0) '
+                                                                       +'                   when :ColnPrice = 2 then Isnull(convert(float,Price1),0) '
+                                                                       +'                   when :ColnPrice = 3 then Isnull(convert(float,Price2),0) '
+                                                                       +'                   when :ColnPrice = 4 then Isnull(convert(float,Price3),0) '
+                                                                       +'                   when :ColnPrice = 5 then Isnull(convert(float,Price4),0) '
+                                                                       +'                   when :ColnPrice = 6 then Isnull(convert(float,Price5),0) '
+                                                                       +'                   when :ColnPrice = 7 then Isnull(convert(float,Price6),0) '
+                                                                       +'                   when :ColnPrice = 8 then Isnull(convert(float,Price7),0) '
+                                                                       +'                   when :ColnPrice = 10 then Isnull(convert(float,Price8),0) '
+                                                                       +'                   when :ColnPrice = 11 then Isnull(convert(float,Price9),0) '
+                                                                       +'                   when :ColnPrice = 12 then Isnull(convert(float,Price10),0) '
+                                                                       +'                   when :ColnPrice = 13 then Isnull(convert(float,Price13),0) '
+                                                                       +'                   when :ColnPrice = 14 then Isnull(convert(float,Price14),0) '
+                                                                       +'                   when :ColnPrice = 15 then Isnull(convert(float,Price15),0) '
+                                                                       +'                   when :ColnPrice = 9 then Isnull(convert(float,AvgPriceIn),0) '
+                                                                       +'                   when :ColnPrice = 17 then Isnull(convert(float,pfv.PriceVeb), 0) '
+                                                                       +'                   when :ColnPrice = 18 then Isnull(convert(float,pfv.PriceInInst), 0) '
+                                                                       +'              end,0) as Price '
+                                                                       +' from Ostatok o '
+                                                                       +'     ,PriceForVeb pfv '
+                                                                       +'  where o.TovarNo = :TovarNo '
+                                                                       +'    and o.TovarNo = pfv.TovarNo';
+                                                 quPriceZero.Prepare;
+                                                 quPriceZero.ParamByName('TovarNo').Value := quSpecBlank.FieldByName('TovarNo').Value;
+                                                 quPriceZero.ParamByName('ColnPrice').Value := ColNPrice;
+                                                 quPriceZero.Open;
+                                                 if ((quPriceZero.FieldByName('Price').Value = 0) or (quPriceZero.FieldByName('Price').IsNull)) then begin
+                                                                                                                                                       ErrMsg := ' Не расцененный товар!' +#13#10+
+                                                                                                                                                                 'Код товара ' + quSpecBlank.FieldByName('TovarNo').AsString +
+                                                                                                                                                                 ' Колонка цены '+ IntToStr(ColNPrice) +#13#10;
+                                                                                                                                                     end;
+
+                                                 quPriceZero.Close;
+                                               end;
+                         quSpecBlank.Next;
+                         if ErrMsg <> '' then raise Exception.Create(ErrMsg+' Установите цену по колонке цены и повторите попытку!');
+                       end; // quSpecBlank.Eof
+
+                      quSpecBlank.First;
+                      while not quSpecBlank.Eof do
+                       begin // quSpecBlank.Eof Наполнение заказа
                          if isStop = false then AddTovarInBlanks(documentID,quSpecBlank.FieldByName('TovarNo').Value,data.UserNo,ColNPrice,quSpecBlank.FieldByName('KolTov').Value,quSpecBlank.FieldByName('KolTov').Value,0, Residue, Need);
                          quSpecBlank.Next;
                        end; // quSpecBlank.Eof
@@ -1229,6 +1277,7 @@ begin
                           quPrice.ParamByName('TovarNo').Value := TovarNo;
                           quPrice.ParamByName('ColnPrice').Value := ColNPrice;
                           quPrice.Open;
+{
                           if ((quPrice.FieldByName('Price').Value = 0) or (quPrice.FieldByName('Price').IsNull)) then begin
                                                                                                                         ErrMsg := 'Не расцененный товар!' +#13#10+
                                                                                                                                   'Создание заказа остановлено! Сообщите программисту!' +#13#10+
@@ -1236,6 +1285,7 @@ begin
                                                                                                                                   'Заказ в файле '+quOrdersCNTAddressPost.AsString;
                                                                                                                         raise Exception.Create(ErrMsg);
                                                                                                                       end;
+}
                           spEditBlankPosition.ParamByName('Boss_Price').Value := quPrice.FieldByName('Price').Value;
                           quPrice.Close;
                         end

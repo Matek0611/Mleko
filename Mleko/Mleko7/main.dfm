@@ -33,7 +33,7 @@ inherited fmMain: TfmMain
     Top = 72
     Width = 312
     Height = 24
-    Caption = #1054#1073#1085#1086#1074#1083#1077#1085#1080#1077' (6.2.74)  20.03.2017'
+    Caption = #1054#1073#1085#1086#1074#1083#1077#1085#1080#1077' (6.2.75)  21.03.2017'
     Color = clMoneyGreen
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
