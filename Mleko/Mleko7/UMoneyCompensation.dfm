@@ -446,6 +446,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       'DECLARE'
       ''
       ' @p_date_beg SmallDateTime'
+      ',@p_date_fst SmallDateTime'
       ',@p_date_end SmallDateTime'
       ',@DateStart  SmallDateTime'
       ',@DisableExclusion bit'
@@ -456,6 +457,16 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       'SET @DateStart = '#39'01.01.2000'#39
       'SET @DisableExclusion = 0'
       'SET @OnlyTotals = 0'
+      'SET @p_date_fst = '
+      '(select MIN(_Date) as MinDate from ('
+      'select MIN(DatePlat) as _Date  from PlatP'
+      'union '
+      'select MIN(DatePlat) as _Date  from PlatR'
+      'union '
+      'select MIN(DateNakl) as _Date  from NaklR'
+      'union '
+      'select MIN(DateNakl) as _Date  from NaklP'
+      ') D )'
       ''
       '--DROP TABLE #Selections'
       'BEGIN TRY  '
@@ -549,7 +560,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       #9#9'PostNo as _Agent, '
       #9#9'PostName as Agent'
       #9#9' FROM dbo.V_List_entity a'
-      #9#9'WHERE DateEntity between @p_date_beg and @p_date_end'
+      #9#9'WHERE DateEntity between @p_date_fst and @p_date_end'
       #9#9'and (ABS(isnull(FreeSumma, 0))>0.005)'
       '        and ((a.tip is null) or (a.tip not in '
       
@@ -602,9 +613,8 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       #9#9#9', Description'
       #9#9#9', CurrencyHead'
       #9#9' FROM dbo.V_List_entity a'
-      #9#9'WHERE '
-      #9#9'--DateEntity between @p_date_beg and @p_date_end'
-      #9#9'(ABS(isnull(FreeSumma, 0))>0.005)'#9#9
+      #9#9'WHERE DateEntity between @p_date_fst and @p_date_end'
+      #9#9'and (ABS(isnull(FreeSumma, 0))>0.005)'#9#9
       #9#9'and (PostNo=@PostNo)'
       '        and ((a.tip is null) or (a.tip not in '
       
@@ -867,6 +877,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '4445434c415245'
       ''
       '2040705f646174655f62656720536d616c6c4461746554696d65'
+      '2c40705f646174655f66737420536d616c6c4461746554696d65'
       '2c40705f646174655f656e6420536d616c6c4461746554696d65'
       '2c404461746553746172742020536d616c6c4461746554696d65'
       '2c4044697361626c654578636c7573696f6e20626974'
@@ -879,6 +890,26 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '5345542040446174655374617274203d202730312e30312e3230303027'
       '534554204044697361626c654578636c7573696f6e203d2030'
       '53455420404f6e6c79546f74616c73203d2030'
+      '5345542040705f646174655f667374203d20'
+      
+        '2873656c656374204d494e285f4461746529206173204d696e44617465206672' +
+        '6f6d2028'
+      
+        '73656c656374204d494e2844617465506c617429206173205f44617465202066' +
+        '726f6d20506c617450'
+      '756e696f6e20'
+      
+        '73656c656374204d494e2844617465506c617429206173205f44617465202066' +
+        '726f6d20506c617452'
+      '756e696f6e20'
+      
+        '73656c656374204d494e28446174654e616b6c29206173205f44617465202066' +
+        '726f6d204e616b6c52'
+      '756e696f6e20'
+      
+        '73656c656374204d494e28446174654e616b6c29206173205f44617465202066' +
+        '726f6d204e616b6c50'
+      '2920442029'
       ''
       '2d2d44524f50205441424c45202353656c656374696f6e73'
       '424547494e205452592020'
@@ -978,7 +1009,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '09092046524f4d2064626f2e565f4c6973745f656e746974792061'
       
         '090957484552452044617465456e74697479206265747765656e2040705f6461' +
-        '74655f62656720616e642040705f646174655f656e64'
+        '74655f66737420616e642040705f646174655f656e64'
       
         '0909616e6420284142532869736e756c6c284672656553756d6d612c20302929' +
         '3e302e30303529'
@@ -1056,13 +1087,12 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '0909092c204465736372697074696f6e'
       '0909092c2043757272656e637948656164'
       '09092046524f4d2064626f2e565f4c6973745f656e746974792061'
-      '0909574845524520'
       
-        '09092d2d44617465456e74697479206265747765656e2040705f646174655f62' +
-        '656720616e642040705f646174655f656e64'
+        '090957484552452044617465456e74697479206265747765656e2040705f6461' +
+        '74655f66737420616e642040705f646174655f656e64'
       
-        '0909284142532869736e756c6c284672656553756d6d612c203029293e302e30' +
-        '3035290909'
+        '0909616e6420284142532869736e756c6c284672656553756d6d612c20302929' +
+        '3e302e303035290909'
       '0909616e642028506f73744e6f3d40506f73744e6f29'
       
         '2020202020202020616e64202828612e746970206973206e756c6c29206f7220' +
