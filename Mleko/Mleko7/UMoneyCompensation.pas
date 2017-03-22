@@ -67,7 +67,6 @@ type
     quDebt_key: TIntegerField;
     quDebt_Count: TIntegerField;
     quDebtID: TIntegerField;
-    quDebtpkey: TStringField;
     quDebtSumma: TFloatField;
     quDebtFreeSumma: TFloatField;
     quDebt_Depart: TIntegerField;
@@ -1111,9 +1110,9 @@ begin
   //(ptUserNo, ptSPID, ptOwnerName, ptExpansion, ptSelection);
 //  ParamKeys[ptUserNo] := idUserNo;
 //  ParamKeys[ptSPID] := idSPID;
-  ParamKeys[ptFormDate] := idFormDate;
-  ParamKeys[ptBegDate] := idBegDate;
-  ParamKeys[ptStartDate] := idStartDate;
+//  ParamKeys[ptFormDate] := idFormDate;
+//  ParamKeys[ptBegDate] := idBegDate;
+//  ParamKeys[ptStartDate] := idStartDate;
   ParamKeys[ptVeryOld] := idVeryOldDay;
   ParamKeys[ptOnlyTotals] := idOnlyTotals;
   ParamKeys[ptDisableExclusion] := idDisableExclusion;
@@ -1130,13 +1129,10 @@ begin
 //    ParamIndexes[pt] := GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
 //   for pt := ptDisableExclusion to ptVeryOld do
 //   ParamIndexes[pt]:= GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
-   for pt := ptFormDate to ptStartDate do
-   ParamIndexes[pt]:= GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
-
-   ParamIndexes[ptOnlyTotals]:=
-   GetStartPosIndex(ParamList, idParamPrefix + idOnlyTotals);
-
-   ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
+   ParamIndexes[ptOnlyTotals]:= GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[ptOnlyTotals]);
+//   for pt := ptFormDate to ptStartDate do
+//   ParamIndexes[pt]:= GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
+//ramIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
    SetDefaultOrderFullStr;
    FindOrderMarks(2, ptOrderFirst);
 
@@ -1160,12 +1156,12 @@ begin
      end;
   for pt := ptLow to ptHigh do
     case pt of
-      ptFormDate:
-          SetParameterByType(pt, GetDateStrByIndex(0, True));
-      ptBegDate:
-        SetParameterByType(pt, QuotedStr(dtBegDate));
-      ptStartDate:
-          SetParameterByType(pt, QuotedStr(dtDateStart));
+//      ptFormDate:
+//          SetParameterByType(pt, GetDateStrByIndex(0, True));
+//      ptBegDate:
+//        SetParameterByType(pt, QuotedStr(dtBegDate));
+//      ptStartDate:
+//          SetParameterByType(pt, QuotedStr(dtDateStart));
       ptOnlyTotals:
             SetParameterByType(pt, IntToStr(Ord(cbxOnlyTotals.Checked)));
         ptOrderFirst, ptOrderSecond:
@@ -2001,8 +1997,8 @@ begin
      z:= SelectMLKItems(st, 'PLAT_TYPE', 'D_PLAT_TYPE');
   stExpenseItem:
      z:= SelectMLKItems(st, 'VIDRASHOD', 'VIDRASHOD');
-  stDocDate:
-     z:= SelectDateItems(st);
+//  stDocDate:
+//     z:= SelectDateItems(st);
   end;
   if (z>=0) then
   begin
