@@ -602,8 +602,9 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       #9#9#9', Description'
       #9#9#9', CurrencyHead'
       #9#9' FROM dbo.V_List_entity a'
-      #9#9'WHERE DateEntity between @p_date_beg and @p_date_end'
-      #9#9'and (ABS(isnull(FreeSumma, 0))>0.005)'#9#9
+      #9#9'WHERE '
+      #9#9'--DateEntity between @p_date_beg and @p_date_end'
+      #9#9'(ABS(isnull(FreeSumma, 0))>0.005)'#9#9
       #9#9'and (PostNo=@PostNo)'
       '        and ((a.tip is null) or (a.tip not in '
       
@@ -1055,12 +1056,13 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '0909092c204465736372697074696f6e'
       '0909092c2043757272656e637948656164'
       '09092046524f4d2064626f2e565f4c6973745f656e746974792061'
+      '0909574845524520'
       
-        '090957484552452044617465456e74697479206265747765656e2040705f6461' +
-        '74655f62656720616e642040705f646174655f656e64'
+        '09092d2d44617465456e74697479206265747765656e2040705f646174655f62' +
+        '656720616e642040705f646174655f656e64'
       
-        '0909616e6420284142532869736e756c6c284672656553756d6d612c20302929' +
-        '3e302e303035290909'
+        '0909284142532869736e756c6c284672656553756d6d612c203029293e302e30' +
+        '3035290909'
       '0909616e642028506f73744e6f3d40506f73744e6f29'
       
         '2020202020202020616e64202828612e746970206973206e756c6c29206f7220' +
@@ -1312,8 +1314,13 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       ''
       
         '7cc4e0f2e020e4eeeaf3ece5edf2e03a2032312e30332e323031373b20c2e5f0' +
-        'f1e8ff20312e317c'
+        'f1e8ff20312e312e317c'
       'c8f1f2eef0e8ff'
+      '32322e30332e32303137'
+      
+        '20c8f1eff0e0e2ebe5ed20e1e0e320f120e4e0f2eee920e820e2fbe2eee4eeec' +
+        '20ede0eaebe0e4edfbf5'
+      '20'
       '32312e30332e32303137'
       
         '202b20d4e8ebfcf2f0e0f6e8ff20efee20f1f2eeebe1f6f32022d1f2e0f2fcff' +
