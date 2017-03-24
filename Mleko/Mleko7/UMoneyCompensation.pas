@@ -295,6 +295,7 @@ const
   AllowedIntSelectionTypes = [ stDepart, stAgent, stDocType, stDocNum,
                                stPayType, stWorker, stExpenseItem];
 
+  ColumnTagShift = 1;
   idCurRecordCount = 0;
   idMaxRecordCount = 1;
   idPercent = 2;
@@ -1186,7 +1187,8 @@ end;
 procedure TfrmMoneyCompensation.SetSelectionsInParamList();
 var s: string; 
 begin
-  VerifyEmptySelections;
+  if not DisableVerification then
+     VerifyEmptySelections;
   GetSelectionsDelimList(Temp, '', ' and', ', ', True);
   if (Temp.Count=0) then Exit;
   s:= Trim(Temp.Text);
@@ -1440,7 +1442,7 @@ begin
   Info:= ColObjs.GetColumnObjectInfo(-1, False);
   if (Info.SortKeys<>nil) then
      begin
-       Keys:= AList.GetChild(Info.Column.Tag);
+       Keys:= AList.GetChild(Info.Column.Tag-ColumnTagShift);
        if (Keys<>nil) then
           Info.SortKeys.CopyToStrings(Keys);
      end;
@@ -1665,7 +1667,7 @@ procedure TfrmMoneyCompensation.FillComponentLists();
     //Fields.Clear;
   for i := 0 to Items.Count-1 do
       begin
-         k:= IndexOfColumnTag(i+1);
+         k:= IndexOfColumnTag(i+ColumnTagShift);
          if (k>=0) then
            begin
              Column:= Columns[k];
