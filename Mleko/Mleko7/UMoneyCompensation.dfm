@@ -1,6 +1,6 @@
 inherited frmMoneyCompensation: TfrmMoneyCompensation
-  Left = 9
-  Top = 71
+  Left = 136
+  Top = 68
   Width = 1014
   Height = 707
   Caption = #1050#1086#1084#1087#1077#1085#1089#1072#1094#1080#1103' '#1076#1077#1085#1077#1078#1085#1099#1093' '#1089#1088#1077#1076#1089#1090#1074
@@ -122,14 +122,16 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
           EditButtons = <>
           FieldName = 'Depart'
           Footers = <>
+          Tag = 1
           Title.Caption = #1054#1090#1076#1077#1083' '#1087#1088#1086#1076#1072#1078
+          Width = 100
         end
         item
           Color = 15658723
           EditButtons = <>
           FieldName = 'Agent'
           Footers = <>
-          Tag = 1
+          Tag = 2
           Title.Alignment = taCenter
           Title.Caption = #1050#1086#1085#1090#1088#1072#1075#1077#1085#1090
           Title.Color = 15658723
@@ -140,16 +142,16 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
           EditButtons = <>
           FieldName = 'DocType'
           Footers = <>
+          Tag = 3
           Title.Caption = #1042#1080#1076' '#1076#1086#1082'-'#1090#1072
-          Title.TitleButton = True
           Width = 80
         end
         item
           EditButtons = <>
           FieldName = 'DocNum'
           Footers = <>
+          Tag = 4
           Title.Caption = #1053#1086#1084'. '#1076#1086#1082'-'#1090#1072
-          Title.TitleButton = True
         end
         item
           Alignment = taRightJustify
@@ -158,15 +160,14 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
           Footers = <>
           Title.Alignment = taCenter
           Title.Caption = #1044#1072#1090#1072' '#1076#1086#1082'-'#1090#1072
-          Title.TitleButton = True
           Width = 100
         end
         item
           EditButtons = <>
           FieldName = 'PayType'
           Footers = <>
+          Tag = 5
           Title.Caption = #1058#1080#1087' '#1087#1083#1072#1090#1077#1078#1072
-          Title.TitleButton = True
           Width = 200
         end
         item
@@ -186,7 +187,6 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
           Tag = -1
           Title.Alignment = taCenter
           Title.Caption = #1057#1091#1084#1084#1072
-          Title.TitleButton = True
           Width = 80
         end
         item
@@ -206,7 +206,6 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
           Tag = -2
           Title.Alignment = taCenter
           Title.Caption = #1057#1091#1084#1084#1072' '#1076#1086#1083#1075#1072
-          Title.TitleButton = True
           Width = 80
         end
         item
@@ -227,9 +226,9 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
           EditButtons = <>
           FieldName = 'Worker'
           Footers = <>
+          Tag = 6
           Title.Alignment = taCenter
           Title.Caption = #1057#1086#1090#1088#1091#1076#1085#1080#1082
-          Title.TitleButton = True
           Width = 100
         end
         item
@@ -239,18 +238,6 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
           Tag = 7
           Title.Caption = #1057#1090#1072#1090#1100#1103' '#1088#1072#1089#1093#1086#1076#1086#1074
           Title.TitleButton = True
-        end
-        item
-          EditButtons = <>
-          FieldName = '_Summa'
-          Footers = <>
-          Visible = False
-        end
-        item
-          EditButtons = <>
-          FieldName = '_FreeSumma'
-          Footers = <>
-          Visible = False
         end>
     end
     object pnlControls: TPanel
@@ -291,7 +278,6 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
           #1050#1086#1085#1090#1088#1072#1075#1077#1085#1090#1099'='
           #1042#1080#1076#1099' '#1076#1086#1082#1091#1084#1077#1085#1090#1072'='
           #8470' '#1076#1086#1082#1091#1084#1077#1085#1090#1072'='
-          #1044#1072#1090#1099' '#1076#1086#1082#1091#1084#1077#1085#1090#1072'='
           #1058#1080#1087#1099' '#1087#1083#1072#1090#1077#1078#1072'='
           #1057#1086#1090#1088#1091#1076#1085#1080#1082#1080'='
           #1057#1090#1072#1090#1100#1080' '#1088#1072#1089#1093#1086#1076#1086#1074'=')
@@ -304,9 +290,8 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
         OnKeyUp = vleSelectionsKeyUp
         ColWidths = (
           123
-          395)
+          412)
         RowHeights = (
-          18
           18
           18
           18
@@ -452,8 +437,8 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       ',@OnlyTotals bit'
       ''
       '--SET @p_date_beg = '#39'01.01.2000'#39
-      'SET @p_date_end = DATEADD(D, 1, GETDATE())'
       'SET @DateStart = '#39'01.01.2000'#39
+      'SET @p_date_end = DATEADD(D, 1, GETDATE())'
       'SET @DisableExclusion = 0'
       'SET @OnlyTotals = 0'
       ''
@@ -488,411 +473,288 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       
         'set @_NaklR = (select ID from [dbo].[D_ENTITY_TYPE] t where t.co' +
         'de = '#39'NAKLR'#39')'
-      ''
-      '--DROP TABLE #Selections'
-      'BEGIN TRY  '
-      'CREATE TABLE #Selections'
-      '( '
-      '  s_Depart int NULL'
-      ', s_Agent int NULL'
-      ', s_DocType int NULL'
-      ', s_DocNum int NULL'
-      ', s_DocDate int NULL'
-      ', s_PayType int NULL'
-      ', s_Worker int NULL'
-      ', s_Expense int NULL'
-      ');  '
-      'END TRY  '
-      'BEGIN CATCH'
-      'TRUNCATE TABLE #Selections'
-      'END CATCH; '
       ' '
-      'INSERT INTO #Selections Values(-1, -1, -1, -1, -1, -1, -1, -1)'
-      ''
-      '--DROP TABLE #TempData'
-      'BEGIN TRY  '
-      'CREATE TABLE #TempData'
-      '( '
-      '_key int  identity(1,1)'
-      ', _Count int'
-      ', ID int'
-      ', Summa decimal(20, 4)'
-      ', FreeSumma decimal(20, 4)'
-      ', _Depart int'
-      ', Depart varchar(30)'
-      ', _Agent smallint NOT NULL'
-      ', Agent varchar(30)'
-      ', _DocType int'
-      ', DocType varchar(1024)'
-      ', DocNum int'
-      ', _DocDate int'
-      ', DocDate smalldatetime'
-      ', _PayType smallint'
-      ', PayType varchar(512)'
-      ', _Worker int'
-      ', Worker varchar(30)'
-      ', _Expense int'
-      ', Expense varchar(50)'
-      ', Description varchar(200)'
-      ', CurrencyHead varchar(5)'
-      ', _Summa decimal(20, 4)'
-      ', _FreeSumma decimal(20, 4)'
-      ');  '
-      'END TRY  '
-      'BEGIN CATCH'
-      'TRUNCATE TABLE #TempData'
-      'END CATCH; '
-      ''
-      'SET NOCOUNT OFF;'
-      'declare '
-      '  @Cnt int'
-      ', @PostNo int'
-      ', @PostName varchar(40)'
-      ', @id int'
-      ',  @_Summa decimal(20, 6)'
-      ',  @_FreeSumma decimal(18, 6) '
-      ', @Summa decimal(20, 4)'
-      ', @FreeSumma decimal(20, 4)'
-      ', @_Depart int'
-      ', @Depart varchar(30)'
-      ', @_Agent smallint'
-      ', @Agent varchar(30)'
-      ', @_DocType int'
-      ', @DocType varchar(1024)'
-      ', @DocNum int'
-      ', @_DocDate int'
-      ', @DocDate smalldatetime'
-      ', @_PayType smallint'
-      ', @PayType varchar(512)'
-      ', @_Worker int'
-      ', @Worker varchar(30)'
-      ', @_Expense int'
-      ', @Expense varchar(50)'
-      ', @Description varchar(200)'
-      ', @CurrencyHead varchar(5)'
-      ''
-      'declare CS cursor scroll local for'
-      'select * from ('
-      'select'
-      'PostNo as _Agent, '
-      'PostName as Agent'
-      'from ('
-      'select '
+      'SELECT * FROM ( '
+      'SELECT'
+      '  _Count  '
+      ', Summa'
+      ', FreeSumma'
+      ', 0 as _Summa'
+      ', 0 as _FreeSumma    '
+      ', Agent'
+      ', _Agent'
+      ',  ID'
+      ',  _Depart'
+      ',  Depart'
+      ',  _DocType'
+      ',  DocType'
+      ',  DocNum'
+      ',  DocDate'
+      ',  _Worker'
+      ',  Worker'
+      ',  _PayType'
+      ',  PayType'#9
+      ',  _Expense'
+      ',  Expense'
+      ',  Description'
+      ', CurrencyHead   '
+      'FROM ('
+      'SELECT'
+      '0 as _Count'
+      ', -factor_direction*Summa as Summa'
+      ', -factor_direction*FreeSumma as FreeSumma'
+      ',  p.PostNo as _Agent'
+      ',  p.Name as Agent'
+      ',  T1.ID as ID '#9'    '
+      ', T1.otdelNo as _Depart'
+      ', vid.OtdelName as Depart'
+      ', entity_type_id AS _DocType'
+      ', ent.description as DocType'
+      ', Nom AS DocNum'
+      ', DateEntity as DocDate'
+      ', T1.SotrudNo as _Worker'
+      ', sot.SotrudName AS Worker'#9
+      ', Tip AS _PayType'
+      ', ISNULL((case '
+      #9'when entity_type_id = @_PlatP then d_p.Name '
+      #9'when entity_type_id = @_PlatR then d_r.Name '
+      #9'else NULL end), '#39#39') as PayType'#9
+      ', VidNo AS _Expense'
+      ', ISNULL(( case '
+      #9'when entity_type_id in (@_PlatR, @_PlatP) then'
+      #9'vras.VidRashodName else'
+      #9'vnak.VidNaklName end), '#39#39') as Expense'
+      ', T1.Description'
+      ', CurrencyHead '
+      'FROM ('
+      'SELECT  '
+      'PlatNo AS ID, '
+      'Summa, '
+      'SummaDolg AS FreeSumma,'
+      'otdelNo,'
       'PostNo,'
-      '(select Name from Post p where p.PostNo=P2.PostNo) as PostName'
-      'from ('
-      'select distinct PostNo from ('
-      'select distinct PostNo from PlatP'
-      'union all'
-      'select distinct PostNo from PlatR'
-      'union all'
-      'select distinct PostNo from NaklR'
-      'union all'
-      'select distinct PostNo from NaklP'
-      ') P1 ) P2 ) P3'
-      'where (not (PostNo in '
-      ' (select PostNo from ListMinusPostForDebit lmp where '
-      #9' (PostNo = lmp.PostNo) and (lmp.CheckMinus=1))))'
-      #9'and'
-      '  (EXISTS(SELECT 1 FROM #Selections WHERE s_Agent=-1) OR '
-      '  (PostNo IN (SELECT s_Agent FROM #Selections)))'
-      '  ) P4'#9#9' '
-      '--<order by #1>'
-      'order by Agent'#9
+      '@_PlatR AS entity_type_id,'
+      'Nom, '
+      'DatePlat AS DateEntity, '
+      'SotrudNo,'
+      'VidRashodNo AS VidNo, '
+      '1 AS factor_direction,'
+      'CurrencyHead,'
+      'TipPlat as Tip,'
+      'Spravka as Description '
+      'from PlatR WITH (nolock)'
+      'UNION ALL'
       ''
-      'open CS;'
-      'while 1=1 '
-      'begin'
-      ' fetch next from CS '
-      '  into @_Agent, @Agent '
-      '  '
-      '  SET @Cnt'#9#9#9'= 0  '
-      '  SET @Summa'#9#9'= 0.0 '
-      '  SET @FreeSumma'#9'= 0.0 '
-      '  '
-      '  if @@FETCH_STATUS <> 0 break'
-      '   begin      '
-      #9'  declare CS1 cursor scroll local for  '
-      #9#9'SELECT'
-      #9#9'    DocID '
-      #9#9#9', -factor_direction*Summa as Summa'
-      #9#9#9', -factor_direction*FreeSumma as FreeSumma'#9#9'    '
-      #9#9#9', _Depart'
-      #9#9#9', vid.OtdelName as Depart'
-      #9#9#9', entity_type_id AS _DocType'
-      #9#9#9', ent.description as DocType'
-      #9#9#9', Nom AS DocNum'
-      #9#9#9', DateEntity as DocDate'
-      #9#9#9', Tip AS _PayType'
-      #9#9#9', (case '
-      #9#9#9'when entity_type_id = @_PlatP then'
-      #9#9#9#9'(select Name from d_PLat_Type p1 where p1.ID=Tip)'
-      #9#9#9'when entity_type_id = @_PlatR then'
-      #9#9#9#9'(select Name from d_PlatR_Tip p1 where p1.ID=Tip)'#9#9
-      #9#9#9#9'else NULL end) as PayType'#9#9#9
-      #9#9#9', _Worker'
-      #9#9#9',  sot.SotrudName AS Worker'#9#9#9
-      #9#9#9', VidNo AS _Expense'
-      
-        #9#9#9', (select VidRashodName from VidRashod v2 where v2.VidRashodN' +
-        'o=VidNo)'
-      #9#9#9'--, (case '
-      #9#9#9'--when entity_type_id in (@_PlatR, @_PlatP) then'
-      
-        #9#9#9'--'#9'(select VidRashodName from v_select_vidrash v1 where v1.Vi' +
-        'dRashodNo=VidNo)'#9#9
-      #9#9#9'--'#9'else'
-      
-        #9#9#9'--'#9'(select VidNaklName from vidnakl v2 where v2.vidnaklNo=Vid' +
-        'No)'#9#9#9#9
-      #9#9#9'--'#9'end) '
-      #9#9#9#9'as Expense '#9#9#9
-      #9#9#9', Spravka'
-      #9#9#9', CurrencyHead'
-      #9#9'FROM'
-      #9#9' ('
-      #9#9'SELECT  '
-      #9#9'PlatNo AS DocID, '
-      #9#9'Summa, '
-      #9#9'SummaDolg AS FreeSumma,'
-      #9#9'otdelNo as _Depart,'
-      #9#9'PostNo,'
-      #9#9'@_PlatR AS entity_type_id,'
-      #9#9'Nom, '
-      #9#9'DatePlat AS DateEntity, '
-      #9#9'SotrudNo as _Worker,'
-      #9#9'VidRashodNo AS VidNo, '
-      #9#9'1 AS factor_direction,'
-      #9#9'CurrencyHead,'
-      #9#9'TipPlat as Tip,'
-      #9#9'Spravka as Spravka '
-      #9#9'from PlatR WITH (nolock)'
-      #9#9'UNION ALL'
+      'SELECT  '
+      'PlatNo AS ID, '
+      'Summa, '
+      'SummaDolg AS FreeSumma,'
+      'otdelNo,'
+      'PostNo,'
+      '@_PlatP AS entity_type_id,'
+      'Nom, '
+      'DatePlat AS DateEntity, '
+      'SotrudNo,'
+      'VidRashodNo AS VidNo, '
+      '-1 AS factor_direction,'
+      'CurrencyHead,'
+      'TipPlat as Tip,'
+      'Spravka as Description '
+      'from PlatP WITH (nolock)'
+      'UNION ALL'
       ''
-      #9#9'SELECT  '
-      #9#9'PlatNo AS DocID, '
-      #9#9'Summa, '
-      #9#9'SummaDolg AS FreeSumma,'
-      #9#9'otdelNo as otdelNum,'
-      #9#9'PostNo,'
-      #9#9'@_PlatP AS entity_type_id,'
-      #9#9'Nom, '
-      #9#9'DatePlat AS DateEntity, '
-      #9#9'SotrudNo as _Worker,'
-      #9#9'VidRashodNo AS VidNo, '
-      #9#9'-1 AS factor_direction,'
-      #9#9'CurrencyHead,'
-      #9#9'TipPlat as Tip,'
-      #9#9'Spravka as Spravka '
-      #9#9'from PlatP WITH (nolock)'
-      #9#9'UNION ALL'
+      'SELECT  '
+      'NaklNo AS ID, '
+      'Summa, '
+      'SummaDolg AS FreeSumma,'
+      'otdelNo,'
+      'PostNo,'
+      '@_NaklP AS entity_type_id,'
+      'Nom, '
+      'DateNakl AS DateEntity, '
+      'NULL as SotrudNo,'
+      'VidNaklNo AS VidNo, '
+      '-1 AS factor_direction,'
+      'CurrencyHead,'
+      'NULL as Tip,'
+      'NULL as Description '
+      'from NaklP WITH (nolock)'
+      'UNION ALL'
       ''
-      #9#9'SELECT  '
-      #9#9'NaklNo AS DocID, '
-      #9#9'Summa, '
-      #9#9'SummaDolg AS FreeSumma,'
-      #9#9'otdelNo as otdelNum,'
-      #9#9'PostNo,'
-      #9#9'@_NaklP AS entity_type_id,'
-      #9#9'Nom, '
-      #9#9'DateNakl AS DateEntity, '
-      #9#9'NULL as _Worker,'
-      #9#9'VidNaklNo AS VidNo, '
-      #9#9'-1 AS factor_direction,'
-      #9#9'CurrencyHead,'
-      #9#9'NULL as Tip,'
-      #9#9'NULL as Spravka '
-      #9#9'from NaklP WITH (nolock)'
-      #9#9'UNION ALL'
+      'SELECT  '
+      'NaklNo AS ID, '
+      
+        'CASE WHEN vidnaklno = 3 THEN - 1 * abs(Summa) ELSE summa END AS ' +
+        'Summa, '
+      'SummaDolg AS FreeSumma,'
+      'otdelNo,'
+      'PostNo,'
+      '@_NaklR AS entity_type_id,'
+      'Nom, '
+      'DateNakl AS DateEntity, '
+      'SotrudNo,'
+      'VidNaklNo AS VidNo, '
+      '1 AS factor_direction,'
+      'CurrencyHead,'
+      'NULL as Tip,'
+      'NULL as Description '
+      'from NaklR WITH (nolock)'
+      ') T1'
+      'INNER JOIN D_ENTITY_TYPE ent on (ent.ID=T1.entity_type_id)'
+      'INNER JOIN Post p on (p.PostNo=T1.PostNo)'
+      'LEFT OUTER JOIN VidOtdel vid on (vid.OtdelNo=T1.OtdelNo)'
+      'LEFT OUTER JOIN Sotrud sot on (sot.SotrudNo=T1.SotrudNo)'
+      'LEFT OUTER JOIN VidRashod vras on (vras.VidRashodNo=T1.VidNo)'
+      'LEFT OUTER JOIN vidnakl vnak on (vnak.vidnaklNo=T1.VidNo)'
+      'LEFT OUTER JOIN d_PLat_Type d_p on (d_p.ID=T1.Tip)'
+      'LEFT OUTER JOIN d_PlatR_Tip d_r on (d_r.ID=T1.Tip)'
+      'where '
+      '--<Conditions 1>'
+      '  (1=1)'
+      ') L1'
+      '    where'
+      '    (@OnlyTotals=0) and'
+      '--<Selections 1>'
+      '  (1=1)'#9
       ''
-      #9#9'SELECT  '
-      #9#9'NaklNo AS DocID, '
-      
-        #9#9'CASE WHEN vidnaklno = 3 THEN - 1 * abs(Summa) ELSE summa END A' +
-        'S Summa, '
-      #9#9'SummaDolg AS FreeSumma,'
-      #9#9'otdelNo as otdelNum,'
-      #9#9'PostNo,'
-      #9#9'@_NaklR AS entity_type_id,'
-      #9#9'Nom, '
-      #9#9'DateNakl AS DateEntity, '
-      #9#9'SotrudNo as _Worker,'
-      #9#9'VidNaklNo AS VidNo, '
-      #9#9'1 AS factor_direction,'
-      #9#9'CurrencyHead,'
-      #9#9'NULL as Tip,'
-      #9#9'NULL as Spravka '
-      #9#9'from NaklR WITH (nolock)'
-      #9#9') T1'
-      #9#9'INNER JOIN D_ENTITY_TYPE ent on (ent.ID=T1.entity_type_id)'
-      #9#9'LEFT OUTER JOIN VidOtdel vid on (vid.OtdelNo=T1._Depart)'
-      #9#9'LEFT OUTER JOIN Sotrud sot on (sot.SotrudNo=T1._Worker)'
-      #9#9
-      #9#9'WHERE '
-      #9#9'--DateEntity between @p_date_beg and @p_date_end'
-      #9#9'(ABS(isnull(FreeSumma, 0))>0.005)'
-      #9#9'and (PostNo=@_Agent)'
-      '        and ((T1.tip is null) or (T1.tip not in '
-      
-        '             (select TipNo from ListMinusPaymentForJournalOfExpe' +
-        'nses where CheckMinus = 1)))'#9
-      #9#9'and'
-      #9#9#9#9'  (EXISTS(SELECT 1 FROM #Selections WHERE s_Depart=-1) OR '
-      #9#9#9#9'  (otdelNo IN (SELECT s_Depart FROM #Selections)))'
-      #9#9#9#9'AND'
-      #9#9#9#9'  (EXISTS(SELECT 1 FROM #Selections WHERE s_DocType=-1) OR '
-      #9#9#9#9'  (entity_type_id IN (SELECT s_DocType FROM #Selections)))'
-      #9#9#9#9'AND'
-      #9#9#9#9'  (EXISTS(SELECT 1 FROM #Selections WHERE s_DocNum=-1) OR '
-      #9#9#9#9'  (Nom IN (SELECT s_DocNum FROM #Selections)))'
-      #9#9#9#9'AND'
-      #9#9#9#9'  (EXISTS(SELECT 1 FROM #Selections WHERE s_DocDate=-1) OR '
-      
-        #9#9#9#9'  (datediff(d, @DateStart, DateEntity) IN (SELECT s_DocDate ' +
-        'FROM #Selections)))'#9#9#9#9'  '
-      #9#9#9#9'AND'
-      
-        #9#9#9#9'  ((Tip is null) or (EXISTS(SELECT 1 FROM #Selections WHERE ' +
-        's_PayType=-1) OR '
-      #9#9#9#9'  (Tip IN (SELECT s_PayType FROM #Selections))))'
-      #9#9#9#9'AND'
-      #9#9#9#9'  (EXISTS(SELECT 1 FROM #Selections WHERE s_Worker=-1) OR '
-      #9#9#9#9'  (SotrudNo IN (SELECT s_Worker FROM #Selections)))'
-      #9#9#9#9'AND'
-      #9#9#9#9'  (EXISTS(SELECT 1 FROM #Selections WHERE s_Expense=-1) OR '
-      
-        #9#9#9#9'  (VidNo IN (SELECT s_Expense FROM #Selections)))'#9'          ' +
-        '   '
-      '--<order by #2>'
-      'order by Depart, DocType, DocDate'
+      'UNION ALL'
       ''
-      #9#9'  open CS1;'
-      #9#9'  while 1=1 '
-      #9#9'   begin'
-      #9#9#9' fetch next from CS1 '
-      #9#9#9'  into @id '
-      #9#9#9#9'    , @_Summa  '
-      #9#9#9#9'    , @_FreeSumma'
-      #9#9#9#9#9', @_Depart '
-      #9#9#9#9#9', @Depart '
-      #9#9#9#9#9', @_DocType '
-      #9#9#9#9#9', @DocType '
-      #9#9#9#9#9', @DocNum'
-      #9#9#9#9#9', @DocDate'
-      #9#9#9#9#9', @_PayType '
-      #9#9#9#9#9', @PayType '#9#9#9#9#9#9#9#9#9
-      #9#9#9#9#9', @_Worker'
-      #9#9#9#9#9', @Worker'
-      #9#9#9#9#9', @_Expense '
-      #9#9#9#9#9', @Expense'#9#9#9#9#9'   '
-      #9#9#9#9#9', @Description'
-      #9#9#9#9#9', @CurrencyHead'#9#9'  '
-      #9#9'      '
-      #9#9#9'  if @@FETCH_STATUS <> 0 break'
-      #9#9#9'  '#9#9#9#9#9#9#9'   '#9#9#9'  '
-      #9#9#9'   begin'#9#9
-      '               insert into #TempData ('
-      #9#9#9#9#9#9#9'_Count'
-      #9#9#9#9#9#9#9', ID'
-      #9#9#9#9#9#9#9', Summa'
-      #9#9#9#9#9#9#9', FreeSumma               '
-      #9#9#9#9#9#9#9', _Depart '
-      #9#9#9#9#9#9#9', Depart '
-      #9#9#9#9#9#9#9', _Agent '
-      #9#9#9#9#9#9#9', Agent '
-      #9#9#9#9#9#9#9', _DocType '
-      #9#9#9#9#9#9#9', DocType '
-      #9#9#9#9#9#9#9', DocNum'
-      #9#9#9#9#9#9#9', _DocDate '
-      #9#9#9#9#9#9#9', DocDate '
-      #9#9#9#9#9#9#9', _PayType '
-      #9#9#9#9#9#9#9', PayType '
-      #9#9#9#9#9#9#9', _Worker '
-      #9#9#9#9#9#9#9', Worker '
-      #9#9#9#9#9#9#9', _Expense '
-      #9#9#9#9#9#9#9', Expense'
-      #9#9#9#9#9#9#9', Description'
-      #9#9#9#9#9#9#9', CurrencyHead'
-      #9#9#9#9#9#9#9', _Summa'
-      #9#9#9#9#9#9#9', _FreeSumma   '#9
-      #9#9#9#9#9#9#9')  '
-      #9#9#9#9'values   (      0 '
-      #9#9#9#9#9#9#9#9', @id '
-      #9#9#9#9#9#9#9#9', @_Summa  '
-      #9#9#9#9#9#9#9#9', @_FreeSumma'
-      #9#9#9#9#9#9#9#9', @_Depart '
-      #9#9#9#9#9#9#9#9', @Depart '
-      #9#9#9#9#9#9#9#9', @_Agent '
-      #9#9#9#9#9#9#9#9', @Agent '
-      #9#9#9#9#9#9#9#9', @_DocType '
-      #9#9#9#9#9#9#9#9', @DocType '
-      #9#9#9#9#9#9#9#9', @DocNum'
-      #9#9#9#9#9#9#9#9', datediff(d, @DateStart, @DocDate)  '
-      #9#9#9#9#9#9#9#9', @DocDate '
-      #9#9#9#9#9#9#9#9', @_PayType '
-      #9#9#9#9#9#9#9#9', @PayType '
-      #9#9#9#9#9#9#9#9', @_Worker '
-      #9#9#9#9#9#9#9#9', @Worker '
-      #9#9#9#9#9#9#9#9', @_Expense '
-      #9#9#9#9#9#9#9#9', @Expense'
-      #9#9#9#9#9#9#9#9', @Description'
-      #9#9#9#9#9#9#9#9', @CurrencyHead'
-      #9#9#9#9#9#9#9#9', 0'
-      #9#9#9#9#9#9#9#9', 0 '#9#9#9#9#9#9#9#9#9
-      #9#9#9#9')'
-      #9#9#9#9'  SET @Cnt'#9#9#9'= @Cnt'#9#9#9'+ 1; '
-      #9#9#9#9'  SET @Summa'#9#9'= @Summa'#9#9'+ @_Summa; '
-      #9#9#9#9'  SET @FreeSumma'#9'= @FreeSumma'#9'+ @_FreeSumma;'#9#9#9'   '
-      #9#9#9'   end'
-      #9#9'   end'
-      #9#9'   if (@Cnt > 0)'
-      #9#9#9'insert into #TempData  '
-      #9#9#9#9#9#9'  values  (  '
-      #9#9#9#9#9#9'          @Cnt'
-      #9#9#9#9#9#9'        ,  NULL  '
-      #9#9#9#9#9#9#9#9', @Summa  '
-      #9#9#9#9#9#9#9#9', @FreeSumma'
-      #9#9#9#9#9#9#9#9', NULL '
-      #9#9#9#9#9#9#9#9', NULL '
-      #9#9#9#9#9#9#9#9', @_Agent '
-      #9#9#9#9#9#9#9#9', @Agent '
-      #9#9#9#9#9#9#9#9', NULL '
-      #9#9#9#9#9#9#9#9', NULL '
-      #9#9#9#9#9#9#9#9', NULL '
-      #9#9#9#9#9#9#9#9', NULL '
-      #9#9#9#9#9#9#9#9', NULL '
-      #9#9#9#9#9#9#9#9', NULL '
-      #9#9#9#9#9#9#9#9', NULL '
-      #9#9#9#9#9#9#9#9', NULL '
-      #9#9#9#9#9#9#9#9', NULL '
-      #9#9#9#9#9#9#9#9', NULL'
-      #9#9#9#9#9#9#9#9', NULL'
-      #9#9#9#9#9#9#9#9', NULL'
-      #9#9#9#9#9#9#9#9', NULL'
-      #9#9#9#9#9#9#9#9', @Summa  '
-      #9#9#9#9#9#9#9#9', @FreeSumma'#9#9#9#9#9#9#9#9#9#9#9#9#9#9#9#9'  '
-      #9#9#9#9#9#9'   )           '
-      '             '
-      '             '#9#9
-      #9'  close CS1;'
-      #9'  deallocate CS1;  '#9#9'   '
-      '     end'
-      '   end'
-      '  close CS;'
-      '  deallocate CS; '
-      '  '
-      'select * from #TempData'
-      'WHERE'
-      '  (@OnlyTotals = 0) or (_Count>0) '
-      'order by _key')
+      'SELECT'
+      '  Post_Count as _Count  '
+      ', Post_Summa as Summa'
+      ', Post_FreeSumma as FreeSumma '
+      ', Post_Summa as _Summa'
+      ', Post_FreeSumma as _FreeSumma   '
+      ', p.Name as Agent'
+      ', _Agent'
+      ', NULL as DocID'
+      ', NULL as _Depart'
+      ', NULL as Depart'
+      ', NULL AS _DocType'
+      ', NULL as DocType'
+      ', NULL AS DocNum'
+      ', NULL as DocDate'
+      ', NULL as_Worker'
+      ', NULL AS Worker'#9
+      ', NULL AS _PayType'
+      ', NULL as PayType'#9
+      ', NULL AS _Expense'
+      ', NULL as Expense'
+      ', NULL as Description'
+      ', NULL as CurrencyHead  '
+      ''
+      'FROM (  '#9' '
+      'SELECT'
+      '  _Agent,'
+      '  COUNT(_Agent) as Post_Count,'
+      '  SUM(Summa) as Post_Summa,'
+      '  SUM(FreeSumma) as Post_FreeSumma'#9
+      'FROM ('
+      'SELECT * FROM ('
+      'SELECT'
+      'PostNo as _Agent,'
+      '  T1.ID as ID '
+      ', -factor_direction*Summa as Summa'
+      ', -factor_direction*FreeSumma as FreeSumma'#9#9'    '
+      ', T1.otdelNo as _Depart'
+      ', entity_type_id AS _DocType'
+      ', Nom AS DocNum'
+      ', DateEntity as DocDate'
+      ', Tip AS _PayType'
+      ', VidNo AS _Expense'
+      'FROM ('
+      'SELECT  '
+      'PlatNo AS ID, '
+      'Summa, '
+      'SummaDolg AS FreeSumma,'
+      'otdelNo,'
+      'PostNo,'
+      '@_PlatR AS entity_type_id,'
+      'Nom, '
+      'DatePlat AS DateEntity, '
+      'SotrudNo,'
+      'VidRashodNo AS VidNo, '
+      '1 AS factor_direction,'
+      'CurrencyHead,'
+      'TipPlat as Tip,'
+      'Spravka as Description '
+      'from PlatR WITH (nolock)'
+      'UNION ALL'
+      ''
+      'SELECT  '
+      'PlatNo AS ID, '
+      'Summa, '
+      'SummaDolg AS FreeSumma,'
+      'otdelNo,'
+      'PostNo,'
+      '@_PlatP AS entity_type_id,'
+      'Nom, '
+      'DatePlat AS DateEntity, '
+      'SotrudNo,'
+      'VidRashodNo AS VidNo, '
+      '-1 AS factor_direction,'
+      'CurrencyHead,'
+      'TipPlat as Tip,'
+      'Spravka as Description '
+      'from PlatP WITH (nolock)'
+      'UNION ALL'
+      ''
+      'SELECT  '
+      'NaklNo AS ID, '
+      'Summa, '
+      'SummaDolg AS FreeSumma,'
+      'otdelNo,'
+      'PostNo,'
+      '@_NaklP AS entity_type_id,'
+      'Nom, '
+      'DateNakl AS DateEntity, '
+      'NULL as SotrudNo,'
+      'VidNaklNo AS VidNo, '
+      '-1 AS factor_direction,'
+      'CurrencyHead,'
+      'NULL as Tip,'
+      'NULL as Description '
+      'from NaklP WITH (nolock)'
+      'UNION ALL'
+      ''
+      'SELECT  '
+      'NaklNo AS ID, '
+      
+        'CASE WHEN vidnaklno = 3 THEN - 1 * abs(Summa) ELSE summa END AS ' +
+        'Summa, '
+      'SummaDolg AS FreeSumma,'
+      'otdelNo,'
+      'PostNo,'
+      '@_NaklR AS entity_type_id,'
+      'Nom, '
+      'DateNakl AS DateEntity, '
+      'SotrudNo,'
+      'VidNaklNo AS VidNo, '
+      '1 AS factor_direction,'
+      'CurrencyHead,'
+      'NULL as Tip,'
+      'NULL as Description '
+      'from NaklR WITH (nolock)'
+      ') T1'
+      'where '
+      '--<Conditions 2>'
+      '  (2=2)'
+      '    ) L1'
+      '    where '
+      '--<Selections 2>'
+      '  (2=2)'
+      '    '
+      ') T2'
+      'GROUP BY _Agent'
+      ') T3'
+      'INNER JOIN Post p on (p.PostNo=T3._Agent)'
+      ') T4'
+      'ORDER BY Agent, _Count, DocType, DocDate')
     ReadOnly = True
     Filtered = True
     OnFilterRecord = quDebtFilterRecord
     Left = 536
     Top = 225
-    object quDebt_key: TIntegerField
-      FieldName = '_key'
-    end
     object quDebt_Count: TIntegerField
       FieldName = '_Count'
     end
@@ -957,18 +819,15 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       FieldName = 'Description'
       Size = 200
     end
-    object quDebt_FreeSumma: TFloatField
-      FieldName = '_FreeSumma'
-    end
-    object quDebt_DocDate: TIntegerField
-      FieldName = '_DocDate'
+    object quDebtCurrencyHead: TStringField
+      FieldName = 'CurrencyHead'
+      Size = 5
     end
     object quDebt_Summa: TFloatField
       FieldName = '_Summa'
     end
-    object quDebtCurrencyHead: TStringField
-      FieldName = 'CurrencyHead'
-      Size = 5
+    object quDebt_FreeSumma: TFloatField
+      FieldName = '_FreeSumma'
     end
   end
   object dlgSaveExportToExcel: TSaveDialog
@@ -979,7 +838,7 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
     Top = 464
   end
   object sthSource: TStrHolder
-    Capacity = 445
+    Capacity = 356
     Macros = <>
     Left = 456
     Top = 257
@@ -997,10 +856,10 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '2c404f6e6c79546f74616c7320626974'
       ''
       '2d2d5345542040705f646174655f626567203d202730312e30312e3230303027'
+      '5345542040446174655374617274203d202730312e30312e3230303027'
       
         '5345542040705f646174655f656e64203d204441544541444428442c20312c20' +
         '47455444415445282929'
-      '5345542040446174655374617274203d202730312e30312e3230303027'
       '534554204044697361626c654578636c7573696f6e203d2030'
       '53455420404f6e6c79546f74616c73203d2030'
       ''
@@ -1049,504 +908,325 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
         '73657420405f4e616b6c52203d202873656c6563742049442066726f6d205b64' +
         '626f5d2e5b445f454e544954595f545950455d207420776865726520742e636f' +
         '6465203d20274e414b4c522729'
-      ''
-      '2d2d44524f50205441424c45202353656c656374696f6e73'
-      '424547494e205452592020'
-      '435245415445205441424c45202353656c656374696f6e73'
-      '2820'
-      '2020735f44657061727420696e74204e554c4c'
-      '2c20735f4167656e7420696e74204e554c4c'
-      '2c20735f446f635479706520696e74204e554c4c'
-      '2c20735f446f634e756d20696e74204e554c4c'
-      '2c20735f446f634461746520696e74204e554c4c'
-      '2c20735f5061795479706520696e74204e554c4c'
-      '2c20735f576f726b657220696e74204e554c4c'
-      '2c20735f457870656e736520696e74204e554c4c'
-      '293b2020'
-      '454e44205452592020'
-      '424547494e204341544348'
-      '5452554e43415445205441424c45202353656c656374696f6e73'
-      '454e442043415443483b20'
       '20'
+      '53454c454354202a2046524f4d202820'
+      '53454c454354'
+      '20205f436f756e742020'
+      '2c2053756d6d61'
+      '2c204672656553756d6d61'
+      '2c2030206173205f53756d6d61'
+      '2c2030206173205f4672656553756d6d6120202020'
+      '2c204167656e74'
+      '2c205f4167656e74'
+      '2c20204944'
+      '2c20205f446570617274'
+      '2c2020446570617274'
+      '2c20205f446f6354797065'
+      '2c2020446f6354797065'
+      '2c2020446f634e756d'
+      '2c2020446f6344617465'
+      '2c20205f576f726b6572'
+      '2c2020576f726b6572'
+      '2c20205f50617954797065'
+      '2c20205061795479706509'
+      '2c20205f457870656e7365'
+      '2c2020457870656e7365'
+      '2c20204465736372697074696f6e'
+      '2c2043757272656e637948656164202020'
+      '46524f4d2028'
+      '53454c454354'
+      '30206173205f436f756e74'
       
-        '494e5345525420494e544f202353656c656374696f6e732056616c756573282d' +
-        '312c202d312c202d312c202d312c202d312c202d312c202d312c202d3129'
-      ''
-      '2d2d44524f50205441424c45202354656d7044617461'
-      '424547494e205452592020'
-      '435245415445205441424c45202354656d7044617461'
-      '2820'
-      '5f6b657920696e7420206964656e7469747928312c3129'
-      '2c205f436f756e7420696e74'
-      '2c20494420696e74'
-      '2c2053756d6d6120646563696d616c2832302c203429'
-      '2c204672656553756d6d6120646563696d616c2832302c203429'
-      '2c205f44657061727420696e74'
-      '2c20446570617274207661726368617228333029'
-      '2c205f4167656e7420736d616c6c696e74204e4f54204e554c4c'
-      '2c204167656e74207661726368617228333029'
-      '2c205f446f635479706520696e74'
-      '2c20446f63547970652076617263686172283130323429'
-      '2c20446f634e756d20696e74'
-      '2c205f446f634461746520696e74'
-      '2c20446f634461746520736d616c6c6461746574696d65'
-      '2c205f5061795479706520736d616c6c696e74'
-      '2c205061795479706520766172636861722835313229'
-      '2c205f576f726b657220696e74'
-      '2c20576f726b6572207661726368617228333029'
-      '2c205f457870656e736520696e74'
-      '2c20457870656e7365207661726368617228353029'
-      '2c204465736372697074696f6e20766172636861722832303029'
-      '2c2043757272656e6379486561642076617263686172283529'
-      '2c205f53756d6d6120646563696d616c2832302c203429'
-      '2c205f4672656553756d6d6120646563696d616c2832302c203429'
-      '293b2020'
-      '454e44205452592020'
-      '424547494e204341544348'
-      '5452554e43415445205441424c45202354656d7044617461'
-      '454e442043415443483b20'
-      ''
-      '534554204e4f434f554e54204f46463b'
-      '6465636c61726520'
-      '202040436e7420696e74'
-      '2c2040506f73744e6f20696e74'
-      '2c2040506f73744e616d65207661726368617228343029'
-      '2c2040696420696e74'
-      '2c2020405f53756d6d6120646563696d616c2832302c203629'
-      '2c2020405f4672656553756d6d6120646563696d616c2831382c20362920'
-      '2c204053756d6d6120646563696d616c2832302c203429'
-      '2c20404672656553756d6d6120646563696d616c2832302c203429'
-      '2c20405f44657061727420696e74'
-      '2c2040446570617274207661726368617228333029'
-      '2c20405f4167656e7420736d616c6c696e74'
-      '2c20404167656e74207661726368617228333029'
-      '2c20405f446f635479706520696e74'
-      '2c2040446f63547970652076617263686172283130323429'
-      '2c2040446f634e756d20696e74'
-      '2c20405f446f634461746520696e74'
-      '2c2040446f634461746520736d616c6c6461746574696d65'
-      '2c20405f5061795479706520736d616c6c696e74'
-      '2c20405061795479706520766172636861722835313229'
-      '2c20405f576f726b657220696e74'
-      '2c2040576f726b6572207661726368617228333029'
-      '2c20405f457870656e736520696e74'
-      '2c2040457870656e7365207661726368617228353029'
-      '2c20404465736372697074696f6e20766172636861722832303029'
-      '2c204043757272656e6379486561642076617263686172283529'
-      ''
+        '2c202d666163746f725f646972656374696f6e2a53756d6d612061732053756d' +
+        '6d61'
       
-        '6465636c61726520435320637572736f72207363726f6c6c206c6f63616c2066' +
-        '6f72'
-      '73656c656374202a2066726f6d2028'
-      '73656c656374'
-      '506f73744e6f206173205f4167656e742c20'
-      '506f73744e616d65206173204167656e74'
-      '66726f6d2028'
-      '73656c65637420'
+        '2c202d666163746f725f646972656374696f6e2a4672656553756d6d61206173' +
+        '204672656553756d6d61'
+      '2c2020702e506f73744e6f206173205f4167656e74'
+      '2c2020702e4e616d65206173204167656e74'
+      '2c202054312e4944206173204944200920202020'
+      '2c2054312e6f7464656c4e6f206173205f446570617274'
+      '2c207669642e4f7464656c4e616d6520617320446570617274'
+      '2c20656e746974795f747970655f6964204153205f446f6354797065'
+      '2c20656e742e6465736372697074696f6e20617320446f6354797065'
+      '2c204e6f6d20415320446f634e756d'
+      '2c2044617465456e7469747920617320446f6344617465'
+      '2c2054312e536f747275644e6f206173205f576f726b6572'
+      '2c20736f742e536f747275644e616d6520415320576f726b657209'
+      '2c20546970204153205f50617954797065'
+      '2c2049534e554c4c28286361736520'
+      
+        '097768656e20656e746974795f747970655f6964203d20405f506c6174502074' +
+        '68656e20645f702e4e616d6520'
+      
+        '097768656e20656e746974795f747970655f6964203d20405f506c6174522074' +
+        '68656e20645f722e4e616d6520'
+      '09656c7365204e554c4c20656e64292c20272729206173205061795479706509'
+      '2c205669644e6f204153205f457870656e7365'
+      '2c2049534e554c4c2828206361736520'
+      
+        '097768656e20656e746974795f747970655f696420696e2028405f506c617452' +
+        '2c20405f506c61745029207468656e'
+      '09767261732e566964526173686f644e616d6520656c7365'
+      
+        '09766e616b2e5669644e616b6c4e616d6520656e64292c202727292061732045' +
+        '7870656e7365'
+      '2c2054312e4465736372697074696f6e'
+      '2c2043757272656e63794865616420'
+      '46524f4d2028'
+      '53454c4543542020'
+      '506c61744e6f2041532049442c20'
+      '53756d6d612c20'
+      '53756d6d61446f6c67204153204672656553756d6d612c'
+      '6f7464656c4e6f2c'
       '506f73744e6f2c'
-      
-        '2873656c656374204e616d652066726f6d20506f737420702077686572652070' +
-        '2e506f73744e6f3d50322e506f73744e6f2920617320506f73744e616d65'
-      '66726f6d2028'
-      '73656c6563742064697374696e637420506f73744e6f2066726f6d2028'
-      
-        '73656c6563742064697374696e637420506f73744e6f2066726f6d20506c6174' +
-        '50'
-      '756e696f6e20616c6c'
-      
-        '73656c6563742064697374696e637420506f73744e6f2066726f6d20506c6174' +
-        '52'
-      '756e696f6e20616c6c'
-      
-        '73656c6563742064697374696e637420506f73744e6f2066726f6d204e616b6c' +
-        '52'
-      '756e696f6e20616c6c'
-      
-        '73656c6563742064697374696e637420506f73744e6f2066726f6d204e616b6c' +
-        '50'
-      '2920503120292050322029205033'
-      '776865726520286e6f742028506f73744e6f20696e20'
-      
-        '202873656c65637420506f73744e6f2066726f6d204c6973744d696e7573506f' +
-        '7374466f724465626974206c6d7020776865726520'
-      
-        '092028506f73744e6f203d206c6d702e506f73744e6f2920616e6420286c6d70' +
-        '2e436865636b4d696e75733d3129292929'
-      '09616e64'
-      
-        '2020284558495354532853454c45435420312046524f4d202353656c65637469' +
-        '6f6e7320574845524520735f4167656e743d2d3129204f5220'
-      
-        '202028506f73744e6f20494e202853454c45435420735f4167656e742046524f' +
-        '4d202353656c656374696f6e73292929'
-      '202029205034090920'
-      '2d2d3c6f726465722062792023313e'
-      '6f72646572206279204167656e7409'
+      '405f506c61745220415320656e746974795f747970655f69642c'
+      '4e6f6d2c20'
+      '44617465506c61742041532044617465456e746974792c20'
+      '536f747275644e6f2c'
+      '566964526173686f644e6f204153205669644e6f2c20'
+      '3120415320666163746f725f646972656374696f6e2c'
+      '43757272656e6379486561642c'
+      '546970506c6174206173205469702c'
+      '53707261766b61206173204465736372697074696f6e20'
+      '66726f6d20506c617452205749544820286e6f6c6f636b29'
+      '554e494f4e20414c4c'
       ''
-      '6f70656e2043533b'
-      '7768696c6520313d3120'
-      '626567696e'
-      '206665746368206e6578742066726f6d20435320'
-      '2020696e746f20405f4167656e742c20404167656e7420'
-      '2020'
-      '20205345542040436e740909093d20302020'
-      '2020534554204053756d6d6109093d20302e3020'
-      '202053455420404672656553756d6d61093d20302e3020'
-      '2020'
-      '2020696620404046455443485f535441545553203c3e203020627265616b'
-      '202020626567696e202020202020'
-      
-        '0920206465636c6172652043533120637572736f72207363726f6c6c206c6f63' +
-        '616c20666f722020'
-      '090953454c454354'
-      '090920202020446f63494420'
-      
-        '0909092c202d666163746f725f646972656374696f6e2a53756d6d6120617320' +
-        '53756d6d61'
-      
-        '0909092c202d666163746f725f646972656374696f6e2a4672656553756d6d61' +
-        '206173204672656553756d6d61090920202020'
-      '0909092c205f446570617274'
-      '0909092c207669642e4f7464656c4e616d6520617320446570617274'
-      '0909092c20656e746974795f747970655f6964204153205f446f6354797065'
-      '0909092c20656e742e6465736372697074696f6e20617320446f6354797065'
-      '0909092c204e6f6d20415320446f634e756d'
-      '0909092c2044617465456e7469747920617320446f6344617465'
-      '0909092c20546970204153205f50617954797065'
-      '0909092c20286361736520'
-      
-        '0909097768656e20656e746974795f747970655f6964203d20405f506c617450' +
-        '207468656e'
-      
-        '090909092873656c656374204e616d652066726f6d20645f504c61745f547970' +
-        '652070312077686572652070312e49443d54697029'
-      
-        '0909097768656e20656e746974795f747970655f6964203d20405f506c617452' +
-        '207468656e'
-      
-        '090909092873656c656374204e616d652066726f6d20645f506c6174525f5469' +
-        '702070312077686572652070312e49443d546970290909'
-      '09090909656c7365204e554c4c20656e64292061732050617954797065090909'
-      '0909092c205f576f726b6572'
-      
-        '0909092c2020736f742e536f747275644e616d6520415320576f726b65720909' +
-        '09'
-      '0909092c205669644e6f204153205f457870656e7365'
-      
-        '0909092c202873656c65637420566964526173686f644e616d652066726f6d20' +
-        '566964526173686f642076322077686572652076322e566964526173686f644e' +
-        '6f3d5669644e6f29'
-      '0909092d2d2c20286361736520'
-      
-        '0909092d2d7768656e20656e746974795f747970655f696420696e2028405f50' +
-        '6c6174522c20405f506c61745029207468656e'
-      
-        '0909092d2d092873656c65637420566964526173686f644e616d652066726f6d' +
-        '20765f73656c6563745f766964726173682076312077686572652076312e5669' +
-        '64526173686f644e6f3d5669644e6f290909'
-      '0909092d2d09656c7365'
-      
-        '0909092d2d092873656c656374205669644e616b6c4e616d652066726f6d2076' +
-        '69646e616b6c2076322077686572652076322e7669646e616b6c4e6f3d566964' +
-        '4e6f2909090909'
-      '0909092d2d09656e642920'
-      '09090909617320457870656e736520090909'
-      '0909092c2053707261766b61'
-      '0909092c2043757272656e637948656164'
-      '090946524f4d'
-      '09092028'
-      '090953454c4543542020'
-      '0909506c61744e6f20415320446f6349442c20'
-      '090953756d6d612c20'
-      '090953756d6d61446f6c67204153204672656553756d6d612c'
-      '09096f7464656c4e6f206173205f4465706172742c'
-      '0909506f73744e6f2c'
-      '0909405f506c61745220415320656e746974795f747970655f69642c'
-      '09094e6f6d2c20'
-      '090944617465506c61742041532044617465456e746974792c20'
-      '0909536f747275644e6f206173205f576f726b65722c'
-      '0909566964526173686f644e6f204153205669644e6f2c20'
-      '09093120415320666163746f725f646972656374696f6e2c'
-      '090943757272656e6379486561642c'
-      '0909546970506c6174206173205469702c'
-      '090953707261766b612061732053707261766b6120'
-      '090966726f6d20506c617452205749544820286e6f6c6f636b29'
-      '0909554e494f4e20414c4c'
+      '53454c4543542020'
+      '506c61744e6f2041532049442c20'
+      '53756d6d612c20'
+      '53756d6d61446f6c67204153204672656553756d6d612c'
+      '6f7464656c4e6f2c'
+      '506f73744e6f2c'
+      '405f506c61745020415320656e746974795f747970655f69642c'
+      '4e6f6d2c20'
+      '44617465506c61742041532044617465456e746974792c20'
+      '536f747275644e6f2c'
+      '566964526173686f644e6f204153205669644e6f2c20'
+      '2d3120415320666163746f725f646972656374696f6e2c'
+      '43757272656e6379486561642c'
+      '546970506c6174206173205469702c'
+      '53707261766b61206173204465736372697074696f6e20'
+      '66726f6d20506c617450205749544820286e6f6c6f636b29'
+      '554e494f4e20414c4c'
       ''
-      '090953454c4543542020'
-      '0909506c61744e6f20415320446f6349442c20'
-      '090953756d6d612c20'
-      '090953756d6d61446f6c67204153204672656553756d6d612c'
-      '09096f7464656c4e6f206173206f7464656c4e756d2c'
-      '0909506f73744e6f2c'
-      '0909405f506c61745020415320656e746974795f747970655f69642c'
-      '09094e6f6d2c20'
-      '090944617465506c61742041532044617465456e746974792c20'
-      '0909536f747275644e6f206173205f576f726b65722c'
-      '0909566964526173686f644e6f204153205669644e6f2c20'
-      '09092d3120415320666163746f725f646972656374696f6e2c'
-      '090943757272656e6379486561642c'
-      '0909546970506c6174206173205469702c'
-      '090953707261766b612061732053707261766b6120'
-      '090966726f6d20506c617450205749544820286e6f6c6f636b29'
-      '0909554e494f4e20414c4c'
+      '53454c4543542020'
+      '4e616b6c4e6f2041532049442c20'
+      '53756d6d612c20'
+      '53756d6d61446f6c67204153204672656553756d6d612c'
+      '6f7464656c4e6f2c'
+      '506f73744e6f2c'
+      '405f4e616b6c5020415320656e746974795f747970655f69642c'
+      '4e6f6d2c20'
+      '446174654e616b6c2041532044617465456e746974792c20'
+      '4e554c4c20617320536f747275644e6f2c'
+      '5669644e616b6c4e6f204153205669644e6f2c20'
+      '2d3120415320666163746f725f646972656374696f6e2c'
+      '43757272656e6379486561642c'
+      '4e554c4c206173205469702c'
+      '4e554c4c206173204465736372697074696f6e20'
+      '66726f6d204e616b6c50205749544820286e6f6c6f636b29'
+      '554e494f4e20414c4c'
       ''
-      '090953454c4543542020'
-      '09094e616b6c4e6f20415320446f6349442c20'
-      '090953756d6d612c20'
-      '090953756d6d61446f6c67204153204672656553756d6d612c'
-      '09096f7464656c4e6f206173206f7464656c4e756d2c'
-      '0909506f73744e6f2c'
-      '0909405f4e616b6c5020415320656e746974795f747970655f69642c'
-      '09094e6f6d2c20'
-      '0909446174654e616b6c2041532044617465456e746974792c20'
-      '09094e554c4c206173205f576f726b65722c'
-      '09095669644e616b6c4e6f204153205669644e6f2c20'
-      '09092d3120415320666163746f725f646972656374696f6e2c'
-      '090943757272656e6379486561642c'
-      '09094e554c4c206173205469702c'
-      '09094e554c4c2061732053707261766b6120'
-      '090966726f6d204e616b6c50205749544820286e6f6c6f636b29'
-      '0909554e494f4e20414c4c'
+      '53454c4543542020'
+      '4e616b6c4e6f2041532049442c20'
+      
+        '43415345205748454e207669646e616b6c6e6f203d2033205448454e202d2031' +
+        '202a206162732853756d6d612920454c53452073756d6d6120454e4420415320' +
+        '53756d6d612c20'
+      '53756d6d61446f6c67204153204672656553756d6d612c'
+      '6f7464656c4e6f2c'
+      '506f73744e6f2c'
+      '405f4e616b6c5220415320656e746974795f747970655f69642c'
+      '4e6f6d2c20'
+      '446174654e616b6c2041532044617465456e746974792c20'
+      '536f747275644e6f2c'
+      '5669644e616b6c4e6f204153205669644e6f2c20'
+      '3120415320666163746f725f646972656374696f6e2c'
+      '43757272656e6379486561642c'
+      '4e554c4c206173205469702c'
+      '4e554c4c206173204465736372697074696f6e20'
+      '66726f6d204e616b6c52205749544820286e6f6c6f636b29'
+      '29205431'
+      
+        '494e4e4552204a4f494e20445f454e544954595f5459504520656e74206f6e20' +
+        '28656e742e49443d54312e656e746974795f747970655f696429'
+      
+        '494e4e4552204a4f494e20506f73742070206f6e2028702e506f73744e6f3d54' +
+        '312e506f73744e6f29'
+      
+        '4c454654204f55544552204a4f494e205669644f7464656c20766964206f6e20' +
+        '287669642e4f7464656c4e6f3d54312e4f7464656c4e6f29'
+      
+        '4c454654204f55544552204a4f494e20536f7472756420736f74206f6e202873' +
+        '6f742e536f747275644e6f3d54312e536f747275644e6f29'
+      
+        '4c454654204f55544552204a4f494e20566964526173686f642076726173206f' +
+        '6e2028767261732e566964526173686f644e6f3d54312e5669644e6f29'
+      
+        '4c454654204f55544552204a4f494e207669646e616b6c20766e616b206f6e20' +
+        '28766e616b2e7669646e616b6c4e6f3d54312e5669644e6f29'
+      
+        '4c454654204f55544552204a4f494e20645f504c61745f5479706520645f7020' +
+        '6f6e2028645f702e49443d54312e54697029'
+      
+        '4c454654204f55544552204a4f494e20645f506c6174525f54697020645f7220' +
+        '6f6e2028645f722e49443d54312e54697029'
+      '776865726520'
+      '2d2d3c436f6e646974696f6e7320313e'
+      '202028313d3129'
+      '29204c31'
+      '202020207768657265'
+      '2020202028404f6e6c79546f74616c733d302920616e64'
+      '2d2d3c53656c656374696f6e7320313e'
+      '202028313d312909'
       ''
-      '090953454c4543542020'
-      '09094e616b6c4e6f20415320446f6349442c20'
-      
-        '090943415345205748454e207669646e616b6c6e6f203d2033205448454e202d' +
-        '2031202a206162732853756d6d612920454c53452073756d6d6120454e442041' +
-        '532053756d6d612c20'
-      '090953756d6d61446f6c67204153204672656553756d6d612c'
-      '09096f7464656c4e6f206173206f7464656c4e756d2c'
-      '0909506f73744e6f2c'
-      '0909405f4e616b6c5220415320656e746974795f747970655f69642c'
-      '09094e6f6d2c20'
-      '0909446174654e616b6c2041532044617465456e746974792c20'
-      '0909536f747275644e6f206173205f576f726b65722c'
-      '09095669644e616b6c4e6f204153205669644e6f2c20'
-      '09093120415320666163746f725f646972656374696f6e2c'
-      '090943757272656e6379486561642c'
-      '09094e554c4c206173205469702c'
-      '09094e554c4c2061732053707261766b6120'
-      '090966726f6d204e616b6c52205749544820286e6f6c6f636b29'
-      '090929205431'
-      
-        '0909494e4e4552204a4f494e20445f454e544954595f5459504520656e74206f' +
-        '6e2028656e742e49443d54312e656e746974795f747970655f696429'
-      
-        '09094c454654204f55544552204a4f494e205669644f7464656c20766964206f' +
-        '6e20287669642e4f7464656c4e6f3d54312e5f44657061727429'
-      
-        '09094c454654204f55544552204a4f494e20536f7472756420736f74206f6e20' +
-        '28736f742e536f747275644e6f3d54312e5f576f726b657229'
-      '0909'
-      '0909574845524520'
-      
-        '09092d2d44617465456e74697479206265747765656e2040705f646174655f62' +
-        '656720616e642040705f646174655f656e64'
-      
-        '0909284142532869736e756c6c284672656553756d6d612c203029293e302e30' +
-        '303529'
-      '0909616e642028506f73744e6f3d405f4167656e7429'
-      
-        '2020202020202020616e6420282854312e746970206973206e756c6c29206f72' +
-        '202854312e746970206e6f7420696e20'
-      
-        '202020202020202020202020202873656c656374205469704e6f2066726f6d20' +
-        '4c6973744d696e75735061796d656e74466f724a6f75726e616c4f6645787065' +
-        '6e73657320776865726520436865636b4d696e7573203d203129292909'
-      '0909616e64'
-      
-        '090909092020284558495354532853454c45435420312046524f4d202353656c' +
-        '656374696f6e7320574845524520735f4465706172743d2d3129204f5220'
-      
-        '090909092020286f7464656c4e6f20494e202853454c45435420735f44657061' +
-        '72742046524f4d202353656c656374696f6e73292929'
-      '09090909414e44'
-      
-        '090909092020284558495354532853454c45435420312046524f4d202353656c' +
-        '656374696f6e7320574845524520735f446f63547970653d2d3129204f5220'
-      
-        '09090909202028656e746974795f747970655f696420494e202853454c454354' +
-        '20735f446f63547970652046524f4d202353656c656374696f6e73292929'
-      '09090909414e44'
-      
-        '090909092020284558495354532853454c45435420312046524f4d202353656c' +
-        '656374696f6e7320574845524520735f446f634e756d3d2d3129204f5220'
-      
-        '090909092020284e6f6d20494e202853454c45435420735f446f634e756d2046' +
-        '524f4d202353656c656374696f6e73292929'
-      '09090909414e44'
-      
-        '090909092020284558495354532853454c45435420312046524f4d202353656c' +
-        '656374696f6e7320574845524520735f446f63446174653d2d3129204f5220'
-      
-        '09090909202028646174656469666628642c20404461746553746172742c2044' +
-        '617465456e746974792920494e202853454c45435420735f446f634461746520' +
-        '46524f4d202353656c656374696f6e73292929090909092020'
-      '09090909414e44'
-      
-        '0909090920202828546970206973206e756c6c29206f72202845584953545328' +
-        '53454c45435420312046524f4d202353656c656374696f6e7320574845524520' +
-        '735f506179547970653d2d3129204f5220'
-      
-        '0909090920202854697020494e202853454c45435420735f5061795479706520' +
-        '46524f4d202353656c656374696f6e7329292929'
-      '09090909414e44'
-      
-        '090909092020284558495354532853454c45435420312046524f4d202353656c' +
-        '656374696f6e7320574845524520735f576f726b65723d2d3129204f5220'
-      
-        '09090909202028536f747275644e6f20494e202853454c45435420735f576f72' +
-        '6b65722046524f4d202353656c656374696f6e73292929'
-      '09090909414e44'
-      
-        '090909092020284558495354532853454c45435420312046524f4d202353656c' +
-        '656374696f6e7320574845524520735f457870656e73653d2d3129204f5220'
-      
-        '090909092020285669644e6f20494e202853454c45435420735f457870656e73' +
-        '652046524f4d202353656c656374696f6e732929290920202020202020202020' +
-        '202020'
-      '2d2d3c6f726465722062792023323e'
-      
-        '6f72646572206279204465706172742c20446f63547970652c20446f63446174' +
-        '65'
+      '554e494f4e20414c4c'
       ''
-      '090920206f70656e204353313b'
-      '090920207768696c6520313d3120'
-      '0909202020626567696e'
-      '090909206665746368206e6578742066726f6d2043533120'
-      '0909092020696e746f2040696420'
-      '09090909202020202c20405f53756d6d612020'
-      '09090909202020202c20405f4672656553756d6d61'
-      '09090909092c20405f44657061727420'
-      '09090909092c204044657061727420'
-      '09090909092c20405f446f635479706520'
-      '09090909092c2040446f635479706520'
-      '09090909092c2040446f634e756d'
-      '09090909092c2040446f6344617465'
-      '09090909092c20405f5061795479706520'
-      '09090909092c20405061795479706520090909090909090909'
-      '09090909092c20405f576f726b6572'
-      '09090909092c2040576f726b6572'
-      '09090909092c20405f457870656e736520'
-      '09090909092c2040457870656e73650909090909202020'
-      '09090909092c20404465736372697074696f6e'
-      '09090909092c204043757272656e63794865616409092020'
-      '0909202020202020'
+      '53454c454354'
+      '2020506f73745f436f756e74206173205f436f756e742020'
+      '2c20506f73745f53756d6d612061732053756d6d61'
+      '2c20506f73745f4672656553756d6d61206173204672656553756d6d6120'
+      '2c20506f73745f53756d6d61206173205f53756d6d61'
       
-        '0909092020696620404046455443485f535441545553203c3e20302062726561' +
-        '6b'
-      '0909092020090909090909092020200909092020'
-      '090909202020626567696e0909'
-      
-        '202020202020202020202020202020696e7365727420696e746f202354656d70' +
-        '446174612028'
-      '090909090909095f436f756e74'
-      '090909090909092c204944'
-      '090909090909092c2053756d6d61'
-      
-        '090909090909092c204672656553756d6d612020202020202020202020202020' +
+        '2c20506f73745f4672656553756d6d61206173205f4672656553756d6d612020' +
         '20'
-      '090909090909092c205f44657061727420'
-      '090909090909092c2044657061727420'
-      '090909090909092c205f4167656e7420'
-      '090909090909092c204167656e7420'
-      '090909090909092c205f446f635479706520'
-      '090909090909092c20446f635479706520'
-      '090909090909092c20446f634e756d'
-      '090909090909092c205f446f634461746520'
-      '090909090909092c20446f634461746520'
-      '090909090909092c205f5061795479706520'
-      '090909090909092c205061795479706520'
-      '090909090909092c205f576f726b657220'
-      '090909090909092c20576f726b657220'
-      '090909090909092c205f457870656e736520'
-      '090909090909092c20457870656e7365'
-      '090909090909092c204465736372697074696f6e'
-      '090909090909092c2043757272656e637948656164'
-      '090909090909092c205f53756d6d61'
-      '090909090909092c205f4672656553756d6d6120202009'
-      '09090909090909292020'
-      '0909090976616c756573202020282020202020203020'
-      '09090909090909092c2040696420'
-      '09090909090909092c20405f53756d6d612020'
-      '09090909090909092c20405f4672656553756d6d61'
-      '09090909090909092c20405f44657061727420'
-      '09090909090909092c204044657061727420'
-      '09090909090909092c20405f4167656e7420'
-      '09090909090909092c20404167656e7420'
-      '09090909090909092c20405f446f635479706520'
-      '09090909090909092c2040446f635479706520'
-      '09090909090909092c2040446f634e756d'
+      '2c20702e4e616d65206173204167656e74'
+      '2c205f4167656e74'
+      '2c204e554c4c20617320446f634944'
+      '2c204e554c4c206173205f446570617274'
+      '2c204e554c4c20617320446570617274'
+      '2c204e554c4c204153205f446f6354797065'
+      '2c204e554c4c20617320446f6354797065'
+      '2c204e554c4c20415320446f634e756d'
+      '2c204e554c4c20617320446f6344617465'
+      '2c204e554c4c2061735f576f726b6572'
+      '2c204e554c4c20415320576f726b657209'
+      '2c204e554c4c204153205f50617954797065'
+      '2c204e554c4c206173205061795479706509'
+      '2c204e554c4c204153205f457870656e7365'
+      '2c204e554c4c20617320457870656e7365'
+      '2c204e554c4c206173204465736372697074696f6e'
+      '2c204e554c4c2061732043757272656e6379486561642020'
+      ''
+      '46524f4d202820200920'
+      '53454c454354'
+      '20205f4167656e742c'
+      '2020434f554e54285f4167656e742920617320506f73745f436f756e742c'
+      '202053554d2853756d6d612920617320506f73745f53756d6d612c'
       
-        '09090909090909092c20646174656469666628642c2040446174655374617274' +
-        '2c2040446f6344617465292020'
-      '09090909090909092c2040446f634461746520'
-      '09090909090909092c20405f5061795479706520'
-      '09090909090909092c20405061795479706520'
-      '09090909090909092c20405f576f726b657220'
-      '09090909090909092c2040576f726b657220'
-      '09090909090909092c20405f457870656e736520'
-      '09090909090909092c2040457870656e7365'
-      '09090909090909092c20404465736372697074696f6e'
-      '09090909090909092c204043757272656e637948656164'
-      '09090909090909092c2030'
-      '09090909090909092c203020090909090909090909'
-      '0909090929'
-      '0909090920205345542040436e740909093d2040436e740909092b20313b20'
+        '202053554d284672656553756d6d612920617320506f73745f4672656553756d' +
+        '6d6109'
+      '46524f4d2028'
+      '53454c454354202a2046524f4d2028'
+      '53454c454354'
+      '506f73744e6f206173205f4167656e742c'
+      '202054312e494420617320494420'
       
-        '090909092020534554204053756d6d6109093d204053756d6d6109092b20405f' +
-        '53756d6d613b20'
+        '2c202d666163746f725f646972656374696f6e2a53756d6d612061732053756d' +
+        '6d61'
       
-        '09090909202053455420404672656553756d6d61093d20404672656553756d6d' +
-        '61092b20405f4672656553756d6d613b090909202020'
-      '090909202020656e64'
-      '0909202020656e64'
-      '09092020206966202840436e74203e203029'
-      '090909696e7365727420696e746f202354656d70446174612020'
-      '090909090909202076616c7565732020282020'
-      '0909090909092020202020202020202040436e74'
-      '09090909090920202020202020202c20204e554c4c2020'
-      '09090909090909092c204053756d6d612020'
-      '09090909090909092c20404672656553756d6d61'
-      '09090909090909092c204e554c4c20'
-      '09090909090909092c204e554c4c20'
-      '09090909090909092c20405f4167656e7420'
-      '09090909090909092c20404167656e7420'
-      '09090909090909092c204e554c4c20'
-      '09090909090909092c204e554c4c20'
-      '09090909090909092c204e554c4c20'
-      '09090909090909092c204e554c4c20'
-      '09090909090909092c204e554c4c20'
-      '09090909090909092c204e554c4c20'
-      '09090909090909092c204e554c4c20'
-      '09090909090909092c204e554c4c20'
-      '09090909090909092c204e554c4c20'
-      '09090909090909092c204e554c4c'
-      '09090909090909092c204e554c4c'
-      '09090909090909092c204e554c4c'
-      '09090909090909092c204e554c4c'
-      '09090909090909092c204053756d6d612020'
+        '2c202d666163746f725f646972656374696f6e2a4672656553756d6d61206173' +
+        '204672656553756d6d61090920202020'
+      '2c2054312e6f7464656c4e6f206173205f446570617274'
+      '2c20656e746974795f747970655f6964204153205f446f6354797065'
+      '2c204e6f6d20415320446f634e756d'
+      '2c2044617465456e7469747920617320446f6344617465'
+      '2c20546970204153205f50617954797065'
+      '2c205669644e6f204153205f457870656e7365'
+      '46524f4d2028'
+      '53454c4543542020'
+      '506c61744e6f2041532049442c20'
+      '53756d6d612c20'
+      '53756d6d61446f6c67204153204672656553756d6d612c'
+      '6f7464656c4e6f2c'
+      '506f73744e6f2c'
+      '405f506c61745220415320656e746974795f747970655f69642c'
+      '4e6f6d2c20'
+      '44617465506c61742041532044617465456e746974792c20'
+      '536f747275644e6f2c'
+      '566964526173686f644e6f204153205669644e6f2c20'
+      '3120415320666163746f725f646972656374696f6e2c'
+      '43757272656e6379486561642c'
+      '546970506c6174206173205469702c'
+      '53707261766b61206173204465736372697074696f6e20'
+      '66726f6d20506c617452205749544820286e6f6c6f636b29'
+      '554e494f4e20414c4c'
+      ''
+      '53454c4543542020'
+      '506c61744e6f2041532049442c20'
+      '53756d6d612c20'
+      '53756d6d61446f6c67204153204672656553756d6d612c'
+      '6f7464656c4e6f2c'
+      '506f73744e6f2c'
+      '405f506c61745020415320656e746974795f747970655f69642c'
+      '4e6f6d2c20'
+      '44617465506c61742041532044617465456e746974792c20'
+      '536f747275644e6f2c'
+      '566964526173686f644e6f204153205669644e6f2c20'
+      '2d3120415320666163746f725f646972656374696f6e2c'
+      '43757272656e6379486561642c'
+      '546970506c6174206173205469702c'
+      '53707261766b61206173204465736372697074696f6e20'
+      '66726f6d20506c617450205749544820286e6f6c6f636b29'
+      '554e494f4e20414c4c'
+      ''
+      '53454c4543542020'
+      '4e616b6c4e6f2041532049442c20'
+      '53756d6d612c20'
+      '53756d6d61446f6c67204153204672656553756d6d612c'
+      '6f7464656c4e6f2c'
+      '506f73744e6f2c'
+      '405f4e616b6c5020415320656e746974795f747970655f69642c'
+      '4e6f6d2c20'
+      '446174654e616b6c2041532044617465456e746974792c20'
+      '4e554c4c20617320536f747275644e6f2c'
+      '5669644e616b6c4e6f204153205669644e6f2c20'
+      '2d3120415320666163746f725f646972656374696f6e2c'
+      '43757272656e6379486561642c'
+      '4e554c4c206173205469702c'
+      '4e554c4c206173204465736372697074696f6e20'
+      '66726f6d204e616b6c50205749544820286e6f6c6f636b29'
+      '554e494f4e20414c4c'
+      ''
+      '53454c4543542020'
+      '4e616b6c4e6f2041532049442c20'
       
-        '09090909090909092c20404672656553756d6d61090909090909090909090909' +
-        '090909092020'
-      '090909090909202020292020202020202020202020'
-      '20202020202020202020202020'
-      '202020202020202020202020200909'
-      '092020636c6f7365204353313b'
-      '0920206465616c6c6f63617465204353313b20200909202020'
-      '2020202020656e64'
-      '202020656e64'
-      '2020636c6f73652043533b'
-      '20206465616c6c6f636174652043533b20'
-      '2020'
-      '73656c656374202a2066726f6d202354656d7044617461'
-      '5748455245'
+        '43415345205748454e207669646e616b6c6e6f203d2033205448454e202d2031' +
+        '202a206162732853756d6d612920454c53452073756d6d6120454e4420415320' +
+        '53756d6d612c20'
+      '53756d6d61446f6c67204153204672656553756d6d612c'
+      '6f7464656c4e6f2c'
+      '506f73744e6f2c'
+      '405f4e616b6c5220415320656e746974795f747970655f69642c'
+      '4e6f6d2c20'
+      '446174654e616b6c2041532044617465456e746974792c20'
+      '536f747275644e6f2c'
+      '5669644e616b6c4e6f204153205669644e6f2c20'
+      '3120415320666163746f725f646972656374696f6e2c'
+      '43757272656e6379486561642c'
+      '4e554c4c206173205469702c'
+      '4e554c4c206173204465736372697074696f6e20'
+      '66726f6d204e616b6c52205749544820286e6f6c6f636b29'
+      '29205431'
+      '776865726520'
+      '2d2d3c436f6e646974696f6e7320323e'
+      '202028323d3229'
+      '2020202029204c31'
+      '20202020776865726520'
+      '2d2d3c53656c656374696f6e7320323e'
+      '202028323d3229'
+      '20202020'
+      '29205432'
+      '47524f5550204259205f4167656e74'
+      '29205433'
       
-        '202028404f6e6c79546f74616c73203d203029206f7220285f436f756e743e30' +
-        '2920'
-      '6f72646572206279205f6b6579'
-      '20')
+        '494e4e4552204a4f494e20506f73742070206f6e2028702e506f73744e6f3d54' +
+        '332e5f4167656e7429'
+      '29205434'
+      
+        '4f52444552204259204167656e742c205f436f756e742c20446f63547970652c' +
+        '20446f6344617465')
   end
   object pmExpansion: TPopupMenu
     Left = 376
@@ -1594,9 +1274,20 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
     StrData = (
       ''
       
-        '7cc4e0f2e020e4eeeaf3ece5edf2e03a2032312e30332e323031373b20c2e5f0' +
-        'f1e8ff20312e312e317c'
+        '7cc4e0f2e020e4eeeaf3ece5edf2e03a2032342e30332e323031373b20c2e5f0' +
+        'f1e8ff20312e327c'
       'c8f1f2eef0e8ff'
+      '32342e30332e32303137'
+      
+        '20c7e020f1f7e5f220efeeebedeee3ee20efe5f0e5efe8f1fbe2e0ede8ff20eb' +
+        'eee3e8eae820efeef1f2f0eee5ede8ff20e7e0eff0eef1e020e820ede5eaeef2' +
+        'eef0fbf520eff0eee3f0e0ececedfbf520f2f0feeaeee2'
+      
+        'f1eaeef0eef1f2fc20e2fbefeeebede5ede8ff20e7e0eff0eef1e020efeee2fb' +
+        'f1e8ebe0f1fc20e22032302d343020f0e0e720efee20f1f0e0e2ede5ede8fe20' +
+        'f1ee20f1eaeef0eef1f2fcfe20e2fbefeeebede5ede8ff20e8f1f5eee4edeee3' +
+        'ee20e7e0eff0eef1e02020'
+      ''
       '32322e30332e32303137'
       
         '20c7e020f1f7e5f220eeeff2e8ece0ebfcedeee3ee20efeef1f2f0eee5ede8ff' +
@@ -1746,5 +1437,36 @@ inherited frmMoneyCompensation: TfrmMoneyCompensation
       '5669644e6f203d205f457870656e7365'
       '5669644e616d65203d20457870656e7365'
       '4465736372697074696f6e203d204465736372697074696f6e09')
+  end
+  object sthConditions: TStrHolder
+    Capacity = 8
+    Macros = <>
+    Left = 400
+    Top = 369
+    InternalVer = 1
+    StrData = (
+      ''
+      
+        '2844617465456e74697479206265747765656e2040705f646174655f62656720' +
+        '616e642040705f646174655f656e642920616e64'
+      
+        '2028284044697361626c654578636c7573696f6e3d3129206f7220286e6f7420' +
+        '2854312e506f73744e6f20696e20'
+      
+        '202873656c65637420506f73744e6f2066726f6d204c6973744d696e7573506f' +
+        '7374466f724465626974206c6d7020776865726520'
+      
+        '09202854312e506f73744e6f203d206c6d702e506f73744e6f2920616e642028' +
+        '6c6d702e436865636b4d696e75733d31292929292920616e6409'
+      
+        '09284142532869736e756c6c284672656553756d6d612c203029293e302e3030' +
+        '352920616e64'
+      
+        '20202020282854312e746970206973206e756c6c29206f72202854312e746970' +
+        '206e6f7420696e20'
+      
+        '202020202873656c656374205469704e6f2066726f6d204c6973744d696e7573' +
+        '5061796d656e74466f724a6f75726e616c4f66457870656e7365732077686572' +
+        '6520436865636b4d696e7573203d2031292929')
   end
 end

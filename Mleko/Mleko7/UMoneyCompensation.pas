@@ -21,10 +21,11 @@ type
                  ptDisableExclusion, ptUseColnPrice, ptDisableZeroSumAcn,
                  ptFormDate, ptBegDate, ptStartDate, ptVeryOld,
                  ptOrderBy, ptOrderFirst, ptOrderSecond,
-                 ptEndDate);
+                 ptEndDate,
+                 ptSelection1, ptCondition1, ptSelection2, ptCondition2);
 
-  TSelectionType = ( stDepart, stAgent, stDocType, stDocNum, stDocDate,
-                     stPayType, stWorker, stExpenseItem, stNakl);
+  TSelectionType = ( stDepart, stAgent, stDocType, stDocNum,
+                     stPayType, stWorker, stExpenseItem, stDocDate, stNakl);
 
   TParamIndexes = array[TParamType] of Integer;
 
@@ -64,7 +65,6 @@ type
     mnuShowHide: TMenuItem;
     acToggleSettingsVisibility: TAction;
     quTest: TMSQuery;
-    quDebt_key: TIntegerField;
     quDebt_Count: TIntegerField;
     quDebtID: TIntegerField;
     quDebtSumma: TFloatField;
@@ -88,11 +88,11 @@ type
     btnSetExPayTypes: TButton;
     sthHelp: TStrHolder;
     cbxOnlyTotals: TCheckBox;
-    quDebt_FreeSumma: TFloatField;
-    quDebt_DocDate: TIntegerField;
-    quDebt_Summa: TFloatField;
     sthFields: TStrHolder;
     quDebtCurrencyHead: TStringField;
+    quDebt_Summa: TFloatField;
+    quDebt_FreeSumma: TFloatField;
+    sthConditions: TStrHolder;
     procedure dbgDebtsTitleBtnClick(Sender: TObject; ACol: Integer; Column: TColumnEh);
     procedure dbgDebtsKeyPress(Sender: TObject; var Key: Char);
     procedure dbgDebtsKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -251,6 +251,13 @@ type
     function EnableAgentKey: Boolean;
     procedure AcceptSelectedItems;
     procedure ApplyTestMode;
+    function KeyFormatIndex(KeyFormat, KeyParam: string; KeyValue: Integer): Integer;
+    function FindKeyFormatIndexes: Integer;
+    procedure SetSelectionsInParamList;
+    procedure SetConditionsInParamList;
+    procedure GetSelectionsDelimList(Dest: TStrings; Prefix,
+      PostFix, Delim: String; DoClear: Boolean = True);
+    function DetectLastNotEmptyChildIndex: Integer;
   public
     { Public declarations }
     procedure RefreshResults(SetMaxCount: Boolean = False);
@@ -283,6 +290,8 @@ const
   AllowedFilterIndexes = [7]; // used for filtering
   AllowedIntIndexes = [5, 8, 9, 10]; // used for sorting
 
+  AllowedNoUndescore = [ stDocNum];
+
   AllowedIntSelectionTypes = [ stDepart, stAgent, stDocType, stDocNum,
                                stPayType, stWorker, stExpenseItem];
 
@@ -295,6 +304,10 @@ const
   idParamPostfix = ' = ';
   idExpansions = 'Expansions';
   idSelections = 'Selections';
+  idConditions = 'Conditions';
+  idKeyFormat ='--<%s %d>';
+  idIntEqualsMark = '(%d=%d)';
+  idIncludeFormat ='%s in (%s)';
   idExpOption = 1;
   idSelOption = 2;
   idUserNo = 'UserNo';
@@ -355,12 +368,14 @@ const
   BoolChecks: array[Boolean] of UINT = (MF_UNCHECKED, MF_CHECKED);
 
   
-  idDefaultSortFields = 'Depart, DocType, DocDate';
+  idDefaultSortFields = 'Agent, _Count, DocType, DocDate';
   OrderDefStrings: array[ptOrderFirst..ptOrderSecond] of String = ('Agent', 'Depart, DocType, DocDate');
 
   BoolStrValues: array[Boolean] of TBoolStrValue =
   //('Нет', 'Да');
   (' ', '+');
+  idLeftParen = '(';
+  idRightParen = ')';
 
   ColumnFilterDlgAsModal: Boolean = True;
 
@@ -747,7 +762,8 @@ end;
 function TfrmMoneyCompensation.SetParameterByType(ParamType: TParamType; Value:
   string): string;
 begin
-  if not (ParamType in [ptOrderFirst, ptOrderSecond]) then
+  if not (ParamType in [ptOrderBy, ptOrderFirst, ptOrderSecond,
+         ptSelection1, ptSelection2, ptCondition1, ptCondition2]) then
   Result := idParamPrefix + ParamKeys[ParamType] + idParamPostfix + Value else
   Result := Value;
   if (not DisableParamIndexes) and (ParamIndexes[ParamType] > 0) then
@@ -836,13 +852,25 @@ begin
     begin
       KeyField:= 'OTDELNO'; TextField:= 'OTDELNAME';
     end;
+  stAgent:
+    begin
+      KeyField:= 'POSTNO'; TextField:= 'NAME'; Table:= 'POST';
+    end;
+  stDocType:
+    begin
+      KeyField:= 'ID'; TextField:= 'DESCRIPTION'; Table:= 'D_ENTITY_TYPE';
+    end;
+  stPayType:
+    begin
+      KeyField:= 'ID'; TextField:= 'NAME'; Table:= 'D_PLAT_TYPE';
+    end;
   stWorker:
     begin
       KeyField:= 'SOTRUDNO'; TextField:= 'SOTRUDNAME';
     end;
-  stAgent:
+  stExpenseItem:
     begin
-      KeyField:= 'POSTNO'; TextField:= 'NAME'; Table:= 'POST';
+      KeyField:= 'VidRashodNo'; TextField:= 'VidRashodName'; Table:= 'VIDRASHOD';
     end;
   end;
 end;
@@ -1000,7 +1028,7 @@ procedure TfrmMoneyCompensation.ApplyTestMode();
 begin
   quTest.Close;
   ParamList := quTest.SQL;
-  ParamList.Assign(quDebt.SQL);
+  ParamList.Assign(sthSource.Strings);
 end;
 
 procedure TfrmMoneyCompensation.ApplyChanges();
@@ -1008,10 +1036,10 @@ begin
   if TestMode then ApplyTestMode()
      else
      begin
-       RecordKey:= -1;
        quDebt.DisableControls;
        quDebt.Close;
        ParamList := quDebt.SQL;
+       ParamList.Assign(sthSource.Strings);
      end;
   ResetGridState;
   SetParameters;
@@ -1071,8 +1099,6 @@ begin
         dbgDebts.Refresh;
      end else
   quDebt.Open;
-  if (RecordKey>=0) then
-  quDebt.Locate('_key', RecordKey, []);
   Tracer.Stop;
   ShowRecordCount(SetMaxCount);
   quDebt.EnableControls;
@@ -1081,6 +1107,103 @@ end;
 procedure TfrmMoneyCompensation.SetDefaultOrderFullStr();
 begin
   OrderFullStr:= idOrderBy + ' ' + idDefaultSortFields;
+end;
+
+function TfrmMoneyCompensation.KeyFormatIndex(
+         KeyFormat, KeyParam: string; KeyValue: Integer): Integer;
+var k: Integer; s: string;
+begin
+  Result:= -1;
+  s:= Format(KeyFormat, [KeyParam, KeyValue]);
+  k:= GetStartPosIndex(ParamList, s);
+  if (k>0) then
+     begin
+        Inc(k);
+        if (k<ParamList.Count) then
+        begin
+          s:= Format(idIntEqualsMark, [KeyValue, KeyValue]);
+          if Trim(ParamList[k])=s then
+             Result:= k;
+        end;
+     end;
+end;
+
+function TfrmMoneyCompensation.FindKeyFormatIndexes(): Integer;
+const
+  KeyParams: array[1..2] of string = (idSelections, idConditions);
+var i, k, z: Integer; pt: TParamType;
+    //ptSelection1, ptSelection2, ptCondition1, ptCondition2
+begin
+  Result:= 0; pt:= Pred(ptSelection1);
+  for k := 1 to 2 do
+    for i := 1 to 2 do
+    begin
+      Inc(pt);
+      z:= KeyFormatIndex(idKeyFormat, KeyParams[i], k);
+      ParamIndexes[pt]:= z;
+      if (z>0) then Inc(Result);
+    end;
+end;
+
+function TfrmMoneyCompensation.DetectLastNotEmptyChildIndex(): Integer;
+begin
+for Result := AList.Count-1 downto 0 do
+  if AList.GetChild(Result).Count>0 then Exit;
+  Result:= -1;
+end;
+
+procedure TfrmMoneyCompensation.GetSelectionsDelimList(
+          Dest: TStrings; Prefix, PostFix, Delim: String; DoClear: Boolean = True);
+var Keys: TStrings; i, k, h, c: Integer; s: string;
+begin
+  Dest.BeginUpdate;
+  if DoClear then Dest.Clear;
+  c:= AList.Count;
+  if (c>0) then
+  begin
+    c:= DetectLastNotEmptyChildIndex();
+    for i := 0 to c do
+    begin
+      Keys:= AList.GetChild(i); s:= '';
+      h:= Keys.Count-1;
+      if (h>=0) then
+         begin
+           s:= Prefix;
+           for k := 0 to h do
+           begin
+             s:= s + Keys[k];
+             if (k<h) then s:= s + Delim;
+           end;
+           s:= Format(idIncludeFormat, [AList[i], s]);
+           if (i<c) then s:= s + PostFix;
+           Dest.Add(s);
+         end;
+    end;
+  end;
+  Dest.EndUpdate;
+end;
+
+procedure TfrmMoneyCompensation.SetSelectionsInParamList();
+var s: string; 
+begin
+  VerifyEmptySelections;
+  GetSelectionsDelimList(Temp, '', ' and', ', ', True);
+  if (Temp.Count=0) then Exit;
+  s:= Trim(Temp.Text);
+  if (s<>'') then
+    begin
+      s:= idLeftParen + s + idRightParen;
+      SetParameterByType(ptSelection1, S);
+      SetParameterByType(ptSelection2, S);
+    end;
+end;
+
+procedure TfrmMoneyCompensation.SetConditionsInParamList();
+var s: string;
+begin
+  s:= sthConditions.Strings.Text;
+  SetParameterByType(ptCondition1, S);
+  SetParameterByType(ptCondition2, S);
 end;
 
 procedure TfrmMoneyCompensation.FindOrderMarks(MarkCount: Integer; Start: TParamType);
@@ -1132,13 +1255,14 @@ begin
    ParamIndexes[ptOnlyTotals]:= GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[ptOnlyTotals]);
 //   for pt := ptFormDate to ptStartDate do
 //   ParamIndexes[pt]:= GetStartPosIndex(ParamList, idParamPrefix + ParamKeys[pt]);
-//ramIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[pt], 10, False);
-   SetDefaultOrderFullStr;
-   FindOrderMarks(2, ptOrderFirst);
-
+  ParamIndexes[ptOrderBy]:= GetStartPosIndex(ParamList, ParamKeys[ptOrderBy], 10, False);
+//   SetDefaultOrderFullStr;
+   //FindOrderMarks(Length(OrderDefStrings), ptOrderFirst);
 //   ParamIndexes[ptExpansion]:= GetStartPosIndex(ParamList, idInsertExpansions);
-   ParamIndexes[ptSelection]:= GetStartPosIndex(ParamList, idInsertSelections);
+//   ParamIndexes[ptSelection]:= GetStartPosIndex(ParamList, idInsertSelections);
 //   ParamIndexes[ptAllTypes]:= GetStartPosIndex(ParamList, idInsertAllTypes);
+  if (FindKeyFormatIndexes<>4) then
+     raise Exception.Create('Number of KeyFormat places should be 4');
 end;
 
 procedure TfrmMoneyCompensation.SetParameters();
@@ -1156,21 +1280,17 @@ begin
      end;
   for pt := ptLow to ptHigh do
     case pt of
-//      ptFormDate:
-//          SetParameterByType(pt, GetDateStrByIndex(0, True));
-//      ptBegDate:
-//        SetParameterByType(pt, QuotedStr(dtBegDate));
-//      ptStartDate:
-//          SetParameterByType(pt, QuotedStr(dtDateStart));
       ptOnlyTotals:
             SetParameterByType(pt, IntToStr(Ord(cbxOnlyTotals.Checked)));
-        ptOrderFirst, ptOrderSecond:
-      begin
-        SetParameterByType(pt, OrderFullStrings[pt]);
-      end;
-      ptExpansion, ptSelection, ptAllTypes:
-        SetParameterByTypeEx(pt);
+      ptOrderBy:
+        SetParameterByType(pt, OrderFullStr);
+//      ptOrderFirst, ptOrderSecond:
+//        SetParameterByType(pt, OrderFullStrings[pt]);
+//      ptExpansion, ptSelection, ptAllTypes:
+//        SetParameterByTypeEx(pt);
     end;
+    SetConditionsInParamList;
+    SetSelectionsInParamList;
 end;
 
 procedure TfrmMoneyCompensation.ExecuteScript();
@@ -1281,34 +1401,21 @@ end;
 procedure TfrmMoneyCompensation.SortRowsByAllowedColumn(Column: TColumnEh; Dir: Integer = 0);
 var
   OrderFields, MainFieldStr, KeyFieldStr: String;
-  Old_Dir, Old_Col, ACol: Integer; pt: TParamType;
+  Old_Dir, Old_Col, ACol: Integer;
 begin
   //Column:= dbgDebts.Columns[ACol];
-  RecordKey:= -1;
-//  if quDebt.Active then
-//     RecordKey:= quDebt_key.AsInteger;
   ACol:= Column.Index;
-  if (not quDebt.Active) or cbxOnlyTotals.Checked then Exit;
+  if (not quDebt.Active) or (not EnableExpansion(Column.Tag) and (Column.Tag>=0)) then Exit;
     MainFieldStr:= Column.FieldName;
-    if SameText(MainFieldStr, OrderDefStrings[ptOrderFirst])
-    then
-    begin
-      OrderFields:= '';
-      pt:= ptOrderFirst;
-    end else
-    begin
-      OrderFields:= GetOrderFields( MainFieldStr, Column.Tag,
-                                    Column.Tag in AllowedIntIndexes);
-      pt:= ptOrderSecond;
-    end;
+    OrderFields:= GetOrderFields(MainFieldStr, Column.Tag, Column.Tag in AllowedIntIndexes);
     Old_Dir:= OldDir; Old_Col:= OldCol;
     if (Dir<>0) then
        begin
          Old_Dir:= Dir;
          Old_Col:= -2;
        end;
-    OrderFullStrings[pt]:=
-    SortMSQueryInEhGrid( Old_Col, Old_Dir, ACol, ParamIndexes[pt], Column,
+    OrderFullStr:=
+    SortMSQueryInEhGrid( Old_Col, Old_Dir, ACol, ParamIndexes[ptOrderBy], Column,
                          quDebt.SQL, quDebt, MainFieldStr, OrderFields, False);
     if (Dir=0) then
        begin
@@ -1531,29 +1638,15 @@ begin
 end;
 
 procedure TfrmMoneyCompensation.FillComponentLists();
-
-  procedure FillExpansionList();
-  begin
-
-  end;
+  var Columns: TDBGridColumnsEh;
+      Column: TColumnEh;
 
   procedure FillSelectionList();
   begin
     SetDefaultSelections(stDepart, [35]);
+    //SetDefaultSelections(stDocType, [8]);
   end;
 
-  procedure FillArrayList();
-  var i: Integer; Items: TStrings;
-  begin
-    Items:= vleSelections.Strings;
-    AList.Clear;
-  for i := 0 to Items.Count-1 do
-  AList.AddItem(Items.Names[i], nil);
-  end;
-
-  procedure FillColumnObjects();
-  var Columns: TDBGridColumnsEh;
-      Column: TColumnEh;
   function IndexOfColumnTag(ColumnTag: Integer): Integer;
   begin
   for Result := 0 to Columns.Count-1 do
@@ -1563,9 +1656,34 @@ procedure TfrmMoneyCompensation.FillComponentLists();
     end;
     Result:= -1;
   end;
+
+  procedure FillArrayList();
+  var i, k: Integer; _s: string; Items: TStrings;
+  begin
+    Items:= vleSelections.Strings;
+    AList.Clear;
+    //Fields.Clear;
+  for i := 0 to Items.Count-1 do
+      begin
+         k:= IndexOfColumnTag(i+1);
+         if (k>=0) then
+           begin
+             Column:= Columns[k];
+             _s:= '_' + Column.FieldName;
+             if (quDebt.FindField(_s)<>nil) then
+                AList.AddItem(_s, nil) else
+             if (TSelectionType(i) in AllowedNoUndescore) then
+                AList.AddItem(Column.FieldName, nil);
+           end;
+      end;
+      if (AList.Count<>Items.Count) then
+         raise Exception.Create('Invalid key items count');
+  end;
+
+  procedure FillColumnObjects();
+
   var i, n, k: Integer;
   begin
-    Columns:= dbgDebts.Columns;
 //    n:= 0; k:= Columns.Count;
 //    for  i:= 0 to k-1 do
 //    begin
@@ -1585,7 +1703,7 @@ procedure TfrmMoneyCompensation.FillComponentLists();
         Column:= Columns[i];
         if (Column.Tag<0) then
            ColObjs.AddColumnObject(Column, fvtSum) else
-        if (Column.Tag>0) then
+        if (Column.Tag in AllowedFilterIndexes) then
            ColObjs.AddColumnObject(Column);
       end;
   end;
@@ -1605,6 +1723,7 @@ procedure TfrmMoneyCompensation.FillComponentLists();
 begin
 //  FillExpansionList;
 //  FillFieldList;
+  Columns:= dbgDebts.Columns;
   FillArrayList();
   FillSelectionList;
   FillColumnObjects();
@@ -1968,18 +2087,8 @@ AQuote = '';
 var i, z: Integer; Items: TStrings; S, Prev: String; R: TGridRect; P: PChar;
     st: TSelectionType;
 begin
-//  R:= vleSelections.Selection;
-//  i:= R.Top-1;
-//  Items:= vleSelections.Strings;
   z:= -1; S:= '';
   i:= vleSelections.Row-1;
-  //S:= AnsiDequotedStr(Items.ValueFromIndex[i], '"');
-  {
-    TSelectionType = ( stOtdel, stVid, stSotrud, stBuh, stPost, stNakl, stAddress, stDoc,
-                     stDayNakl, stDayOpl, stDayExp);
-  TSelectionType = ( stDepart, stAgent, stDocType,
-  stDocNum, stDocDate, stPayType, stWorker, stExpenseItem);
-  }
   st:= TSelectionType(i);
   Prev:= GetSelectionStrByIndex(Ord(st)) ;
   case st of
@@ -2002,13 +2111,7 @@ begin
   end;
   if (z>=0) then
   begin
-    //Fields.Clear;
     S:= GetDelimText(Temp, ', ', '"');
-//    S:= Trim(S);
-//    P:= PChar(S);
-//    if (S<>'') and (not (st in [stDocDate]))
-//    and (AnsiExtractQuotedStr(P, '"')='') then S:= AnsiQuotedStr(S, '"');
-    //Items.ValueFromIndex[i]:= S;
     vleSelections.Values[vleSelections.Keys[vleSelections.Row]]:= S;
   end else
   vleSelections.Values[vleSelections.Keys[vleSelections.Row]]:= Prev;
