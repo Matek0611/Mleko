@@ -1,21 +1,21 @@
 inherited frmSelectItemBuhDlg: TfrmSelectItemBuhDlg
-  Left = 564
-  Top = 299
+  Left = 400
+  Top = 306
+  ActiveControl = dbgBuhPersons
   BorderStyle = bsDialog
   Caption = #1057#1087#1080#1089#1086#1082' '#1073#1091#1093#1075#1072#1083#1090#1077#1088#1086#1074
   ClientHeight = 217
-  ClientWidth = 342
+  ClientWidth = 536
   OldCreateOrder = True
   Position = poScreenCenter
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object btnAdd: TButton [0]
-    Left = 128
+    Left = 174
     Top = 176
     Width = 75
     Height = 25
-    Anchors = [akBottom]
     Caption = #1044#1086#1073#1072#1074#1080#1090#1100
     TabOrder = 0
     OnClick = btnAddClick
@@ -26,11 +26,12 @@ inherited frmSelectItemBuhDlg: TfrmSelectItemBuhDlg
     Width = 75
     Height = 25
     Caption = #1047#1072#1082#1088#1099#1090#1100
+    Default = True
     TabOrder = 1
     OnClick = btnCloseClick
   end
   object btnDelete: TButton [2]
-    Left = 224
+    Left = 328
     Top = 176
     Width = 75
     Height = 25
@@ -41,7 +42,7 @@ inherited frmSelectItemBuhDlg: TfrmSelectItemBuhDlg
   object dbgBuhPersons: TDBGrid [3]
     Left = 8
     Top = 16
-    Width = 320
+    Width = 513
     Height = 145
     DataSource = dsBuhPersons
     TabOrder = 3
@@ -57,7 +58,7 @@ inherited frmSelectItemBuhDlg: TfrmSelectItemBuhDlg
         Expanded = False
         FieldName = 'Person'
         Title.Caption = #1048#1084#1103
-        Width = 200
+        Width = 400
         Visible = True
       end
       item

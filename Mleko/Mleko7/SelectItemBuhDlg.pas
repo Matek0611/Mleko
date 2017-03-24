@@ -90,7 +90,9 @@ end;
 procedure TfrmSelectItemBuhDlg.btnCloseClick(Sender: TObject);
 begin
   inherited;
-  Close
+  if (tbBuhPersons.State in [dsEdit, dsInsert]) then
+      tbBuhPersons.Post;
+  Close;
 end;
 
 procedure TfrmSelectItemBuhDlg.dbgBuhPersonsDrawColumnCell(Sender: TObject;
