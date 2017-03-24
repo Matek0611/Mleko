@@ -1,6 +1,6 @@
 inherited fmOtchets: TfmOtchets
-  Left = 798
-  Top = 127
+  Left = 160
+  Top = 220
   Width = 796
   Height = 478
   Caption = 'fmOtchets'
@@ -3779,5 +3779,15 @@ inherited fmOtchets: TfmOtchets
   object frBarCodeObject1: TfrBarCodeObject
     Left = 560
     Top = 400
+  end
+  object quBuhPersons: TMSQuery
+    Connection = dmDataModule.DB
+    SQL.Strings = (
+      'select Person from Buh_Persons where Active=1')
+    Left = 160
+    Top = 208
+    object quBuhPersonsPerson: TStringField
+      FieldName = 'Person'
+    end
   end
 end

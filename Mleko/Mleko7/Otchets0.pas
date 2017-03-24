@@ -434,6 +434,8 @@ type
     quRashodPrintIsStavNDS: TIntegerField;
     quTovarVidNameOtdelName: TStringField;
     quRashodPrintArticle: TLargeintField;
+    quBuhPersons: TMSQuery;
+    quBuhPersonsPerson: TStringField;
     
     procedure frReport3GetValue(const ParName: String;
       var ParValue: Variant);
@@ -1066,7 +1068,7 @@ procedure PrintNaklTransportRasNew(NaklNo:integer; Preview, Print3: Boolean);
 //Buh=False  Без шапки
 //Buh=True  С шапкой
 var
-  i: integer;
+  i, Secret: integer;
   b: Boolean;
 begin
  Screen.Cursor:=crHourGlass;
@@ -1104,14 +1106,15 @@ begin
                                    Preview := false;
                                  end
                                 else i := SelectItem('Печать ТТН', ['ТТН новая', 'Расходная', 'Возвратная']);
-
+   i:= DecodeSecretValue(i, Secret);
    case i of
     0: frReportPrintNaklTransport.LoadFromFile('Tovarno_Transportnaya_2014.frf');
     1: frReportPrintNaklTransport.LoadFromFile('Tovarno_Transportnaya_1_0.frf');
     2: frReportPrintNaklTransport.LoadFromFile('Tovarno_Transportnaya_1_0_1.frf');
    end;
 
-//   frReportPrintNaklTransport.DesignReport;
+   if (Secret=100) then
+   frReportPrintNaklTransport.DesignReport else
    if Preview then
     frReportPrintNaklTransport.ShowReport
    else
