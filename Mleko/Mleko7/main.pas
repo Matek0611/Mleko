@@ -339,6 +339,8 @@ type
     BlankListLight: TMenuItem;
     mnuDebtSettings: TMenuItem;
     MoneyCompensation: TMenuItem;
+    SelectBuhPerson: TMenuItem;
+    ShowStoreList: TMenuItem;
     procedure N3Click(Sender: TObject);
     procedure N8Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
@@ -589,6 +591,8 @@ type
     procedure mnuDebtSettingsClick(Sender: TObject);
     procedure InputOrderExcelNewClick(Sender: TObject);
     procedure MoneyCompensationClick(Sender: TObject);
+    procedure SelectBuhPersonClick(Sender: TObject);
+    procedure ShowStoreListClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -665,7 +669,7 @@ uses Post0, NaklP0, Tovar0, Ostatok2, About,
   AnalisCuttingMesh, Currency, CurrencyExchange, VidRashodGroup, ListPlusPostForClosePlatRIsEconom,
   MlekoClosePlatRLight, EditDocPlat, DocPlatHead, ListVidOtdelForAPP, ListMinusPostForBDDS,
   UAnalyzeDebitDebt, UMoneyCompensation, UListMinusPostForDebit, MlekoBlankListLight,
-  CreateBlankWithExel;
+  CreateBlankWithExel, SelectItemBuhDlg, UStoreList;
 
 {$R *.DFM}
 
@@ -5051,6 +5055,20 @@ procedure TfmMain.MoneyCompensationClick(Sender: TObject);
 begin
   inherited;
   with TfrmMoneyCompensation.Create(Application) do
+    ShowModal;
+end;
+
+procedure TfmMain.SelectBuhPersonClick(Sender: TObject);
+begin
+  inherited;
+  with TfrmSelectItemBuhDlg.Create(Application) do
+    ShowModal;
+end;
+
+procedure TfmMain.ShowStoreListClick(Sender: TObject);
+begin
+  inherited;
+  with TfrmStoreList.Create(Application) do
     ShowModal;
 end;
 

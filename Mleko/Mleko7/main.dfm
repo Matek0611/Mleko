@@ -1,6 +1,6 @@
 inherited fmMain: TfmMain
-  Left = 431
-  Top = 214
+  Left = 6
+  Top = 64
   VertScrollBar.Range = 0
   Anchors = [akLeft, akTop, akRight, akBottom]
   AutoScroll = False
@@ -284,6 +284,10 @@ inherited fmMain: TfmMain
       object NPepsico: TMenuItem
         Caption = #1044#1086#1083#1078#1085#1086#1089#1090#1080
         OnClick = NPepsicoClick
+      end
+      object ShowStoreList: TMenuItem
+        Caption = #1057#1082#1083#1072#1076#1099
+        OnClick = ShowStoreListClick
       end
     end
     object N80: TMenuItem
@@ -1225,6 +1229,10 @@ inherited fmMain: TfmMain
       object mnuDebtSettings: TMenuItem
         Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1076#1083#1103' '#1072#1085#1072#1083#1080#1079#1072' '#1044#1090
         OnClick = mnuDebtSettingsClick
+      end
+      object SelectBuhPerson: TMenuItem
+        Caption = #1042#1099#1073#1088#1072#1090#1100' '#1073#1091#1093#1075#1072#1083#1090#1077#1088#1072
+        OnClick = SelectBuhPersonClick
       end
     end
     object N104: TMenuItem

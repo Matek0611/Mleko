@@ -72,7 +72,7 @@ function IndexOfColumnByTag(DBGridEh: TDBGridEh; TagValue: Integer): Integer;
 function SortMSQueryInEhGrid( var OldCol, OldDir: Integer;
           Col, OrderLine: Integer; Column: TColumnEh; Source: TStrings;
           MSQuery: TMSQuery; MainField: String; OrderFields: String = '';
-          DoOpen: Boolean = True): String;
+          DoOpen: Boolean = True; UseOrderBy: Boolean = True): String;
 procedure SaveDBGridToXLSFile(DBGridEh: TCustomDBGridEh; const FileName: String; IsSaveAll: Boolean);
 function DetectDataType(s: string): TVarType;
 function DetectDataTypeOfItems(Items: TStrings): TVarType;
@@ -339,7 +339,8 @@ end;
 function SortMSQueryInEhGrid( var OldCol, OldDir: Integer;
           Col, OrderLine: Integer; Column: TColumnEh; Source: TStrings;
           MSQuery: TMSQuery; MainField: String; OrderFields: String = '';
-          DoOpen: Boolean = True): String;
+          DoOpen: Boolean = True;
+          UseOrderBy: Boolean = True): String;
 const
   idOrderBy = 'ORDER BY';
 //const
@@ -377,7 +378,9 @@ begin
       (not SameText(MainField, Column.Field.FieldName)) then
            OrderFields:= Column.Field.FieldName;
    if (OrderFields<>'') then OrderStr:= OrderStr + ', ';
-   Result:= idOrderBy + ' ' + MainField + OrderStr + OrderFields;
+   Result:= MainField + OrderStr + OrderFields;
+   if UseOrderBy then Result:= idOrderBy + ' ' + Result;
+   if (MSQuery=nil) then Exit;
    MSQuery.Close;
    if DoInsert and (Source<>nil) then
    begin
