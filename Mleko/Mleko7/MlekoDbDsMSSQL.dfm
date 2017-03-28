@@ -1,8 +1,8 @@
 inherited MlekoDbDsMSSQLDm: TMlekoDbDsMSSQLDm
-  Left = 338
-  Top = 134
+  Left = 234
+  Top = 248
   Height = 469
-  Width = 781
+  Width = 795
   inherited DBDev: TMSConnection
     Options.Provider = prSQL
     Password = '3#_KVAZAR@'
@@ -45,6 +45,14 @@ inherited MlekoDbDsMSSQLDm: TMlekoDbDsMSSQLDm
     Connection = dmDataModule.DB
     SQL.Strings = (
       'SELECT '
+      'T2.*,'
+      'wh.Name as HouseName'
+      'FROM ('
+      'SELECT '
+      'T1.*,'
+      'ISNULL(tw.HouseID, ltw.HouseID) as HouseID'
+      'FROM ('
+      'SELECT '
       '       s.NaklNo,'
       '       tnp.No_pp,'
       '       s.order_num,'
@@ -58,18 +66,27 @@ inherited MlekoDbDsMSSQLDm: TMlekoDbDsMSSQLDm
       '       s.Weight,'
       '       s.dhead_id,'
       '       s.ID,'
-      '       s.vid_Name,'
+      '       s.vid_Name as vid_Name_1,'
       '       s.producer_name,'
       '       s.summa,'
       '       s.summa_no_nds,'
-      '       s.dhead_id,  '
+      '       s.dhead_id as dhead_id_1,  '
       '       s.DateOfManufacture,'
       '       s.Currency, '
       '       s.PaymentPrice'
-      '  FROM V_DSPEC s left join '
+      '  FROM V_DSPEC s '
+      '  left join '
       '       TovarNOPP tnp on tnp.TovarNo = s.article_id'
-      ' WHERE s.DHEAD_ID = :DHEAD_ID'
-      'ORDER BY &_order')
+      'WHERE s.DHEAD_ID = :DHEAD_ID'
+      ') T1'
+      'left join TovarInWarehouse tw on '
+      #9#9'(tw.TovarID=T1.article_id) and'
+      #9#9'(tw.pkey=T1.dhead_id)'
+      'left join L_Tovar_WareHouse ltw on'
+      #9#9'(ltw.TovarID=T1.article_id)'
+      ') T2'
+      'left join Warehouses wh on'
+      #9#9'(T2.HouseID=wh.ID) and (wh.Active=1)')
     BeforeUpdateExecute = quDSPECBeforeUpdateExecute
     AfterUpdateExecute = quDSPECAfterUpdateExecute
     AfterPost = quDSPECAfterPost
@@ -82,11 +99,6 @@ inherited MlekoDbDsMSSQLDm: TMlekoDbDsMSSQLDm
         DataType = ftLargeint
         Name = 'DHEAD_ID'
         Value = -1
-      end>
-    MacroData = <
-      item
-        Name = '_order'
-        Value = 'Order_Num'
       end>
     object quDSPECNaklNo: TIntegerField
       FieldName = 'NaklNo'
@@ -161,6 +173,14 @@ inherited MlekoDbDsMSSQLDm: TMlekoDbDsMSSQLDm
       DisplayLabel = #1062#1077#1085#1072' '#1087#1088#1072#1081#1089#1072
       FieldName = 'PaymentPrice'
       ReadOnly = True
+    end
+    object quDSPECHouseID: TSmallintField
+      FieldName = 'HouseID'
+      ReadOnly = True
+    end
+    object quDSPECHouseName: TStringField
+      FieldName = 'HouseName'
+      Size = 50
     end
   end
   object QuLAGGroup: TMSQuery
@@ -1256,6 +1276,9 @@ inherited MlekoDbDsMSSQLDm: TMlekoDbDsMSSQLDm
     end
     object quTovarMinCarryover: TFloatField
       FieldName = 'MinCarryover'
+    end
+    object quTovarUKT_ZED: TStringField
+      FieldName = 'UKT_ZED'
     end
   end
   object dsTovar: TDataSource

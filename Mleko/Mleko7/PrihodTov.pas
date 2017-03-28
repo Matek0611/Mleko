@@ -177,6 +177,7 @@ type
     dbnedtRateCurrencyAccounting: TDBNumberEditEh;
     Label15: TLabel;
     quNaklPRateCurrencyAccounting: TFloatField;
+    tbTovarInWarehouse: TMSTable;
     procedure ScrollBoxExit(Sender: TObject);
     procedure bbOKClick(Sender: TObject);
     procedure DBGrid1KeyUp(Sender: TObject; var Key: Word;
@@ -206,9 +207,16 @@ type
     procedure lcBuhPropertiesChange(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
   private
     dhead_id: Int64;
     is_insert : boolean;
+    procedure SelectWareHouse;
+    function DeleteTovarInWarehouseItem: Boolean;
+    function InsertTovarInWarehouseItem(pkey, TovarID: Int64;
+      houseID: Integer): Boolean;
+    function ChangeTovarInWarehouseItem(pkey, TovarID: Int64;
+      houseID: Integer): Boolean;
   public
     { public declarations }
   end;
@@ -223,7 +231,8 @@ procedure PrihodTovar(OtdelNo: integer; var Pkey: Int64);
 implementation
 
 uses data, PrintNaklP, TovarPrih, Post0, MlekoDbDsMSSQL, main,
-  Variants, BCDbMSSQL,UtilsCommon, CFLMLKCustomRep, ListTovarDateOfManufaktureForNakl;
+  Variants, BCDbMSSQL,UtilsCommon, CFLMLKCustomRep,
+  ListTovarDateOfManufaktureForNakl, UWarehouses;
 
 {$R *.DFM}
 
@@ -541,6 +550,7 @@ end;
 
 procedure TfmPrihodTov.bbPrihodDelClick(Sender: TObject);
 begin
+  DeleteTovarInWarehouseItem;
   DBGrid1.DataSource.DataSet.Delete;
 end;
 
@@ -643,6 +653,7 @@ begin
                              TMlekoDbDsMSSQLDm(CustomDm).quDSPEC.Post;
                            end
                       else TMlekoDbDsMSSQLDm(CustomDm).quDSPEC.Cancel;
+    InsertTovarInWarehouseItem(dhead_id, Prih.TovarNo, -1);
     DateOfManufacture := 0;
     is_insert := False;
   end;
@@ -774,7 +785,7 @@ begin
                                                                            raise Exception.Create(' Нельзя редактировать кол-во!'+ #10#13 +
                                                                                                   'Необходимо удалить, и заново создать запись в накладной!');
                                                                          end;
-} 
+}
     if (UpperCase(Field.FieldName) = 'PRICE_ECO') then
     begin
       quPriceInInst:=TMSQuery.Create(nil);
@@ -938,6 +949,132 @@ begin
       qul_DspecForTovarDateOfManufacture.Close;
       Free;
    end;
+end;
+
+function TfmPrihodTov.ChangeTovarInWarehouseItem(pkey, TovarID: Int64; houseID: Integer): Boolean;
+begin
+  Result:= False;
+  try
+   tbTovarInWarehouse.Open;
+   try
+     if tbTovarInWarehouse.Locate('pkey;TovarID', VarArrayOf([pkey, TovarID]), []) then
+     begin
+       tbTovarInWarehouse.Edit;
+       tbTovarInWarehouse.FieldByName('HouseID').Value:= houseID;
+       tbTovarInWarehouse.Post;
+       Result:= True;
+     end
+    except
+      Result:= False;
+    end;
+   finally
+    tbTovarInWarehouse.Close;
+   end;
+end;
+
+function TfmPrihodTov.InsertTovarInWarehouseItem(pkey, TovarID: Int64; houseID: Integer): Boolean;
+var VhouseID: Variant;
+    Query, quMaxID: TMSQuery;
+    MaxID: Integer;
+begin
+  Result:= False;
+  try
+    Query:= TMlekoDbDsMSSQLDm(CustomDm).quDSPEC;
+    pkey:= Query.FieldByName('dhead_id').Value;
+    TovarID:= Query.FieldByName('article_id').Value;
+    tbTovarInWarehouse.Open;
+    if not tbTovarInWarehouse.Locate('pkey;TovarID', VarArrayOf([pkey, TovarID]), []) then
+    begin
+      quMaxID:=TMSQuery.Create(nil);
+      quMaxID.Connection:=dmDataModule.DB;
+      quMaxID.SQL.Text:= 'select isnull((select max(id) from dbo.TovarInWarehouse), 0) as ID';
+      quMaxID.Open;
+      MaxID:= quMaxID.FieldByName('ID').Value;
+      if (houseID<=0) then
+         begin
+          quMaxID.Close;
+          quMaxID.SQL.Text:= 'select HouseID from dbo.L_Tovar_WareHouse where TovarID=' +
+                             IntToStr(TovarID);
+          quMaxID.Open;
+          VhouseID:= quMaxID.FieldByName('HouseID').Value;
+          if not VarIsNull(VhouseID) then
+             houseID:= VhouseID;
+         end;
+        quMaxID.Close;
+        quMaxID.Free;
+      tbTovarInWarehouse.Edit;
+      tbTovarInWarehouse.Append;
+      if (houseID<=0) then
+      tbTovarInWarehouse.FieldByName('HouseID').Value:= null else
+      tbTovarInWarehouse.FieldByName('HouseID').Value:= houseID;
+      tbTovarInWarehouse.FieldByName('pkey').Value:= pkey;
+      tbTovarInWarehouse.FieldByName('TovarID').Value:= TovarID;
+      tbTovarInWarehouse.FieldByName('ID').Value:= MaxID+1;
+      tbTovarInWarehouse.Post;
+      Result:= True;
+    end;
+    tbTovarInWarehouse.Close;
+  except
+    Result:= False;
+  end;
+end;
+
+function TfmPrihodTov.DeleteTovarInWarehouseItem(): Boolean;
+var houseID, MaxID: Integer;
+    VhouseID: Variant;
+    Query, quMaxID: TMSQuery;
+    pkey: Int64; TovarID: Int64;
+begin
+  Result:= False;
+  try
+    Query:= TMlekoDbDsMSSQLDm(CustomDm).quDSPEC;
+    pkey:= Query.FieldByName('dhead_id').Value;
+    TovarID:= Query.FieldByName('article_id').Value;
+    tbTovarInWarehouse.Open;
+    if tbTovarInWarehouse.Locate('pkey;TovarID', VarArrayOf([pkey, TovarID]), []) then
+    begin
+     tbTovarInWarehouse.Edit;
+     tbTovarInWarehouse.Delete;
+     tbTovarInWarehouse.Post;
+     Result:= True;
+    end;
+    tbTovarInWarehouse.Close;
+  except
+    Result:= False;
+  end;
+end;
+
+procedure TfmPrihodTov.SelectWareHouse();
+var houseID, MaxID: Integer;
+    VhouseID: Variant;
+    Query, quMaxID: TMSQuery;
+    pkey: Int64; TovarID: Int64;
+begin
+  Query:= TMlekoDbDsMSSQLDm(CustomDm).quDSPEC;
+  VhouseID:= Query.FieldByName('HouseID').Value;
+  MaxID:= -1;
+  if not VarIsNull(VhouseID) then
+     MaxID:= Query.FieldByName('HouseID').AsInteger;
+  houseID:= GetWarehouseIDByDlg(@MaxID);
+  if (houseID>0) then
+     begin
+       pkey:= Query.FieldByName('dhead_id').Value;
+       TovarID:= Query.FieldByName('article_id').Value;
+       if not ChangeTovarInWarehouseItem(pkey, TovarID, houseID) then
+         InsertTovarInWarehouseItem(pkey, TovarID, houseID);
+       Query.Refresh;
+       DBGrid1.Refresh;
+     end;  
+end;
+
+
+procedure TfmPrihodTov.DBGrid1DblClick(Sender: TObject);
+var Field: TField;
+begin
+  inherited;
+  Field:= DBGrid1.SelectedField;
+  if (Field<>nil) and (Field.FieldName='HouseName') then
+     SelectWareHouse;
 end;
 
 end.

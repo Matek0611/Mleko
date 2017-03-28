@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, 
   Db, ExtCtrls, DBAccess, 
   MemDS, ActnList, CitDbComboEdit, ADODB,
-  MsAccess, BCDbDsMSSQL,SdacVcl,Data, cxEdit;    
+  MsAccess, BCDbDsMSSQL,SdacVcl,Data, cxEdit;
 
 type
   TMlekoDbDsMSSQLDm = class(TBCDbDsMSSQLDm)
@@ -165,6 +165,9 @@ type
     quCurrencyisCrossCurrency: TBooleanField;
     dsCurrency: TMSDataSource;
     QuPostArtGroupDelayPayCurrency: TStringField;
+    quTovarUKT_ZED: TStringField;
+    quDSPECHouseID: TSmallintField;
+    quDSPECHouseName: TStringField;
     procedure quDSPECAfterPost(DataSet: TDataSet);
     procedure quDSPECBeforeUpdateExecute(Sender: TCustomMSDataSet;
       StatementTypes: TStatementTypes; Params: TMSParams);

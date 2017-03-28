@@ -1,7 +1,7 @@
 inherited fmPrihodTov: TfmPrihodTov
-  Left = 511
-  Top = 208
-  Width = 1095
+  Left = -6
+  Top = 185
+  Width = 1035
   Height = 577
   Caption = #1055#1088#1080#1093#1086#1076' '#1090#1086#1074#1072#1088#1072
   ParentFont = True
@@ -11,7 +11,7 @@ inherited fmPrihodTov: TfmPrihodTov
   object paTop: TPanel [0]
     Left = 0
     Top = 0
-    Width = 1079
+    Width = 1019
     Height = 99
     Align = alTop
     BevelInner = bvLowered
@@ -20,7 +20,7 @@ inherited fmPrihodTov: TfmPrihodTov
     object ScrollBox: TScrollBox
       Left = 2
       Top = 2
-      Width = 1075
+      Width = 1015
       Height = 95
       HorzScrollBar.Margin = 6
       HorzScrollBar.Range = 341
@@ -425,7 +425,7 @@ inherited fmPrihodTov: TfmPrihodTov
   object paMiddle: TPanel [1]
     Left = 0
     Top = 99
-    Width = 1079
+    Width = 1019
     Height = 410
     Align = alClient
     BevelInner = bvLowered
@@ -435,7 +435,7 @@ inherited fmPrihodTov: TfmPrihodTov
     object DBGrid1: TDBGrid
       Left = 4
       Top = 4
-      Width = 1071
+      Width = 1011
       Height = 402
       Align = alClient
       DataSource = dsPrihod
@@ -446,6 +446,7 @@ inherited fmPrihodTov: TfmPrihodTov
       TitleFont.Height = -11
       TitleFont.Name = 'MS Sans Serif'
       TitleFont.Style = []
+      OnDblClick = DBGrid1DblClick
       OnKeyUp = DBGrid1KeyUp
       OnTitleClick = DBGrid1TitleClick
       Columns = <
@@ -515,13 +516,20 @@ inherited fmPrihodTov: TfmPrihodTov
           FieldName = 'PaymentPrice'
           Width = 112
           Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'HouseName'
+          ReadOnly = True
+          Title.Caption = #1057#1082#1083#1072#1076
+          Visible = True
         end>
     end
   end
   object paBottom: TPanel [2]
     Left = 0
     Top = 509
-    Width = 1079
+    Width = 1019
     Height = 29
     Align = alBottom
     TabOrder = 2
@@ -1465,6 +1473,12 @@ inherited fmPrihodTov: TfmPrihodTov
   object dsNaklPDelay: TMSDataSource
     DataSet = quNaklPDelay
     Left = 800
+    Top = 203
+  end
+  object tbTovarInWarehouse: TMSTable
+    TableName = 'dbo.TovarInWarehouse'
+    Connection = dmDataModule.DB
+    Left = 408
     Top = 203
   end
 end
